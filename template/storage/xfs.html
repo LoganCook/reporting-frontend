@@ -1,0 +1,54 @@
+<!-- TODO: replace prehistoric sandbox code -->
+
+<!--
+<h3 class="text-center">Compellent / XFS</h3>
+
+<div ng-controller="XFSController">
+    <div class="row">
+        <div class="col-sm-4 col-sm-offset-4">
+
+            <div style="padding-top: 25px;">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Filesystem</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" ng-model="select.fs" ng-change="selectUsage()">
+                                <option ng-repeat="fs in filesystems" value="{{ fs.id }}">{{ cleanName(fs.name) }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Snapshot</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" ng-model="select.ts" ng-change="selectUsage()">
+                                <option ng-repeat="snap in snapshots" value="{{ snap.id }}">{{ formatTimestamp(snap.ts) }}</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div style="padding-top: 25px;">
+                <table class="table table-striped" style="width: 100%;">
+                    <tr>
+                        <th><a href="#" ng-click="sortType = 'owner.name' ; sortReverse = !sortReverse">User</a></th>
+                        <th><a href="#" ng-click="sortType = 'soft' ; sortReverse = !sortReverse">Soft Quota</a></th>
+                        <th><a href="#" ng-click="sortType = 'hard' ; sortReverse = !sortReverse">Hard Quota</a></th>
+                        <th><a href="#" ng-click="sortType = 'usage' ; sortReverse = !sortReverse">Usage</a></th>
+                    </tr>
+                    <tr ng-repeat="u in usage | orderBy:sortType:sortReverse">
+                        <td>{{ u.owner.name }}</td>
+                        <td>{{ formatSize(u.soft) }}</td>
+                        <td>{{ formatSize(u.hard) }}</td>
+                        <td>{{ formatSize(u.usage) }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+-->
