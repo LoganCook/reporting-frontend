@@ -1,0 +1,55 @@
+<div class="container">
+    <h3 class="text-center">Settings</h3>
+
+    <div ng-controller="SettingsController">
+        <div class="row">
+            <h4 class="text-center">API Endpoints</h4>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div style="padding-top: 25px;">
+                    <form class="form-horizontal" novalidate>
+                        <div class="form-group">
+                            <span class="col-sm-2 text-right">Service</span>
+                            <span class="col-sm-7 text-center">Base URL</span>
+                            <span class="col-sm-3 text-center">Token</span>
+                        </div>
+
+                        <div class="form-group" ng-repeat="(name, config) in $storage.endpoints">
+                            <label class="col-sm-2 control-label" for="endpoint-{{ name }}">{{ name }}</label>
+                            <div class="col-sm-7">
+                                <input class="form-control" id="endpoint-{{ name }}" ng-model="config.endpoint" ng-change="updateConfigString()" type="text">
+                            </div>
+                            <div class="col-sm-3">
+                                <input class="form-control" id="token-{{ name }}" ng-model="config.token" ng-change="updateConfigString()" type="text">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <h4 class="text-center">Configuration String</h4>
+        </div>
+
+        <div class="row">
+            <form class="form-horizontal" novalidate>
+                <div class="form-group">
+                    <span class="col-sm-3 text-center">Passphrase</span>
+                    <span class="col-sm-9 text-center">Encrypted Configuration</span>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <input class="form-control" ng-model="configPassword" ng-change="updateConfigString()" type="text">
+                    </div>
+                    <div class="col-sm-9">
+                        <input class="form-control" ng-disabled="!validPassphrase()" ng-model="configString" ng-change="useConfigString()" type="text">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

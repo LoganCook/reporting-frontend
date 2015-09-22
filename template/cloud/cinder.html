@@ -1,0 +1,64 @@
+<!-- TODO: replace prehistoric sandbox code -->
+
+<!--
+<div class="container">
+    <h3 class="text-center">Cloud &mdash; Block Storage (Cinder)</h3>
+
+    <div ng-controller="CinderController">
+        <div class="row">
+            <div class="col-sm-4 col-sm-offset-4">
+
+                <div style="padding-top: 25px;">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Snapshot</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" ng-change="selectSnapshot()" ng-model="select.ts">
+                                    <option ng-repeat="snap in snapshots" value="{{ snap.id }}">{{ formatTimestamp(snap.ts) }}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div style="padding-top: 25px;">
+                    <table class="table table-striped" style="width: 100%;">
+                        <tr>
+                            <th>
+                                <a href="#" ng-click="sortType = 'name' ; sortReverse = !sortReverse">Name</a>
+                            </th>
+                            <th>
+                                <a href="#" ng-click="sortType = 'ownerName' ; sortReverse = !sortReverse">Owner</a>
+                            </th>
+                            <th>
+                                <a href="#" ng-click="sortType = 'tenantName' ; sortReverse = !sortReverse">Tenant</a>
+                            </th>
+                            <th>
+                                <a href="#" ng-click="sortType = 'size' ; sortReverse = !sortReverse">Size</a>
+                            </th>
+                            <th>
+                                <a href="#" ng-click="sortType = 'status.name' ; sortReverse = !sortReverse">Status</a>
+                            </th>
+                            <th>
+                                <a href="#" ng-click="sortType = 'volume.az.name' ; sortReverse = !sortReverse">Zone</a>
+                            </th>
+                        </tr>
+                        <tr ng-repeat="vs in volumeStatus | orderBy:sortType:sortReverse">
+                            <td>{{ vs.name }}</td>
+                            <td>{{ vs.ownerName }}</td>
+                            <td>{{ vs.tenantName }}</td>
+                            <td>{{ formatSize(vs.size) }}</td>
+                            <td>{{ vs.status.name }}</td>
+                            <td>{{ vs.volume.az.name }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+-->

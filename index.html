@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>eRSA Reporting</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/m8tro-bootstrap/3.3.5/m8tro.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body ng-app="reportingApp" ng-strict-di>
+
+    <nav class="navbar navbar-default" style="margin-bottom: 0px;" role="navigation" ng-controller="MenuController">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" ng-init="navCollapsed = true" ng-click="navCollapsed = !navCollapsed">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" ui-sref="home">
+                <img style="max-width: 50px; margin-top: -15px;" src="../images/ersa.png">
+            </a>
+        </div>
+
+        <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
+            <ul class="nav navbar-nav">
+                <!--<li><a ui-sref="home">Reporting</a></li>-->
+
+                <li dropdown ng-repeat="(menu, items) in menus">
+                    <a href="#" dropdown-toggle>{{ menu }}</a>
+
+                    <ul class="dropdown-menu" role="menu">
+                        <li ng-repeat="(item, state) in items" >
+                            <a ui-sref="{{ state[0] }}">{{ item }}</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li><a ui-sref="settings">Settings</a></li>
+                <li><a href="http://www.ersa.edu.au">eRSA</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div ui-view></div>
+
+    <script src="reporting.js"></script>
+
+    <!-- browserify problems with ngStorage, so handle separately -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/ngStorage/0.3.9/ngStorage.min.js"></script>
+</body>
+</html>
