@@ -1,7 +1,7 @@
 .fullscreen {
     width: 100vw;
     height: 100vh;
-    background-image: url('/images/ersa-g75.jpg'); /* no slick client-side effects for now */
+    background-image: url('../images/ersa-g75.jpg'); /* no slick client-side effects for now */
     background-size: cover;
     background-position: center;
     display: table;
