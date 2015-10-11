@@ -34,7 +34,7 @@ gulp.task("jshint", function() {
 gulp.task("prep", ["clean", "jshint"]);
 
 gulp.task("static", ["prep"], function() {
-    return gulp.src(["css/**/*.css", "images/**/*.???", "index.html", "template/**/*.html"], {
+    return gulp.src(["css/**/*.css", "fonts/*", "images/**/*.???", "index.html", "template/**/*.html"], {
             base: "."
         })
         .pipe(gulp.dest("build"));
@@ -48,7 +48,7 @@ gulp.task("serve", ["default"], serve({
 }));
 
 gulp.task("watch", ["default"], function() {
-    var watcher = gulp.watch(["js/**/*.js", "css/**/*.css", "images/**/*.???", "index.html", "template/**/*.html"], ["default"]);
+    var watcher = gulp.watch(["js/**/*.js", "css/**/*.css", "fonts/*", "images/**/*.???", "index.html", "template/**/*.html"], ["default"]);
 
     watcher.on("change", function(event) {
         console.log(event.type + ": " + event.path);

@@ -2,25 +2,27 @@ var angular = require("angular");
 
 // browserify problems with ngStorage, so handle separately
 
-var reportingApp = angular.module("reportingApp", ["ngStorage", require("angular-resource"), require("angular-ui-router"), require("angular-ui-bootstrap")]);
+var reportingApp = angular.module("reportingApp", ["ngStorage", require("angular-sanitize"), require("ng-csv"), require("angular-ui-router"), require("angular-ui-bootstrap")]);
 
-reportingApp.controller("CRMController", ["$scope", "$http", "$localStorage", "$sessionStorage", require("./identity/crm")]);
+reportingApp.factory("reporting", ["$localStorage", "$timeout", require("./client")]);
 
-reportingApp.controller("HPCController", ["$scope", "$http", "$localStorage", "$sessionStorage", require("./hpc/overview")]);
+reportingApp.controller("CRMController", ["$rootScope", "$scope", "$timeout", "$localStorage", "$sessionStorage", "reporting", require("./identity/crm")]);
 
-reportingApp.controller("FilesystemController", ["$scope", "$http", "$localStorage", "$sessionStorage", require("./storage/fs")]);
-reportingApp.controller("XFSController", ["$scope", "$http", "$localStorage", "$sessionStorage", require("./storage/xfs")]);
-reportingApp.controller("HNASController", ["$scope", "$http", "$localStorage", "$sessionStorage", require("./storage/hnas")]);
-reportingApp.controller("HCPController", ["$scope", "$http", "$localStorage", "$sessionStorage", require("./storage/hcp")]);
+reportingApp.controller("HPCController", ["$rootScope", "$scope", "$timeout", "$localStorage", "$sessionStorage", "reporting", require("./hpc/overview")]);
 
-reportingApp.controller("KeystoneController", ["$scope", "$http", "$localStorage", "$sessionStorage", require("./cloud/keystone")]);
-reportingApp.controller("CinderController", ["$scope", "$http", "$localStorage", "$sessionStorage", require("./cloud/cinder")]);
-reportingApp.controller("NovaController", ["$scope", "$http", "$localStorage", "$sessionStorage", require("./cloud/nova")]);
-reportingApp.controller("SwiftController", ["$scope", "$http", "$localStorage", "$sessionStorage", require("./cloud/swift")]);
-reportingApp.controller("CeilometerController", ["$scope", "$http", "$localStorage", "$sessionStorage", require("./cloud/ceilometer")]);
+reportingApp.controller("FilesystemController", ["$rootScope", "$scope", "$timeout", "$localStorage", "$sessionStorage", "reporting", require("./storage/fs")]);
+reportingApp.controller("XFSController", ["$rootScope", "$scope", "$timeout", "$localStorage", "$sessionStorage", "reporting", require("./storage/xfs")]);
+reportingApp.controller("HNASController", ["$rootScope", "$scope", "$timeout", "$localStorage", "$sessionStorage", "reporting", require("./storage/hnas")]);
+reportingApp.controller("HCPController", ["$rootScope", "$scope", "$timeout", "$localStorage", "$sessionStorage", "reporting", require("./storage/hcp")]);
 
-reportingApp.controller("HomeController", ["$scope", "$http", "$localStorage", "$sessionStorage", require("./home")]);
-reportingApp.controller("MenuController", ["$scope", "$http", "$localStorage", "$sessionStorage", require("./menu")]);
-reportingApp.controller("SettingsController", ["$scope", "$http", "$localStorage", "$sessionStorage", require("./settings")]);
+reportingApp.controller("KeystoneController", ["$rootScope", "$scope", "$timeout", "$localStorage", "$sessionStorage", "reporting", require("./cloud/keystone")]);
+reportingApp.controller("CinderController", ["$rootScope", "$scope", "$timeout", "$localStorage", "$sessionStorage", "reporting", require("./cloud/cinder")]);
+reportingApp.controller("NovaController", ["$rootScope", "$scope", "$timeout", "$localStorage", "$sessionStorage", "reporting", require("./cloud/nova")]);
+reportingApp.controller("SwiftController", ["$rootScope", "$scope", "$timeout", "$localStorage", "$sessionStorage", "reporting", require("./cloud/swift")]);
+reportingApp.controller("CeilometerController", ["$rootScope", "$scope", "$timeout", "$localStorage", "$sessionStorage", "reporting", require("./cloud/ceilometer")]);
+
+reportingApp.controller("HomeController", ["$rootScope", "$scope", "$timeout", "$localStorage", "$sessionStorage", "reporting", require("./home")]);
+reportingApp.controller("MenuController", ["$rootScope", "$scope", "$timeout", "$localStorage", "$sessionStorage", "reporting", require("./menu")]);
+reportingApp.controller("SettingsController", ["$rootScope", "$scope", "$timeout", "$localStorage", "$sessionStorage", "reporting", require("./settings")]);
 
 reportingApp.config(["$stateProvider", "$urlRouterProvider", require("./route")]);

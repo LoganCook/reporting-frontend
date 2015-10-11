@@ -1,5 +1,5 @@
 var menuData = require("./menu-data");
 
-module.exports = function ($scope, $http, $localStorage, $sessionStorage) {
+module.exports = function ($rootScope, $scope, $timeout, $localStorage, $sessionStorage, reporting) {
     $scope.menus = menuData;
 };

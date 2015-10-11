@@ -19,5 +19,21 @@ module.exports = {
 
     formatDuration: function(t, unit) {
         return moment.duration(t, unit).humanize();
+    },
+
+    keyArray: function(records, key) {
+        var result = {};
+
+        _.forEach(records, function(record) {
+            result[record[key ? key : "id"]] = record;
+        });
+
+        return result;
+    },
+
+    api: function(object, name) {
+        return function(parameters) {
+            return object.get(object.base + name + (parameters ? ("?" + parameters.join("&")) : ""));
+        };
     }
 };
