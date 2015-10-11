@@ -21,8 +21,10 @@
         "lodash": "~3.10.1",
         "lz-string": "~1.4.4",
         "moment": "~2.10.6",
+        "ng-csv": "~0.3.5",
         "ngstorage": "~0.3.9",
         "numeral": "~1.5.3",
+        "restler": "~3.4.0",
         "sjcl": "~1.0.3"
     },
     "devDependencies": {

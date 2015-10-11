@@ -12,4 +12,9 @@
     vertical-align: middle;
     text-align: center;
     color: black;
+    text-shadow: none;
+}
+
+h3 {
+    padding-bottom: 20px;
 }

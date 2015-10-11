@@ -1,4 +1,4 @@
-module.exports = function ($scope, $http, $localStorage, $sessionStorage) {
+module.exports = function ($rootScope, $scope, $timeout, $localStorage, $sessionStorage, reporting) {
     // TODO: replace prehistoric sandbox code
 
     /*

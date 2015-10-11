@@ -1,63 +1,102 @@
 var _ = require("lodash");
+var util = require("../util");
 
-module.exports = function ($scope, $http, $localStorage, $sessionStorage) {
-    // TODO: replace prehistoric sandbox code
+module.exports = function ($rootScope, $scope, $timeout, $localStorage, $sessionStorage, reporting) {
+    $scope.values = _.values;
 
-    /*
-    var config = { "headers": { "x-ersa-crm-token": "foo" }};
+    $scope.formatTimestamp = util.formatTimestamp;
 
-    $scope.getMembers = function(orgID) {
-        var members = $scope.contactsByOrg[orgID];
+    $scope.snapshots = {};
 
-        if (!members) {
-            return "?";
-        }
-
-        var truncate = members.length >= 10;
-        if (truncate) {
-            members = members.slice(0, 9);
-        }
-
-        var memberNames = [];
-
-        for (var i in members) {
-            memberID = members[i];
-
-            memberNames.push($scope.contactMap[memberID].name);
-        }
-
-        if (truncate) {
-            memberNames.push("...");
-        }
-
-        return memberNames.join(", ");
+    $scope.select = {
+        id: null // snapshot id
     };
 
-    $http.get("http://localhost:5031/contact", config).then(function(data) {
-        $scope.contactMap = data.data;
+    $scope.snapshot = {
+        "membership": [],
+        "addressMapping": [],
+        "usernameMapping": []
+    };
 
-        var contactsByOrg = {};
+    $scope.snapshotByPerson = {
+        "membership": {},
+        "addressMapping": {},
+        "usernameMapping": {}
+    };
 
-        for (var contactID in data.data) {
-            contact = data.data[contactID];
+    var relevantField = {
+        "membership": "organisation",
+        "usernameMapping": "username",
+        "addressMapping": "email"
+    };
 
-            for (var orgIndex in contact.organisations) {
-                var orgID = contact.organisations[orgIndex];
+    var humanReadableContent = {
+        "membership": "organisations",
+        "usernameMapping": "usernames",
+        "addressMapping": "addresses"
+    };
 
-                if (!(orgID in contactsByOrg)) {
-                    contactsByOrg[orgID] = [];
+    var humanReadableField = {
+        "membership": "name",
+        "usernameMapping": "username",
+        "addressMapping": "address"
+    };
+
+    $scope.selectSnapshot = function() {
+        if ($scope.select.id) {
+            reporting.crmSnapshot($scope.select.id, function(svc, type, snapshot, data) {
+                $scope.snapshot[type] = data;
+                $scope.snapshotByPerson[type] = {};
+
+                var groupedByPerson = _.groupBy(data, function(x) {
+                    return x.person;
+                });
+
+                var extractField = function(record) {
+                    return record[relevantField[type]];
+                };
+
+                var getReadable = function(ref) {
+                    return $scope[humanReadableContent[type]][ref][humanReadableField[type]];
+                };
+
+                var generateReadable = function(refs) {
+                    return _.map(refs, getReadable).join(", ");
+                };
+
+                for (var person in groupedByPerson) {
+                    var refs = _.map(groupedByPerson[person], extractField);
+                    $scope.snapshotByPerson[type][person] = generateReadable(refs);
                 }
 
-                contactsByOrg[orgID].push(contactID);
+                if (type == "membership") {
+                    var groupedByOrganisation = _.groupBy(data, function(x) {
+                        return x.organisation;
+                    });
+
+                    var extractPerson = function(record) {
+                        var entity = $scope.people[record.person];
+
+                        return entity.first_name + " " + entity.last_name;
+                    };
+
+                    for (var organisation in groupedByOrganisation) {
+                        groupedByOrganisation[organisation] =
+                            _.map(groupedByOrganisation[organisation], extractPerson).join(", ");
+                    }
+
+                    $scope.membershipByOrganisation = groupedByOrganisation;
+                }
+            });
+        } else {
+            for (var type in $scope.snapshot) {
+                $scope.snapshot[type] = [];
+                $scope.snapshotByPerson[type] = {};
             }
         }
+    };
 
-        $scope.contactsByOrg = contactsByOrg;
+    reporting.crmBase(function(svc, type, data) {
+        $scope[type] = util.keyArray(data);
     });
-
-    $http.get("http://localhost:5031/organisation", config).then(function(data) {
-        $scope.orgMap = data.data;
-        $scope.orgValues = _.values(data.data);
-    });
-    */
 };

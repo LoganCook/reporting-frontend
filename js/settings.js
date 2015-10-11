@@ -2,7 +2,7 @@ var menuData = require("./menu-data");
 var lz = require("lz-string");
 var sjcl = require("sjcl");
 
-module.exports = function($scope, $http, $localStorage, $sessionStorage) {
+module.exports = function($rootScope, $scope, $timeout, $localStorage, $sessionStorage, reporting) {
     $scope.$storage = $localStorage;
 
     $scope.configPassword = "";
