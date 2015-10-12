@@ -35,5 +35,16 @@ module.exports = {
         return function(parameters) {
             return this.get(this.base + name + (parameters ? ("?" + parameters.join("&")) : ""));
         };
+    },
+
+    chopTime: function(ts) {
+        var chopped = new Date(ts);
+
+        chopped.setHours(0);
+        chopped.setMinutes(0);
+        chopped.setSeconds(0);
+        chopped.setMilliseconds(0);
+
+        return chopped;
     }
 };
