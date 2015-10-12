@@ -31,9 +31,9 @@ module.exports = {
         return result;
     },
 
-    api: function(object, name) {
+    api: function(name) {
         return function(parameters) {
-            return object.get(object.base + name + (parameters ? ("?" + parameters.join("&")) : ""));
+            return this.get(this.base + name + (parameters ? ("?" + parameters.join("&")) : ""));
         };
     }
 };
