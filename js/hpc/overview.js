@@ -175,8 +175,8 @@ module.exports = function($rootScope, $scope, $http, $localStorage, $sessionStor
     };
 
     $scope.loadJobs = function() {
-        $scope.rangeStartEpoch = Math.round($scope.rangeStart.getTime() / 1000);
-        $scope.rangeEndEpoch = Math.round($scope.rangeEnd.getTime() / 1000);
+        $scope.rangeStartEpoch = Math.round(util.chopTime($scope.rangeStart).getTime() / 1000);
+        $scope.rangeEndEpoch = Math.round(util.chopTime($scope.rangeEnd).getTime() / 1000);
 
         var query = baseFilters.slice();
         query.push("filter=end.ge." + $scope.rangeStartEpoch);
