@@ -3,6 +3,8 @@ var moment = require("moment");
 var numeral = require("numeral");
 var _ = require("lodash");
 
+var defaultQuery = "count=5000";
+
 module.exports = {
     formatTimestamp: function(t) {
         return moment.unix(t).format("LLL");
@@ -33,7 +35,8 @@ module.exports = {
 
     api: function(name) {
         return function(parameters) {
-            return this.get(this.base + name + (parameters ? ("?" + parameters.join("&")) : ""));
+            var query = parameters ? parameters.join("&") : defaultQuery;
+            return this.get(this.base + name + "?" + query);
         };
     },
 

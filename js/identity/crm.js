@@ -57,7 +57,9 @@ module.exports = function ($rootScope, $scope, $timeout, $localStorage, $session
                 };
 
                 var getReadable = function(ref) {
-                    return $scope[humanReadableContent[type]][ref][humanReadableField[type]];
+                    var content = humanReadableContent[type];
+                    var field = humanReadableField[type];
+                    return $scope[content][ref][field];
                 };
 
                 var generateReadable = function(refs) {
