@@ -56,7 +56,7 @@ module.exports = function($localStorage, $timeout) {
 
     service.crmSnapshot = function(snapshot, callback) {
         ["membership", "usernameMapping", "addressMapping"].forEach(function(type) {
-            loadQuery("crm", type, ["filter=snapshot.eq." + snapshot], callback);
+            loadQuery("crm", type, ["count=10000", "filter=snapshot.eq." + snapshot], callback);
         });
     };
 

@@ -28,6 +28,8 @@ module.exports = function($rootScope, $scope, $http, $localStorage, $sessionStor
     var jobSummary = {};
 
     var clear = function() {
+        jobSummary = {};
+
         $scope.status = "Zero jobs loaded.";
         $scope.jobs = [];
         $scope.jobCount = 0;
