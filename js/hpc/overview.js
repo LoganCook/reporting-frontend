@@ -62,62 +62,6 @@ module.exports = function($rootScope, $scope, $http, $localStorage, $sessionStor
 
     var selectCRM = function() {};
 
-    var populateSummaryCRM = function(summary) {
-        if (!(summary.username in $scope.crm.usernames)) {
-            summary.fullname = "?";
-            summary.organisation = "?";
-        } else {
-            var usernameID = $scope.crm.usernames[summary.username].id;
-
-            var usernameFilters = [
-                "filter=snapshot.eq." + $scope.crm.id,
-                "filter=username.eq." + usernameID
-            ];
-
-            reporting.query("crm", "usernameMapping", usernameFilters, function(svc, type, query, data) {
-                if (data) {
-                    var personID = data[0].person;
-                    var person = $scope.crm.people[personID];
-
-                    if (person) {
-                        summary.fullname = person.first_name + " " + person.last_name;
-                    }
-
-                    var membershipFilters = [
-                        "filter=snapshot.eq." + $scope.crm.id,
-                        "filter=person.eq." + personID
-                    ];
-
-                    reporting.query("crm", "membership", membershipFilters, function(svc, type, query, data) {
-                        var orgNames = [];
-
-                        _.forEach(data, function(entry) {
-                            var orgID = entry.organisation;
-                            var org = $scope.crm.organisations[orgID];
-                            orgNames.push(org.name);
-                        });
-
-                        summary.organisation = orgNames.join(" / ");
-                    });
-                } else {
-                    summary.fullname = "?";
-                }
-            });
-        }
-    };
-
-    var nextPage = function(query) {
-        var next = [];
-        _.forEach(query, function(param) {
-            if (_.startsWith(param, "page=")) {
-                next.push("page=" + (parseInt(param.split("=")[1]) + 1));
-            } else {
-                next.push(param);
-            }
-        });
-        return next;
-    };
-
     var updateSummary = function(data) {
         _.forEach(data, function(job) {
             if (!(job.owner in jobSummary)) {
@@ -130,7 +74,7 @@ module.exports = function($rootScope, $scope, $http, $localStorage, $sessionStor
                     cpuSeconds: 0
                 };
 
-                populateSummaryCRM(jobSummary[job.owner]);
+                reporting.populateFromUsername($scope.crm.id, jobSummary[job.owner]);
             }
 
             jobSummary[job.owner].jobCount++;
@@ -168,7 +112,7 @@ module.exports = function($rootScope, $scope, $http, $localStorage, $sessionStor
             updateSummary(data);
             publishJobSummary();
 
-            var next = nextPage(query);
+            var next = util.nextPage(query);
 
             reporting.hpcQuery("job", next, processJobs);
         } else {
