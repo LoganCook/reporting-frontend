@@ -1,54 +1,87 @@
-<!-- TODO: replace prehistoric sandbox code -->
+<div class="container-fluid">
+    <h3 class="text-center">Compellent / XFS</h3>
 
-<!--
-<h3 class="text-center">Compellent / XFS</h3>
-
-<div ng-controller="XFSController">
-    <div class="row">
-        <div class="col-sm-4 col-sm-offset-4">
-
-            <div style="padding-top: 25px;">
-                <form class="form-horizontal">
+    <div ng-controller="XFSController">
+        <form>
+            <div class="row">
+                <div class="col-md-3">
+                    <p>CRM Snapshot</p>
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Filesystem</label>
-                        <div class="col-sm-8">
-                            <select class="form-control" ng-model="select.fs" ng-change="selectUsage()">
-                                <option ng-repeat="fs in filesystems" value="{{ fs.id }}">{{ cleanName(fs.name) }}</option>
+                        <div>
+                            <select class="form-control" ng-model="select.crm">
+                                <option value="">Timestamp</option>
+                                <option ng-repeat="snapshot in values(crm.snapshots) | orderBy: 'ts'" value="{{ snapshot.id }}">
+                                    {{ formatTimestamp(snapshot.ts) }}
+                                </option>
                             </select>
                         </div>
                     </div>
+                </div>
+
+                <div class="col-md-3">
+                    <p>Filesystem</p>
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Snapshot</label>
-                        <div class="col-sm-8">
-                            <select class="form-control" ng-model="select.ts" ng-change="selectUsage()">
-                                <option ng-repeat="snap in snapshots" value="{{ snap.id }}">{{ formatTimestamp(snap.ts) }}</option>
+                        <div>
+                            <select class="form-control" ng-model="select.filesystem">
+                                <option value="">Filesystem</option>
+                                <option ng-repeat="fs in values(xfs.filesystem) | orderBy: 'name'" value="{{ fs.id }}">
+                                    {{ fs.name }}
+                                </option>
                             </select>
                         </div>
                     </div>
-                </form>
+                </div>
+
+                <div class="col-md-3">
+                    <p>Usage Snapshot</p>
+                    <div class="form-group">
+                        <div>
+                            <select class="form-control" ng-model="select.snapshot">
+                                <option value="">Timestamp</option>
+                                <option ng-repeat="snapshot in values(xfs.snapshot) | orderBy: 'ts'" value="{{ snapshot.id }}">
+                                    {{ formatTimestamp(snapshot.ts) }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <p>{{ status }}</p>
+                    <div class="btn-group btn-group-justified" role="group">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" ng-click="loadUsage()">Update</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" ng-csv="exportUsage()" field-separator="\t" filename="xfs.tsv">Export as TSV</button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-        </div>
-    </div>
+        </form>
 
-    <div class="row">
-        <div class="col-sm-12">
-            <div style="padding-top: 25px;">
-                <table class="table table-striped" style="width: 100%;">
+        <div class="row" style="padding-top: 25px;">
+            <div class="col-md-12">
+                <table class="table table-striped">
                     <tr>
-                        <th><a href="#" ng-click="sortType = 'owner.name' ; sortReverse = !sortReverse">User</a></th>
-                        <th><a href="#" ng-click="sortType = 'soft' ; sortReverse = !sortReverse">Soft Quota</a></th>
-                        <th><a href="#" ng-click="sortType = 'hard' ; sortReverse = !sortReverse">Hard Quota</a></th>
-                        <th><a href="#" ng-click="sortType = 'usage' ; sortReverse = !sortReverse">Usage</a></th>
+                        <th>Full Name</th>
+                        <th>Username</th>
+                        <th>Organisation</th>
+                        <th>Usage</th>
+                        <th>Soft Quota</th>
+                        <th>Hard Quota</th>
                     </tr>
-                    <tr ng-repeat="u in usage | orderBy:sortType:sortReverse">
-                        <td>{{ u.owner.name }}</td>
-                        <td>{{ formatSize(u.soft) }}</td>
-                        <td>{{ formatSize(u.hard) }}</td>
-                        <td>{{ formatSize(u.usage) }}</td>
+                    <tr ng-repeat="entry in output.usage | orderBy: 'username'">
+                        <td>{{ entry.fullname }}</td>
+                        <td>{{ entry.username }}</td>
+                        <td>{{ entry.organisation }}</td>
+                        <td>{{ formatSize(entry.usage) }}</td>
+                        <td>{{ formatSize(entry.soft) }}</td>
+                        <td>{{ formatSize(entry.hard) }}</td>
                     </tr>
                 </table>
             </div>
         </div>
     </div>
 </div>
--->

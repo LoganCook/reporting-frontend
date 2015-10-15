@@ -23,6 +23,10 @@ module.exports = {
         return moment.duration(t, unit).humanize();
     },
 
+    basename: function(s) {
+        return s.split("/").pop();
+    },
+
     keyArray: function(records, key) {
         var result = {};
 
@@ -49,5 +53,17 @@ module.exports = {
         chopped.setMilliseconds(0);
 
         return chopped;
+    },
+
+    nextPage: function(query) {
+        var next = [];
+        _.forEach(query, function(param) {
+            if (_.startsWith(param, "page=")) {
+                next.push("page=" + (parseInt(param.split("=")[1]) + 1));
+            } else {
+                next.push(param);
+            }
+        });
+        return next;
     }
 };
