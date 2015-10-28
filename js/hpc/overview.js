@@ -107,7 +107,7 @@ module.exports = function($rootScope, $scope, $http, $localStorage, $sessionStor
         if (data && data.length > 0) {
             Array.prototype.push.apply($scope.jobs, data);
             $scope.jobCount += data.length;
-            $scope.status = "Loading ... " + $scope.jobCount + " jobs.";
+            $scope.status = "Loaded " + $scope.jobCount + " jobs.";
 
             updateSummary(data);
             publishJobSummary();
@@ -121,8 +121,8 @@ module.exports = function($rootScope, $scope, $http, $localStorage, $sessionStor
     };
 
     $scope.loadJobs = function() {
-        $scope.rangeStartEpoch = Math.round(util.chopTime($scope.rangeStart).getTime() / 1000);
-        $scope.rangeEndEpoch = Math.round(util.chopTime($scope.rangeEnd).getTime() / 1000);
+        $scope.rangeStartEpoch = util.dayStart($scope.rangeStart);
+        $scope.rangeEndEpoch = util.dayEnd($scope.rangeEnd);
 
         var query = baseFilters.slice();
         query.push("filter=end.ge." + $scope.rangeStartEpoch);

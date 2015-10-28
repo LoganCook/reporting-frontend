@@ -1,10 +1,24 @@
 <div class="container-fluid">
-    <h3 class="text-center">Compellent / XFS</h3>
+    <h3 class="text-center">XFS</h3>
 
     <div ng-controller="XFSController">
         <form>
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-2">
+                    <p>Host</p>
+                    <div class="form-group">
+                        <div>
+                            <select class="form-control" ng-change="selectHost()" ng-model="select.host">
+                                <option value="">Name</option>
+                                <option ng-repeat="host in values(xfs.host) | orderBy: 'name'" value="{{ host.id }}">
+                                    {{ host.name }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
                     <p>CRM Snapshot</p>
                     <div class="form-group">
                         <div>
@@ -18,11 +32,11 @@
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <p>Filesystem</p>
                     <div class="form-group">
                         <div>
-                            <select class="form-control" ng-model="select.filesystem">
+                            <select class="form-control" ng-disabled="!select.host" ng-model="select.filesystem">
                                 <option value="">Filesystem</option>
                                 <option ng-repeat="fs in values(xfs.filesystem) | orderBy: 'name'" value="{{ fs.id }}">
                                     {{ fs.name }}
@@ -32,11 +46,32 @@
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-2">
+                    <p>Start Date</p>
+                    <p class="input-group">
+                        <input type="text" class="form-control" datepicker-popup ng-model="rangeStart" is-open="rangeStartOpen" show-weeks="false" />
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="openRangeStart()">📅</button>
+                        </span>
+                    </p>
+                </div>
+
+                <div class="col-md-2">
+                    <p>End Date</p>
+                    <p class="input-group">
+                        <input type="text" class="form-control" datepicker-popup ng-model="rangeEnd" is-open="rangeEndOpen" show-weeks="false" />
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="openRangeEnd()">📅</button>
+                        </span>
+                    </p>
+                </div>
+
+
+                <!-- <div class="col-md-2">
                     <p>Usage Snapshot</p>
                     <div class="form-group">
                         <div>
-                            <select class="form-control" ng-model="select.snapshot">
+                            <select class="form-control" ng-disabled="!select.host" ng-model="select.snapshot">
                                 <option value="">Timestamp</option>
                                 <option ng-repeat="snapshot in values(xfs.snapshot) | orderBy: 'ts'" value="{{ snapshot.id }}">
                                     {{ formatTimestamp(snapshot.ts) }}
@@ -44,44 +79,41 @@
                             </select>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <p>{{ status }}</p>
                     <div class="btn-group btn-group-justified" role="group">
                         <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-default" ng-click="loadUsage()">Update</button>
+                            <button class="btn btn-default" ng-click="loadUsageRange()" ng-disabled="!(select.host && select.crm && select.filesystem)" type="button">Update</button>
                         </div>
                         <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-default" ng-csv="exportUsage()" field-separator="\t" filename="xfs.tsv">Export as TSV</button>
+                            <button class="btn btn-default" field-separator="\t" filename="xfs.tsv" ng-csv="exportUsageRange()" type="button">Export as TSV</button>
                         </div>
                     </div>
                 </div>
+            </div>
 
+            <div class="row" ng-show="select.host && select.crm && select.filesystem" style="padding-top: 25px;">
+                <div class="col-md-12">
+                    <table class="table table-striped">
+                        <tr>
+                            <th>Full Name</th>
+                            <th>Username</th>
+                            <th>Organisation</th>
+                            <th>Usage (Weighted Mean)</th>
+                            <th>Usage (Peak)</th>
+                        </tr>
+                        <tr ng-repeat="entry in output.summed | orderBy: 'username'">
+                            <td>{{ entry.fullname }}</td>
+                            <td>{{ entry.username }}</td>
+                            <td>{{ entry.organisation }}</td>
+                            <td>{{ formatSize(entry.usage) }}</td>
+                            <td>{{ formatSize(entry.peak) }}</td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </form>
-
-        <div class="row" style="padding-top: 25px;">
-            <div class="col-md-12">
-                <table class="table table-striped">
-                    <tr>
-                        <th>Full Name</th>
-                        <th>Username</th>
-                        <th>Organisation</th>
-                        <th>Usage</th>
-                        <th>Soft Quota</th>
-                        <th>Hard Quota</th>
-                    </tr>
-                    <tr ng-repeat="entry in output.usage | orderBy: 'username'">
-                        <td>{{ entry.fullname }}</td>
-                        <td>{{ entry.username }}</td>
-                        <td>{{ entry.organisation }}</td>
-                        <td>{{ formatSize(entry.usage) }}</td>
-                        <td>{{ formatSize(entry.soft) }}</td>
-                        <td>{{ formatSize(entry.hard) }}</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
     </div>
 </div>

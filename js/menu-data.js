@@ -7,7 +7,7 @@ module.exports = {
         },
         "Storage": {
             "Filesystems": ["/storage/fs", "Filesystem"],
-            "Compellent / XFS": ["/storage/xfs", "XFS"],
+            "XFS": ["/storage/xfs", "XFS"],
             "HNAS": ["/storage/hnas", "HNAS"],
             "HCP": ["/storage/hcp", "HCP"]
         },

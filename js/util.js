@@ -1,4 +1,5 @@
 var filesize = require("filesize");
+var math = require("mathjs");
 var moment = require("moment");
 var numeral = require("numeral");
 var _ = require("lodash");
@@ -40,19 +41,65 @@ module.exports = {
     api: function(name) {
         return function(parameters) {
             var query = parameters ? parameters.join("&") : defaultQuery;
-            return this.get(this.base + name + "?" + query);
+
+            if (query.length < 1024) {
+                return this.get(this.base + name + "?" + query);
+            } else {
+                var headers = {};
+
+                _.merge(headers, this.defaults.headers, {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                });
+
+                return this.post(this.base + name, {
+                    data: query,
+                    headers: headers
+                });
+            }
         };
     },
 
-    chopTime: function(ts) {
-        var chopped = new Date(ts);
+    dayStart: function(ts) {
+        var modified = new Date(ts);
 
-        chopped.setHours(0);
-        chopped.setMinutes(0);
-        chopped.setSeconds(0);
-        chopped.setMilliseconds(0);
+        modified.setHours(0);
+        modified.setMinutes(0);
+        modified.setSeconds(0);
+        modified.setMilliseconds(0);
 
-        return chopped;
+        return Math.round(modified.getTime() / 1000);
+    },
+
+    dayEnd: function(ts) {
+        var modified = new Date(ts);
+
+        modified.setHours(23);
+        modified.setMinutes(59);
+        modified.setSeconds(59);
+        modified.setMilliseconds(999);
+
+        return Math.round(modified.getTime() / 1000);
+    },
+
+    durationWeight: function(t1, t2, timestamps) {
+        if (timestamps.length == 1) {
+            var soleSnapshot = [];
+            soleSnapshot[timestamps[0]] = 1;
+            return soleSnapshot;
+        }
+
+        var range = t2 - t1;
+        var weights = {};
+
+        weights[timestamps[0]] = (timestamps[1] - t1) / range;
+
+        for (var i = 1; i < timestamps.length - 1; i++) {
+            weights[timestamps[i]] = (timestamps[i+1] - timestamps[i]) / range;
+        }
+
+        weights[timestamps[timestamps.length-1]] = (t2 - timestamps[timestamps.length - 1]) / range;
+
+        return weights;
     },
 
     nextPage: function(query) {
