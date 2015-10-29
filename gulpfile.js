@@ -1,11 +1,21 @@
+var fs = require("fs");
 var browserify = require("browserify");
 var gulp = require("gulp");
+var git = require("gulp-git");
 var rename = require("gulp-rename");
 var source = require("vinyl-source-stream");
 var jshint = require("gulp-jshint");
 var stylish = require("jshint-stylish");
 var del = require("del");
 var serve = require("gulp-serve");
+
+var gitInfo = function(output) {
+    git.exec({args : "log -1 --pretty=format:'{ \"hash\" : \"%h\", \"timestamp\" : \"%ai\" }'"}, function (err, stdout) {
+        if (err) throw err;
+
+        fs.writeFileSync(output, stdout);
+    });
+};
 
 gulp.task("clean", function() {
     return del(["build"]);
@@ -40,7 +50,9 @@ gulp.task("static", ["prep"], function() {
         .pipe(gulp.dest("build"));
 });
 
-gulp.task("default", ["browserify"]);
+gulp.task("default", ["browserify"], function() {
+    gitInfo("build/git.json");
+});
 
 gulp.task("serve", ["default"], serve({
     root: ["build"],
