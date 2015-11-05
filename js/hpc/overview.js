@@ -20,8 +20,10 @@ module.exports = function($rootScope, $scope, $http, $localStorage, $sessionStor
         $scope.rangeEndOpen = true;
     };
 
+    $scope.selectedQueues = {};
+
     var baseFilters = [
-        "count=5000",
+        "count=25000",
         "page=1"
     ];
 
@@ -40,6 +42,12 @@ module.exports = function($rootScope, $scope, $http, $localStorage, $sessionStor
 
     reporting.hpcBase(function(svc, type, data) {
         $scope[type] = util.keyArray(data);
+
+        if (type == "queue") {
+            _.forEach($scope.selectedQueues, function(q) {
+                $scope.selectedQueues[q.id] = false;
+            });
+        }
     });
 
     $scope.crm = {
@@ -127,6 +135,16 @@ module.exports = function($rootScope, $scope, $http, $localStorage, $sessionStor
         var query = baseFilters.slice();
         query.push("filter=end.ge." + $scope.rangeStartEpoch);
         query.push("filter=end.lt." + $scope.rangeEndEpoch);
+
+        var queueQuery = [];
+
+        for (var qID in $scope.selectedQueues) {
+            if ($scope.selectedQueues[qID]) {
+                queueQuery.push(qID);
+            }
+        }
+
+        query.push("filter=queue.in." + queueQuery.join(","));
 
         clear();
 
