@@ -51,6 +51,17 @@
                     </div>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <p class="text-center">Queues</p>
+                    <div class="form-group text-center">
+                        <label class="checkbox-inline" ng-repeat="(qID, q) in queue">
+                            <input type="checkbox" ng-model="selectedQueues[qID]">{{ q.name }}
+                        </label>
+                    </div>
+                </div>
+            </div>
         </form>
 
         <div class="row" style="padding-top: 25px;">
