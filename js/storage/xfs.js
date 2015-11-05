@@ -39,7 +39,7 @@ module.exports = function ($rootScope, $scope, $timeout, $localStorage, $session
     };
 
     var baseFilters = [
-        "count=5000",
+        "count=25000",
         "page=1"
     ];
 
@@ -78,7 +78,11 @@ module.exports = function ($rootScope, $scope, $timeout, $localStorage, $session
 
     clear();
 
-    var selectHost = function() {
+    $scope.selectHost = function() {
+        clear();
+
+        $scope.select.filesystem = null;
+
         if ($scope.select.host) {
             ["filesystem", "snapshot"].forEach(function(type) {
                 $scope.xfs[type] = {};
@@ -198,6 +202,24 @@ module.exports = function ($rootScope, $scope, $timeout, $localStorage, $session
         var snapshots = _.filter(_.values($scope.xfs.snapshot), function(snapshot) {
             return (snapshot.ts >= t1) && (snapshot.ts < t2);
         });
+
+        // Take a sample of snapshots to keep things manageable. Sort by UUID (which
+        // is consistent and pseudorandom) and grab the first N (snapshotLimit).
+
+        var days = (t2 - t1) / (24 * 60 * 60);
+        var snapshotLimit = Math.max(250, days);
+
+        snapshots.sort(function(s1, s2) {
+            if (s1.id > s2.id) {
+                return 1;
+            } else if (s1.id < s2.id) {
+                return -1;
+            } else {
+                return 0;
+            }
+        });
+
+        snapshots = snapshots.slice(0, snapshotLimit);
 
         var timestamps = snapshots.map(function(s) { return s.ts; });
 
