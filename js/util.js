@@ -4,7 +4,7 @@ var moment = require("moment");
 var numeral = require("numeral");
 var _ = require("lodash");
 
-var defaultQuery = "count=5000";
+var defaultQuery = "count=10000";
 
 module.exports = {
     formatTimestamp: function(t) {

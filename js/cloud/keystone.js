@@ -1,44 +1,83 @@
-var numeral = require("numeral");
-var moment = require("moment");
 var _ = require("lodash");
+var util = require("../util");
 
 module.exports = function ($rootScope, $scope, $timeout, $localStorage, $sessionStorage, reporting) {
-    // TODO: replace prehistoric sandbox code
+    $scope.values = _.values;
 
-    /*
-    var config = { "headers": { "x-ersa-nectar-keystone-token": "foo" }};
+    $scope.formatTimestamp = util.formatTimestamp;
+    $scope.formatNumber = util.formatNumber;
+
+    var baseFilters = [
+        "count=50000",
+        "page=1"
+    ];
 
     $scope.select = {
-        ts: null
+        snapshot: null
     };
 
-    $scope.usage = [];
+    var keystone = {};
 
-    $scope.sortType = "name";
-    $scope.sortReverse  = false;
+    $scope.keystone = {};
+    $scope.referenceByDomain = {};
 
-    $http.get("http://localhost:5035/snapshot", config).then(function(data) {
-        var snapshots = data.data;
+    var initKeystone = function() {
+        reporting.keystoneBase(function(svc, type, data) {
+            if (type == "snapshot") {
+                keystone.snapshotByTimestamp = $scope.keystone.snapshotByTimestamp = util.keyArray(data, "ts");
+            } else if (type == "tenant") {
+                // Strip personal tenants.
 
-        $scope.snapshots = _.sortBy(snapshots, "ts").reverse();
-    });
+                var trimmed = [];
 
-    $http.get("http://localhost:5035/tenant", config).then(function(data) {
-        var tenants = [];
+                _.forEach(data, function(tenant) {
+                    if (!tenant.name.startsWith("pt-")) {
+                        trimmed.push(tenant);
+                    }
+                });
 
-        data.data.forEach(function(tenant) {
-            if (tenant.name.indexOf("pt-") == -1) {
-                tenants.push(tenant);
+                data = trimmed;
+            } else if (type == "reference") {
+                var referenceByDomain = {};
+
+                _.forEach(data, function(reference) {
+                    if (!(reference.domain in referenceByDomain)) {
+                        referenceByDomain[reference.domain] = [];
+                    }
+
+                    var address = reference.value.split("@")[0].toLowerCase();
+
+                    referenceByDomain[reference.domain].push(address);
+                });
+
+                for (var domain in referenceByDomain) {
+                    referenceByDomain[domain].sort();
+                    $scope.referenceByDomain[domain] = referenceByDomain[domain].join(", ");
+                }
             }
-        });
 
-        $scope.tenants = tenants;
-    });
+            keystone[type] = $scope.keystone[type] = util.keyArray(data);
+        });
+    };
+
+    initKeystone();
+
+    var processSnapshot = function(svc, type, query, data) {
+        if (data && data.length > 0) {
+            keystone[type] = $scope.keystone[type] = util.keyArray(data);
+        }
+    };
 
     $scope.selectSnapshot = function() {
-        // $http.get("http://localhost:1234/membership?filter=filesystem.eq." + $scope.select.fs + "&filter=snapshot.eq." + $scope.select.ts, config).then(function(data) {
-        //     $scope.usage = data.data;
-        // });
+        if ($scope.select.snapshot) {
+            $scope.keystone.mapping = $scope.keystone.membership = {};
+            
+            var query = baseFilters.slice();
+            query.push("filter=snapshot.eq." + $scope.select.snapshot);
+
+            ["mapping", "membership"].forEach(function(type) {
+                reporting.keystoneQuery(type, query, processSnapshot);
+            });
+        }
     };
-    */
 };
