@@ -133,8 +133,8 @@ module.exports = function($rootScope, $scope, $http, $localStorage, $sessionStor
         $scope.rangeEndEpoch = util.dayEnd($scope.rangeEnd);
 
         var query = baseFilters.slice();
-        query.push("filter=end.ge." + $scope.rangeStartEpoch);
-        query.push("filter=end.lt." + $scope.rangeEndEpoch);
+        query.push("filter=start.ge." + $scope.rangeStartEpoch);
+        query.push("filter=start.lt." + $scope.rangeEndEpoch);
 
         var queueQuery = [];
 
