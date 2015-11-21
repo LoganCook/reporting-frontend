@@ -28,11 +28,31 @@ module.exports = {
         return s.split("/").pop();
     },
 
+    extractor: function(key) {
+        return function(item) {
+            return item[key ? key : "id"];
+        };
+    },
+
     keyArray: function(records, key) {
         var result = {};
 
         _.forEach(records, function(record) {
             result[record[key ? key : "id"]] = record;
+        });
+
+        return result;
+    },
+
+    keyMultiArray: function(records, key) {
+        var result = {};
+
+        _.forEach(records, function(record) {
+            if (!(record[key] in result)) {
+                result[record[key]] = [];
+            }
+
+            result[record[key]].push(record);
         });
 
         return result;
