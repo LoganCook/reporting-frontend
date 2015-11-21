@@ -34,7 +34,7 @@
                             </tr>
                             <tr ng-repeat="domain in values(keystone.domain) | orderBy: 'name'">
                                 <td>{{ domain.name }}</td>
-                                <td>{{ referenceByDomain[domain.id] }}</td>
+                                <td>{{ referenceByDomain[domain.id].join(", ") }}</td>
                             </tr>
                         </table>
                     </tab>
@@ -46,7 +46,7 @@
                             </tr>
                             <tr ng-repeat="tenant in values(keystone.tenant) | orderBy: 'name'">
                                 <td>{{ tenant.name }}</td>
-                                <td>TODO</td>
+                                <td>{{ addressesByTenant[tenant.id].join(", ") }}</td>
                             </tr>
                         </table>
                     </tab>

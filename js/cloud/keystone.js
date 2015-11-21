@@ -19,12 +19,24 @@ module.exports = function ($rootScope, $scope, $timeout, $localStorage, $session
     var keystone = {};
 
     $scope.keystone = {};
+
     $scope.referenceByDomain = {};
+
+    var isKnownTenant = function(t) { return t in $scope.keystone.tenant; };
+
+    var clear = function() {
+        $scope.membershipByAccount = {};
+        $scope.membershipByTenant = {};
+
+        $scope.referenceByAccount = {};
+
+        $scope.addressesByTenant = {};
+    };
 
     var initKeystone = function() {
         reporting.keystoneBase(function(svc, type, data) {
             if (type == "snapshot") {
-                keystone.snapshotByTimestamp = $scope.keystone.snapshotByTimestamp = util.keyArray(data, "ts");
+                $scope.snapshotByTimestamp = util.keyArray(data, "ts");
             } else if (type == "tenant") {
                 // Strip personal tenants.
 
@@ -52,26 +64,62 @@ module.exports = function ($rootScope, $scope, $timeout, $localStorage, $session
 
                 for (var domain in referenceByDomain) {
                     referenceByDomain[domain].sort();
-                    $scope.referenceByDomain[domain] = referenceByDomain[domain].join(", ");
                 }
+
+                $scope.referenceByDomain = referenceByDomain;
             }
 
             keystone[type] = $scope.keystone[type] = util.keyArray(data);
         });
     };
 
+    clear();
+
     initKeystone();
 
     var processSnapshot = function(svc, type, query, data) {
         if (data && data.length > 0) {
             keystone[type] = $scope.keystone[type] = util.keyArray(data);
+
+            if (type == "membership") {
+                // account → [membership]
+                var membershipByAccount = util.keyMultiArray(data, "account");
+
+                for (var account in membershipByAccount) {
+                    membershipByAccount[account] = membershipByAccount[account].filter(isKnownTenant);
+                }
+
+                $scope.membershipByAccount = membershipByAccount;
+
+                // tenant → [membership]
+                var membershipByTenant = util.keyMultiArray(data, "tenant");
+
+                _.forEach(membershipByTenant, function(value, tenant) {
+                    if (isKnownTenant(tenant)) {
+                        $scope.membershipByTenant[tenant] = value;
+                    }
+                });
+            } else if (type == "mapping") {
+                $scope.referenceByAccount = util.keyArray(data, "account");
+            }
+        }
+
+        if (!(_.isEmpty($scope.membershipByTenant) || _.isEmpty($scope.referenceByAccount))) {
+            _.forEach($scope.membershipByTenant, function(members, tenant) {
+                $scope.addressesByTenant[tenant] = members.map(function(member) {
+                    var mapping = $scope.referenceByAccount[member.account];
+                    return mapping ? $scope.keystone.reference[mapping.reference].value : "?";
+                }).sort();
+            });
         }
     };
 
     $scope.selectSnapshot = function() {
         if ($scope.select.snapshot) {
             $scope.keystone.mapping = $scope.keystone.membership = {};
-            
+
+            clear();
+
             var query = baseFilters.slice();
             query.push("filter=snapshot.eq." + $scope.select.snapshot);
 
