@@ -22,7 +22,9 @@ module.exports = function ($rootScope, $scope, $timeout, $localStorage, $session
 
     $scope.referenceByDomain = {};
 
-    var isKnownTenant = function(t) { return t in $scope.keystone.tenant; };
+    var isKnownTenant = function(t) {
+        return t in $scope.keystone.tenant;
+    };
 
     var clear = function() {
         $scope.membershipByAccount = {};
@@ -31,6 +33,7 @@ module.exports = function ($rootScope, $scope, $timeout, $localStorage, $session
         $scope.referenceByAccount = {};
 
         $scope.addressesByTenant = {};
+        $scope.domainsByTenant = {};
     };
 
     var initKeystone = function() {
@@ -77,19 +80,41 @@ module.exports = function ($rootScope, $scope, $timeout, $localStorage, $session
 
     initKeystone();
 
+    $scope.addressByAccount = function(account) {
+        var reference = $scope.referenceByAccount[account.id];
+
+        if (!reference) {
+            return "?";
+        } else {
+            return $scope.keystone.reference[reference.reference].value;
+        }
+    };
+
+    $scope.accountHasMultipleTenants = function(account) {
+        var membership = $scope.membershipByAccount[account.id];
+
+        return membership && (membership.length > 1);
+    };
+
+    $scope.getMembershipName = function(membership) {
+        return $scope.keystone.tenant[membership.tenant].name;
+    };
+
+    $scope.accountListFilter = function(account) {
+        return ($scope.addressByAccount(account) != "?") && $scope.accountHasMultipleTenants(account);
+    };
+
     var processSnapshot = function(svc, type, query, data) {
         if (data && data.length > 0) {
             keystone[type] = $scope.keystone[type] = util.keyArray(data);
 
             if (type == "membership") {
                 // account → [membership]
-                var membershipByAccount = util.keyMultiArray(data, "account");
-
-                for (var account in membershipByAccount) {
-                    membershipByAccount[account] = membershipByAccount[account].filter(isKnownTenant);
-                }
-
-                $scope.membershipByAccount = membershipByAccount;
+                _.forEach(util.keyMultiArray(data, "account"), function(membership, account) {
+                    $scope.membershipByAccount[account] = membership.filter(function(m) {
+                        return isKnownTenant(m.tenant);
+                    });
+                });
 
                 // tenant → [membership]
                 var membershipByTenant = util.keyMultiArray(data, "tenant");
@@ -110,6 +135,16 @@ module.exports = function ($rootScope, $scope, $timeout, $localStorage, $session
                     var mapping = $scope.referenceByAccount[member.account];
                     return mapping ? $scope.keystone.reference[mapping.reference].value : "?";
                 }).sort();
+
+                $scope.domainsByTenant[tenant] = _.uniq(members.map(function(member) {
+                    var mapping = $scope.referenceByAccount[member.account];
+                    if (mapping) {
+                        var domain = $scope.keystone.reference[mapping.reference].domain;
+                        return $scope.keystone.domain[domain].name;
+                    } else{
+                        return "?";
+                    }
+                })).sort();
             });
         }
     };

@@ -38,34 +38,30 @@
                             </tr>
                         </table>
                     </tab>
-                    <tab heading="Tenants">
+                    <tab heading="Tenants (non-pt)">
                         <table class="table table-striped">
                             <tr>
                                 <th>Tenant</th>
+                                <th>Organisations</th>
                                 <th>Members</th>
                             </tr>
                             <tr ng-repeat="tenant in values(keystone.tenant) | orderBy: 'name'">
                                 <td>{{ tenant.name }}</td>
+                                <td>{{ domainsByTenant[tenant.id].join(", ") }}</td>
                                 <td>{{ addressesByTenant[tenant.id].join(", ") }}</td>
                             </tr>
                         </table>
                     </tab>
-                    <tab heading="People">
+                    <tab heading="People (non-pt)">
                         <table class="table table-striped">
                             <tr>
-                                <th>Domain</th>
                                 <th>Address</th>
-                                <th>OpenStack ID</th>
                                 <th>Tenants</th>
                             </tr>
-                            <!-- TODO
-                            <tr ng-repeat="account in values(keystone.account) | orderBy: 'openstack_id'">
-                                <td></td>
-                                <td></td>
-                                <td>{{ account.openstack_id }}</td>
-                                <td></td>
+                            <tr ng-repeat="account in values(keystone.account) | filter: accountListFilter | orderBy: addressByAccount">
+                                <td>{{ addressByAccount(account) }}</td>
+                                <td>{{ membershipByAccount[account.id].map(getMembershipName).sort().join(", ") }}</td>
                             </tr>
-                            -->
                         </table>
                     </tab>
                 </tabset>
