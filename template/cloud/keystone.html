@@ -1,24 +1,72 @@
-<!-- TODO: replace prehistoric sandbox code -->
+<div class="container-fluid">
+    <h3 class="text-center">NeCTAR Identity (Keystone)</h3>
 
-<!--
-<h3 class="text-center">Cloud &mdash; Identity (Keystone)</h3>
+    <div ng-controller="KeystoneController">
+        <form>
+            <div class="row">
+                <div class="col-md-4 col-md-offset-4">
+                    <div class="form-group">
+                        <div>
+                            <select class="form-control" ng-model="select.snapshot" ng-change="selectSnapshot()">
+                                <option value="">Timestamp</option>
+                                <option ng-repeat="snapshot in values(keystone.snapshot) | orderBy: 'ts'" value="{{ snapshot.id }}">
+                                    {{ formatTimestamp(snapshot.ts) }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-<div ng-controller="KeystoneController">
-    <div class="row">
-        <div class="col-sm-12">
-            <div style="padding-top: 25px;">
-                <table class="table table-striped" style="width: 100%;">
-                    <tr>
-                        <th><a href="#" ng-click="sortType = 'name' ; sortReverse = !sortReverse">Name</a></th>
-                        <th><a href="#" ng-click="sortType = 'description' ; sortReverse = !sortReverse">Description</a></th>
-                    </tr>
-                    <tr ng-repeat="tenant in tenants | orderBy:sortType:sortReverse">
-                        <td>{{ tenant.name }}</td>
-                        <td>{{ tenant.description }}</td>
-                    </tr>
-                </table>
+            <div class="row" ng-hide="select.snapshot">
+                <p class="text-center">Select a Keystone snapshot.</p>
+            </div>
+        </form>
+
+        <div class="col-md-12">
+            <div class="row" ng-show="select.snapshot">
+                <tabset justified="true">
+                    <tab heading="Organisations">
+                        <table class="table table-striped">
+                            <tr>
+                                <th>Organisation</th>
+                                <th>People</th>
+                            </tr>
+                            <tr ng-repeat="domain in values(keystone.domain) | orderBy: 'name'">
+                                <td>{{ domain.name }}</td>
+                                <td>{{ referenceByDomain[domain.id].join(", ") }}</td>
+                            </tr>
+                        </table>
+                    </tab>
+                    <tab heading="Tenants (non-pt)">
+                        <table class="table table-striped">
+                            <tr>
+                                <th>Tenant</th>
+                                <th>Organisations</th>
+                                <th>Members</th>
+                            </tr>
+                            <tr ng-repeat="tenant in values(keystone.tenant) | orderBy: 'name'">
+                                <td>{{ tenant.name }}</td>
+                                <td>{{ domainsByTenant[tenant.id].join(", ") }}</td>
+                                <td>{{ addressesByTenant[tenant.id].join(", ") }}</td>
+                            </tr>
+                        </table>
+                    </tab>
+                    <tab heading="People (non-pt)">
+                        <table class="table table-striped">
+                            <tr>
+                                <th>Address</th>
+                                <th>Tenants</th>
+                            </tr>
+                            <tr ng-repeat="account in values(keystone.account) | filter: accountListFilter | orderBy: addressByAccount">
+                                <td>{{ addressByAccount(account) }}</td>
+                                <td>{{ membershipByAccount[account.id].map(getMembershipName).sort().join(", ") }}</td>
+                            </tr>
+                        </table>
+                    </tab>
+                </tabset>
             </div>
         </div>
+
     </div>
 </div>
--->

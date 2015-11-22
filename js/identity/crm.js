@@ -48,9 +48,7 @@ module.exports = function ($rootScope, $scope, $timeout, $localStorage, $session
                 $scope.snapshot[type] = data;
                 $scope.snapshotByPerson[type] = {};
 
-                var groupedByPerson = _.groupBy(data, function(x) {
-                    return x.person;
-                });
+                var groupedByPerson = _.groupBy(data, util.extractor("person"));
 
                 var extractField = function(record) {
                     return record[relevantField[type]];
@@ -72,9 +70,7 @@ module.exports = function ($rootScope, $scope, $timeout, $localStorage, $session
                 }
 
                 if (type == "membership") {
-                    var groupedByOrganisation = _.groupBy(data, function(x) {
-                        return x.organisation;
-                    });
+                    var groupedByOrganisation = _.groupBy(data, util.extractor("organisation"));
 
                     var extractPerson = function(record) {
                         var entity = $scope.people[record.person];

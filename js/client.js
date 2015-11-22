@@ -3,6 +3,7 @@ var _ = require("lodash");
 var CRM = require("./client/crm");
 var HPC = require("./client/hpc");
 var XFS = require("./client/xfs");
+var Keystone = require("./client/keystone");
 
 var util = require("./util");
 
@@ -93,6 +94,20 @@ module.exports = function($localStorage, $timeout) {
 
     service.xfsQuery = function(type, query, callback) {
         loadQuery("xfs", type, query, callback);
+    };
+
+    service.keystone = function() {
+        return new Keystone($localStorage.endpoints.Keystone.endpoint, $localStorage.endpoints.Keystone.token);
+    };
+
+    service.keystoneBase = function(callback) {
+        ["snapshot", "account", "tenant", "domain", "reference"].forEach(function(type) {
+            load("keystone", type, callback);
+        });
+    };
+
+    service.keystoneQuery = function(type, query, callback) {
+        loadQuery("keystone", type, query, callback);
     };
 
     service.populateFromUsername = function(snapshot, object) {
