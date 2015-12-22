@@ -4,6 +4,7 @@ var CRM = require("./client/crm");
 var HPC = require("./client/hpc");
 var XFS = require("./client/xfs");
 var Keystone = require("./client/keystone");
+var Business = require("./client/business");
 
 var util = require("./util");
 
@@ -94,6 +95,24 @@ module.exports = function($localStorage, $timeout) {
 
     service.xfsQuery = function(type, query, callback) {
         loadQuery("xfs", type, query, callback);
+    };
+
+    service.business = function() {
+        return new Business($localStorage.endpoints.Sandbox.endpoint, $localStorage.endpoints.Sandbox.token);
+    };
+
+    service.businessBase = function(callback) {
+        ["entity", "entityType", "entityName", "entityRelationship",
+            "integerAttribute", "floatAttribute", "stringAttribute",
+            "nameMapping", "integerAttributeMapping",
+            "floatAttributeMapping", "stringAttributeMapping"
+        ].forEach(function(type) {
+            load("business", type, callback);
+        });
+    };
+
+    service.businessQuery = function(type, query, callback) {
+        loadQuery("business", type, query, callback);
     };
 
     service.keystone = function() {

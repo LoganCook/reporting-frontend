@@ -1,0 +1,23 @@
+<div class="container-fluid">
+    <h3 class="text-center">Business</h3>
+
+    <div ng-controller="SandboxController">
+        <form>
+            <div class="row">
+                <h4 class="text-center">Entity Types</h4>
+            </div>
+            <div class="row" style="padding-top: 25px;">
+                <div class="col-md-4 col-md-offset-4">
+                    <table class="table table-striped">
+                        <tr>
+                            <th>Name</th>
+                        </tr>
+                        <tr ng-repeat="et in values(entityType) | orderBy: 'name'">
+                            <td>{{ et.name }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

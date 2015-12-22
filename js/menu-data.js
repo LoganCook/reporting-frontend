@@ -2,6 +2,9 @@ module.exports = {
         "Identity": {
             "CRM": ["/identity/crm", "CRM"]
         },
+        "Business": {
+            "Sandbox": ["/business/sandbox", "Sandbox"]
+        },
         "HPC": {
             "Overview": ["/hpc/overview", "HPC"]
         },
