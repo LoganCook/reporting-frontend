@@ -8,6 +8,8 @@ reportingApp.factory("reporting", ["$localStorage", "$timeout", require("./clien
 
 reportingApp.controller("CRMController", ["$rootScope", "$scope", "$timeout", "$localStorage", "$sessionStorage", "reporting", require("./identity/crm")]);
 
+reportingApp.controller("SandboxController", ["$rootScope", "$scope", "$timeout", "$localStorage", "$sessionStorage", "reporting", require("./business/sandbox")]);
+
 reportingApp.controller("HPCController", ["$rootScope", "$scope", "$timeout", "$localStorage", "$sessionStorage", "reporting", require("./hpc/overview")]);
 
 reportingApp.controller("FilesystemController", ["$rootScope", "$scope", "$timeout", "$localStorage", "$sessionStorage", "reporting", require("./storage/fs")]);
