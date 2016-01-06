@@ -22,10 +22,12 @@ module.exports = function($rootScope, $scope, $http, $localStorage, $sessionStor
 
     $scope.selectedQueues = {};
 
-    var baseFilters = [
-        "count=25000",
-        "page=1"
-    ];
+    var baseFilters = function() {
+        return {
+            count: 25000,
+            page: 1
+        };
+    };
 
     var jobSummary = {};
 
@@ -61,7 +63,7 @@ module.exports = function($rootScope, $scope, $http, $localStorage, $sessionStor
     };
 
     reporting.crmBase(function(svc, type, data) {
-        if (type == "usernames") {
+        if (type == "username") {
             $scope.crm[type] = util.keyArray(data, "username");
         } else {
             $scope.crm[type] = util.keyArray(data);
@@ -132,9 +134,12 @@ module.exports = function($rootScope, $scope, $http, $localStorage, $sessionStor
         $scope.rangeStartEpoch = util.dayStart($scope.rangeStart);
         $scope.rangeEndEpoch = util.dayEnd($scope.rangeEnd);
 
-        var query = baseFilters.slice();
-        query.push("filter=start.ge." + $scope.rangeStartEpoch);
-        query.push("filter=start.lt." + $scope.rangeEndEpoch);
+        var query = _.merge(baseFilters(), {
+            filter: [
+                "start.ge." + $scope.rangeStartEpoch,
+                "start.lt." + $scope.rangeEndEpoch
+            ]
+        });
 
         var queueQuery = [];
 
@@ -144,7 +149,7 @@ module.exports = function($rootScope, $scope, $http, $localStorage, $sessionStor
             }
         }
 
-        query.push("filter=queue.in." + queueQuery.join(","));
+        query.filter.push("queue.in." + queueQuery.join(","));
 
         clear();
 

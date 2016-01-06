@@ -4,7 +4,7 @@ var moment = require("moment");
 var numeral = require("numeral");
 var _ = require("lodash");
 
-var defaultQuery = "count=10000";
+// var defaultQuery = "count=10000";
 
 module.exports = {
     formatTimestamp: function(t) {
@@ -58,27 +58,6 @@ module.exports = {
         return result;
     },
 
-    api: function(name) {
-        return function(parameters) {
-            var query = parameters ? parameters.join("&") : defaultQuery;
-
-            if (query.length < 1024) {
-                return this.get(this.base + name + "?" + query);
-            } else {
-                var headers = {};
-
-                _.merge(headers, this.defaults.headers, {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                });
-
-                return this.post(this.base + name, {
-                    data: query,
-                    headers: headers
-                });
-            }
-        };
-    },
-
     dayStart: function(ts) {
         var modified = new Date(ts);
 
@@ -123,14 +102,17 @@ module.exports = {
     },
 
     nextPage: function(query) {
-        var next = [];
-        _.forEach(query, function(param) {
-            if (_.startsWith(param, "page=")) {
-                next.push("page=" + (parseInt(param.split("=")[1]) + 1));
-            } else {
-                next.push(param);
-            }
-        });
-        return next;
+        if ("page" in query) {
+            query.page += 1;
+        }
+        // var next = [];
+        // _.forEach(query, function(param) {
+        //     if (_.startsWith(param, "page=")) {
+        //         next.push("page=" + (parseInt(param.split("=")[1]) + 1));
+        //     } else {
+        //         next.push(param);
+        //     }
+        // });
+        return query;
     }
 };
