@@ -6,46 +6,37 @@ module.exports = function ($rootScope, $scope, $timeout, $localStorage, $session
 
     $scope.formatTimestamp = util.formatTimestamp;
 
-    $scope.snapshots = {};
-
     $scope.select = {
         id: null // snapshot id
     };
 
-    $scope.snapshot = {
-        "membership": [],
-        "addressMapping": [],
-        "usernameMapping": []
-    };
-
     $scope.snapshotByPerson = {
         "membership": {},
-        "addressMapping": {},
-        "usernameMapping": {}
+        "person-email": {},
+        "person-username": {}
     };
 
     var relevantField = {
         "membership": "organisation",
-        "usernameMapping": "username",
-        "addressMapping": "email"
+        "person-username": "username",
+        "person-email": "email"
     };
 
     var humanReadableContent = {
-        "membership": "organisations",
-        "usernameMapping": "usernames",
-        "addressMapping": "addresses"
+        "membership": "organisation",
+        "person-username": "username",
+        "person-email": "email"
     };
 
     var humanReadableField = {
         "membership": "name",
-        "usernameMapping": "username",
-        "addressMapping": "address"
+        "person-username": "username",
+        "person-email": "address"
     };
 
     $scope.selectSnapshot = function() {
         if ($scope.select.id) {
             reporting.crmSnapshot($scope.select.id, function(svc, type, snapshot, data) {
-                $scope.snapshot[type] = data;
                 $scope.snapshotByPerson[type] = {};
 
                 var groupedByPerson = _.groupBy(data, util.extractor("person"));
@@ -57,7 +48,14 @@ module.exports = function ($rootScope, $scope, $timeout, $localStorage, $session
                 var getReadable = function(ref) {
                     var content = humanReadableContent[type];
                     var field = humanReadableField[type];
-                    return $scope[content][ref][field];
+
+                    var entry = $scope[content][ref];
+
+                    if (entry) {
+                        return entry[field];
+                    } else {
+                        return "?";
+                    }
                 };
 
                 var generateReadable = function(refs) {
@@ -73,9 +71,13 @@ module.exports = function ($rootScope, $scope, $timeout, $localStorage, $session
                     var groupedByOrganisation = _.groupBy(data, util.extractor("organisation"));
 
                     var extractPerson = function(record) {
-                        var entity = $scope.people[record.person];
+                        var entity = $scope.person[record.person];
 
-                        return entity.first_name + " " + entity.last_name;
+                        if (entity) {
+                            return entity.first_name + " " + entity.last_name;
+                        } else {
+                            return "?";
+                        }
                     };
 
                     for (var organisation in groupedByOrganisation) {
@@ -88,7 +90,6 @@ module.exports = function ($rootScope, $scope, $timeout, $localStorage, $session
             });
         } else {
             for (var type in $scope.snapshot) {
-                $scope.snapshot[type] = [];
                 $scope.snapshotByPerson[type] = {};
             }
         }

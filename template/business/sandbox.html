@@ -12,7 +12,7 @@
                         <tr>
                             <th>Name</th>
                         </tr>
-                        <tr ng-repeat="et in values(entityType) | orderBy: 'name'">
+                        <tr ng-repeat="et in values(data['entity/type']) | orderBy: 'name'">
                             <td>{{ et.name }}</td>
                         </tr>
                     </table>

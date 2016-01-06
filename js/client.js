@@ -1,36 +1,72 @@
 var _ = require("lodash");
-
-var CRM = require("./client/crm");
-var HPC = require("./client/hpc");
-var XFS = require("./client/xfs");
-var Keystone = require("./client/keystone");
-var Business = require("./client/business");
+var axios = require("axios");
+var qs = require("qs");
 
 var util = require("./util");
 
 module.exports = function($localStorage, $timeout) {
+    var defaultHeaders = function(name) {
+        return {
+            "x-ersa-auth-token": $localStorage.endpoints[name].token
+        };
+    };
+
+    var client = function(name) {
+        return axios.create({
+            baseURL: $localStorage.endpoints[name].endpoint,
+            headers: defaultHeaders(name)
+        });
+    };
+
+    var clientName = {
+        crm: "CRM",
+        hpc: "HPC",
+        xfs: "XFS",
+        keystone: "Keystone",
+        business: "Sandbox"
+    };
+
     var service = {
         raw: {}
     };
 
+    // API
+
     var load = function(svc, type, callback) {
-        service[svc]()[type]().on("complete", function(data) {
+        client(clientName[svc]).get(type + "?count=100000").then(function(response) {
             $timeout(function() {
                 if (!(svc in service.raw)) {
                     service.raw[svc] = {};
                 }
 
-                service.raw[svc][type] = data;
+                service.raw[svc][type] = response.data;
 
                 if (callback) {
-                    callback(svc, type, data);
+                    callback(svc, type, response.data);
                 }
             });
+        }).catch(function(response) {
+            console.log(response);
         });
     };
 
     var loadQuery = function(svc, type, query, callback) {
-        service[svc]()[type](query).on("complete", function(data) {
+        var queryString = qs.stringify(query, { arrayFormat: "repeat" });
+
+        var queryClient = client(clientName[svc]);
+        var execute;
+
+        if (queryString.length < 1024) {
+            execute = queryClient.get(type + "?" + queryString);
+        } else {
+            execute = queryClient.post(type, queryString, {
+                headers: _.merge(defaultHeaders(clientName[svc]), {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                })
+            });
+        }
+
+        var handle = function(response) {
             $timeout(function() {
                 if (!(svc in service.raw)) {
                     service.raw[svc] = {};
@@ -40,28 +76,20 @@ module.exports = function($localStorage, $timeout) {
                     service.raw[svc][type] = {};
                 }
 
-                service.raw[svc][type][query] = data;
+                service.raw[svc][type][query] = response.data;
 
                 if (callback) {
-                    callback(svc, type, query, data);
+                    callback(svc, type, query, response.data);
                 }
             });
-        });
-    };
+        };
 
-    service.crm = function() {
-        return new CRM($localStorage.endpoints.CRM.endpoint, $localStorage.endpoints.CRM.token);
-    };
-
-    service.crmBase = function(callback) {
-        ["snapshots", "people", "organisations", "usernames", "addresses"].forEach(function(type) {
-            load("crm", type, callback);
-        });
-    };
-
-    service.crmSnapshot = function(snapshot, callback) {
-        ["membership", "usernameMapping", "addressMapping"].forEach(function(type) {
-            loadQuery("crm", type, ["count=10000", "filter=snapshot.eq." + snapshot], callback);
+        execute.then(handle).catch(function(response) {
+            if (response.status == 404) {
+                handle(response); // 404 signifies EOF
+            } else {
+                console.log(response);
+            }
         });
     };
 
@@ -69,9 +97,21 @@ module.exports = function($localStorage, $timeout) {
         loadQuery(svc, type, query, callback);
     };
 
-    service.hpc = function() {
-        return new HPC($localStorage.endpoints.HPC.endpoint, $localStorage.endpoints.HPC.token);
+    // CRM
+
+    service.crmBase = function(callback) {
+        ["snapshot", "person", "organisation", "username", "email"].forEach(function(type) {
+            load("crm", type, callback);
+        });
     };
+
+    service.crmSnapshot = function(snapshot, callback) {
+        ["membership", "person-username", "person-email"].forEach(function(type) {
+            loadQuery("crm", type, { count: 10000, filter: "snapshot.eq." + snapshot }, callback);
+        });
+    };
+
+    // HPC
 
     service.hpcBase = function(callback) {
         ["host", "queue", "owner"].forEach(function(type) {
@@ -83,9 +123,7 @@ module.exports = function($localStorage, $timeout) {
         loadQuery("hpc", type, query, callback);
     };
 
-    service.xfs = function() {
-        return new XFS($localStorage.endpoints.XFS.endpoint, $localStorage.endpoints.XFS.token);
-    };
+    // XFS
 
     service.xfsBase = function(callback) {
         ["snapshot", "host", "filesystem", "owner"].forEach(function(type) {
@@ -97,15 +135,13 @@ module.exports = function($localStorage, $timeout) {
         loadQuery("xfs", type, query, callback);
     };
 
-    service.business = function() {
-        return new Business($localStorage.endpoints.Sandbox.endpoint, $localStorage.endpoints.Sandbox.token);
-    };
+    // Business
 
     service.businessBase = function(callback) {
-        ["entity", "entityType", "entityName", "entityRelationship",
-            "integerAttribute", "floatAttribute", "stringAttribute",
-            "nameMapping", "integerAttributeMapping",
-            "floatAttributeMapping", "stringAttributeMapping"
+        ["entity", "entity/type", "entity/name", "entity/relationship",
+            "attribute/integer", "attribute/float", "attribute/string",
+            "mapping/name", "mapping/attribute/integer",
+            "mapping/attribute/float", "mapping/attribute/string"
         ].forEach(function(type) {
             load("business", type, callback);
         });
@@ -115,9 +151,7 @@ module.exports = function($localStorage, $timeout) {
         loadQuery("business", type, query, callback);
     };
 
-    service.keystone = function() {
-        return new Keystone($localStorage.endpoints.Keystone.endpoint, $localStorage.endpoints.Keystone.token);
-    };
+    // Keystone
 
     service.keystoneBase = function(callback) {
         ["snapshot", "account", "tenant", "domain", "reference"].forEach(function(type) {
@@ -129,6 +163,8 @@ module.exports = function($localStorage, $timeout) {
         loadQuery("keystone", type, query, callback);
     };
 
+    // Generic
+
     service.populateFromUsername = function(snapshot, object) {
         var top = this;
 
@@ -136,7 +172,7 @@ module.exports = function($localStorage, $timeout) {
             top.crmLookup = {};
 
             for (var type in top.raw.crm) {
-                if (type == "usernames") {
+                if (type == "username") {
                     top.crmLookup[type] = util.keyArray(top.raw.crm[type], "username");
                 } else {
                     top.crmLookup[type] = util.keyArray(top.raw.crm[type]);
@@ -144,37 +180,41 @@ module.exports = function($localStorage, $timeout) {
             }
         }
 
-        if (!(object.username in top.crmLookup.usernames)) {
+        if (!(object.username in top.crmLookup.username)) {
             object.fullname = "?";
             object.organisation = "?";
         } else {
-            var usernameID = top.crmLookup.usernames[object.username].id;
+            var usernameID = top.crmLookup.username[object.username].id;
 
-            var usernameFilters = [
-                "filter=snapshot.eq." + snapshot,
-                "filter=username.eq." + usernameID
-            ];
+            var usernameFilters = {
+                filter: [
+                    "snapshot.eq." + snapshot,
+                    "username.eq." + usernameID
+                ]
+            };
 
-            top.query("crm", "usernameMapping", usernameFilters, function(svc, type, query, data) {
+            top.query("crm", "person-username", usernameFilters, function(svc, type, query, data) {
                 if (data) {
                     var personID = data[0].person;
-                    var person = top.crmLookup.people[personID];
+                    var person = top.crmLookup.person[personID];
 
                     if (person) {
                         object.fullname = person.first_name + " " + person.last_name;
                     }
 
-                    var membershipFilters = [
-                        "filter=snapshot.eq." + snapshot,
-                        "filter=person.eq." + personID
-                    ];
+                    var membershipFilters = {
+                        filter: [
+                            "snapshot.eq." + snapshot,
+                            "person.eq." + personID
+                        ]
+                    };
 
                     top.query("crm", "membership", membershipFilters, function(svc, type, query, data) {
                         var orgNames = [];
 
                         _.forEach(data, function(entry) {
                             var orgID = entry.organisation;
-                            var org = top.crmLookup.organisations[orgID];
+                            var org = top.crmLookup.organisation[orgID];
                             orgNames.push(org.name);
                         });
 

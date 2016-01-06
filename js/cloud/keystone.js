@@ -7,10 +7,12 @@ module.exports = function ($rootScope, $scope, $timeout, $localStorage, $session
     $scope.formatTimestamp = util.formatTimestamp;
     $scope.formatNumber = util.formatNumber;
 
-    var baseFilters = [
-        "count=50000",
-        "page=1"
-    ];
+    var baseFilters = function() {
+        return {
+            count: 50000,
+            page: 1
+        };
+    };
 
     $scope.select = {
         snapshot: null
@@ -155,8 +157,9 @@ module.exports = function ($rootScope, $scope, $timeout, $localStorage, $session
 
             clear();
 
-            var query = baseFilters.slice();
-            query.push("filter=snapshot.eq." + $scope.select.snapshot);
+            var query = _.merge(baseFilters(), {
+                filter: "snapshot.eq." + $scope.select.snapshot
+            });
 
             ["mapping", "membership"].forEach(function(type) {
                 reporting.keystoneQuery(type, query, processSnapshot);

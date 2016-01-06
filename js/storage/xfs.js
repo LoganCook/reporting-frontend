@@ -38,10 +38,12 @@ module.exports = function ($rootScope, $scope, $timeout, $localStorage, $session
         summed: []
     };
 
-    var baseFilters = [
-        "count=25000",
-        "page=1"
-    ];
+    var baseQuery = function() {
+        return {
+            count: 25000,
+            page: 1
+        };
+    };
 
     var xfs = {};
 
@@ -57,7 +59,7 @@ module.exports = function ($rootScope, $scope, $timeout, $localStorage, $session
 
     var initCRM = function() {
         reporting.crmBase(function(svc, type, data) {
-            if (type == "usernames") {
+            if (type == "username") {
                 $scope.crm[type] = util.keyArray(data, "username");
             } else {
                 $scope.crm[type] = util.keyArray(data);
@@ -150,6 +152,7 @@ module.exports = function ($rootScope, $scope, $timeout, $localStorage, $session
 
             _.forEach($scope.raw, function(record) {
                 if (!(record.owner in summed)) {
+                    console.log(record);
                     summed[record.owner] = {
                         username: $scope.xfs.owner[record.owner].name,
                         fullname: "",
@@ -183,10 +186,12 @@ module.exports = function ($rootScope, $scope, $timeout, $localStorage, $session
     };
 
     $scope.loadUsageSnapshot = function() {
-        var query = [
-            "filter=snapshot.eq." + $scope.select.snapshot,
-            "filter=filesystem.eq." + $scope.select.filesystem
-        ];
+        var query = _.merge(baseQuery(), {
+            filter: [
+                "snapshot.eq." + $scope.select.snapshot,
+                "filesystem.eq." + $scope.select.filesystem
+            ]
+        });
 
         clear();
 
@@ -244,9 +249,11 @@ module.exports = function ($rootScope, $scope, $timeout, $localStorage, $session
             return;
         }
 
-        var query = baseFilters.slice();
-        query.push("filter=snapshot.in." + snapshots.map(function(s) { return s.id; }).join(","));
-        query.push("filter=filesystem.eq." + $scope.select.filesystem);
+        var query = baseQuery();
+        query.filter = [
+            "snapshot.in." + snapshots.map(function(s) { return s.id; }).join(","),
+            "filesystem.eq." + $scope.select.filesystem
+        ];
 
         clear();
 

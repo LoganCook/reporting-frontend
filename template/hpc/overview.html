@@ -11,7 +11,7 @@
                         <div>
                             <select class="form-control" ng-model="crm.id">
                                 <option value="">Timestamp</option>
-                                <option ng-repeat="snapshot in values(crm.snapshots) | orderBy: 'ts'" value="{{ snapshot.id }}">
+                                <option ng-repeat="snapshot in values(crm.snapshot) | orderBy: 'ts'" value="{{ snapshot.id }}">
                                     {{ formatTimestamp(snapshot.ts) }}
                                 </option>
                             </select>

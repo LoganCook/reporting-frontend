@@ -8,8 +8,10 @@ module.exports = function ($rootScope, $scope, $timeout, $localStorage, $session
     $scope.formatNumber = util.formatNumber;
 
     var reload = function() {
+        $scope.data = {};
+
         reporting.businessBase(function(svc, type, data) {
-            $scope[type] = util.keyArray(data);
+            $scope.data[type] = util.keyArray(data);
         });
     };
 
