@@ -2,7 +2,7 @@ var numeral = require("numeral");
 var moment = require("moment");
 var _ = require("lodash");
 
-module.exports = function ($rootScope, $scope, $timeout, $localStorage, $sessionStorage, reporting) {
+module.exports = function ($rootScope, $scope, $timeout, reporting) {
     // TODO: replace prehistoric sandbox code
 
     /*

@@ -1,7 +1,7 @@
 var _ = require("lodash");
 var util = require("../util");
 
-module.exports = function($rootScope, $scope, $http, $localStorage, $sessionStorage, reporting) {
+module.exports = function($rootScope, $scope, $http, reporting) {
     $scope.values = _.values;
 
     $scope.formatTimestamp = util.formatTimestamp;

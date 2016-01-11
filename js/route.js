@@ -9,12 +9,6 @@ module.exports = function($stateProvider, $urlRouterProvider) {
         controller: "HomeController"
     });
 
-    $stateProvider.state("settings", {
-        url: "/settings",
-        templateUrl: "template/settings.html",
-        controller: "SettingsController"
-    });
-
     for (var menu in menuData) {
         for (var item in menuData[menu]) {
             var details = menuData[menu][item];

@@ -1,3 +1,3 @@
-module.exports = function($rootScope, $scope, $timeout, $localStorage, $sessionStorage, reporting) {
+module.exports = function($rootScope, $scope, $timeout, reporting) {
     // TODO
 };

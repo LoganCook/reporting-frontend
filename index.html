@@ -26,9 +26,7 @@
 
         <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
             <ul class="nav navbar-nav">
-                <!--<li><a ui-sref="home">Reporting</a></li>-->
-
-                <li dropdown ng-repeat="(menu, items) in menus">
+                <li dropdown ng-show="configured" ng-repeat="(menu, items) in menus">
                     <a href="#" dropdown-toggle>{{ menu }}</a>
 
                     <ul class="dropdown-menu" role="menu">
@@ -40,7 +38,9 @@
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
-                <li><a ui-sref="settings">Settings</a></li>
+                <li ng-show="configured"><a href="#">{{ email }}</a></li>
+                <li ng-show="configured"><a ng-click="reset()" href="#">Logout</a></li>
+                <li ng-hide="configured"><a href="https://rapid.aaf.edu.au/jwt/authnrequest/research/F4OXTn_Jp5YxQ1i0brnVYg">AAF Login</a></li>
                 <li><a href="http://www.ersa.edu.au">eRSA</a></li>
             </ul>
         </div>
@@ -49,8 +49,5 @@
     <div ui-view></div>
 
     <script src="reporting.js"></script>
-
-    <!-- browserify problems with ngStorage, so handle separately -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/ngStorage/0.3.9/ngStorage.min.js"></script>
 </body>
 </html>

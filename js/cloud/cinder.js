@@ -2,7 +2,7 @@ var _ = require("lodash");
 
 var util = require("../util");
 
-module.exports = function ($rootScope, $scope, $timeout, $localStorage, $sessionStorage, reporting) {
+module.exports = function ($rootScope, $scope, $timeout, reporting) {
     // TODO: replace prehistoric sandbox code
 
     /*
