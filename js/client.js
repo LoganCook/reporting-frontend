@@ -4,26 +4,19 @@ var qs = require("qs");
 
 var util = require("./util");
 
-module.exports = function($localStorage, $timeout) {
+module.exports = function($timeout) {
     var defaultHeaders = function(name) {
+        // name not currently used
         return {
-            "x-ersa-auth-token": $localStorage.endpoints[name].token
+            "x-ersa-auth-token": sessionStorage.secret
         };
     };
 
     var client = function(name) {
         return axios.create({
-            baseURL: $localStorage.endpoints[name].endpoint,
+            baseURL: sessionStorage[name].url,
             headers: defaultHeaders(name)
         });
-    };
-
-    var clientName = {
-        crm: "CRM",
-        hpc: "HPC",
-        xfs: "XFS",
-        keystone: "Keystone",
-        business: "Sandbox"
     };
 
     var service = {
@@ -33,7 +26,7 @@ module.exports = function($localStorage, $timeout) {
     // API
 
     var load = function(svc, type, callback) {
-        client(clientName[svc]).get(type + "?count=100000").then(function(response) {
+        client(svc).get(type + "?count=100000").then(function(response) {
             $timeout(function() {
                 if (!(svc in service.raw)) {
                     service.raw[svc] = {};
@@ -53,14 +46,14 @@ module.exports = function($localStorage, $timeout) {
     var loadQuery = function(svc, type, query, callback) {
         var queryString = qs.stringify(query, { arrayFormat: "repeat" });
 
-        var queryClient = client(clientName[svc]);
+        var queryClient = client(svc);
         var execute;
 
         if (queryString.length < 1024) {
             execute = queryClient.get(type + "?" + queryString);
         } else {
             execute = queryClient.post(type, queryString, {
-                headers: _.merge(defaultHeaders(clientName[svc]), {
+                headers: _.merge(defaultHeaders(svc), {
                     "Content-Type": "application/x-www-form-urlencoded"
                 })
             });

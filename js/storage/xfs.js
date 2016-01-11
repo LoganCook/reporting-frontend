@@ -2,7 +2,7 @@ var _ = require("lodash");
 var math = require("mathjs");
 var util = require("../util");
 
-module.exports = function ($rootScope, $scope, $timeout, $localStorage, $sessionStorage, reporting) {
+module.exports = function ($rootScope, $scope, $timeout, reporting) {
     $scope.values = _.values;
 
     $scope.formatTimestamp = util.formatTimestamp;
