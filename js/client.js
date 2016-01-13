@@ -14,7 +14,7 @@ module.exports = function($timeout) {
 
     var client = function(name) {
         return axios.create({
-            baseURL: sessionStorage[name].url,
+            baseURL: sessionStorage[name],
             headers: defaultHeaders(name)
         });
     };
