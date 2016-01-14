@@ -6,9 +6,9 @@ reportingApp.factory("reporting", ["$timeout", require("./client")]);
 
 reportingApp.controller("CRMController", ["$rootScope", "$scope", "$timeout", "reporting", require("./identity/crm")]);
 
-reportingApp.controller("SandboxController", ["$rootScope", "$scope", "$timeout", "reporting", require("./business/sandbox")]);
+reportingApp.controller("BusinessController", ["$rootScope", "$scope", "$timeout", "reporting", require("./business/business")]);
 
-reportingApp.controller("HPCController", ["$rootScope", "$scope", "$timeout", "reporting", require("./hpc/overview")]);
+reportingApp.controller("HPCController", ["$rootScope", "$scope", "$timeout", "reporting", require("./hpc/hpc")]);
 
 reportingApp.controller("FilesystemController", ["$rootScope", "$scope", "$timeout", "reporting", require("./storage/fs")]);
 reportingApp.controller("XFSController", ["$rootScope", "$scope", "$timeout", "reporting", require("./storage/xfs")]);
