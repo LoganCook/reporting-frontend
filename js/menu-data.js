@@ -16,9 +16,8 @@ module.exports = {
         },
         "Cloud": {
             "Identity (Keystone)": ["/cloud/keystone", "Keystone"],
-            "Block Storage (Cinder)": ["/cloud/cinder", "Cinder"],
-            "Object Storage (Swift)": ["/cloud/swift", "Swift"],
             "Virtual Machines (Nova)": ["/cloud/nova", "Nova"],
-            "Utilisation (Ceilometer)": ["/cloud/ceilometer", "Ceilometer"]
+            "Block Storage (Cinder)": ["/cloud/cinder", "Cinder"],
+            "Object Storage (Swift)": ["/cloud/swift", "Swift"]
         }
     };
