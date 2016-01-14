@@ -19,7 +19,6 @@ reportingApp.controller("KeystoneController", ["$rootScope", "$scope", "$timeout
 reportingApp.controller("CinderController", ["$rootScope", "$scope", "$timeout", "reporting", require("./cloud/cinder")]);
 reportingApp.controller("NovaController", ["$rootScope", "$scope", "$timeout", "reporting", require("./cloud/nova")]);
 reportingApp.controller("SwiftController", ["$rootScope", "$scope", "$timeout", "reporting", require("./cloud/swift")]);
-reportingApp.controller("CeilometerController", ["$rootScope", "$scope", "$timeout", "reporting", require("./cloud/ceilometer")]);
 
 reportingApp.controller("HomeController", ["$rootScope", "$scope", "$timeout", "reporting", require("./home")]);
 reportingApp.controller("MenuController", ["$rootScope", "$scope", "$timeout", "reporting", require("./menu")]);
