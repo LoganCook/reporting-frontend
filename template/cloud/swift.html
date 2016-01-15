@@ -1,46 +1,44 @@
-<!-- TODO: replace prehistoric sandbox code -->
+<div class="container-fluid">
+    <h3 class="text-center">NeCTAR Object Storage (Swift)</h3>
 
-<!--
-<h3 class="text-center">Cloud &mdash; Object Storage (Swift)</h3>
+    <div ng-controller="SwiftController">
+        <div class="row">
+            <div class="col-sm-4 col-sm-offset-4">
 
-<div ng-controller="SwiftController">
-    <div class="row">
-        <div class="col-sm-4 col-sm-offset-4">
-
-            <div style="padding-top: 25px;">
-                <form class="form-horizontal">
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label">Snapshot</label>
-                        <div class="col-sm-8">
-                            <select class="form-control" ng-model="select.ts" ng-change="selectSnapshot()">
-                                <option ng-repeat="snap in snapshots" value="{{ snap.id }}">{{ formatTimestamp(snap.ts) }}</option>
-                            </select>
+                <div style="padding-top: 25px;">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Snapshot</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" ng-model="select.ts" ng-change="selectSnapshot()">
+                                    <option ng-repeat="snap in snapshots" value="{{ snap.id }}">{{ formatTimestamp(snap.ts) }}</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="row">
-        <div class="col-sm-12">
-            <div style="padding-top: 25px;">
-                <table class="table table-striped" style="width: 100%;">
-                    <tr>
-                        <th><a href="#" ng-click="sortType = 'name' ; sortReverse = !sortReverse">Name</a></th>
-                        <th><a href="#" ng-click="sortType = 'containers' ; sortReverse = !sortReverse">Containers</a></th>
-                        <th><a href="#" ng-click="sortType = 'bytes' ; sortReverse = !sortReverse">Bytes</a></th>
-                        <th><a href="#" ng-click="sortType = 'quota' ; sortReverse = !sortReverse">Quota</a></th>
-                    </tr>
-                    <tr ng-repeat="tenantUsage in usage | orderBy:sortType:sortReverse">
-                        <td>{{ tenantUsage.name }}</td>
-                        <td>{{ tenantUsage.containers }}</td>
-                        <td>{{ formatSize(tenantUsage.bytes) }}</td>
-                        <td>{{ formatSize(tenantUsage.quota) }}</td>
-                    </tr>
-                </table>
+        <div class="row">
+            <div class="col-sm-12">
+                <div style="padding-top: 25px;">
+                    <table class="table table-striped" style="width: 100%;">
+                        <tr>
+                            <th>Name</th>
+                            <th>Containers</th>
+                            <th>Bytes</th>
+                            <th>Quota</th>
+                        </tr>
+                        <tr ng-repeat="tenantUsage in usage">
+                            <td>{{ tenantUsage.name }}</td>
+                            <td>{{ tenantUsage.containers }}</td>
+                            <td>{{ formatSize(tenantUsage.bytes) }}</td>
+                            <td>{{ formatSize(tenantUsage.quota) }}</td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 </div>
--->

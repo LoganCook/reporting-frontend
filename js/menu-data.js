@@ -3,22 +3,21 @@ module.exports = {
             "CRM": ["/identity/crm", "CRM"]
         },
         "Business": {
-            "Sandbox": ["/business/sandbox", "Sandbox"]
+            "Business": ["/business/business", "Business"]
         },
         "HPC": {
-            "Overview": ["/hpc/overview", "HPC"]
+            "HPC": ["/hpc/hpc", "HPC"]
         },
         "Storage": {
-            "Filesystems": ["/storage/fs", "Filesystem"],
+            "Filesystem": ["/storage/fs", "Filesystem"],
             "XFS": ["/storage/xfs", "XFS"],
             "HNAS": ["/storage/hnas", "HNAS"],
             "HCP": ["/storage/hcp", "HCP"]
         },
         "Cloud": {
             "Identity (Keystone)": ["/cloud/keystone", "Keystone"],
-            "Block Storage (Cinder)": ["/cloud/cinder", "Cinder"],
-            "Object Storage (Swift)": ["/cloud/swift", "Swift"],
             "Virtual Machines (Nova)": ["/cloud/nova", "Nova"],
-            "Utilisation (Ceilometer)": ["/cloud/ceilometer", "Ceilometer"]
+            "Block Storage (Cinder)": ["/cloud/cinder", "Cinder"],
+            "Object Storage (Swift)": ["/cloud/swift", "Swift"]
         }
     };

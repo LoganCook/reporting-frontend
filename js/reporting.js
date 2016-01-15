@@ -6,9 +6,9 @@ reportingApp.factory("reporting", ["$timeout", require("./client")]);
 
 reportingApp.controller("CRMController", ["$rootScope", "$scope", "$timeout", "reporting", require("./identity/crm")]);
 
-reportingApp.controller("SandboxController", ["$rootScope", "$scope", "$timeout", "reporting", require("./business/sandbox")]);
+reportingApp.controller("BusinessController", ["$rootScope", "$scope", "$timeout", "reporting", require("./business/business")]);
 
-reportingApp.controller("HPCController", ["$rootScope", "$scope", "$timeout", "reporting", require("./hpc/overview")]);
+reportingApp.controller("HPCController", ["$rootScope", "$scope", "$timeout", "reporting", require("./hpc/hpc")]);
 
 reportingApp.controller("FilesystemController", ["$rootScope", "$scope", "$timeout", "reporting", require("./storage/fs")]);
 reportingApp.controller("XFSController", ["$rootScope", "$scope", "$timeout", "reporting", require("./storage/xfs")]);
@@ -19,7 +19,6 @@ reportingApp.controller("KeystoneController", ["$rootScope", "$scope", "$timeout
 reportingApp.controller("CinderController", ["$rootScope", "$scope", "$timeout", "reporting", require("./cloud/cinder")]);
 reportingApp.controller("NovaController", ["$rootScope", "$scope", "$timeout", "reporting", require("./cloud/nova")]);
 reportingApp.controller("SwiftController", ["$rootScope", "$scope", "$timeout", "reporting", require("./cloud/swift")]);
-reportingApp.controller("CeilometerController", ["$rootScope", "$scope", "$timeout", "reporting", require("./cloud/ceilometer")]);
 
 reportingApp.controller("HomeController", ["$rootScope", "$scope", "$timeout", "reporting", require("./home")]);
 reportingApp.controller("MenuController", ["$rootScope", "$scope", "$timeout", "reporting", require("./menu")]);

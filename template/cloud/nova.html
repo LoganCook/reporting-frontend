@@ -1,1 +1,43 @@
-<!-- TODO -->
+<div class="container-fluid">
+    <h3 class="text-center">NeCTAR Virtual Machines (Nova)</h3>
+
+    <div ng-controller="NovaController">
+        <div class="row">
+            <div class="col-sm-4 col-sm-offset-4">
+
+                <div style="padding-top: 25px;">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Snapshot</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" ng-change="selectSnapshot()" ng-model="select.ts">
+                                    <option ng-repeat="snap in snapshots" value="{{ snap.id }}">{{ formatTimestamp(snap.ts) }}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div style="padding-top: 25px;">
+                    <table class="table table-striped" style="width: 100%;">
+                        <tr>
+                            <th>Foo</th>
+                        </tr>
+                        <tr ng-repeat="item in items">
+                            <td>{{ vs.name }}</td>
+                            <td>{{ vs.ownerName }}</td>
+                            <td>{{ vs.tenantName }}</td>
+                            <td>{{ formatSize(vs.size) }}</td>
+                            <td>{{ vs.status.name }}</td>
+                            <td>{{ vs.volume.az.name }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
