@@ -1,8 +1,5 @@
-<!-- TODO: replace prehistoric sandbox code -->
-
-<!--
-<div class="container">
-    <h3 class="text-center">Cloud &mdash; Block Storage (Cinder)</h3>
+<div class="container-fluid">
+    <h3 class="text-center">NeCTAR Block Storage (Cinder)</h3>
 
     <div ng-controller="CinderController">
         <div class="row">
@@ -28,26 +25,14 @@
                 <div style="padding-top: 25px;">
                     <table class="table table-striped" style="width: 100%;">
                         <tr>
-                            <th>
-                                <a href="#" ng-click="sortType = 'name' ; sortReverse = !sortReverse">Name</a>
-                            </th>
-                            <th>
-                                <a href="#" ng-click="sortType = 'ownerName' ; sortReverse = !sortReverse">Owner</a>
-                            </th>
-                            <th>
-                                <a href="#" ng-click="sortType = 'tenantName' ; sortReverse = !sortReverse">Tenant</a>
-                            </th>
-                            <th>
-                                <a href="#" ng-click="sortType = 'size' ; sortReverse = !sortReverse">Size</a>
-                            </th>
-                            <th>
-                                <a href="#" ng-click="sortType = 'status.name' ; sortReverse = !sortReverse">Status</a>
-                            </th>
-                            <th>
-                                <a href="#" ng-click="sortType = 'volume.az.name' ; sortReverse = !sortReverse">Zone</a>
-                            </th>
+                            <th>Name</th>
+                            <th>Owner</th>
+                            <th>Tenant</th>
+                            <th>Size</th>
+                            <th>Status</th>
+                            <th>AZ</th>
                         </tr>
-                        <tr ng-repeat="vs in volumeStatus | orderBy:sortType:sortReverse">
+                        <tr ng-repeat="vs in volumeStatus">
                             <td>{{ vs.name }}</td>
                             <td>{{ vs.ownerName }}</td>
                             <td>{{ vs.tenantName }}</td>
@@ -61,4 +46,3 @@
         </div>
     </div>
 </div>
--->
