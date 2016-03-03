@@ -1,12 +1,6 @@
-var filesize = require("filesize");
-var math = require("mathjs");
-var moment = require("moment");
-var numeral = require("numeral");
-var _ = require("lodash");
-
 // var defaultQuery = "count=10000";
-
-module.exports = {
+define(["filesize", "mathjs", "moment", "numeral", "lodash"], function (filesize, math, moment, numeral, _) {
+return {
     formatTimestamp: function(t) {
         return moment.unix(t).format("LLL");
     },
@@ -116,3 +110,4 @@ module.exports = {
         return query;
     }
 };
+});

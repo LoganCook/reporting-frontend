@@ -1,4 +1,4 @@
-module.exports = {
+define(function (require, exports, module) {module.exports = {
         "Identity": {
             "CRM": ["/identity/crm", "CRM"]
         },
@@ -21,3 +21,5 @@ module.exports = {
             "Object Storage (Swift)": ["/cloud/swift", "Swift"]
         }
     };
+
+});

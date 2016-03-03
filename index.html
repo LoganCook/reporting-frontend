@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body ng-app="reportingApp" ng-strict-di>
+<body ng-strict-di>
 
     <nav class="navbar navbar-default" style="margin-bottom: 0px;" role="navigation" ng-controller="MenuController">
         <div class="navbar-header">
@@ -48,6 +48,14 @@
 
     <div ui-view></div>
 
-    <script src="reporting.js"></script>
+    <!--
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-route.min.js"></script>
+-->
+    <script src="lib/angular/angular.js"></script>
+    <script src="lib/angular-bootstrap/ui-bootstrap.min.js"></script>
+    <script src="lib/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="lib/angular-sanitize/angular-sanitize.js"></script>
+    <script src="lib/requirejs/require.js" data-main="js/main.js"></script>
 </body>
 </html>

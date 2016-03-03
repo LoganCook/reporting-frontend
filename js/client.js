@@ -1,10 +1,5 @@
-var _ = require("lodash");
-var axios = require("axios");
-var qs = require("qs");
-
-var util = require("./util");
-
-module.exports = function($timeout) {
+define(["app", "lodash", "axios", "qs", "./util"], function (app, _, axios, qs, util) {
+return function($timeout) {
     var defaultHeaders = function(name) {
         // name not currently used
         return {
@@ -222,3 +217,4 @@ module.exports = function($timeout) {
 
     return service;
 };
+});
