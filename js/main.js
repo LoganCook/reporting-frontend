@@ -21,6 +21,9 @@ require.config({
 
 define("app", function() {
     var app = angular.module("reportingApp", ["ngSanitize", "ui.router", "ui.bootstrap"]);
+    require(["route"], function(route) {
+        app.config(["$stateProvider", "$urlRouterProvider", route]);
+    });
     return app;
 });
 
