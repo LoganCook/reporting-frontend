@@ -1,9 +1,6 @@
 .fullscreen {
     width: 100vw;
     height: 100vh;
-    background-image: url('../images/ersa-g75.jpg'); /* no slick client-side effects for now */
-    background-size: cover;
-    background-position: center;
     display: table;
 }
 
@@ -11,7 +8,6 @@
     display: table-cell;
     vertical-align: middle;
     text-align: center;
-    color: black;
     text-shadow: none;
 }
 
