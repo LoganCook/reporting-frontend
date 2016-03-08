@@ -23,7 +23,7 @@
                     <div class="form-group">
                         <div>
                             <select class="form-control" ng-model="select.crm">
-                                <option value="">Timestamp</option>
+                                <option value="">Snapshot</option>
                                 <option ng-repeat="snapshot in values(crm.snapshot) | orderBy: 'ts'" value="{{ snapshot.id }}">
                                     {{ formatTimestamp(snapshot.ts) }}
                                 </option>
@@ -72,7 +72,7 @@
                     <div class="form-group">
                         <div>
                             <select class="form-control" ng-disabled="!select.host" ng-model="select.snapshot">
-                                <option value="">Timestamp</option>
+                                <option value="">Snapshot</option>
                                 <option ng-repeat="snapshot in values(xfs.snapshot) | orderBy: 'ts'" value="{{ snapshot.id }}">
                                     {{ formatTimestamp(snapshot.ts) }}
                                 </option>
