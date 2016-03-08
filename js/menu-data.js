@@ -1,4 +1,4 @@
-define(function (require, exports, module) {module.exports = {
+define({
         "Identity": {
             "CRM": ["/identity/crm", "CRM"]
         },
@@ -20,6 +20,4 @@ define(function (require, exports, module) {module.exports = {
             "Block Storage (Cinder)": ["/cloud/cinder", "Cinder"],
             "Object Storage (Swift)": ["/cloud/swift", "Swift"]
         }
-    };
-
 });

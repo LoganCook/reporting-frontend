@@ -1,4 +1,5 @@
 require.config({
+  //enforceDefine: true, //This is for IE error handling: http://requirejs.org/docs/api.html#ieloadfail. use define instead of a normal js file
   paths: {
       'angular' : '/lib/angular/angular',
       'ng-csv' : '/lib/ng-csv/build/ng-csv.min',
@@ -17,6 +18,15 @@ require.config({
       "ng-csv": { deps: ['angular'], exports: "ng-csv" }
   },
   baseUrl: '/js'
+});
+
+//TODO: May have seperated dev and production main.js files or gulp it?
+require(["debug-settings"], function(d) {
+    for (var attr in d) {
+        if (d.hasOwnProperty(attr)) sessionStorage[attr] = d[attr];
+        }
+    }, function (err) {
+        console.log("Cannot load settings, skip set up debug session.");
 });
 
 define("app", function() {

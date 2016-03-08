@@ -4,11 +4,9 @@ define(["app", "menu-data"], function (app, menuData) {
             $scope.menus = menuData;
 
             $scope.init = function() {
-                //$scope.configured = "secret" in sessionStorage;
-                $scope.configured = true; //for debug
+                $scope.configured = "secret" in sessionStorage;
                 if ($scope.configured) {
-                    $scope.email = "debug.email"; //for debug. for production, turn it into variable
-                    //$scope.email = sessionStorage.email;
+                    $scope.email = sessionStorage.email;
                 }
             };
 

@@ -1,44 +1,30 @@
 {
-    "name": "ersa-reporting-frontend",
-    "version": "0.1.0",
-    "description": "eRSA Reporting Frontend",
-    "contributors": [{
-        "name": "Craig Patten",
-        "email": "craig.patten@ersa.edu.au",
-        "url": "https://github.com/craigpatten"
-    }],
-    "repository": {
-      "type": "git",
-      "url": "https://github.com/eresearchsa/reporting-frontend"
-    },
-    "main": "reporting.js",
-    "dependencies": {
-        "angular": "~1.4.5",
-        "angular-resource": "~1.4.5",
-        "angular-sanitize": "~1.4.5",
-        "angular-ui-bootstrap": "~0.13.4",
-        "angular-ui-router": "~0.2.15",
-        "axios": "~0.8.1",
-        "filesize": "~3.1.3",
-        "lodash": "~3.10.1",
-        "mathjs": "~2.4.0",
-        "moment": "~2.10.6",
-        "ng-csv": "~0.3.5",
-        "numeral": "~1.5.3",
-        "qs": "~5.2.0"
-    },
-    "devDependencies": {
-        "gulp": "~3.9.0",
-        "gulp-git": "~1.6.0",
-        "gulp-rename": "~1.2.2",
-        "gulp-jshint": "1.11.2",
-        "jshint-stylish": "~2.0.1",
-        "vinyl-source-stream": "~1.1.0",
-        "browserify": "~11.1.0",
-        "del": "~2.0.2",
-        "gulp-serve": "1.2.0"
-    },
-    "scripts": {},
-    "license": "Apache-2.0",
-    "private": true
+  "name": "ersa-reporting-frontend",
+  "version": "0.1.0",
+  "description": "eRSA Reporting Frontend",
+  "contributors": [
+    {
+      "name": "Craig Patten",
+      "email": "craig.patten@ersa.edu.au",
+      "url": "https://github.com/craigpatten"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eresearchsa/reporting-frontend"
+  },
+  "main": "reporting.js",
+  "devDependencies": {
+    "gulp": "",
+    "gulp-connect": "",
+    "gulp-jshint": "1.11.2",
+    "jshint-stylish": "~2.0.1",
+    "del": "~2.0.2"
+  },
+  "scripts": {},
+  "license": "Apache-2.0",
+  "private": true,
+  "dependencies": {
+    "qs": "^6.1.0"
+  }
 }

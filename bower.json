@@ -1,0 +1,34 @@
+{
+  "name": "ersa-reporting-frontend",
+  "authors": [
+    "Jianfeng Li <jianfeng.li@ersa.edu.au>"
+  ],
+  "description": "Reporting Frontend",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "lib",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "",
+    "requirejs": "",
+    "angular": "~1.5",
+    "angular-route": "~1.5",
+    "angular-sanitize": "~1.5",
+    "angular-resource": "~1.5",
+    "angular-ui-bootstrap": "",
+    "angular-ui-router": "~0.2",
+    "axios": "~0.8.1",
+    "filesize": "~3.1.3",
+    "lodash": "~3.10.1",
+    "mathjs": "~2.4.0",
+    "moment": "~2.10.6",
+    "ng-csv": "~0.3",
+    "numeral": "~1.5.3",
+    "angular-bootstrap": "^1.2.1"
+  }
+}

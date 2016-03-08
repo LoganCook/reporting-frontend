@@ -1,4 +1,6 @@
 npm-debug.log
 build
+lib
 node_modules
 .DS_Store
+debug-settings.js
