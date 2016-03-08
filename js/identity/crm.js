@@ -1,101 +1,98 @@
-var _ = require("lodash");
-var util = require("../util");
+define(["app", "lodash", "../util" ], function (app, _, util) {
+    app.controller("CRMController", ["$rootScope", "$scope", "$timeout", "reporting", function($rootScope, $scope, $timeout, reporting) {
+        $scope.values = _.values;
+        $scope.formatTimestamp = util.formatTimestamp;
+        $scope.select = {
+            id: null // snapshot id
+        };
 
-module.exports = function ($rootScope, $scope, $timeout, reporting) {
-    $scope.values = _.values;
+        $scope.snapshotByPerson = {
+            "membership": {},
+            "person-email": {},
+            "person-username": {}
+        };
 
-    $scope.formatTimestamp = util.formatTimestamp;
+        var relevantField = {
+            "membership": "organisation",
+            "person-username": "username",
+            "person-email": "email"
+        };
 
-    $scope.select = {
-        id: null // snapshot id
-    };
+        var humanReadableContent = {
+            "membership": "organisation",
+            "person-username": "username",
+            "person-email": "email"
+        };
 
-    $scope.snapshotByPerson = {
-        "membership": {},
-        "person-email": {},
-        "person-username": {}
-    };
+        var humanReadableField = {
+            "membership": "name",
+            "person-username": "username",
+            "person-email": "address"
+        };
 
-    var relevantField = {
-        "membership": "organisation",
-        "person-username": "username",
-        "person-email": "email"
-    };
+        $scope.selectSnapshot = function() {
+            if ($scope.select.id) {
+                reporting.crmSnapshot($scope.select.id, function(svc, type, snapshot, data) {
+                    $scope.snapshotByPerson[type] = {};
 
-    var humanReadableContent = {
-        "membership": "organisation",
-        "person-username": "username",
-        "person-email": "email"
-    };
+                    var groupedByPerson = _.groupBy(data, util.extractor("person"));
 
-    var humanReadableField = {
-        "membership": "name",
-        "person-username": "username",
-        "person-email": "address"
-    };
+                    var extractField = function(record) {
+                        return record[relevantField[type]];
+                    };
 
-    $scope.selectSnapshot = function() {
-        if ($scope.select.id) {
-            reporting.crmSnapshot($scope.select.id, function(svc, type, snapshot, data) {
-                $scope.snapshotByPerson[type] = {};
+                    var getReadable = function(ref) {
+                        var content = humanReadableContent[type];
+                        var field = humanReadableField[type];
 
-                var groupedByPerson = _.groupBy(data, util.extractor("person"));
+                        var entry = $scope[content][ref];
 
-                var extractField = function(record) {
-                    return record[relevantField[type]];
-                };
-
-                var getReadable = function(ref) {
-                    var content = humanReadableContent[type];
-                    var field = humanReadableField[type];
-
-                    var entry = $scope[content][ref];
-
-                    if (entry) {
-                        return entry[field];
-                    } else {
-                        return "?";
-                    }
-                };
-
-                var generateReadable = function(refs) {
-                    return _.map(refs, getReadable).join(", ");
-                };
-
-                for (var person in groupedByPerson) {
-                    var refs = _.map(groupedByPerson[person], extractField);
-                    $scope.snapshotByPerson[type][person] = generateReadable(refs);
-                }
-
-                if (type == "membership") {
-                    var groupedByOrganisation = _.groupBy(data, util.extractor("organisation"));
-
-                    var extractPerson = function(record) {
-                        var entity = $scope.person[record.person];
-
-                        if (entity) {
-                            return entity.first_name + " " + entity.last_name;
+                        if (entry) {
+                            return entry[field];
                         } else {
                             return "?";
                         }
                     };
 
-                    for (var organisation in groupedByOrganisation) {
-                        groupedByOrganisation[organisation] =
-                            _.map(groupedByOrganisation[organisation], extractPerson).join(", ");
+                    var generateReadable = function(refs) {
+                        return _.map(refs, getReadable).join(", ");
+                    };
+
+                    for (var person in groupedByPerson) {
+                        var refs = _.map(groupedByPerson[person], extractField);
+                        $scope.snapshotByPerson[type][person] = generateReadable(refs);
                     }
 
-                    $scope.membershipByOrganisation = groupedByOrganisation;
-                }
-            });
-        } else {
-            for (var type in $scope.snapshot) {
-                $scope.snapshotByPerson[type] = {};
-            }
-        }
-    };
+                    if (type == "membership") {
+                        var groupedByOrganisation = _.groupBy(data, util.extractor("organisation"));
 
-    reporting.crmBase(function(svc, type, data) {
-        $scope[type] = util.keyArray(data);
-    });
-};
+                        var extractPerson = function(record) {
+                            var entity = $scope.person[record.person];
+
+                            if (entity) {
+                                return entity.first_name + " " + entity.last_name;
+                            } else {
+                                return "?";
+                            }
+                        };
+
+                        for (var organisation in groupedByOrganisation) {
+                            groupedByOrganisation[organisation] =
+                                _.map(groupedByOrganisation[organisation], extractPerson).join(", ");
+                        }
+
+                        $scope.membershipByOrganisation = groupedByOrganisation;
+                    }
+                });
+            } else {
+                for (var type in $scope.snapshot) {
+                    $scope.snapshotByPerson[type] = {};
+                }
+            }
+        };
+
+        reporting.crmBase(function(svc, type, data) {
+            $scope[type] = util.keyArray(data);
+        });
+    }]);
+});

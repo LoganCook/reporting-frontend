@@ -29,16 +29,21 @@ require(["debug-settings"], function(d) {
         console.log("Cannot load settings, skip set up debug session.");
 });
 
-define("app", function() {
+define("app", ["client"], function(client) {
     var app = angular.module("reportingApp", ["ngSanitize", "ui.router", "ui.bootstrap"]);
-    require(["route"], function(route) {
-        app.config(["$stateProvider", "$urlRouterProvider", route]);
-    });
+    app.factory("reporting", ["$timeout", client]);
+    // app.controller("CRMController", ["$scope", "$timeout", "reporting", function($scope, $timeout, reporting) {
+    //     console.log("direct alling");
+    //     $scope.selectSnapshot = function() { console.log("we are being called");}
+    // }]);
     return app;
 });
 
-require(["app", "menu", "client"],
-    function () {
-        angular.bootstrap(document, ["reportingApp"]);
+require(["app", "menu", "identity/crm", "hpc/hpc"],
+    function (app) {
+        require(["route"], function(route) {
+            app.config(["$stateProvider", "$urlRouterProvider", route]);
+            angular.bootstrap(document, ["reportingApp"]);
+        });
     }
 );
