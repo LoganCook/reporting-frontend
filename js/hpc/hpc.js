@@ -1,7 +1,6 @@
 define(["app", "lodash", "../util"], function(app, _, util) {
-    app.controller("HPCController", ["$rootScope", "$scope", "$timeout", "reporting", function($rootScope, $scope, $timeout, reporting) {
+    app.controller("HPCController", ["$rootScope", "$scope", "$resource", "$timeout", "reporting", function($rootScope, $scope, $resource, $timeout, reporting) {
         $scope.values = _.values;
-        console.log($scope.values);
 
         $scope.formatTimestamp = util.formatTimestamp;
         $scope.formatNumber = util.formatNumber;
@@ -157,5 +156,15 @@ define(["app", "lodash", "../util"], function(app, _, util) {
 
             reporting.hpcQuery("job", query, processJobs);
         };
+
+        var localr = $resource('http://127.0.01:8000/api/:target/');
+        localr.query({target:'Organisation', method:'get_tops'}, function(data) {
+            $scope.topOrgs = data;
+        });
+
+        $scope.unitChanged = function() {
+            console.log("From scope:" + $scope.selectedOrg);
+        }
+
     }]);
 });

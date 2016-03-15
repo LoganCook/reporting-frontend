@@ -30,12 +30,12 @@ require(["debug-settings"], function(d) {
 });
 
 define("app", ["client"], function(client) {
-    var app = angular.module("reportingApp", ["ngSanitize", "ui.router", "ui.bootstrap"]);
+    var app = angular.module("reportingApp", ["ngSanitize", "ui.router", "ui.bootstrap", "ngResource"]);
     app.factory("reporting", ["$timeout", client]);
-    // app.controller("CRMController", ["$scope", "$timeout", "reporting", function($scope, $timeout, reporting) {
-    //     console.log("direct alling");
-    //     $scope.selectSnapshot = function() { console.log("we are being called");}
-    // }]);
+    app.config(['$resourceProvider', function($resourceProvider) {
+      // Don't strip trailing slashes from calculated URLs to make Django URLs work
+      $resourceProvider.defaults.stripTrailingSlashes = false;
+    }]);
     return app;
 });
 

@@ -1,6 +1,16 @@
 <div class="container-fluid">
     <h3 class="text-center">HPC</h3>
 
+    <div class="form-group">
+        <div>
+            <label for="repeatSelect">Organisation: </label>
+            <select name="repeatSelect" id="repeatSelect" ng-model="selectedOrg" ng-change="unitChanged()" class="form-control">
+                <option value="">All</option>
+                <option ng-repeat="org in topOrgs" value="{{ org.pk }}">{{ org.fields.name }}</option>
+            </select>
+        </div>
+    </div>
+    <p class="code"> {{ selectedOrg | json }}  </p>
     <div>
 
         <form>
@@ -22,9 +32,9 @@
                 <div class="col-md-3">
                     <p>Start Date</p>
                     <p class="input-group">
-                        <input type="text" class="form-control" datepicker-popup ng-model="rangeStart" is-open="rangeStartOpen" show-weeks="false" />
+                        <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="rangeStart" is-open="rangeStartOpen" show-weeks="false" />
                         <span class="input-group-btn">
-                            <button type="button" class="btn btn-default" ng-click="openRangeStart()">📅</button>
+                            <button type="button" class="btn btn-default" ng-click="openRangeStart()"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
                     </p>
                 </div>
@@ -34,7 +44,7 @@
                     <p class="input-group">
                         <input type="text" class="form-control" datepicker-popup ng-model="rangeEnd" is-open="rangeEndOpen" show-weeks="false" />
                         <span class="input-group-btn">
-                            <button type="button" class="btn btn-default" ng-click="openRangeEnd()">📅</button>
+                            <button type="button" class="btn btn-default" ng-click="openRangeEnd()"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
                     </p>
                 </div>
