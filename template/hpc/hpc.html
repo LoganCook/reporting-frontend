@@ -1,38 +1,25 @@
 <div class="container-fluid">
     <h3 class="text-center">HPC</h3>
+    <p ng-show="error" class="alert alert-danger">{{ error }}</p>
 
-    <div class="form-group">
-        <div>
-            <label for="repeatSelect">Organisation: </label>
-            <select name="repeatSelect" id="repeatSelect" ng-model="selectedOrg" ng-change="unitChanged()" class="form-control">
-                <option value="">All</option>
-                <option ng-repeat="org in topOrgs" value="{{ org.pk }}">{{ org.fields.name }}</option>
-            </select>
-        </div>
-    </div>
-    <p class="code"> {{ selectedOrg | json }}  </p>
     <div>
 
         <form>
             <div class="row">
                 <div class="col-md-3">
-                    <p>CRM Snapshot</p>
+                    <p>Organisation</p>
                     <div class="form-group">
-                        <div>
-                            <select class="form-control" ng-model="crm.id">
-                                <option value="">Snapshot</option>
-                                <option ng-repeat="snapshot in values(crm.snapshot) | orderBy: 'ts'" value="{{ snapshot.id }}">
-                                    {{ formatTimestamp(snapshot.ts) }}
-                                </option>
-                            </select>
-                        </div>
+                        <select name="orgSelect" id="orgSelect" ng-model="selectedOrg" ng-change="orgChanged()" class="form-control">
+                            <option value="">All</option>
+                            <option ng-repeat="org in topOrgs" value="{{ org.pk }}">{{ org.fields.name }}</option>
+                        </select>
                     </div>
                 </div>
 
                 <div class="col-md-3">
                     <p>Start Date</p>
                     <p class="input-group">
-                        <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="rangeStart" is-open="rangeStartOpen" show-weeks="false" />
+                        <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="rangeStart" is-open="rangeStartOpen" showWeeks="false"/>
                         <span class="input-group-btn">
                             <button type="button" class="btn btn-default" ng-click="openRangeStart()"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
@@ -42,7 +29,7 @@
                 <div class="col-md-3">
                     <p>End Date</p>
                     <p class="input-group">
-                        <input type="text" class="form-control" datepicker-popup ng-model="rangeEnd" is-open="rangeEndOpen" show-weeks="false" />
+                        <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="rangeEnd" is-open="rangeEndOpen" showWeeks="false" />
                         <span class="input-group-btn">
                             <button type="button" class="btn btn-default" ng-click="openRangeEnd()"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
@@ -80,7 +67,8 @@
                     <tr>
                         <th>Full Name</th>
                         <th>Username</th>
-                        <th>Organisation</th>
+                        <th>Email</th>
+                        <th>School</th>
                         <th>Job Count</th>
                         <th>Total Core Hours</th>
                         <th>Total Core Duration</th>
@@ -89,6 +77,7 @@
                     <tr ng-repeat="sum in jobSummary | orderBy: 'username'">
                         <td>{{ sum.fullname }}</td>
                         <td>{{ sum.username }}</td>
+                        <td>{{ sum.email }}</td>
                         <td>{{ sum.organisation }}</td>
                         <td>{{ formatNumber(sum.jobCount) }}</td>
                         <td>{{ formatNumber(sum.cpuSeconds / 3600) }}</td>

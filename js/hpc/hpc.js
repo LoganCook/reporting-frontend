@@ -60,6 +60,24 @@ define(["app", "lodash", "../util"], function(app, _, util) {
             }
         };
 
+        function mapUser(attachTo) {
+            var found = false;
+            if (angular.isDefined($scope.details)) {
+                var fields = ['fullname', 'email', 'organisation'], i;
+                if (attachTo.username in $scope.details) {
+                    found = true;
+                    for(i = 0; i < 3; i++) {
+                        attachTo[fields[i]] = $scope.details[attachTo.username][fields[i]] ;
+                    }
+                }
+            } else {
+                $scope.error = "Data need to be loaded";
+            }
+            return found;
+        }
+
+        //Here it loads crm data into $scope.crm["snapshot", "person", "organisation", "username", "email"]
+        //username is packed differently
         reporting.crmBase(function(svc, type, data) {
             if (type == "username") {
                 $scope.crm[type] = util.keyArray(data, "username");
@@ -82,13 +100,20 @@ define(["app", "lodash", "../util"], function(app, _, util) {
                         cpuSeconds: 0
                     };
 
-                    reporting.populateFromUsername($scope.crm.id, jobSummary[job.owner]);
+                    //reporting.populateFromUsername($scope.crm.id, jobSummary[job.owner]);
                 }
 
                 jobSummary[job.owner].jobCount++;
                 jobSummary[job.owner].cpuSeconds += job.cpu_seconds;
-            });
 
+            });
+            var username, swap = {};
+            for (username in jobSummary) {
+                if (mapUser(jobSummary[username])) {
+                    swap[username] = jobSummary[username];
+                };
+            }
+            jobSummary = swap;
         };
 
         var publishJobSummary = function() {
@@ -97,7 +122,7 @@ define(["app", "lodash", "../util"], function(app, _, util) {
 
         $scope.exportSummary = function() {
             data = [
-                ["Full Name", "Organisation", "Username", "Job Count", "Core Hours"]
+                ["Full Name", "Organisation", "Username", "Email", "Job Count", "Core Hours"]
             ];
 
             _.forEach(jobSummary, function(summary) {
@@ -105,6 +130,7 @@ define(["app", "lodash", "../util"], function(app, _, util) {
                     summary.fullname,
                     summary.organisation,
                     summary.username,
+                    summary.email,
                     summary.jobCount, (summary.cpuSeconds / 3600).toFixed(1)
                 ]);
             });
@@ -162,8 +188,14 @@ define(["app", "lodash", "../util"], function(app, _, util) {
             $scope.topOrgs = data;
         });
 
-        $scope.unitChanged = function() {
-            console.log("From scope:" + $scope.selectedOrg);
+        $scope.orgChanged = function() {
+            $scope.error = "";
+            if ($scope.selectedOrg !=='') {
+                var localr = $resource('http://127.0.01:8000/api/:target/');
+                localr.get({target:'Organisation', id:$scope.selectedOrg, method:'get_extented_accounts'}, function(data) {
+                    $scope.details = data;
+                });
+            }
         }
 
     }]);

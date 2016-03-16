@@ -29,8 +29,8 @@ require(["debug-settings"], function(d) {
         console.log("Cannot load settings, skip set up debug session.");
 });
 
-define("app", ["client"], function(client) {
-    var app = angular.module("reportingApp", ["ngSanitize", "ui.router", "ui.bootstrap", "ngResource"]);
+define("app", ["client", "ng-csv"], function(client) {
+    var app = angular.module("reportingApp", ["ngSanitize", "ui.router", "ui.bootstrap", "ngResource", "ngCsv"]);
     app.factory("reporting", ["$timeout", client]);
     app.config(['$resourceProvider', function($resourceProvider) {
       // Don't strip trailing slashes from calculated URLs to make Django URLs work
