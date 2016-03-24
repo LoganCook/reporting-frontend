@@ -1,7 +1,6 @@
 require.config({
   //enforceDefine: true, //This is for IE error handling: http://requirejs.org/docs/api.html#ieloadfail. use define instead of a normal js file
   paths: {
-      'angular' : '/lib/angular/angular',
       'ng-csv' : '/lib/ng-csv/build/ng-csv.min',
       'axios' : '/lib/axios/dist/axios.min',
       'lodash': '/lib/lodash/lodash.min',
@@ -12,10 +11,7 @@ require.config({
       'qs': '/node_modules/qs/dist/qs'
   },
   shim: {
-      angular: {
-          exports : 'angular'
-      },
-      "ng-csv": { deps: ['angular'], exports: "ng-csv" }
+      "ng-csv": { exports: "ng-csv" }
   },
   baseUrl: '/js'
 });
