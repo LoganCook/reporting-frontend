@@ -161,8 +161,8 @@ define(["app", "lodash", "../util"], function(app, _, util) {
 
             var query = _.merge(baseFilters(), {
                 filter: [
-                    "start.ge." + $scope.rangeStartEpoch,
-                    "start.lt." + $scope.rangeEndEpoch
+                    "end.ge." + $scope.rangeStartEpoch,
+                    "end.lt." + $scope.rangeEndEpoch
                 ]
             });
 
