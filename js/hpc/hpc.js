@@ -1,12 +1,23 @@
 define(["app", "lodash", "../util"], function(app, _, util) {
-    app.controller("HPCController", ["$rootScope", "$scope", "$resource", "$timeout", "reporting", function($rootScope, $scope, $resource, $timeout, reporting) {
+    app.controller("HPCController", ["$rootScope", "$scope", "$resource", "$timeout", "reporting", 
+    "$uibModal",
+    function($rootScope, $scope, $resource, $timeout, reporting, $uibModal) {
+
         $scope.values = _.values;
 
         $scope.formatTimestamp = util.formatTimestamp;
         $scope.formatNumber = util.formatNumber;
         $scope.formatDuration = util.formatDuration;
 
-        $scope.rangeStart = new Date();
+
+        $scope.dateOptions = {
+            //dateDisabled: true, 
+            maxDate: new Date() 
+        };
+        
+        var startDate = new Date();
+        startDate.setDate(startDate.getDate() -14);
+        $scope.rangeStart = startDate;
         $scope.rangeStartOpen = false;
         $scope.openRangeStart = function() {
             $scope.rangeStartOpen = true;
@@ -19,6 +30,9 @@ define(["app", "lodash", "../util"], function(app, _, util) {
         };
 
         $scope.selectedQueues = {};
+        
+        $scope.alerts = [];
+        $scope.jobAll = true;
 
         var baseFilters = function() {
             return {
@@ -40,6 +54,7 @@ define(["app", "lodash", "../util"], function(app, _, util) {
 
         clear();
 
+        //Here it loads crm data into $scope.crm["host", "queue", "owner"]
         reporting.hpcBase(function(svc, type, data) {
             $scope[type] = util.keyArray(data);
 
@@ -69,6 +84,12 @@ define(["app", "lodash", "../util"], function(app, _, util) {
                     for(i = 0; i < 3; i++) {
                         attachTo[fields[i]] = $scope.details[attachTo.username][fields[i]] ;
                     }
+                //This else clause added by Rex, to display jobs which is not matched wiht @scope.details(extends department)
+                }else{
+                    found = true;
+                    for(i = 0; i < 3; i++) {
+                        attachTo[fields[i]] = '-' ;
+                    }
                 }
             } else {
                 $scope.error = "Data need to be loaded";
@@ -80,7 +101,7 @@ define(["app", "lodash", "../util"], function(app, _, util) {
         //username is packed differently
         reporting.crmBase(function(svc, type, data) {
             if (type == "username") {
-                $scope.crm[type] = util.keyArray(data, "username");
+                $scope.crm[type] = util.keyArray(data, "username"); 
             } else {
                 $scope.crm[type] = util.keyArray(data);
             }
@@ -155,7 +176,28 @@ define(["app", "lodash", "../util"], function(app, _, util) {
             }
         };
 
+
+        var validateJobs = function() {
+            $scope.alerts = [];
+            if ($scope.selectedOrg =='') {
+                $scope.alerts.push({type: 'danger',msg: 'Please select an Organisation!'}); 
+                return false;
+            }
+            
+            if ($scope.rangeStart > $scope.rangeEnd) {
+                $scope.alerts.push({type: 'danger',msg: "Start date shouldn't later!"}); 
+                return false;
+            }
+            
+            
+            return true;
+        };
+        
         $scope.loadJobs = function() {
+            if(!validateJobs()){
+                return;
+            }
+            
             $scope.rangeStartEpoch = util.dayStart($scope.rangeStart);
             $scope.rangeEndEpoch = util.dayEnd($scope.rangeEnd);
 
@@ -165,7 +207,8 @@ define(["app", "lodash", "../util"], function(app, _, util) {
                     "end.lt." + $scope.rangeEndEpoch
                 ]
             });
-
+            //query : {count:25000, page:1, filter:["end.ge.1459953000", "end.lt.1460039400"]}
+ 
             var queueQuery = [];
 
             for (var qID in $scope.selectedQueues) {
@@ -175,6 +218,7 @@ define(["app", "lodash", "../util"], function(app, _, util) {
             }
 
             query.filter.push("queue.in." + queueQuery.join(","));
+            //query : {count:25000, page:1, filter:["end.ge.1459953000", "end.lt.1460039400", "queue.in.1210458a-4145-4f67-a19d-02be24a29fb6,2841930e-e8aa-4eaf-b938-ade7033e8532,32c6532e-2b34-4d06-9873-38c9cc1cddf9"]}
 
             clear();
 
@@ -197,6 +241,45 @@ define(["app", "lodash", "../util"], function(app, _, util) {
                 });
             }
         }
+         
+         
 
-    }]);
+        // Alert Util
+        $scope.closeAlert = function(index) {
+            $scope.alerts.splice(index, 1);
+        };
+        
+        // Modal Util
+        $scope.animationsEnabled = true;
+        $scope.openJobMessage = function (size) { 
+
+            var modalInstance = $uibModal.open({
+            animation: $scope.animationsEnabled,
+            templateUrl: 'template/hpc/hpc.html',  
+            restrict: 'E',  
+            controller: 'HPCController', 
+            size: size,
+            resolve: {
+                items: function () {
+                //return $scope.items;
+                }
+              }
+            });
+
+            modalInstance.result.then(function (selectedItem) {
+                //$scope.selected = selectedItem;
+                }, 
+                function () {
+                //console.info('Modal dismissed at: ' + new Date());
+            });
+        };
+
+        $scope.toggleAnimation = function () {
+            $scope.animationsEnabled = !$scope.animationsEnabled;
+        }; 
+        
+        // cache data
+        //https://www.phase2technology.com/blog/caching-json-arrays-using-cachefactory-in-angularjs-1-2-x/
+        
+    }]);  
 });

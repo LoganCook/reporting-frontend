@@ -1,7 +1,7 @@
 <div class="container-fluid">
     <h3 class="text-center">HPC</h3>
     <p ng-show="error" class="alert alert-danger">{{ error }}</p>
-
+    <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
     <div>
 
         <form>
@@ -19,17 +19,18 @@
                 <div class="col-md-3">
                     <p>Start Date</p>
                     <p class="input-group">
-                        <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="rangeStart" is-open="rangeStartOpen" showWeeks="false"/>
+                        <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="rangeStart" is-open="rangeStartOpen" showWeeks="false" datepicker-options="dateOptions" ng-required="true"/>
                         <span class="input-group-btn">
                             <button type="button" class="btn btn-default" ng-click="openRangeStart()"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
                     </p>
+                    <span ng-show="rangeStart.$error.invalidDate">Invalid start date.</span>
                 </div>
 
                 <div class="col-md-3">
                     <p>End Date</p>
                     <p class="input-group">
-                        <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="rangeEnd" is-open="rangeEndOpen" showWeeks="false" />
+                        <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="rangeEnd" is-open="rangeEndOpen" showWeeks="false" datepicker-options="dateOptions" ng-required="true"/>
                         <span class="input-group-btn">
                             <button type="button" class="btn btn-default" ng-click="openRangeEnd()"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
@@ -54,7 +55,7 @@
                     <p class="text-center">Queues</p>
                     <div class="form-group text-center">
                         <label class="checkbox-inline" ng-repeat="(qID, q) in queue">
-                            <input type="checkbox" ng-model="selectedQueues[qID]">{{ q.name }}
+                            <input type="checkbox" ng-checked="jobAll" ng-model="selectedQueues[qID]">{{ q.name }}
                         </label>
                     </div>
                 </div>
@@ -87,6 +88,11 @@
                 </table>
             </div>
         </div>
-
-    </div>
+        <!-- 
+            http://jsfiddle.net/alexsuch/RLQhh/ 
+            https://angular-ui.github.io/bootstrap/
+        -->
+        <!-- button type="button" class="btn btn-default" ng-click="openJobMessage('lg')">Open me!</button -->
+    </div> 
+       
 </div>
