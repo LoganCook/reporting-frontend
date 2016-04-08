@@ -16,7 +16,7 @@ define(["app", "lodash", "../util"], function(app, _, util) {
         };
         
         var startDate = new Date();
-        startDate.setDate(startDate.getDate() -14);
+        startDate.setMonth(startDate.getMonth() -1);
         $scope.rangeStart = startDate;
         $scope.rangeStartOpen = false;
         $scope.openRangeStart = function() {
@@ -30,9 +30,8 @@ define(["app", "lodash", "../util"], function(app, _, util) {
         };
 
         $scope.selectedQueues = {};
-        
-        $scope.alerts = [];
-        $scope.jobAll = true;
+        $scope.allQueusSelected = true; 
+        $scope.alerts = []; 
 
         var baseFilters = function() {
             return {

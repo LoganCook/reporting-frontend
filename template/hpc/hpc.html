@@ -52,10 +52,14 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <p class="text-center">Queues</p>
+                    <p class="text-center">
+<label class="checkbox-inline">
+                            <input type="checkbox" ng-model="allQueusSelected">All Queues
+</label>                    
+                    </p>
                     <div class="form-group text-center">
                         <label class="checkbox-inline" ng-repeat="(qID, q) in queue">
-                            <input type="checkbox" ng-checked="jobAll" ng-model="selectedQueues[qID]">{{ q.name }}
+                            <input type="checkbox" ng-checked="allQueusSelected" ng-model="selectedQueues[qID]">{{ q.name }}
                         </label>
                     </div>
                 </div>
