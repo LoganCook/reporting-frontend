@@ -1,6 +1,6 @@
 define(["app", "lodash", "../util"], function(app, _, util) {
     app.controller("HPCController", ["$rootScope", "$scope", "$resource", "$timeout", "reporting", 
-    "$uibModal",
+    "$uibModal", 
     function($rootScope, $scope, $resource, $timeout, reporting, $uibModal) {
 
         $scope.values = _.values;
@@ -30,7 +30,7 @@ define(["app", "lodash", "../util"], function(app, _, util) {
         };
 
         $scope.selectedQueues = {};
-        $scope.allQueusSelected = true; 
+        $scope.allQueusSelected = true;
         $scope.alerts = []; 
 
         var baseFilters = function() {
@@ -85,9 +85,11 @@ define(["app", "lodash", "../util"], function(app, _, util) {
                     }
                 //This else clause added by Rex, to display jobs which is not matched wiht @scope.details(extends department)
                 }else{
-                    found = true;
-                    for(i = 0; i < 3; i++) {
-                        attachTo[fields[i]] = '-' ;
+                    if ($scope.selectedOrg ==='') { 
+                        found = true;
+                        for(i = 0; i < 3; i++) {
+                            attachTo[fields[i]] = '-' ;
+                        }
                     }
                 }
             } else {
@@ -158,7 +160,8 @@ define(["app", "lodash", "../util"], function(app, _, util) {
             return data;
         };
 
-        var processJobs = function(svc, type, query, data) {
+        var processJobs = function(svc, type, query, data) { 
+            
             if (data && data.length > 0) {
                 Array.prototype.push.apply($scope.jobs, data);
                 $scope.jobCount += data.length;
@@ -173,15 +176,17 @@ define(["app", "lodash", "../util"], function(app, _, util) {
             } else {
                 $scope.status = "Jobs: " + $scope.jobCount;
             }
+            
+            $rootScope.spinnerActive = false;
         };
 
 
         var validateJobs = function() {
             $scope.alerts = [];
-            if ($scope.selectedOrg =='') {
-                $scope.alerts.push({type: 'danger',msg: 'Please select an Organisation!'}); 
-                return false;
-            }
+            //if ($scope.selectedOrg =='') {
+            //    $scope.alerts.push({type: 'danger',msg: 'Please select an Organisation!'}); 
+            //    return false;
+            //}
             
             if ($scope.rangeStart > $scope.rangeEnd) {
                 $scope.alerts.push({type: 'danger',msg: "Start date shouldn't later!"}); 
@@ -196,6 +201,8 @@ define(["app", "lodash", "../util"], function(app, _, util) {
             if(!validateJobs()){
                 return;
             }
+            
+            $rootScope.spinnerActive = true;
             
             $scope.rangeStartEpoch = util.dayStart($scope.rangeStart);
             $scope.rangeEndEpoch = util.dayEnd($scope.rangeEnd);
@@ -231,13 +238,15 @@ define(["app", "lodash", "../util"], function(app, _, util) {
             $scope.topOrgs = data;
         });
 
-        $scope.orgChanged = function() {
+        $scope.orgChanged = function() { 
             $scope.error = "";
-            if ($scope.selectedOrg !=='') {
+            if ($scope.selectedOrg !=='') {  
+                //$rootScope.spinnerActive = true;
                 var localr = $resource('http://127.0.01:8000/api/:target/');
                 localr.get({target:'Organisation', id:$scope.selectedOrg, method:'get_extented_accounts'}, function(data) {
                     $scope.details = data;
-                });
+                    //$rootScope.spinnerActive = false;
+                }); 
             }
         }
          
@@ -279,6 +288,6 @@ define(["app", "lodash", "../util"], function(app, _, util) {
         
         // cache data
         //https://www.phase2technology.com/blog/caching-json-arrays-using-cachefactory-in-angularjs-1-2-x/
-        
-    }]);  
+         
+    }]);   
 });

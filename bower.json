@@ -26,6 +26,7 @@
     "mathjs": "~2.4.0",
     "moment": "~2.10.6",
     "ng-csv": "~0.3",
-    "numeral": "~1.5.3"
+    "numeral": "~1.5.3",
+    "angular-spinner": "~0.8.1"
   }
 }

@@ -8,6 +8,7 @@ require.config({
       "mathjs": '/lib/mathjs/dist/math.min',
       "moment": '/lib/moment/min/moment.min',
       "numeral": '/lib/numeral/min/numeral.min',
+      "loadingSpinner": '/lib/angular-spinner/angular-spinner.min',
       'qs': '/node_modules/qs/dist/qs'
   },
   shim: {
@@ -26,12 +27,34 @@ require(["debug-settings"], function(d) {
 });
 
 define("app", ["client", "ng-csv"], function(client) {
-    var app = angular.module("reportingApp", ["ngSanitize", "ui.router", "ui.bootstrap", "ngResource", "ngCsv"]);
+    var app = angular.module("reportingApp", ["ngSanitize", "ui.router", "ui.bootstrap", "ngResource", "ngCsv", "angularSpinner"]);
     app.factory("reporting", ["$timeout", client]);
     app.config(['$resourceProvider', function($resourceProvider) {
       // Don't strip trailing slashes from calculated URLs to make Django URLs work
       $resourceProvider.defaults.stripTrailingSlashes = false;
     }]);
+
+    //Global loading modal popup for all pages
+    app.directive('usSpinner',   ['$rootScope' ,function ($rootScope){
+        return {
+            link: function (scope, elm, attrs){  
+                $rootScope.spinnerActive = false;
+                scope.isLoading = function () { 
+                    return $rootScope.spinnerActive;
+                };
+
+                scope.$watch(scope.isLoading, function (loading){
+                    $rootScope.spinnerActive = loading;
+                    if(loading){ 
+                        elm.removeClass('ng-hide');
+                    }else{ 
+                        elm.addClass('ng-hide');
+                    }
+                }); 
+            }
+        }; 
+    }]);
+
     return app;
 });
 
