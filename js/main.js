@@ -55,8 +55,54 @@ define("app", ["client", "ng-csv"], function(client) {
         }; 
     }]);
 
+
+    //Cacheable organisation-user data for all pages
+    app.factory('org', function($http, $q) {
+        var requestUri = 'http://localhost:8000';
+        var userUri = requestUri + '/api/Organisation/?id=#id&method=get_extented_accounts';
+        var orgUri = requestUri + '/api/Organisation/?method=get_tops';
+        var organisations = [], users = {};
+        
+        function _getUsersOf(orgId) {
+            var deferred = $q.defer();
+            if (orgId in users) {
+                deferred.resolve(users[orgId]);
+            } else { 
+                $http.get(userUri.replace("#id", orgId)).then(function(response) {
+                    users[orgId] = response.data;
+                    deferred.resolve(users[orgId]);
+                });
+            }
+            return deferred.promise;
+        }
+        return {
+            getOrganisations: function() {
+                var deferred = $q.defer();
+                if (organisations.length) {
+                    deferred.resolve(organisations);
+                } else {
+                    $http.get(orgUri).then(function(response) { 
+                        organisations = response.data;  
+                        deferred.resolve(organisations); 
+                        for(var i = 0 ; i < organisations.length; i++){  
+                           _getUsersOf(organisations[i].pk);
+                        }  
+                    });
+                }
+                return deferred.promise;
+            }, 
+            getAllUsers: function() {
+                var deferred = $q.defer();
+                deferred.resolve(users);
+                return deferred.promise;
+            } 
+        }
+    }); 
+
     return app;
 });
+
+
 
 require(["app", "menu", "identity/crm", "hpc/hpc"],
     function (app) {

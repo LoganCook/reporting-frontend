@@ -19,7 +19,7 @@
                 <div class="col-md-3">
                     <p>Start Date</p>
                     <p class="input-group">
-                        <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="rangeStart" is-open="rangeStartOpen" showWeeks="false" datepicker-options="dateOptions" ng-required="true"/>
+                        <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="rangeStart" is-open="rangeStartOpen" showWeeks="false" datepicker-options="dateOptions" ng-required="true" onkeydown="return false"/>
                         <span class="input-group-btn">
                             <button type="button" class="btn btn-default" ng-click="openRangeStart()"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
@@ -30,7 +30,7 @@
                 <div class="col-md-3">
                     <p>End Date</p>
                     <p class="input-group">
-                        <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="rangeEnd" is-open="rangeEndOpen" showWeeks="false" datepicker-options="dateOptions" ng-required="true"/>
+                        <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="rangeEnd" is-open="rangeEndOpen" showWeeks="false" datepicker-options="dateOptions" ng-required="true" onkeydown="return false"/>
                         <span class="input-group-btn">
                             <button type="button" class="btn btn-default" ng-click="openRangeEnd()"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
@@ -54,12 +54,12 @@
                 <div class="col-md-12">
                     <p class="text-center">
                         <label class="checkbox-inline"> 
-                            <input type="checkbox" ng-model="allQueusSelected">All Queues
+                            <input type="checkbox" ng-model="allQueusSelected" ng-change="selectAllQueues()">All Queues
                         </label>                    
                     </p>
                     <div class="form-group text-center">
                         <label class="checkbox-inline" ng-repeat="(qID, q) in queue">
-                            <input type="checkbox" ng-checked="allQueusSelected" ng-model="selectedQueues[qID]">{{ q.name }}
+                            <input type="checkbox" ng-change='onChangeQueu(qID)' ng-init="selectedQueues[qID] = true" ng-model="selectedQueues[qID]">{{ q.name }}
                         </label>
                     </div>
                 </div>
