@@ -7,26 +7,9 @@ define(["app", "lodash", "../util"], function(app, _, util) {
         $scope.formatTimestamp = util.formatTimestamp;
         $scope.formatNumber = util.formatNumber;
         $scope.formatDuration = util.formatDuration;
-
-
-        $scope.dateOptions = {
-            //dateDisabled: true, 
-            maxDate: new Date() 
-        };
-        
-        var startDate = new Date();
-        startDate.setMonth(startDate.getMonth() -1);
-        $scope.rangeStart = startDate;
-        $scope.rangeStartOpen = false;
-        $scope.openRangeStart = function() {
-            $scope.rangeStartOpen = true;
-        };
-
-        $scope.rangeEnd = new Date();
-        $scope.rangeEndOpen = false;
-        $scope.openRangeEnd = function() {
-            $scope.rangeEndOpen = true;
-        };
+         
+        $scope.rangeStart = '';
+        $scope.rangeEnd = '';
         
         $scope.details = {};
         $scope.selectedQueues = {};
@@ -156,7 +139,7 @@ define(["app", "lodash", "../util"], function(app, _, util) {
             $scope.jobSummary = _.values(_jobSummary);
         };
 
-        $scope.exportSummary = function() {
+        $scope.export = function() {
             data = [
                 ["Full Name", "Organisation", "Username", "Email", "Job Count", "Core Hours"]
             ];
@@ -216,7 +199,7 @@ define(["app", "lodash", "../util"], function(app, _, util) {
             return true;
         };
         
-        $scope.loadJobs = function() {
+        $scope.load = function() {
             if(!validateJobs()){
                 return;
             }
@@ -334,7 +317,7 @@ define(["app", "lodash", "../util"], function(app, _, util) {
                 }
             }
             $scope.allQueusSelected = allQueusSelected;
-        }     
-           
+        }
+         
     }]);   
 });

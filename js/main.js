@@ -55,7 +55,70 @@ define("app", ["client", "ng-csv"], function(client) {
             }
         }; 
     }]);
+ 
 
+    //Global search form for all pages
+    app.directive('ersaSearch',  function (){
+        return {                          
+            restrict: "AE",   
+            controller: function ($scope, $element, $attrs, $transclude) {
+ 
+                $scope.dateOptions = {
+                    //dateDisabled: true, 
+                    maxDate: new Date() 
+                };             
+                 
+                if(!angular.isDefined($scope.load)){   
+                    alert('load function is not defined ..');
+                }
+                if(!angular.isDefined($scope.export)){   
+                    alert('export function is not defined ..');
+                }
+                
+                if(!angular.isDefined($scope.rangeStart)){   
+                    alert('rangeStart is not defined ..');
+                }else if($scope.rangeStart == ''){ 
+                    var startDate = new Date();
+                    startDate.setMonth(startDate.getMonth() -1);
+                    $scope.rangeStart = startDate;
+                }
+                  
+                if(!angular.isDefined($scope.rangeEnd)){   
+                    alert('rangeEnd is not defined');
+                }else if($scope.rangeEnd == ''){ 
+                    $scope.rangeEnd = new Date();
+                }
+                
+                if(!angular.isDefined($scope.openRangeStart)){  
+                    $scope.rangeStartOpen = false;
+                    $scope.openRangeStart = function() {
+                        $scope.rangeStartOpen = true;
+                    };
+                } 
+                
+                if(!angular.isDefined($scope.openRangeEnd)){   
+                    $scope.rangeEndOpen = false;
+                    $scope.openRangeEnd = function() {
+                        $scope.rangeEndOpen = true;
+                    }; 
+                }
+                
+                
+                
+                if(angular.isDefined($attrs.startDateClass)){ 
+                    $scope.startDateClassName = $attrs.startDateClass; 
+                }
+                if(angular.isDefined($attrs.endDateClass)){ 
+                    $scope.endDateClassName = $attrs.endDateClass; 
+                }
+                if(angular.isDefined($attrs.buttonClass)){ 
+                    $scope.buttonClassName = $attrs.buttonClass; 
+                }  
+            },   
+            templateUrl: 'template/directives/ersa-search.html'
+        }; 
+    });
+     
 
     //Cacheable organisation-user data for all pages
     app.factory('org', function($http, $q) {

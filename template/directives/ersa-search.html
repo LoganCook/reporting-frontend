@@ -1,0 +1,35 @@
+ 
+
+    <div class={{!startDateClassName?"col-md-3":startDateClassName}}>
+        <p>Start Date</p>
+        <p class="input-group">
+            <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="rangeStart" is-open="rangeStartOpen" showWeeks="false" datepicker-options="dateOptions" ng-required="true" onkeydown="return false"/>
+            <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="openRangeStart()"><i class="glyphicon glyphicon-calendar"></i></button>
+            </span>
+        </p>
+        <span ng-show="rangeStart.$error.invalidDate">Invalid start date.</span>
+    </div>
+
+    <div class={{!endDateClassName?"col-md-3":endDateClassName}}>
+        <p>End Date</p>
+        <p class="input-group">
+            <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="rangeEnd" is-open="rangeEndOpen" showWeeks="false" datepicker-options="dateOptions" ng-required="true" onkeydown="return false"/>
+            <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="openRangeEnd()"><i class="glyphicon glyphicon-calendar"></i></button>
+            </span>
+        </p>
+    </div>
+
+    <div class={{!buttonClassName?"col-md-3":buttonClassName}}>
+        <p>{{ status }}</p>
+        <div class="btn-group btn-group-justified" role="group">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-default" ng-click="load()">Update</button>
+            </div>
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-default" ng-csv="export()" field-separator="\t" filename="hpc.tsv">Export as TSV</button>
+            </div>
+        </div>
+    </div>
+                 
