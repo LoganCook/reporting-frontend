@@ -9,7 +9,8 @@ require.config({
       "moment": '/lib/moment/min/moment.min',
       "numeral": '/lib/numeral/min/numeral.min',
       "loadingSpinner": '/lib/angular-spinner/angular-spinner.min',
-      'qs': '/node_modules/qs/dist/qs'
+      'qs': '/node_modules/qs/dist/qs',
+      'ngGoogleChart': '/lib/angular-google-chart/ng-google-chart.min.js'
   },
   shim: {
       "ng-csv": { exports: "ng-csv" }
@@ -27,7 +28,7 @@ require(["debug-settings"], function(d) {
 });
 
 define("app", ["client", "ng-csv"], function(client) {
-    var app = angular.module("reportingApp", ["ngSanitize", "ui.router", "ui.bootstrap", "ngResource", "ngCsv", "angularSpinner"]);
+    var app = angular.module("reportingApp", ["ngSanitize", "ui.router", "ui.bootstrap", "ngResource", "ngCsv", "angularSpinner", "googlechart"]);
     app.factory("reporting", ["$timeout", client]);
     app.config(['$resourceProvider', function($resourceProvider) {
       // Don't strip trailing slashes from calculated URLs to make Django URLs work
