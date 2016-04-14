@@ -1,302 +1,312 @@
-var _ = require("lodash");
-var math = require("mathjs");
-var util = require("../util");
+define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
+    app.controller("XFSController", ["$rootScope", "$scope", "$timeout", "reporting", "$uibModal", "org",
+    function($rootScope, $scope, $timeout, reporting, $uibModal, org) {
 
-module.exports = function ($rootScope, $scope, $timeout, reporting) {
-    $scope.values = _.values;
+        $scope.values = _.values;
 
-    $scope.formatTimestamp = util.formatTimestamp;
-    $scope.formatNumber = util.formatNumber;
-    $scope.formatDuration = util.formatDuration;
-    $scope.formatSize = util.formatSize;
-    $scope.basename = util.basename;
+        $scope.formatTimestamp = util.formatTimestamp;
+        $scope.formatNumber = util.formatNumber;
+        $scope.formatDuration = util.formatDuration;
+        $scope.formatSize = util.formatSize;
+        $scope.basename = util.basename;
 
-    $scope.rangeStart = new Date();
-    $scope.rangeStartOpen = false;
-    $scope.openRangeStart = function() {
-        $scope.rangeStartOpen = true;
-    };
-
-    $scope.rangeEnd = new Date();
-    $scope.rangeEndOpen = false;
-    $scope.openRangeEnd = function() {
-        $scope.rangeEndOpen = true;
-    };
-
-    $scope.select = {
-        host: null,
-        crm: null,
-        filesystem: null,
-        snapshot: null
-    };
-
-    $scope.crm = {};
-    $scope.xfs = {};
-
-    $scope.output = {
-        usage: [],
-        summed: []
-    };
-
-    var baseQuery = function() {
-        return {
-            count: 25000,
-            page: 1
+        $scope.rangeStart = new Date();
+        $scope.rangeStartOpen = false;
+        $scope.openRangeStart = function() {
+            $scope.rangeStartOpen = true;
         };
-    };
 
-    var xfs = {};
+        $scope.rangeEnd = new Date();
+        $scope.rangeEndOpen = false;
+        $scope.openRangeEnd = function() {
+            $scope.rangeEndOpen = true;
+        };
 
-    var initXFS = function() {
-        reporting.xfsBase(function(svc, type, data) {
-            xfs[type] = $scope.xfs[type] = util.keyArray(data);
+        $scope.select = {
+            host: null,
+            crm: null,
+            filesystem: null,
+            snapshot: null
+        };
 
-            if (type == "snapshot") {
-                xfs.snapshotByTimestamp = $scope.xfs.snapshotByTimestamp = util.keyArray(data, "ts");
-            }
-        });
-    };
+        $scope.crm = {};
+        $scope.xfs = {};
 
-    var initCRM = function() {
-        reporting.crmBase(function(svc, type, data) {
-            if (type == "username") {
-                $scope.crm[type] = util.keyArray(data, "username");
-            } else {
-                $scope.crm[type] = util.keyArray(data);
-            }
-        });
-    };
+        $scope.output = {
+            usage: [],
+            summed: []
+        };
 
-    var clear = function() {
-        $scope.raw = [];
-        $scope.output.usage = [];
-        $scope.output.summed = [];
+        var baseQuery = function() {
+            return {
+                count: 25000,
+                page: 1
+            };
+        };
 
-        $scope.status = "No data loaded.";
-    };
+        var xfs = {};
 
-    initCRM();
-    initXFS();
+        var initXFS = function() {
+            reporting.xfsBase(function(svc, type, data) {
+                xfs[type] = $scope.xfs[type] = util.keyArray(data);
 
-    clear();
-
-    $scope.selectHost = function() {
-        clear();
-
-        $scope.select.filesystem = null;
-
-        if ($scope.select.host) {
-            ["filesystem", "snapshot"].forEach(function(type) {
-                $scope.xfs[type] = {};
-                for (var key in xfs[type]) {
-                    if (xfs[type][key].host == $scope.select.host) {
-                        $scope.xfs[type][key] = xfs[type][key];
-                    }
+                if (type == "snapshot") {
+                    xfs.snapshotByTimestamp = $scope.xfs.snapshotByTimestamp = util.keyArray(data, "ts");
                 }
             });
-        }
-    };
+        };
 
-    var processUsage = function(svc, type, query, data) {
-        if (data && data.length > 0) {
-            $scope.status = "Loaded " + data.length + " usage records.";
+        var initCRM = function() {
+            reporting.crmBase(function(svc, type, data) {
+                if (type == "username") {
+                    $scope.crm[type] = util.keyArray(data, "username");
+                } else {
+                    $scope.crm[type] = util.keyArray(data);
+                }
+            });
+        };
 
+        var clear = function() {
+            $scope.raw = [];
             $scope.output.usage = [];
+            $scope.output.summed = [];
 
-            data.forEach(function(entry) {
-                if (entry.usage === 0) {
+            $scope.status = "No data loaded.";
+        };
+
+        initCRM();
+        initXFS();
+
+        clear();
+
+        $scope.selectHost = function() {
+            clear();
+
+            $scope.select.filesystem = '';
+
+            if ($scope.select.host) {
+                ["filesystem", "snapshot"].forEach(function(type) {
+                    $scope.xfs[type] = {};
+                    for (var key in xfs[type]) {
+                        if (xfs[type][key].host == $scope.select.host) {
+                            $scope.xfs[type][key] = xfs[type][key];
+                        }
+                    }
+                });
+            }
+        };
+
+        var processUsage = function(svc, type, query, data) {
+            if (data && data.length > 0) {
+                $scope.status = "Loaded " + data.length + " usage records.";
+
+                $scope.output.usage = [];
+
+                data.forEach(function(entry) {
+                    if (entry.usage === 0) {
+                        return;
+                    }
+
+                    entry.username = "?";
+
+                    if (entry.owner in $scope.xfs.owner) {
+                        ["soft", "hard", "usage"].forEach(function(key) {
+                            entry[key] *= 1024;
+                        });
+
+                        entry.username = $scope.xfs.owner[entry.owner].name;
+                        entry.fullname = "";
+                        entry.organisation = "";
+
+                        reporting.populateFromUsername($scope.select.crm, entry);
+                    }
+
+                    $scope.output.usage.push(entry);
+                });
+            }
+        };
+
+        var processUsageRange = function(svc, type, query, data) {
+            if (data && data.length > 0) {
+                Array.prototype.push.apply($scope.raw, data);
+
+                $scope.status = "Loaded " + $scope.raw.length + " usage records.";
+
+                var next = util.nextPage(query);
+
+                reporting.xfsQuery("usage", next, processUsageRange);
+            } else {
+                $scope.status = "Usage records: " + $scope.raw.length + ". Snapshots: " + $scope.select.snapshots.length + ".";
+
+                if ($scope.raw.length === 0) {
                     return;
                 }
 
-                entry.username = "?";
+                var t1 = util.dayStart($scope.rangeStart);
+                var t2 = util.dayEnd($scope.rangeEnd);
 
-                if (entry.owner in $scope.xfs.owner) {
-                    ["soft", "hard", "usage"].forEach(function(key) {
-                        entry[key] *= 1024;
-                    });
+                var weights = util.durationWeight(t1, t2, $scope.select.timestamps);
 
-                    entry.username = $scope.xfs.owner[entry.owner].name;
-                    entry.fullname = "";
-                    entry.organisation = "";
+                var summed = {};
 
-                    reporting.populateFromUsername($scope.select.crm, entry);
-                }
+                _.forEach($scope.raw, function(record) {
+                    if (!(record.owner in summed)) {
+                        console.log(record);
+                        summed[record.owner] = {
+                            username: $scope.xfs.owner[record.owner].name,
+                            fullname: "",
+                            organisation: "",
+                            usage: 0,
+                            peak: 0
+                        };
 
-                $scope.output.usage.push(entry);
-            });
-        }
-    };
+                        reporting.populateFromUsername($scope.select.crm, summed[record.owner]);
+                    }
 
-    var processUsageRange = function(svc, type, query, data) {
-        if (data && data.length > 0) {
-            Array.prototype.push.apply($scope.raw, data);
+                    record.usage *= 1024;
 
-            $scope.status = "Loaded " + $scope.raw.length + " usage records.";
+                    var userSum = summed[record.owner];
 
-            var next = util.nextPage(query);
+                    var snapshot = $scope.xfs.snapshot[record.snapshot];
 
-            reporting.xfsQuery("usage", next, processUsageRange);
-        } else {
-            $scope.status = "Usage records: " + $scope.raw.length + ". Snapshots: " + $scope.select.snapshots.length + ".";
+                    var weightedUsage = weights[snapshot.ts] * record.usage;
 
-            if ($scope.raw.length === 0) {
-                return;
+                    userSum.usage += weightedUsage;
+
+                    if (record.usage > userSum.peak) {
+                        userSum.peak = record.usage;
+                    }
+                });
+
+                $scope.output.summed = _.values(summed).filter(function(entry) {
+                    return entry.usage > 0;
+                });
             }
+        };
 
+        $scope.loadUsageSnapshot = function() {
+            var filter = {};
+            if ($scope.select.filesystem == '' ) { 
+                filter = {filter: ["snapshot.eq." + $scope.select.snapshot]};
+            }else{
+                filter = {filter: ["snapshot.eq." + $scope.select.snapshot,"filesystem.eq." + $scope.select.filesystem]};
+            }
+            
+            var query = _.merge(baseQuery(), filter);
+
+            clear();
+
+            $scope.status = "Loading ...";
+
+            reporting.xfsQuery("usage", query, processUsage);
+        };
+
+        $scope.loadUsageRange = function() {
             var t1 = util.dayStart($scope.rangeStart);
             var t2 = util.dayEnd($scope.rangeEnd);
 
-            var weights = util.durationWeight(t1, t2, $scope.select.timestamps);
+            var snapshots = _.filter(_.values($scope.xfs.snapshot), function(snapshot) {
+                return (snapshot.ts >= t1) && (snapshot.ts < t2);
+            });
 
-            var summed = {};
+            // Take a sample of snapshots to keep things manageable. Sort by UUID (which
+            // is consistent and pseudorandom) and grab the first N (snapshotLimit).
 
-            _.forEach($scope.raw, function(record) {
-                if (!(record.owner in summed)) {
-                    console.log(record);
-                    summed[record.owner] = {
-                        username: $scope.xfs.owner[record.owner].name,
-                        fullname: "",
-                        organisation: "",
-                        usage: 0,
-                        peak: 0
-                    };
+            var days = (t2 - t1) / (24 * 60 * 60);
+            var snapshotLimit = Math.max(250, days);
 
-                    reporting.populateFromUsername($scope.select.crm, summed[record.owner]);
-                }
-
-                record.usage *= 1024;
-
-                var userSum = summed[record.owner];
-
-                var snapshot = $scope.xfs.snapshot[record.snapshot];
-
-                var weightedUsage = weights[snapshot.ts] * record.usage;
-
-                userSum.usage += weightedUsage;
-
-                if (record.usage > userSum.peak) {
-                    userSum.peak = record.usage;
+            snapshots.sort(function(s1, s2) {
+                if (s1.id > s2.id) {
+                    return 1;
+                } else if (s1.id < s2.id) {
+                    return -1;
+                } else {
+                    return 0;
                 }
             });
 
-            $scope.output.summed = _.values(summed).filter(function(entry) {
-                return entry.usage > 0;
+            snapshots = snapshots.slice(0, snapshotLimit);
+
+            var timestamps = snapshots.map(function(s) { return s.ts; });
+
+            var earlierSnapshots = _.values($scope.xfs.snapshot).filter(function(s) {
+                return s.ts < t1;
             });
-        }
-    };
 
-    $scope.loadUsageSnapshot = function() {
-        var query = _.merge(baseQuery(), {
-            filter: [
-                "snapshot.eq." + $scope.select.snapshot,
-                "filesystem.eq." + $scope.select.filesystem
-            ]
-        });
+            if (earlierSnapshots.length > 0) {
+                earlierSnapshots = util.keyArray(earlierSnapshots, "ts");
 
-        clear();
+                var ts = math.max(_.keys(earlierSnapshots).map(function(i) { return parseInt(i); }));
 
-        $scope.status = "Loading ...";
-
-        reporting.xfsQuery("usage", query, processUsage);
-    };
-
-    $scope.loadUsageRange = function() {
-        var t1 = util.dayStart($scope.rangeStart);
-        var t2 = util.dayEnd($scope.rangeEnd);
-
-        var snapshots = _.filter(_.values($scope.xfs.snapshot), function(snapshot) {
-            return (snapshot.ts >= t1) && (snapshot.ts < t2);
-        });
-
-        // Take a sample of snapshots to keep things manageable. Sort by UUID (which
-        // is consistent and pseudorandom) and grab the first N (snapshotLimit).
-
-        var days = (t2 - t1) / (24 * 60 * 60);
-        var snapshotLimit = Math.max(250, days);
-
-        snapshots.sort(function(s1, s2) {
-            if (s1.id > s2.id) {
-                return 1;
-            } else if (s1.id < s2.id) {
-                return -1;
-            } else {
-                return 0;
+                snapshots.push(earlierSnapshots[ts]);
+                timestamps.push(ts);
             }
-        });
 
-        snapshots = snapshots.slice(0, snapshotLimit);
+            $scope.select.snapshots = snapshots;
+            $scope.select.timestamps = math.sort(timestamps);
 
-        var timestamps = snapshots.map(function(s) { return s.ts; });
+            if (snapshots.length === 0) {
+                $scope.status = "No snapshots in that range.";
+                return;
+            }
 
-        var earlierSnapshots = _.values($scope.xfs.snapshot).filter(function(s) {
-            return s.ts < t1;
-        });
+            var query = baseQuery();
+             
+            if ($scope.select.filesystem == '' ) { 
+                query.filter = [
+                    "snapshot.in." + snapshots.map(function(s) { return s.id; }).join(",") 
+                ];
+            }else{
+                query.filter = [
+                    "snapshot.in." + snapshots.map(function(s) { return s.id; }).join(","),
+                    "filesystem.eq." + filesystemEq 
+                ]; 
+            }
+            
 
-        if (earlierSnapshots.length > 0) {
-            earlierSnapshots = util.keyArray(earlierSnapshots, "ts");
+            clear();
 
-            var ts = math.max(_.keys(earlierSnapshots).map(function(i) { return parseInt(i); }));
+            $scope.status = "Loading ...";
+            $scope.jobCount = 0;
 
-            snapshots.push(earlierSnapshots[ts]);
-            timestamps.push(ts);
-        }
+            reporting.xfsQuery("usage", query, processUsageRange);
+        };
 
-        $scope.select.snapshots = snapshots;
-        $scope.select.timestamps = math.sort(timestamps);
+        $scope.exportUsage = function() {
+            data = [
+                ["Full Name", "Organisation", "Username", "Usage (GB)", "Soft Quota (GB)", "Hard Quota (GB)"]
+            ];
 
-        if (snapshots.length === 0) {
-            $scope.status = "No snapshots in that range.";
-            return;
-        }
+            _.forEach($scope.output.usage, function(entry) {
+                data.push([
+                    entry.fullname,
+                    entry.organisation,
+                    entry.username,
+                    entry.usage / (1024 * 1024 * 1024),
+                    entry.soft / (1024 * 1024 * 1024),
+                    entry.hard / (1024 * 1024 * 1024)
+                ]);
+            });
 
-        var query = baseQuery();
-        query.filter = [
-            "snapshot.in." + snapshots.map(function(s) { return s.id; }).join(","),
-            "filesystem.eq." + $scope.select.filesystem
-        ];
+            return data;
+        };
 
-        clear();
+        $scope.exportUsageRange = function() {
+            data = [
+                ["Full Name", "Organisation", "Username", "Usage (Weighted Mean, GB)", "Usage (Peak, GB)"]
+            ];
 
-        $scope.status = "Loading ...";
-        $scope.jobCount = 0;
+            _.forEach($scope.output.summed, function(entry) {
+                data.push([
+                    entry.fullname,
+                    entry.organisation,
+                    entry.username,
+                    entry.usage / (1024 * 1024 * 1024),
+                    entry.peak / (1024 * 1024 * 1024)
+                ]);
+            });
 
-        reporting.xfsQuery("usage", query, processUsageRange);
-    };
-
-    $scope.exportUsage = function() {
-        data = [
-            ["Full Name", "Organisation", "Username", "Usage (GB)", "Soft Quota (GB)", "Hard Quota (GB)"]
-        ];
-
-        _.forEach($scope.output.usage, function(entry) {
-            data.push([
-                entry.fullname,
-                entry.organisation,
-                entry.username,
-                entry.usage / (1024 * 1024 * 1024),
-                entry.soft / (1024 * 1024 * 1024),
-                entry.hard / (1024 * 1024 * 1024)
-            ]);
-        });
-
-        return data;
-    };
-
-    $scope.exportUsageRange = function() {
-        data = [
-            ["Full Name", "Organisation", "Username", "Usage (Weighted Mean, GB)", "Usage (Peak, GB)"]
-        ];
-
-        _.forEach($scope.output.summed, function(entry) {
-            data.push([
-                entry.fullname,
-                entry.organisation,
-                entry.username,
-                entry.usage / (1024 * 1024 * 1024),
-                entry.peak / (1024 * 1024 * 1024)
-            ]);
-        });
-
-        return data;
-    };
-};
+            return data;
+        };
+    }]);   
+});

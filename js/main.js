@@ -236,7 +236,7 @@ define("app", ["client", "ng-csv"], function(client) {
 
 
 
-require(["app", "menu", "identity/crm", "hpc/hpc"],
+require(["app", "menu", "identity/crm", "hpc/hpc", "storage/xfs"],
     function (app) {
         require(["route"], function(route) {
             app.config(["$stateProvider", "$urlRouterProvider", route]);

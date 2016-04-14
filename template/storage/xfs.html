@@ -85,7 +85,8 @@
                     <p>{{ status }}</p>
                     <div class="btn-group btn-group-justified" role="group">
                         <div class="btn-group" role="group">
-                            <button class="btn btn-default" ng-click="loadUsageRange()" ng-disabled="!(select.host && select.crm && select.filesystem)" type="button">Update</button>
+                            <!-- button class="btn btn-default" ng-click="loadUsageRange()" ng-disabled="!(select.host && select.crm && select.filesystem)" type="button">Update</button -->
+                            <button class="btn btn-default" ng-click="loadUsageRange()" ng-disabled="!(select.host)" type="button">Update</button>
                         </div>
                         <div class="btn-group" role="group">
                             <button class="btn btn-default" field-separator="\t" filename="xfs.tsv" ng-csv="exportUsageRange()" type="button">Export as TSV</button>
@@ -94,7 +95,8 @@
                 </div>
             </div>
 
-            <div class="row" ng-show="select.host && select.crm && select.filesystem" style="padding-top: 25px;">
+            <!-- div class="row" ng-show="select.host && select.crm && select.filesystem" style="padding-top: 25px;" -->
+            <div class="row" ng-show="select.host" style="padding-top: 25px;">
                 <div class="col-md-12">
                     <table class="table table-striped">
                         <tr>

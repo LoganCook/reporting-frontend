@@ -168,16 +168,16 @@ return function($timeout) {
             }
         }
 
-        if (!(object.username in top.crmLookup.username)) {
+/*        if (!(object.username in top.crmLookup.username)) {
             object.fullname = "?";
             object.organisation = "?";
-        } else {
-            var usernameID = top.crmLookup.username[object.username].id;
+        } else {*/
+            //var usernameID = top.crmLookup.username[object.username].id;
 
             var usernameFilters = {
                 filter: [
-                    "snapshot.eq." + snapshot,
-                    "username.eq." + usernameID
+                    "snapshot.eq." + snapshot//,
+                    //"username.eq." + usernameID
                 ]
             };
 
@@ -212,7 +212,7 @@ return function($timeout) {
                     object.fullname = "?";
                 }
             });
-        }
+        //}
     };
 
     return service;
