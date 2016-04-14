@@ -4,12 +4,12 @@ define(["app", "lodash", "../util"], function(app, _, util) {
 
         $scope.values = _.values;
 
+        /**
+         * Below 3 variables is used in vew list.
+         */
         $scope.formatTimestamp = util.formatTimestamp;
         $scope.formatNumber = util.formatNumber;
-        $scope.formatDuration = util.formatDuration;
-         
-        $scope.rangeStart = '';
-        $scope.rangeEnd = '';
+        $scope.formatDuration = util.formatDuration; 
         
         $scope.details = {};
         $scope.selectedQueues = {};
@@ -139,6 +139,9 @@ define(["app", "lodash", "../util"], function(app, _, util) {
             $scope.jobSummary = _.values(_jobSummary);
         };
 
+        /**
+         * This function is called from _export() in ersa-search directive
+         */
         $scope.export = function() {
             data = [
                 ["Full Name", "Organisation", "Username", "Email", "Job Count", "Core Hours"]
@@ -191,29 +194,22 @@ define(["app", "lodash", "../util"], function(app, _, util) {
             //    $scope.alerts.push({type: 'danger',msg: 'Please select an Organisation!'}); 
             //    return false;
             //}
-            
-            if ($scope.rangeStart > $scope.rangeEnd) {
-                $scope.alerts.push({type: 'danger',msg: "Start date invalid"}); 
-                return false;
-            }  
+             
             return true;
         };
-        
-        $scope.load = function() {
+
+        /**
+         * This function is called from _load() in ersa-search directive
+         * arg : rangeEpochFilter - filter:["end.ge.1459953000", "end.lt.1460039400"]
+         */        
+        $scope.load = function(rangeEpochFilter) {
             if(!validateJobs()){
                 return;
             }
             
-            $scope.selectedOrg = '';
-            $scope.rangeStartEpoch = util.dayStart($scope.rangeStart);
-            $scope.rangeEndEpoch = util.dayEnd($scope.rangeEnd);
+            $scope.selectedOrg = ''; 
 
-            var query = _.merge(baseFilters(), {
-                filter: [
-                    "end.ge." + $scope.rangeStartEpoch,
-                    "end.lt." + $scope.rangeEndEpoch
-                ]
-            });
+            var query = _.merge(baseFilters(), rangeEpochFilter);
             //query : {count:25000, page:1, filter:["end.ge.1459953000", "end.lt.1460039400"]}
  
             var queueQuery = []; 

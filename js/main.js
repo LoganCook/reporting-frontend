@@ -66,8 +66,12 @@ define("app", ["client", "ng-csv"], function(client) {
                 $scope.dateOptions = {
                     //dateDisabled: true, 
                     maxDate: new Date() 
-                };             
-                 
+                };
+                             
+                /**
+                 * Initialize start and end data.
+                 * Each controller can still set up start and end date.
+                 */
                 if(!angular.isDefined($scope.load)){   
                     alert('load function is not defined ..');
                 }
@@ -75,17 +79,13 @@ define("app", ["client", "ng-csv"], function(client) {
                     alert('export function is not defined ..');
                 }
                 
-                if(!angular.isDefined($scope.rangeStart)){   
-                    alert('rangeStart is not defined ..');
-                }else if($scope.rangeStart == ''){ 
+                if(!angular.isDefined($scope.rangeStart)){    
                     var startDate = new Date();
                     startDate.setMonth(startDate.getMonth() -1);
                     $scope.rangeStart = startDate;
                 }
                   
                 if(!angular.isDefined($scope.rangeEnd)){   
-                    alert('rangeEnd is not defined');
-                }else if($scope.rangeEnd == ''){ 
                     $scope.rangeEnd = new Date();
                 }
                 
@@ -104,7 +104,9 @@ define("app", ["client", "ng-csv"], function(client) {
                 }
                 
                 
-                
+                /**
+                 * If each class is defined , assigne to 
+                 */
                 if(angular.isDefined($attrs.startDateClass)){ 
                     $scope.startDateClassName = $attrs.startDateClass; 
                 }
@@ -113,7 +115,73 @@ define("app", ["client", "ng-csv"], function(client) {
                 }
                 if(angular.isDefined($attrs.buttonClass)){ 
                     $scope.buttonClassName = $attrs.buttonClass; 
-                }  
+                }
+                
+
+                /**
+                 * start Util fuctions 
+                 */
+                getSearchDateFilter = function(scope) {
+                    
+                    if (scope.rangeStart > scope.rangeEnd) {
+                        scope.alerts.push({type: 'danger',msg: "Start date invalid"}); 
+                        return '';
+                    }          
+                    
+                    var rangeStartEpoch = this.dayStart(scope.rangeStart);
+                    var rangeEndEpoch = this.dayEnd(scope.rangeEnd);
+                    
+                    var filter =  {
+                            filter: [
+                                "end.ge." + rangeStartEpoch,
+                                "end.lt." + rangeEndEpoch
+                            ]
+                        }; 
+                    return filter;
+                }
+
+                dayStart = function(ts) {
+                    var modified = new Date(ts);
+
+                    modified.setHours(0);
+                    modified.setMinutes(0);
+                    modified.setSeconds(0);
+                    modified.setMilliseconds(0);
+
+                    return Math.round(modified.getTime() / 1000);
+                }
+
+                dayEnd = function(ts) {
+                    var modified = new Date(ts);
+
+                    modified.setHours(23);
+                    modified.setMinutes(59);
+                    modified.setSeconds(59);
+                    modified.setMilliseconds(999);
+
+                    return Math.round(modified.getTime() / 1000);
+                }
+                
+                /**
+                 * end Util fuctions 
+                 */
+                
+                /** 
+                 * Wrapping functions
+                 */
+                $scope._load = function() {
+                    console.log("called _load..");
+                    var rangeEpochFilter = getSearchDateFilter($scope);
+                    if(rangeEpochFilter == ''){
+                        return;
+                    } 
+            
+                    $scope.load(rangeEpochFilter);
+                } 
+                
+                $scope._export = function() {  
+                    return $scope.export();
+                }
             },   
             templateUrl: 'template/directives/ersa-search.html'
         }; 
