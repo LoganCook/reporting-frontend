@@ -9,19 +9,9 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         $scope.formatDuration = util.formatDuration;
         $scope.formatSize = util.formatSize;
         $scope.basename = util.basename;
+ 
 
-        $scope.rangeStart = new Date();
-        $scope.rangeStartOpen = false;
-        $scope.openRangeStart = function() {
-            $scope.rangeStartOpen = true;
-        };
-
-        $scope.rangeEnd = new Date();
-        $scope.rangeEndOpen = false;
-        $scope.openRangeEnd = function() {
-            $scope.rangeEndOpen = true;
-        };
-
+        $scope.alerts = []; 
         $scope.select = {
             host: null,
             crm: null,
@@ -201,7 +191,22 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             reporting.xfsQuery("usage", query, processUsage);
         };
 
-        $scope.loadUsageRange = function() {
+        //$scope.loadUsageRange = function() {
+        $scope.load = function(rangeEpochFilter) { 
+            $scope.alerts = [];
+            if (!($scope.select.host)) {
+                $scope.alerts.push({type: 'danger',msg: "Please select Host!"}); 
+                return false;
+            }          
+/*            if (!($scope.select.crm)) {
+                $scope.alerts.push({type: 'danger',msg: "Please select CRM!"}); 
+                return false;
+            }   */
+            if (!($scope.select.filesystem)) {
+                $scope.alerts.push({type: 'danger',msg: "Please select Fileysystem!"}); 
+                return false;
+            }                             
+            
             var t1 = util.dayStart($scope.rangeStart);
             var t2 = util.dayEnd($scope.rangeEnd);
 
@@ -259,7 +264,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             }else{
                 query.filter = [
                     "snapshot.in." + snapshots.map(function(s) { return s.id; }).join(","),
-                    "filesystem.eq." + filesystemEq 
+                    "filesystem.eq." + $scope.select.filesystem 
                 ]; 
             }
             
@@ -291,7 +296,8 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             return data;
         };
 
-        $scope.exportUsageRange = function() {
+        //$scope.exportUsageRange = function() {
+        $scope.export = function() {
             data = [
                 ["Full Name", "Organisation", "Username", "Usage (Weighted Mean, GB)", "Usage (Peak, GB)"]
             ];
@@ -308,5 +314,6 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
 
             return data;
         };
+         
     }]);   
 });

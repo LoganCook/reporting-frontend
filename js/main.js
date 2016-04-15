@@ -107,6 +107,13 @@ define("app", ["client", "ng-csv"], function(client) {
                 /**
                  * If each class is defined , assigne to 
                  */
+
+                if(!angular.isDefined($attrs.exportFileName)){   
+                    alert('Export File Name is not defined ..');
+                }else{
+                   $scope.exportFileName = $attrs.exportFileName; 
+                }
+                              
                 if(angular.isDefined($attrs.startDateClass)){ 
                     $scope.startDateClassName = $attrs.startDateClass; 
                 }
@@ -169,8 +176,7 @@ define("app", ["client", "ng-csv"], function(client) {
                 /** 
                  * Wrapping functions
                  */
-                $scope._load = function() {
-                    console.log("called _load..");
+                $scope._load = function() { 
                     var rangeEpochFilter = getSearchDateFilter($scope);
                     if(rangeEpochFilter == ''){
                         return;

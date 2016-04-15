@@ -1,6 +1,7 @@
 <div class="container-fluid">
     <h3 class="text-center">XFS</h3>
-
+    <p ng-show="error" class="alert alert-danger">{{ error }}</p>
+    <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
     <div>
         <form>
             <div class="row">
@@ -46,26 +47,11 @@
                     </div>
                 </div>
 
-                <div class="col-md-2">
-                    <p>Start Date</p>
-                    <p class="input-group">
-                        <input type="text" class="form-control" datepicker-popup ng-model="rangeStart" is-open="rangeStartOpen" show-weeks="false" />
-                        <span class="input-group-btn">
-                            <button type="button" class="btn btn-default" ng-click="openRangeStart()">📅</button>
-                        </span>
-                    </p>
-                </div>
-
-                <div class="col-md-2">
-                    <p>End Date</p>
-                    <p class="input-group">
-                        <input type="text" class="form-control" datepicker-popup ng-model="rangeEnd" is-open="rangeEndOpen" show-weeks="false" />
-                        <span class="input-group-btn">
-                            <button type="button" class="btn btn-default" ng-click="openRangeEnd()">📅</button>
-                        </span>
-                    </p>
-                </div>
-
+                <ersa-search 
+                    start-date-class="col-md-2" end-date-class="col-md-2" 
+                    button-class="col-md-2" 
+                    export-file-name="xfs.tsv"
+                />
 
                 <!-- <div class="col-md-2">
                     <p>Usage Snapshot</p>
@@ -81,18 +67,17 @@
                     </div>
                 </div> -->
 
-                <div class="col-md-2">
+                <!--div class="col-md-2">
                     <p>{{ status }}</p>
                     <div class="btn-group btn-group-justified" role="group">
                         <div class="btn-group" role="group">
-                            <!-- button class="btn btn-default" ng-click="loadUsageRange()" ng-disabled="!(select.host && select.crm && select.filesystem)" type="button">Update</button -->
-                            <button class="btn btn-default" ng-click="loadUsageRange()" ng-disabled="!(select.host)" type="button">Update</button>
+                            <button class="btn btn-default" ng-click="loadUsageRange()" ng-disabled="!(select.host && select.crm && select.filesystem)" type="button">Update</button>
                         </div>
                         <div class="btn-group" role="group">
                             <button class="btn btn-default" field-separator="\t" filename="xfs.tsv" ng-csv="exportUsageRange()" type="button">Export as TSV</button>
                         </div>
                     </div>
-                </div>
+                </div-->
             </div>
 
             <!-- div class="row" ng-show="select.host && select.crm && select.filesystem" style="padding-top: 25px;" -->

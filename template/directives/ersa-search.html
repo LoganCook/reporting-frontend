@@ -28,7 +28,7 @@
                 <button type="button" class="btn btn-default" ng-click="_load()">Update</button>
             </div>
             <div class="btn-group" role="group">
-                <button type="button" class="btn btn-default" ng-csv="_export()" field-separator="\t" filename="hpc.tsv">Export as TSV</button>
+                <button type="button" class="btn btn-default" ng-csv="_export()" field-separator="\t" filename={{exportFileName}}>Export as TSV</button>
             </div>
         </div>
     </div>
