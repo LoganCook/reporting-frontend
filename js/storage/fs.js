@@ -1,8 +1,8 @@
-var numeral = require("numeral");
-var moment = require("moment");
-var _ = require("lodash");
-
-module.exports = function ($rootScope, $scope, $timeout, reporting) {
+define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
+    app.controller("FilesystemController", ["$rootScope", "$scope", "$timeout", "reporting", "$uibModal", "org",
+    function($rootScope, $scope, $timeout, reporting, $uibModal, org) {
+ 
+    
     // TODO: replace prehistoric sandbox code
 
     /*
@@ -44,4 +44,6 @@ module.exports = function ($rootScope, $scope, $timeout, reporting) {
         $scope.snapshots = $scope.allSnapshots[$scope.select.fs];
     };
     */
-};
+         
+    }]);   
+});
