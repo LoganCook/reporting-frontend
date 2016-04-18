@@ -315,5 +315,9 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             return data;
         };
          
+        // Alert Util
+        $scope.closeAlert = function(index) {
+            $scope.alerts.splice(index, 1);
+        };
     }]);   
 });

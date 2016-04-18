@@ -131,7 +131,7 @@ define("app", ["client", "ng-csv"], function(client) {
                 getSearchDateFilter = function(scope) {
                     
                     if (scope.rangeStart > scope.rangeEnd) {
-                        scope.alerts.push({type: 'danger',msg: "Start date invalid"}); 
+                        scope.alerts.push({type: 'danger',msg: "Date options is invalid!"}); 
                         return '';
                     }          
                     
