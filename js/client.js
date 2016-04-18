@@ -151,6 +151,18 @@ return function($timeout) {
         loadQuery("keystone", type, query, callback);
     };
 
+    // Nova
+
+    service.novaBase = function(callback) {
+        ["snapshot", "account", "domain", "reference"].forEach(function(type) {
+            load("nova", type, callback);
+        });
+    };
+
+    service.novaQuery = function(type, query, callback) {
+        loadQuery("nova", type, query, callback);
+    };
+
     // Generic
 
     service.populateFromUsername = function(snapshot, object) {

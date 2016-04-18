@@ -2,23 +2,26 @@
     <h3 class="text-center">NeCTAR Virtual Machines (Nova)</h3>
 
     <div>
-        <div class="row">
-            <div class="col-sm-4 col-sm-offset-4">
-
-                <div style="padding-top: 25px;">
-                    <form class="form-horizontal">
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Snapshot</label>
-                            <div class="col-sm-8">
-                                <select class="form-control" ng-change="selectSnapshot()" ng-model="select.ts">
-                                    <option ng-repeat="snap in snapshots" value="{{ snap.id }}">{{ formatTimestamp(snap.ts) }}</option>
-                                </select>
-                            </div>
+        <form>
+            <div class="row">
+                <div class="col-md-4 col-md-offset-4">
+                    <div class="form-group">
+                        <div>
+                            <select class="form-control" ng-model="select.snapshot" ng-change="selectSnapshot()">
+                                <option value="">Snapshot</option>
+                                <option ng-repeat="snapshot in values(nova.snapshot) | orderBy: 'ts'" value="{{ snapshot.id }}">
+                                    {{ formatTimestamp(snapshot.ts) }}
+                                </option>
+                            </select>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
-        </div>
+
+            <div class="row" ng-hide="select.snapshot">
+                <p class="text-center">Select a Nova snapshot.</p>
+            </div>
+        </form>
 
         <div class="row">
             <div class="col-sm-12">
