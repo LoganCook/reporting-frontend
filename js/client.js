@@ -154,7 +154,7 @@ return function($timeout) {
     // Nova
 
     service.novaBase = function(callback) {
-        ["snapshot", "account", "domain", "reference"].forEach(function(type) {
+        ["az", "flavor", "instance/status", "hypervisor"].forEach(function(type) {
             load("nova", type, callback);
         });
     };

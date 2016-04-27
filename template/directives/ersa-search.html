@@ -1,7 +1,7 @@
  
 
-    <div class={{!startDateClassName?"col-md-3":startDateClassName}}>
-        <p>Start Date</p>
+    <div class={{!startDateClassName?"col-md-3":startDateClassName}}> 
+        <p>{{!startDateTitle?"Start Date":startDateTitle}}</p>
         <p class="input-group">
             <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="rangeStart" is-open="rangeStartOpen" showWeeks="false" datepicker-options="dateOptions" ng-required="true" onkeydown="return false"/>
             <span class="input-group-btn">
@@ -12,7 +12,7 @@
     </div>
 
     <div class={{!endDateClassName?"col-md-3":endDateClassName}}>
-        <p>End Date</p>
+        <p>{{!endDateTitle?"End Date":endDateTitle}}</p>
         <p class="input-group">
             <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="rangeEnd" is-open="rangeEndOpen" showWeeks="false" datepicker-options="dateOptions" ng-required="true" onkeydown="return false"/>
             <span class="input-group-btn">
