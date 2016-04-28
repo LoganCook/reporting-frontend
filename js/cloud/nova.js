@@ -9,30 +9,30 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
 
         $scope.formatTimestamp = util.formatTimeSecStamp;
         $scope.formatNumber = util.formatNumber;
+        $scope.formatDuration = util.formatDuration;
         $scope.alerts = []; 
 
-        $scope.select = {
-            snapshot: null
-        };
+        $scope.selectedDomain = ''; 
+        $scope.selectedSnapshot = '';
         
         $scope.cache = {}; 
         $scope.cache.instancesState = [];
         
-        $scope.instances = {}; 
-        $scope.instancesStatus = {}; 
+        $scope.domains = [{"id": 1, "name":"Flinders"},
+                          {"id": 2, "name":"Adelaide"},
+                          {"id": 3, "name":"UniSA"}];  
+        $scope.instances = {};  
         $scope.azs = {}; 
         $scope.hypervisors = {}; 
-        $scope.flavors= {};  
-        $scope.ips = {};  
+        $scope.flavors= {};   
          
-        $scope.selectedStatus = ''; 
-        $scope.selectedSnapshot = '';
          
         var instances = {};    
         var snapshots= {};    
+        var instanceSummary = {};   
         var baseFilters = function() {
             return {
-                count: 1000,
+                count: 30,
                 page: 1
             };
         }; 
@@ -40,11 +40,13 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         var clear = function() {    
             snapshots= {};    
             $scope.status = "Zero instances loaded.";  
-            $scope.selectedStatus = ''
+            $scope.selectedDomain = ''
             $scope.instancesState = []; 
              
             $scope.cache = {}; 
             $scope.cache.instancesState = [];
+            
+            instanceSummary = {}; 
         }; 
 
         var processInitData = function(svc, type, data) {  
@@ -54,10 +56,9 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 $scope.azs  = util.keyArray(data);  
             }else if (type == "hypervisor") {  
                 $scope.hypervisors  = util.keyArray(data);  
+
             }else if (type == "flavor") {  
                 $scope.flavors  = util.keyArray(data);  
-            }else if (type == "ip") {  
-                $scope.ips  = util.keyArray(data);  
             }  
         }; 
  
@@ -71,7 +72,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 
                 var next = util.nextPage(query);
  
-                reporting.novaQuery("instance", next, processInstance);
+                //reporting.novaQuery("instance", next, processInstance);
             } else { 
                 //$rootScope.spinnerActive = false; 
             } 
@@ -89,108 +90,79 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
 
         initNova();
    
-        $scope.statusChanged = function() { 
-            $scope.instancesState = mapInstanceState($scope.cache.instancesState);  
+        $scope.domainChanged = function() { 
+            //$scope.instancesState = mapInstanceState($scope.cache.instancesState);  
         }; 
-                
-        var mapInstanceState = function(data) { 
              
-            /// Assign base data ////
+        var mapInstanceState = function(data) {  
             
-            _.forEach($scope.hypervisors, function(_hypervisor) {   
-                if (_hypervisor.availability_zone in $scope.azs) { 
-                    //_hypervisor["azname"] = $scope.azs[_hypervisor.availability_zone].name;
-                }
-            });
-             
-            _.forEach($scope.instances, function(_instances) {   
-                if (_instances.flavor in $scope.flavors) { 
-                    _instances["flavorname"] = $scope.flavors[_instances.flavor].name;
-                    _instances["vcpus"] = $scope.flavors[_instances.flavor].vcpus;
-                    _instances["ram"] = $scope.flavors[_instances.flavor].ram;
-                    _instances["disk"] = $scope.flavors[_instances.flavor].disk;
-                    _instances["ephemeral"] = $scope.flavors[_instances.flavor].ephemeral;
-                    _instances["public"] = $scope.flavors[_instances.flavor].public;
-                }
-            });
-            
-            ////////////////////////////////////////////////////////
-            
-            var swap = [];
+            var swap = []; 
             _.forEach(data, function(_instanceState) {
-                if($scope.selectedStatus != '' && $scope.selectedStatus != _instanceState.status){
+                if($scope.selectedDomain != '' && $scope.selectedDomain != _instanceState.status){
                     return ; 
-                } 
-                 
-                if(_instanceState.snapshot in snapshots){ 
-                    _instanceState["snapshotts"] = $scope.formatTimestamp(snapshots[_instanceState.snapshot].ts);
-                }else{
-                    _instanceState["snapshotts"] = "-";
-                }
-                
-                if(_instanceState.status in $scope.instancesStatus){ 
-                    _instanceState["statusname"] = $scope.instancesStatus[_instanceState.status].name;
-                }else{
-                    _instanceState["statusname"] = "-";
-                }
-                
-                if(_instanceState.instance in $scope.instances){ 
-                    //_instanceState["instanceid"] = $scope.instances[_instanceState.instance].id;
-                    _instanceState["account"] = $scope.instances[_instanceState.instance].account;
+                }   
+
+                if (!(_instanceState.instance in instanceSummary)) {
+
+                    instanceSummary[_instanceState.instance] = { 
+                        openstack_id: $scope.instances[_instanceState.instance].openstack_id,                       
+                        name: _instanceState.name 
+                    };     
                     
-                    _instanceState["flavorname"] = $scope.instances[_instanceState.instance].flavorname;
-                    _instanceState["vcpus"] = $scope.instances[_instanceState.instance].vcpus;
-                    _instanceState["ram"] = $scope.instances[_instanceState.instance].ram;
-                    _instanceState["disk"] = $scope.instances[_instanceState.instance].disk;
-                    _instanceState["ephemeral"] = $scope.instances[_instanceState.instance].ephemeral;
-                    _instanceState["public"] = $scope.instances[_instanceState.instance].public;
-                }else{
-                    //_instanceState["instanceid"] = "-";
-                    _instanceState["flavorname"] = "-";
-                    _instanceState["account"] = "-";
+                    if(_instanceState.snapshot in snapshots){ 
+                        instanceSummary[_instanceState.instance].snapshotmin= snapshots[_instanceState.snapshot].ts;
+                        instanceSummary[_instanceState.instance].snapshotmax= snapshots[_instanceState.snapshot].ts;
+                    } 
+                }     
+                                
+                if(_instanceState.instance in $scope.instances){    
+                    
+                    if(_instanceState.snapshot in snapshots){
+                        var _min = instanceSummary[_instanceState.instance].snapshotmin;
+                        var _max = instanceSummary[_instanceState.instance].snapshotmax; 
+                        instanceSummary[_instanceState.instance].snapshotmin = Math.min(_min, snapshots[_instanceState.snapshot].ts);
+                        instanceSummary[_instanceState.instance].snapshotmax = Math.max(_max, snapshots[_instanceState.snapshot].ts);
+                    } 
+                    
+                    if(_instanceState.hypervisor in $scope.hypervisors){ 
+                        instanceSummary[_instanceState.instance].hypervisorname = $scope.hypervisors[_instanceState.hypervisor].name;  
+                    }else{
+                        instanceSummary[_instanceState.instance].hypervisorname = "-"; 
+                    } 
+                    
+                    if ($scope.instances[_instanceState.instance].flavor in $scope.flavors) {
+                        var flavorId = $scope.instances[_instanceState.instance].flavor; 
+                        instanceSummary[_instanceState.instance].flavorname= $scope.flavors[flavorId].name;
+                        instanceSummary[_instanceState.instance].vcpus = $scope.flavors[flavorId].vcpus;
+                        instanceSummary[_instanceState.instance].ram = $scope.flavors[flavorId].ram;
+                        instanceSummary[_instanceState.instance].disk = $scope.flavors[flavorId].disk;
+                        instanceSummary[_instanceState.instance].ephemeral = $scope.flavors[flavorId].ephemeral; 
+                    }else{
+                        instanceSummary[_instanceState.instance].flavorname= "-";
+                        instanceSummary[_instanceState.instance].vcpus = "-";
+                        instanceSummary[_instanceState.instance].ram = "-";
+                        instanceSummary[_instanceState.instance].disk = "-";
+                        instanceSummary[_instanceState.instance].ephemeral = "-"; 
+                    }                           
                 } 
-                
-                if(_instanceState.hypervisor in $scope.hypervisors){ 
-                    _instanceState["hypervisorname"] = $scope.hypervisors[_instanceState.hypervisor].name;
-                    //_instanceState["azname"] = $scope.hypervisors[_instanceState.hypervisor].azname;
-                }else{
-                    _instanceState["hypervisorname"] = "-";
-                    _instanceState["azname"] = "-";
-                }
-                
-                
-                
-                
-                swap.push(_instanceState);                
+                //swap.push(_.values(instanceSummary));                
             });
             return swap;
-        }
+        } 
         
-        
-        var mapIpAddress = function(ipAddressMaps) {  
-            
-            _.forEach($scope.instancesState, function(_instancesState) {   
-                if ((_instancesState.instance + _instancesState.snapshot) in ipAddressMaps) { 
-                        _instancesState["ipaddress"] = ipAddressMaps[(_instancesState.instance + _instancesState.snapshot)].ipaddress;  
-                }
-            }); 
-        }
                 
         var processInstanceState = function(svc, type, query, data) { 
             
             if (data && data.length > 0) { 
                 Array.prototype.push.apply($scope.cache.instancesState, data); 
                 
-                _mappedData = mapInstanceState(data);
-                
-                Array.prototype.push.apply($scope.instancesState, _mappedData); 
+                mapInstanceState(data);
+                $scope.instancesState = _.values(instanceSummary);
+                //Array.prototype.push.apply($scope.instancesState, _mappedData); 
                 $scope.status = "Loaded " + $scope.cache.instancesState.length + " instances states."; 
                 
                 $rootScope.spinnerActive = false;
-                
-                //// after fetch instance state
-                //reporting.novaQuery("ip/mapping", query, processIpMapping);    
-                
+                  
                 var next = util.nextPage(query);
  
                 //reporting.novaQuery("instance/state", next, processInstanceState);
@@ -199,29 +171,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 $rootScope.spinnerActive = false;
             } 
         };
-                
-        var processIpMapping = function(svc, type, query, data) { 
-            
-            if (data && data.length > 0) {  
-                
-                _.forEach(data, function(_ipaddress) {   
-                    if (_ipaddress.address in $scope.ips) { 
-                        _ipaddress["ipaddress"] = $scope.ips[_ipaddress.address].address; 
-                    }
-                });          
                  
-                mapIpAddress(util.multiKeyArray(data, "instance", "snapshot")); 
- 
-                $rootScope.spinnerActive = false;
-                
-                var next = util.nextPage(query);
- 
-                //reporting.novaQuery("ip/mapping", next, processIpMapping);
-            } else {
-                //$scope.status = "Jobs: " + $scope.jobCount;
-                $rootScope.spinnerActive = false;
-            } 
-        };
         
         
         /**
@@ -261,20 +211,10 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             var instanceParams = [];
             var _param = "";
             for(var i = 1; i <= allIntance; i++){
-                _param += instances[i - 1].id ;
-                if((i % 20) == 0){
-                    instanceParams.push(_param);
-                    _param = "";
-                }else{
-                    _param += ",";
-                } 
-            }
-             
-            _.forEach(instanceParams, function(_instanceParams) { 
-                 
+ 
                 var filter =  {
                         filter: [
-                            "instance.in." + _instanceParams,
+                            "instance.in." + instances[i - 1].id,
                             "snapshot.in." + _snapshotParams,
                         ]
                     }; 
@@ -286,31 +226,18 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
 
                 $scope.status = "Loading ...";  
                 reporting.novaQuery("instance/state", query, processInstanceState);    
-            }); 
+            }
         };
 
          
         var loadAccounts = function(_snapshotParams) {   
  
-            var allIntance = instances.length;                    
-            var accountParams = [];
-            var _param = "";
-            for(var i = 1; i <= allIntance; i++){
-                _param += instances[i - 1].id ;
-                if((i % 20) == 0){
-                    accountParams.push(_param);
-                    _param = "";
-                }else{
-                    _param += ",";
-                } 
-            }
-             
-            _.forEach(accountParams, function(_accountParams) { 
-                console.log("##._accountParams 1=" + _accountParams); 
+            var allIntance = instances.length;    
+            for(var i = 1; i <= allIntance; i++){ 
 
                 var filter =  {
                         filter: [
-                            "instance.in." + _accountParams,
+                            "instance.in." + instances[i - 1].id ,
                             "snapshot.in." + _snapshotParams,
                         ]
                     }; 
@@ -324,7 +251,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
 
                 $scope.status = "Loading ...";  
                 reporting.novaQuery("instance/state", query, processInstanceState);    
-            }); 
+            }
         };
                           
         /**
@@ -337,7 +264,14 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 return;
             }    
             
-            clear();
+            clear(); 
+                
+            /// Assign hypervisors ////
+            _.forEach($scope.hypervisors, function(_hypervisor) {   
+                if (_hypervisor.availability_zone in $scope.azs) { 
+                    //_hypervisor["azname"] = $scope.azs[_hypervisor.availability_zone].name;
+                }
+            }); 
             
             var rangeStartEpoch = util.dayStart($scope.rangeStart);
             var rangeEndEpoch = util.dayEnd($scope.rangeEnd);

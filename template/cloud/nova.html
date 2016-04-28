@@ -5,11 +5,11 @@
         <form>
             <div class="row">
                 <div class="col-md-3">
-                    <p>Instance status</p>
+                    <p>Domain</p>
                     <div class="form-group">
-                        <select name="statusSelect" id="statusSelect" ng-model="selectedStatus" ng-change="statusChanged()" class="form-control">
+                        <select name="domainSelect" id="domainSelect" ng-model="selectedDomain" ng-change="domainChanged()" class="form-control">
                             <option value="">All</option>
-                            <option ng-repeat="status in instancesStatus" value="{{ status.id }}">{{ status.name }}</option>
+                            <option ng-repeat="domain in domains" value="{{ domain.id }}">{{ domain.name }}</option>
                         </select>
                     </div>
                 </div> 
@@ -25,38 +25,36 @@
                 <div style="padding-top: 25px;">
                     <table class="table table-striped" style="width: 100%;">
                         <tr>
-                            <th>Instance</th>
-                            <th>Snapshot</th> 
-                            <th>Status</th> 
+                            <th>Server ID</th> 
+                            <th>Server Name</th>
                             <!-- th>Instance Status ID </th --> 
-                            <!-- th>Account ID</th -->
-                            <!-- th>Instance ID </th --> 
-                            <th>hypervisorname </th> 
-                            <th>Flavor</th>
+                            <!-- th>Account ID</th --> 
+                            <th>Hypervisorname </th>
+                            <th>Inventory Code</th>
+                            <th>Hours</th>    
                             <th>VCPUs</th>
+                            <th>Usage</th>    
                             <th>RAM</th>
                             <th>Disk</th>
-                            <th>Ephemeral</th> 
-                            <th>Public</th>
+                            <th>Ephemeral</th>  
                         </tr>
                         <tr ng-repeat="instance in instancesState | orderBy: 'name'"> 
-                            <td>{{ instance.name }}</td>
-                            <td>{{ instance.snapshotts}}</td> 
-                            <td>{{ instance.statusname}}</td> 
+                            <td>{{ instance.openstack_id }}</td> 
+                            <td>{{ instance.name }}</td> 
                             <!-- td>{{ instance.id}}</td --> 
-                            <!-- td>{{ instance.account }}</td -->
-                            <!-- td>{{ instance.instance}}</td --> 
+                            <!-- td>{{ instance.account }}</td --> 
                             <td>{{ instance.hypervisorname }}</td> 
                             <td>{{ instance.flavorname }}</td>
+                            <td>{{ ((instance.snapshotmax - instance.snapshotmin) / 3600).toFixed(1) }}</td>  
                             <td>{{ instance.vcpus }}</td>
+                            <td>{{ formatDuration((instance.snapshotmax - instance.snapshotmin) * instance.vcpus, "seconds") }}</td>  
                             <td>{{ instance.ram }}</td>
                             <td>{{ instance.disk }}</td>
-                            <td>{{ instance.ephemeral }}</td> 
-                            <td>{{ instance.public }}</td>
+                            <td>{{ instance.ephemeral }}</td>  
                         </tr>
                     </table>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</div> 
