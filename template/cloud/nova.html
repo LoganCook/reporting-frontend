@@ -25,6 +25,7 @@
                 <div style="padding-top: 25px;">
                     <table class="table table-striped" style="width: 100%;">
                         <tr>
+                            <th>Tenant</th> 
                             <th>Server ID</th> 
                             <th>Server Name</th>
                             <!-- th>Instance Status ID </th --> 
@@ -38,7 +39,8 @@
                             <th>Disk</th>
                             <th>Ephemeral</th>  
                         </tr>
-                        <tr ng-repeat="instance in instancesState | orderBy: 'name'"> 
+                        <tr ng-repeat="instance in instancesState | orderBy: 'tenant_name'"> 
+                            <td>{{ instance.tenant_name }}</td> 
                             <td>{{ instance.openstack_id }}</td> 
                             <td>{{ instance.name }}</td> 
                             <!-- td>{{ instance.id}}</td --> 
