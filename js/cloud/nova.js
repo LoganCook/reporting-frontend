@@ -40,8 +40,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         }; 
    
         var clear = function() {    
-            snapshots= {};    
-            $scope.status = "Zero instances loaded.";  
+            snapshots= {};     
             $scope.selectedDomain = ''
             $scope.instancesState = []; 
              
@@ -86,8 +85,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 var next = util.nextPage(query);
  
                 reporting.keystoneQuery("membership", next, processKeystoneMembership);
-            } else {
-                //$scope.status = "Jobs: " + $scope.jobCount;
+            } else { 
                 $rootScope.spinnerActive = false;
             } 
         };
@@ -174,7 +172,6 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                     }     
                 }); 
             } else {
-                //$scope.status = "Jobs: " + $scope.jobCount;
                 $rootScope.spinnerActive = false;
             } 
         }; 
@@ -184,9 +181,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         
         // Nova data
         var processInitData = function(svc, type, data) {  
-            if (type == "instance/status") {   
-                $scope.instancesStatus  = util.keyArray(data);  
-            }else if (type == "az") {  
+            if (type == "az") {  
                 azs  = util.keyArray(data);  
             }else if (type == "hypervisor") {  
                 hypervisors  = util.keyArray(data);   
@@ -211,7 +206,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
 
 
         var loadNovaAccountTenant = function(data) {  
-            var fetchingcount = 100;
+            var fetchingcount = 1000;
             var allinstances = data.length;
             var accountParams = [];
             var _account = ""; 
@@ -289,8 +284,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                     }     
                 }); 
             } else {
-                //$scope.status = "Jobs: " + $scope.jobCount;
-                $rootScope.spinnerActive = false;
+                 $rootScope.spinnerActive = false;
             } 
         };
          
@@ -298,7 +292,6 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             reporting.novaBase(processInitData); 
              
             var query = _.merge(baseFilters(), saZonefilter);
-            //var query = baseFilters();
             reporting.novaQuery("instance", query, processInstance);
         };
 
@@ -383,8 +376,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 var next = util.nextPage(query);
  
                 reporting.novaQuery("instance/state", next, processInstanceState);
-            } else {
-                //$scope.status = "Jobs: " + $scope.jobCount;
+            } else { 
                 $rootScope.spinnerActive = false;
             } 
         };
@@ -395,28 +387,27 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
          * This function is called from _export() in ersa-search directive
          */
         $scope.export = function() { 
-            data = [
-                ["Name", "Status", "Hyperviso", "Flavorname", "VCPUs", "RAM", "Disk", "Ephemeral", "Public"]
+            console.log("export called..");
+            var data = [
+                ["Tenant", "Server ID", "Server Name", "Hypervisorname", "Inventory Code", "Hours", "VCPUs", "Usage", "RAM", "Disk", "Ephemeral"]
             ];
 
-            _.forEach($scope.instancesState, function(_instancesState) {
+            _.forEach($scope.instancesState, function(_instance) {
                 data.push([
-                    _instancesState.name,
-                    _instancesState.statusname,
-                    _instancesState.hypervisorname,
-                    _instancesState.flavorname,
-                    _instancesState.vcpus ,
-                    _instancesState.ram ,
-                    _instancesState.disk ,
-                    _instancesState.ephemeral ,
-                    _instancesState.public 
+                    _instance.tenant_name,
+                    _instance.openstack_id,
+                    _instance.name,
+                    _instance.hypervisorname,
+                    _instance.flavorname,
+                    ((_instance.snapshotmax - _instance.snapshotmin) / 3600).toFixed(1) ,
+                    _instance.vcpus ,
+                    $scope.formatDuration((_instance.snapshotmax - _instance.snapshotmin) * _instance.vcpus, "seconds") ,
+                    _instance.ram ,
+                    _instance.disk ,
+                    _instance.ephemeral 
                 ]);
             });
             
-            data.sort(function(a, b) {
-                if(a[2] >= b[2]){return 1;}
-                return -1; 
-            });
             
             return data;            
         }    
@@ -425,21 +416,23 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         var loadInstanceState = function(_snapshotParams) {  
             // mergy instance data with keystone data
             var memberships = util.multiKeyArray(keystone.memberships, "account_openstack", "tenant_openstack"); 
+            var swap = [];
             _.forEach(instances, function(_instances) {
             
                 if ((_instances.account_openstack + _instances.tenant_openstack) in memberships) {
                     _instances.tenant_allocation = memberships[_instances.account_openstack + _instances.tenant_openstack].allocation; 
                     _instances.tenant_name = memberships[_instances.account_openstack + _instances.tenant_openstack].name; 
-                    _instances.tenant_description = memberships[_instances.account_openstack + _instances.tenant_openstack].description; 
+                    _instances.tenant_description = memberships[_instances.account_openstack + _instances.tenant_openstack].description;
+                    //swap.push(_instances);
+                }else{
+                    _instances.tenant_name =  _instances.account_openstack + " | " + _instances.tenant_openstack; 
                 }
             });
-             
+            //instances = swap;
             $scope.instances = util.keyArray(instances); 
             
             // fetch instance state
-            var allIntance = instances.length;
-            var instanceParams = [];
-            var _param = "";
+            var allIntance = instances.length;  
             for(var i = 1; i <= allIntance; i++){
  
                 var filter =  {
@@ -450,8 +443,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                     }; 
                 
                 var query = _.merge(baseFilters(), filter);
-                //query : {count:25000, page:1, filter:[queue.in.1210458a-4145-4f67-a19d-02be24a29fb6,2841930e-e8aa-4eaf-b938-ade7033e8532,32c6532e-2b34-4d06-9873-38c9cc1cddf9"]}
-
+ 
                 $rootScope.spinnerActive = true; 
 
                 $scope.status = "Loading ...";  
@@ -471,13 +463,8 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                             "snapshot.in." + _snapshotParams,
                         ]
                     }; 
-                
-                //var query = baseFilters(); 
-                var query = _.merge(baseFilters(), filter);
-                //query : {count:25000, page:1, filter:["end.ge.1459953000", "end.lt.1460039400"]}
-                //query : {count:25000, page:1, filter:[queue.in.1210458a-4145-4f67-a19d-02be24a29fb6,2841930e-e8aa-4eaf-b938-ade7033e8532,32c6532e-2b34-4d06-9873-38c9cc1cddf9"]}
-
-                $rootScope.spinnerActive = true; 
+                 
+                var query = _.merge(baseFilters(), filter); 
 
                 $scope.status = "Loading ...";  
                 reporting.novaQuery("instance/state", query, processInstanceState);    
@@ -497,11 +484,11 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             clear(); 
                 
             /// Assign hypervisors ////
-            _.forEach(hypervisors, function(_hypervisor) {   
-                if (_hypervisor.availability_zone in azs) { 
+            //_.forEach(hypervisors, function(_hypervisor) {   
+            //    if (_hypervisor.availability_zone in azs) { 
                     //_hypervisor["azname"] = $scope.azs[_hypervisor.availability_zone].name;
-                }
-            }); 
+            //    }
+            //}); 
             
             var rangeStartEpoch = util.dayStart($scope.rangeStart);
             var rangeEndEpoch = util.dayEnd($scope.rangeEnd);
@@ -514,6 +501,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 };             
             
             var query =  _.merge({count: 100000}, filter); 
+            $scope.status = "Loading snapshots ...";  
             reporting.novaQuery("snapshot", query, processSnapshot);  
         };
         
@@ -522,6 +510,8 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             snapshots = util.keyArray(data); 
             
             if (data && data.length > 0) { 
+                
+                $scope.status = "Loading instance state ...";  
 
                 var allsnapshot = data.length;    
                 var _param = "";
@@ -534,8 +524,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 
                 loadInstanceState(_param); 
                 
-            } else { 
-                //$rootScope.spinnerActive = false;  
+            } else {  
                 $scope.status = "Loaded " + "0 snapshots."; 
             } 
         };     
