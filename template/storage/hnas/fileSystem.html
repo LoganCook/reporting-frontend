@@ -1,0 +1,53 @@
+<div class="container-fluid">
+    <h3 class="text-center">File system(Owner)</h3>
+    <p ng-show="error" class="alert alert-danger">{{ error }}</p>
+    <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
+    <div>
+
+        <form>
+            <div class="row"> 
+                <ersa-search 
+                    start-date-class="col-md-4" end-date-class="col-md-4" 
+                    button-class="col-md-4" 
+                    export-file-name="fs.tsv"/> 
+            </div> 
+        </form>
+
+        <div class="row" style="padding-top: 25px;">
+            <div class="col-md-12">
+                <!-- table class="table table-striped">
+                    <tr>
+                        <th>Capacity</th>
+                        <th>Free</th> 
+                        <th>Live usage</th>
+                        <th>Snapshot usage</th> 
+                    </tr>
+                    <tr ng-repeat="usage in jobSummary | orderBy: 'capacity'">
+                        <td>{{ usage.capacity }}</td>
+                        <td>{{ usage.free }}</td>
+                        <td>{{ usage.live_usage }}</td> 
+                        <td>{{ formatNumber(usage.snapshot_usage) }}</td> 
+                    </tr>
+                </table -->
+                
+                <table class="table table-striped">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>  
+                    </tr>
+                    <tr ng-repeat=" owner in owners ">
+                        <td>{{ owner.id }}</td>
+                        <td>{{ owner.name }}</td> 
+                    </tr>
+                </table>                
+                
+            </div>
+        </div>
+        <!-- 
+            http://jsfiddle.net/alexsuch/RLQhh/ 
+            https://angular-ui.github.io/bootstrap/
+        -->
+        <!-- button type="button" class="btn btn-default" ng-click="openJobMessage('lg')">Open me!</button -->
+    </div> 
+       
+</div>

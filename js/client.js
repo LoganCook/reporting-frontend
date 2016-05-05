@@ -163,6 +163,18 @@ return function($timeout) {
         loadQuery("nova", type, query, callback);
     };
 
+    // Hnas
+
+    service.hnasBase = function(callback) {
+        ["allocation", "owner"].forEach(function(type) {
+            load("hnas", type, callback);
+        });
+    };
+
+    service.hnasQuery = function(type, query, callback) {
+        loadQuery("hnas", type, query, callback);
+    };
+
     // Generic
 
     service.populateFromUsername = function(snapshot, object) {
