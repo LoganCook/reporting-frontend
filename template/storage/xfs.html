@@ -5,7 +5,7 @@
     <div>
         <form>
             <div class="row">
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <p>Host</p>
                     <div class="form-group">
                         <div>
@@ -18,22 +18,8 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="col-md-2">
-                    <p>CRM Snapshot</p>
-                    <div class="form-group">
-                        <div>
-                            <select class="form-control" ng-model="select.crm">
-                                <option value="">Snapshot</option>
-                                <option ng-repeat="snapshot in values(crm.snapshot) | orderBy: 'ts'" value="{{ snapshot.id }}">
-                                    {{ formatTimestamp(snapshot.ts) }}
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-2">
+ 
+                <div class="col-md-3">
                     <p>Filesystem</p>
                     <div class="form-group">
                         <div>

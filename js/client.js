@@ -192,10 +192,10 @@ return function($timeout) {
             }
         }
 
-/*        if (!(object.username in top.crmLookup.username)) {
+        if (!(object.username in top.crmLookup.username)) {
             object.fullname = "?";
             object.organisation = "?";
-        } else {*/
+        } else {
             //var usernameID = top.crmLookup.username[object.username].id;
 
             var usernameFilters = {
@@ -236,7 +236,7 @@ return function($timeout) {
                     object.fullname = "?";
                 }
             });
-        //}
+        }
     };
 
     return service;

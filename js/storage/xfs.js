@@ -8,8 +8,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         $scope.formatNumber = util.formatNumber;
         $scope.formatDuration = util.formatDuration;
         $scope.formatSize = util.formatSize;
-        $scope.basename = util.basename;
- 
+        $scope.basename = util.basename; 
 
         $scope.alerts = []; 
         $scope.select = {
@@ -18,8 +17,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             filesystem: null,
             snapshot: null
         };
-
-        $scope.crm = {};
+ 
         $scope.xfs = {};
 
         $scope.output = {
@@ -44,17 +42,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                     xfs.snapshotByTimestamp = $scope.xfs.snapshotByTimestamp = util.keyArray(data, "ts");
                 }
             });
-        };
-
-        var initCRM = function() {
-            reporting.crmBase(function(svc, type, data) {
-                if (type == "username") {
-                    $scope.crm[type] = util.keyArray(data, "username");
-                } else {
-                    $scope.crm[type] = util.keyArray(data);
-                }
-            });
-        };
+        }; 
 
         var clear = function() {
             $scope.raw = [];
@@ -63,8 +51,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
 
             $scope.status = "No data loaded.";
         };
-
-        initCRM();
+ 
         initXFS();
 
         clear();
@@ -107,9 +94,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                         entry.username = $scope.xfs.owner[entry.owner].name;
                         entry.fullname = "";
                         entry.organisation = "";
-
-                        reporting.populateFromUsername($scope.select.crm, entry);
-                    }
+                     }
 
                     $scope.output.usage.push(entry);
                 });
@@ -149,9 +134,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                             usage: 0,
                             peak: 0
                         };
-
-                        reporting.populateFromUsername($scope.select.crm, summed[record.owner]);
-                    }
+                     }
 
                     record.usage *= 1024;
 
@@ -198,10 +181,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 $scope.alerts.push({type: 'danger',msg: "Please select Host!"}); 
                 return false;
             }          
-/*            if (!($scope.select.crm)) {
-                $scope.alerts.push({type: 'danger',msg: "Please select CRM!"}); 
-                return false;
-            }   */
+ 
             if (!($scope.select.filesystem)) {
                 $scope.alerts.push({type: 'danger',msg: "Please select Fileysystem!"}); 
                 return false;
