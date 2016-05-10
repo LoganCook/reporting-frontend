@@ -71,16 +71,16 @@
                 <div class="col-md-12">
                     <table class="table table-striped">
                         <tr>
-                            <th>Full Name</th>
+                            <!--th>Full Name</th -->
                             <th>Username</th>
-                            <th>Organisation</th>
+                            <!--th>Organisation</th -->
                             <th>Usage (Weighted Mean)</th>
                             <th>Usage (Peak)</th>
                         </tr>
                         <tr ng-repeat="entry in output.summed | orderBy: 'username'">
-                            <td>{{ entry.fullname }}</td>
+                            <!-- td>{{ entry.fullname }}</td -->
                             <td>{{ entry.username }}</td>
-                            <td>{{ entry.organisation }}</td>
+                            <!-- td>{{ entry.organisation }}</td -->
                             <td>{{ formatSize(entry.usage) }}</td>
                             <td>{{ formatSize(entry.peak) }}</td>
                         </tr>

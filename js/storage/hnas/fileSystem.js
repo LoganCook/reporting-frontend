@@ -4,6 +4,7 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
  
         $scope.values = _.values;
 
+        $scope.formatSize = util.formatSize;
         $scope.formatTimestamp = util.formatTimeSecStamp;
         $scope.formatNumber = util.formatNumber;
         $scope.formatDuration = util.formatDuration;
@@ -12,17 +13,16 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
         $scope.cache = {}; 
         $scope.cache.filesystemUsage = [];
         $scope.filesystemUsage = []; 
-  
-        $scope.allocations = {};    
-        $scope.owners = {};  
-         
+   
+        $scope.owners = {};    
         
         var snapshots= {};    
-        var filesystems = {};  
-        var virtualVolumes = {};  
+        var filesystems = {};   
+        var usageSummary = {};  
+        
         var baseFilters = function() {
             return {
-                count: 10,
+                count: 10000,
                 page: 1
             };
         }; 
@@ -32,121 +32,62 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
             
             $scope.cache = {}; 
             $scope.cache.filesystemUsage = []; 
+            usageSummary = {}; 
         }; 
 
  
         var initHnas = function() {  
+            $rootScope.spinnerActive = true; 
             $scope.status = "Loading ...";  
             reporting.hnasBase(processInitData);  
         };
 
         var processInitData = function(svc, type, data) {  
-            if (type == "allocation") {  
+            if (type == "filesystem") {  
 
-                if (data && data.length > 0) {  
-                    $scope.allocations  = util.keyArray(data); 
-                    $scope.status = "Allocation: " + data.length; 
-                     
-                    //var query = { count: 10000, page:1, filter: ["allocation.in." + allocationId]}; 
-                    //reporting.hnasQuery("filesystem", baseFilters(), processFilesystem);
+                if (data && data.length > 0) {   
+                    Array.prototype.push.apply(filesystems,  data);  
+                    $scope.status = "Loaded " + data.length + " filesystems."; 
+ 
                 } else { 
-                    $scope.status = "Allocation: 0" ; 
+                    $scope.status = "Filesystem: 0" ; 
                 }  
+                
+                $rootScope.spinnerActive = false; 
             }else if (type == "owner") {  
                 $scope.owners  = util.keyArray(data);    
             }  
-        }; 
-        
-
-        var processFilesystem = function(svc, type, query, data) { 
-            
-            if (data && data.length > 0) {  
-                
-                Array.prototype.push.apply(filesystems,  data);  
-                $scope.status = "Loaded " + data.length + " filesystems.";  
-                
-                $rootScope.spinnerActive = true;
-                  
-                var next = util.nextPage(query);
- 
-                reporting.hnasQuery("filesystem", next, processFilesystem);
-            } else { 
-                $rootScope.spinnerActive = false;
-                
-                _.forEach(filesystems, function(_filesystem) { 
-                    if (_filesystem.allocation in $scope.allocations) { 
-                        _filesystem.allocation_name = $scope.allocations[_filesystem.allocation].allocation;  
-                    }     
-                });
-
-                if (data && data.length > 0) {   
-                    //var query = { count: 10000, page:1, filter: ["allocation.in." + allocationId]}; 
-                    reporting.hnasQuery("virtual-volume", baseFilters(), processVirtualVolume); 
-                }               
-                                   
-            } 
-        };        
-
-
-        var processVirtualVolume = function(svc, type, query, data) { 
-            
-            if (data && data.length > 0) {  
-                
-                Array.prototype.push.apply(virtualVolumes,  data);  
-                $scope.status = "Loaded " + data.length + " virtual-volume.";  
-                
-                $rootScope.spinnerActive = true;
-                  
-                var next = util.nextPage(query);
- 
-                reporting.hnasQuery("virtual-volume", next, processVirtualVolume);
-            } else { 
-                $rootScope.spinnerActive = false;
-                var filesystemMap = util.keyArray(filesystems);  
-                
-                _.forEach(virtualVolumes, function(_virtualVolume) { 
-                    if (_virtualVolume.allocation in $scope.allocations) { 
-                        _virtualVolume.allocation_name = allocations[_virtualVolume.allocation].allocation;  
-                    }  
-                    
-                    if (_virtualVolume.filesystem in filesystemMap) { 
-                        _virtualVolume.filesystem_name = filesystemMap[_virtualVolume.filesystem].name;  
-                    }                        
-                });                 
-                
-            } 
-        };
-        
+        };   
 
         clear();
-        initHnas();    
-        
+        initHnas();     
 
         /**
          * This function is called from _export() in ersa-search directive
          */
         $scope.export = function() {
-            data = [
-                ["Full Name", "Organisation", "Username", "Email", "Job Count", "Core Hours"]
+            var dataWithTitle = [
+                ["Name", "Capacity", "Free(avg)", "Live usage(avg)", "Snapshot usage"]
             ];
+            var data = [];
 
-            _.forEach(jobSummary, function(summary) {
+            _.forEach(usageSummary, function(usage) {
                 data.push([
-                    summary.fullname,
-                    summary.organisation,
-                    summary.username,
-                    summary.email,
-                    summary.jobCount, 
-                    (summary.cpuSeconds / 3600).toFixed(1)
+                    usage.name,
+                    $scope.formatNumber(usage.capacity),
+                    $scope.formatNumber(usage.free / usage.usageCount),
+                    $scope.formatNumber(usage.live_usage / usage.usageCount),
+                    $scope.formatNumber(usage.snapshot_usage) 
                 ]);
             });
             
             data.sort(function(a, b) {
-                if(a[2] >= b[2]){return 1;}
+                if(a[0].toLowerCase() >= b[0].toLowerCase()){return 1;}
                 return -1; 
             });
             
-            return data;
+            Array.prototype.push.apply(dataWithTitle, data); 
+            return dataWithTitle;
         };        
 
         /**
@@ -197,8 +138,8 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
         };     
 
 
-        var loadFilesystemUsage = function(_snapshotParams) { 
- 
+        var loadFilesystemUsage = function(_snapshotParams) {   
+            
             var filter =  {filter: ["snapshot.in." + _snapshotParams]};  
             var query = _.merge(baseFilters(), filter);
 
@@ -212,89 +153,66 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
             
             if (data && data.length > 0) { 
                 Array.prototype.push.apply($scope.cache.filesystemUsage, data);  
-                $scope.status = "Loaded " + $scope.cache.filesystemUsage.length + " instances states."; 
+                $scope.status = "Loaded " + $scope.cache.filesystemUsage.length + " usages"; 
                 
                 $rootScope.spinnerActive = true; 
                 var next = util.nextPage(query);
  
-                reporting.novaQuery("filesystem/usage", next, processFilesystemUsage);
+                reporting.hnasQuery("filesystem/usage", next, processFilesystemUsage);
             } else {  
                 $rootScope.spinnerActive = false;
                 
-                mapFilesystemUsage($scope.cache.filesystemUsage);
-                $scope.filesystemUsage = $scope.cache.filesystemUsage; 
-                
+                mapFilesystemUsage($scope.cache.filesystemUsage); 
+                $scope.filesystemUsage = _.values(usageSummary);
             } 
         };
                  
         
         var mapFilesystemUsage = function(data) {  
             
+            var filesystemMap = util.keyArray(filesystems);  
             var swap = []; 
-            _.forEach(data, function(_instanceState) {
-                if($scope.selectedDomain != '' && $scope.selectedDomain != _instanceState.status){
-                    return ; 
-                }   
+            _.forEach(data, function(_usage) {
+                //if($scope.selectedDomain != '' && $scope.selectedDomain != _instanceState.status){
+                //    return ; 
+                //}   
 
-                if (!(_instanceState.instance in instanceSummary)) {
+                if (!(_usage.filesystem in usageSummary)) {
 
-                    instanceSummary[_instanceState.instance] = { 
-                        openstack_id: $scope.instances[_instanceState.instance].openstack_id,                       
-                        name: _instanceState.name 
+                    usageSummary[_usage.filesystem] = { 
+                        filesystem_id: _usage.filesystem,                       
+                        name: filesystemMap[_usage.filesystem].name, 
+                        capacity : 0,
+                        free : 0,
+                        live_usage : 0,
+                        snapshot_usage : 0,
+                        usageCount: 0
                     };     
                     
-                    if(_instanceState.snapshot in snapshots){ 
-                        instanceSummary[_instanceState.instance].snapshotmin= snapshots[_instanceState.snapshot].ts;
-                        instanceSummary[_instanceState.instance].snapshotmax= snapshots[_instanceState.snapshot].ts;
+                    if(_usage.snapshot in snapshots){ 
+                        usageSummary[_usage.filesystem].snapshotmin= snapshots[_usage.snapshot].ts;
+                        usageSummary[_usage.filesystem].snapshotmax= snapshots[_usage.snapshot].ts;
                     } 
-                }     
+                }   
+                  
+                if(_usage.snapshot in snapshots){
+                    var _min = usageSummary[_usage.filesystem].snapshotmin;
+                    var _max = usageSummary[_usage.filesystem].snapshotmax; 
+                    usageSummary[_usage.filesystem].snapshotmin = Math.min(_min, snapshots[_usage.snapshot].ts);
+                    usageSummary[_usage.filesystem].snapshotmax = Math.max(_max, snapshots[_usage.snapshot].ts);
+                }  
                                 
-                if(_instanceState.instance in $scope.instances){   
-                     
-                    instanceSummary[_instanceState.instance].tenant_name = $scope.instances[_instanceState.instance].tenant_name;
-                    
-                    if(_instanceState.snapshot in snapshots){
-                        var _min = instanceSummary[_instanceState.instance].snapshotmin;
-                        var _max = instanceSummary[_instanceState.instance].snapshotmax; 
-                        instanceSummary[_instanceState.instance].snapshotmin = Math.min(_min, snapshots[_instanceState.snapshot].ts);
-                        instanceSummary[_instanceState.instance].snapshotmax = Math.max(_max, snapshots[_instanceState.snapshot].ts);
-                    } 
-                    
-                    if(_instanceState.hypervisor in hypervisors){ 
-                        instanceSummary[_instanceState.instance].hypervisorname = hypervisors[_instanceState.hypervisor].name;  
-                    }else{
-                        instanceSummary[_instanceState.instance].hypervisorname = "-"; 
-                    } 
-                    
-                    if ($scope.instances[_instanceState.instance].flavor in flavors) {
-                        var flavorId = $scope.instances[_instanceState.instance].flavor; 
-                        instanceSummary[_instanceState.instance].flavorname= flavors[flavorId].name;
-                        instanceSummary[_instanceState.instance].vcpus = flavors[flavorId].vcpus;
-                        instanceSummary[_instanceState.instance].ram = flavors[flavorId].ram;
-                        instanceSummary[_instanceState.instance].disk = flavors[flavorId].disk;
-                        instanceSummary[_instanceState.instance].ephemeral = flavors[flavorId].ephemeral; 
-                    }else{
-                        instanceSummary[_instanceState.instance].flavorname= "-";
-                        instanceSummary[_instanceState.instance].vcpus = "-";
-                        instanceSummary[_instanceState.instance].ram = "-";
-                        instanceSummary[_instanceState.instance].disk = "-";
-                        instanceSummary[_instanceState.instance].ephemeral = "-"; 
-                    }                           
-                } 
-                //swap.push(_.values(instanceSummary));                
+                if(_usage.filesystem in filesystemMap){   
+                    usageSummary[_usage.filesystem].usageCount++;
+                    usageSummary[_usage.filesystem].capacity = _usage.capacity;
+                    usageSummary[_usage.filesystem].free += _usage.free;
+                    usageSummary[_usage.filesystem].live_usage += _usage.live_usage;
+                    usageSummary[_usage.filesystem].snapshot_usage = _usage.snapshot_usage;
+                }      
+                //swap.push(_.values(usageSummary));                
             });
             return swap;
-        } 
-        
-        $scope.ownerChanged = function() { 
-            console.log('selectedOwner=' + $scope.selectedOwner); 
-            //$scope.instancesState = mapInstanceState($scope.cache.instancesState);  
-        }; 
-        
-        $scope.allocationChanged = function() { 
-            console.log('selectedAllocation=' + $scope.selectedAllocation); 
-            //$scope.instancesState = mapInstanceState($scope.cache.instancesState);  
-        }; 
+        }  
         
         $scope.$on('$viewContentLoaded', function() { 
 
@@ -308,9 +226,7 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
             //endDate.setDate(endDate.getDate() -82);
             //$scope.rangeEnd = endDate;
             console.log('viewContentLoaded ...'); 
-        });
-                     
-                
+        });    
                             
     }]);   
 });

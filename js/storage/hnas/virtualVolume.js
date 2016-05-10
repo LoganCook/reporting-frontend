@@ -4,24 +4,26 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
  
         $scope.values = _.values;
 
+        $scope.formatSize = util.formatSize;
         $scope.formatTimestamp = util.formatTimeSecStamp;
         $scope.formatNumber = util.formatNumber;
         $scope.formatDuration = util.formatDuration;
         $scope.alerts = []; 
   
         $scope.cache = {};  
-        $scope.cache.virtualVolumeUsage = []; 
- 
-        $scope.virtualVolumeUsage = [];
-        $scope.allocations = {};    
+        $scope.cache.virtualVolumeUsage = [];  
+        $scope.virtualVolumeUsage = []; 
+        
         $scope.owners = {};   
         
         var snapshots= {};    
         var filesystems = {};  
         var virtualVolumes = {};  
+        var usageSummary = {};  
+        
         var baseFilters = function() {
             return {
-                count: 1000,
+                count: 10000,
                 page: 1
             };
         }; 
@@ -30,69 +32,42 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
             snapshots= {};      
             
             $scope.cache = {}; 
-            $scope.cache.filesystemUsage = []; 
+            $scope.cache.virtualVolumeUsage = [];  
+            usageSummary = {};  
         }; 
 
  
         var initHnas = function() {  
             $scope.status = "Loading ...";  
+            $rootScope.spinnerActive = true; 
+            
             reporting.hnasBase(processInitData);  
         };
 
         var processInitData = function(svc, type, data) {  
-            if (type == "allocation") {  
+            if (type == "filesystem") {  
 
                 if (data && data.length > 0) {  
-                    $scope.allocations  = util.keyArray(data); 
-                    $scope.status = "Allocation: " + data.length; 
-                     
-                    //var query = { count: 10000, page:1, filter: ["allocation.in." + allocationId]}; 
-                    //reporting.hnasQuery("filesystem", baseFilters(), processFilesystem);
+                    Array.prototype.push.apply(filesystems,  data);  
+                    $scope.status = "Loaded " + data.length + " filesystems."; 
+ 
+                    //var query = { count: 10000, page:1 ,filter: ["allocation.in." + allocationId]}; 
+                    reporting.hnasQuery("virtual-volume", baseFilters(), processVirtualVolume); 
+
                 } else { 
                     $scope.status = "Allocation: 0" ; 
                 }  
             }else if (type == "owner") {  
                 $scope.owners  = util.keyArray(data);    
             }  
-        }; 
-        
-
-        var processFilesystem = function(svc, type, query, data) { 
-            
-            if (data && data.length > 0) {  
-                
-                Array.prototype.push.apply(filesystems,  data);  
-                $scope.status = "Loaded " + data.length + " filesystems.";  
-                
-                $rootScope.spinnerActive = true;
-                  
-                var next = util.nextPage(query);
- 
-                reporting.hnasQuery("filesystem", next, processFilesystem);
-            } else { 
-                $rootScope.spinnerActive = false;
-                
-                _.forEach(filesystems, function(_filesystem) { 
-                    if (_filesystem.allocation in $scope.allocations) { 
-                        _filesystem.allocation_name = $scope.allocations[_filesystem.allocation].allocation;  
-                    }     
-                });
-
-                if (data && data.length > 0) {   
-                    //var query = { count: 10000, page:1, filter: ["allocation.in." + allocationId]}; 
-                    reporting.hnasQuery("virtual-volume", baseFilters(), processVirtualVolume); 
-                }               
-                                   
-            } 
-        };        
-
+        };  
 
         var processVirtualVolume = function(svc, type, query, data) { 
             
             if (data && data.length > 0) {  
                 
                 Array.prototype.push.apply(virtualVolumes,  data);  
-                $scope.status = "Loaded " + data.length + " virtual-volume.";  
+                $scope.status = "Loaded " + data.length + " virtual volumes.";  
                 
                 $rootScope.spinnerActive = true;
                   
@@ -103,49 +78,43 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
                 $rootScope.spinnerActive = false;
                 var filesystemMap = util.keyArray(filesystems);  
                 
-                _.forEach(virtualVolumes, function(_virtualVolume) { 
-                    if (_virtualVolume.allocation in $scope.allocations) { 
-                        _virtualVolume.allocation_name = allocations[_virtualVolume.allocation].allocation;  
-                    }  
-                    
+                _.forEach(virtualVolumes, function(_virtualVolume) {  
                     if (_virtualVolume.filesystem in filesystemMap) { 
                         _virtualVolume.filesystem_name = filesystemMap[_virtualVolume.filesystem].name;  
                     }                        
-                });                 
-                
+                });       
             } 
-        };
-        
+        }; 
 
         clear();
-        initHnas();    
-        
+        initHnas();     
 
         /**
          * This function is called from _export() in ersa-search directive
          */
         $scope.export = function() {
-            data = [
-                ["Full Name", "Organisation", "Username", "Email", "Job Count", "Core Hours"]
+            var dataWithTitle = [
+                ["Volume", "File system", "Quota", "Files(avg)", "Usage(avg)"]
             ];
+            var data = [];
 
-            _.forEach(jobSummary, function(summary) {
+            _.forEach(usageSummary, function(usage) {
                 data.push([
-                    summary.fullname,
-                    summary.organisation,
-                    summary.username,
-                    summary.email,
-                    summary.jobCount, 
-                    (summary.cpuSeconds / 3600).toFixed(1)
+                    usage.virtual_volume_name,
+                    usage.filesystem_name,
+                    $scope.formatNumber(usage.quota),
+                    $scope.formatNumber(usage.files / usage.usageCount),
+                    $scope.formatNumber(usage.usage / usage.usageCount) 
                 ]);
             });
             
             data.sort(function(a, b) {
-                if(a[2] >= b[2]){return 1;}
+                if(a[0].toLowerCase() >= b[0].toLowerCase()){return 1;}
                 return -1; 
             });
-            
-            return data;
+                        
+            Array.prototype.push.apply(dataWithTitle, data); 
+            return dataWithTitle;
         };        
     
         $scope.load = function() { 
@@ -184,7 +153,7 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
                     } 
                 }                
                 
-                loadFilesystemUsage(_param); 
+                loadVirtualVolumeUsage(_param); 
                 
             } else {  
                 $scope.status = "Loaded " + "0 snapshots."; 
@@ -192,7 +161,7 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
         };     
 
 
-        var loadFilesystemUsage = function(_snapshotParams) { 
+        var loadVirtualVolumeUsage = function(_snapshotParams) { 
  
             var filter =  {filter: ["snapshot.in." + _snapshotParams]};  
             var query = _.merge(baseFilters(), filter);
@@ -207,17 +176,17 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
             
             if (data && data.length > 0) { 
                 Array.prototype.push.apply($scope.cache.virtualVolumeUsage, data);  
-                $scope.status = "Loaded " + $scope.cache.virtualVolumeUsage.length + " instances states."; 
+                $scope.status = "Loaded " + $scope.cache.virtualVolumeUsage.length + " usages."; 
                 
                 $rootScope.spinnerActive = true; 
                 var next = util.nextPage(query);
  
-                reporting.novaQuery("virtual-volume/usage", next, processVirtualVolumeUsage);
+                reporting.hnasQuery("virtual-volume/usage", next, processVirtualVolumeUsage);
             } else {  
                 $rootScope.spinnerActive = false;
                 
                 mapVirtualVolumeUsage($scope.cache.virtualVolumeUsage);
-                $scope.virtualVolumeUsage = $scope.cache.virtualVolumeUsage; 
+                $scope.virtualVolumeUsage = _.values(usageSummary); 
                 
             } 
         };
@@ -225,57 +194,50 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
         
         var mapVirtualVolumeUsage = function(data) {  
             
+            var virtualVolumeMap = util.keyArray(virtualVolumes);  
             var swap = []; 
-            _.forEach(data, function(_instanceState) {
-                if($scope.selectedDomain != '' && $scope.selectedDomain != _instanceState.status){
-                    return ; 
-                }   
+            _.forEach(data, function(_usage) {
+                //if($scope.selectedDomain != '' && $scope.selectedDomain != _instanceState.status){
+                //   return ; 
+                //}    
 
-                if (!(_instanceState.instance in instanceSummary)) {
-
-                    instanceSummary[_instanceState.instance] = { 
-                        openstack_id: $scope.instances[_instanceState.instance].openstack_id,                       
-                        name: _instanceState.name 
+                if (!(_usage.virtual_volume in usageSummary)) {
+                    
+                    usageSummary[_usage.virtual_volume] = { 
+                        virtual_volume: _usage.virtual_volume,                       
+                        virtual_volume_name: virtualVolumeMap[_usage.virtual_volume].name, 
+                        filesystem_name: virtualVolumeMap[_usage.virtual_volume].filesystem_name, 
+                        files : 0,
+                        quota : 0,
+                        usage : 0,
+                        owner : '',
+                        usageCount: 0
                     };     
                     
-                    if(_instanceState.snapshot in snapshots){ 
-                        instanceSummary[_instanceState.instance].snapshotmin= snapshots[_instanceState.snapshot].ts;
-                        instanceSummary[_instanceState.instance].snapshotmax= snapshots[_instanceState.snapshot].ts;
+                    if(_usage.snapshot in snapshots){ 
+                        usageSummary[_usage.virtual_volume].snapshotmin= snapshots[_usage.snapshot].ts;
+                        usageSummary[_usage.virtual_volume].snapshotmax= snapshots[_usage.snapshot].ts;
                     } 
                 }     
                                 
-                if(_instanceState.instance in $scope.instances){   
-                     
-                    instanceSummary[_instanceState.instance].tenant_name = $scope.instances[_instanceState.instance].tenant_name;
-                    
-                    if(_instanceState.snapshot in snapshots){
-                        var _min = instanceSummary[_instanceState.instance].snapshotmin;
-                        var _max = instanceSummary[_instanceState.instance].snapshotmax; 
-                        instanceSummary[_instanceState.instance].snapshotmin = Math.min(_min, snapshots[_instanceState.snapshot].ts);
-                        instanceSummary[_instanceState.instance].snapshotmax = Math.max(_max, snapshots[_instanceState.snapshot].ts);
-                    } 
-                    
-                    if(_instanceState.hypervisor in hypervisors){ 
-                        instanceSummary[_instanceState.instance].hypervisorname = hypervisors[_instanceState.hypervisor].name;  
-                    }else{
-                        instanceSummary[_instanceState.instance].hypervisorname = "-"; 
-                    } 
-                    
-                    if ($scope.instances[_instanceState.instance].flavor in flavors) {
-                        var flavorId = $scope.instances[_instanceState.instance].flavor; 
-                        instanceSummary[_instanceState.instance].flavorname= flavors[flavorId].name;
-                        instanceSummary[_instanceState.instance].vcpus = flavors[flavorId].vcpus;
-                        instanceSummary[_instanceState.instance].ram = flavors[flavorId].ram;
-                        instanceSummary[_instanceState.instance].disk = flavors[flavorId].disk;
-                        instanceSummary[_instanceState.instance].ephemeral = flavors[flavorId].ephemeral; 
-                    }else{
-                        instanceSummary[_instanceState.instance].flavorname= "-";
-                        instanceSummary[_instanceState.instance].vcpus = "-";
-                        instanceSummary[_instanceState.instance].ram = "-";
-                        instanceSummary[_instanceState.instance].disk = "-";
-                        instanceSummary[_instanceState.instance].ephemeral = "-"; 
-                    }                           
-                } 
+                if(_usage.snapshot in snapshots){
+                    var _min = usageSummary[_usage.virtual_volume].snapshotmin;
+                    var _max = usageSummary[_usage.virtual_volume].snapshotmax; 
+                    usageSummary[_usage.virtual_volume].snapshotmin = Math.min(_min, snapshots[_usage.snapshot].ts);
+                    usageSummary[_usage.virtual_volume].snapshotmax = Math.max(_max, snapshots[_usage.snapshot].ts);
+                }  
+                                
+                if(_usage.virtual_volume in virtualVolumeMap){   
+                    usageSummary[_usage.virtual_volume].usageCount++;
+                    usageSummary[_usage.virtual_volume].files += _usage.files;
+                    usageSummary[_usage.virtual_volume].quota = _usage.quota;
+                    usageSummary[_usage.virtual_volume].usage += _usage.usage;  
+                }         
+                  
+                if(_usage.owner in $scope.owners){     
+                    usageSummary[_usage.virtual_volume].owner = $scope.owners[_usage.owner].name; 
+                }  
+                
                 //swap.push(_.values(instanceSummary));                
             });
             return swap;

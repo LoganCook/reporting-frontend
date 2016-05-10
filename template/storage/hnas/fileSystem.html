@@ -1,5 +1,5 @@
 <div class="container-fluid">
-    <h3 class="text-center">File system(Owner)</h3>
+    <h3 class="text-center">File system usage</h3>
     <p ng-show="error" class="alert alert-danger">{{ error }}</p>
     <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
     <div>
@@ -15,32 +15,22 @@
 
         <div class="row" style="padding-top: 25px;">
             <div class="col-md-12">
-                <!-- table class="table table-striped">
-                    <tr>
-                        <th>Capacity</th>
-                        <th>Free</th> 
-                        <th>Live usage</th>
-                        <th>Snapshot usage</th> 
-                    </tr>
-                    <tr ng-repeat="usage in jobSummary | orderBy: 'capacity'">
-                        <td>{{ usage.capacity }}</td>
-                        <td>{{ usage.free }}</td>
-                        <td>{{ usage.live_usage }}</td> 
-                        <td>{{ formatNumber(usage.snapshot_usage) }}</td> 
-                    </tr>
-                </table -->
-                
                 <table class="table table-striped">
                     <tr>
-                        <th>ID</th>
-                        <th>Name</th>  
+                        <th>Name</th>
+                        <th>Capacity</th>
+                        <th>Free(avg)</th> 
+                        <th>Live usage(avg)</th>
+                        <th>Snapshot usage</th> 
                     </tr>
-                    <tr ng-repeat=" owner in owners ">
-                        <td>{{ owner.id }}</td>
-                        <td>{{ owner.name }}</td> 
+                    <tr ng-repeat="usage in filesystemUsage | orderBy: 'name'">
+                        <td>{{ usage.name }}</td>
+                        <td>{{ formatSize(usage.capacity) }}</td>
+                        <td>{{ formatSize(usage.free / usage.usageCount) }}</td>
+                        <td>{{ formatSize(usage.live_usage / usage.usageCount) }}</td>  
+                        <td>{{ formatSize(usage.snapshot_usage) }}</td> 
                     </tr>
-                </table>                
-                
+                </table> 
             </div>
         </div>
         <!-- 

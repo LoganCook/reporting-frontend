@@ -166,7 +166,7 @@ return function($timeout) {
     // Hnas
 
     service.hnasBase = function(callback) {
-        ["allocation", "owner"].forEach(function(type) {
+        ["filesystem", "owner"].forEach(function(type) {
             load("hnas", type, callback);
         });
     };
