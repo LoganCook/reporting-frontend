@@ -175,6 +175,18 @@ return function($timeout) {
         loadQuery("hnas", type, query, callback);
     };
 
+    // Hcp
+
+    service.hcpBase = function(callback) {
+        ["allocation"].forEach(function(type) {
+            load("hcp", type, callback);
+        });
+    };
+
+    service.hcpQuery = function(type, query, callback) {
+        loadQuery("hcp", type, query, callback);
+    };
+
     // Generic
 
     service.populateFromUsername = function(snapshot, object) {
