@@ -75,8 +75,7 @@ define(["app", "lodash", "../util"], function(app, _, util) {
                 }
                 // "account", "domain"
                 keystone[type] = $scope.keystone[type] = util.keyArray(data);
-                
-                console.log(keystone.toSource());
+                 
             });
         };
 

@@ -25,8 +25,8 @@
 
         <div class="col-md-12">
             <div class="row" ng-show="select.snapshot">
-                <tabset justified="true">
-                    <tab heading="Organisations">
+                <uib-tabset justified="true">
+                    <uib-tab heading="Organisations">
                         <table class="table table-striped">
                             <tr>
                                 <th>Organisation</th>
@@ -37,8 +37,8 @@
                                 <td>{{ referenceByDomain[domain.id].join(", ") }}</td>
                             </tr>
                         </table>
-                    </tab>
-                    <tab heading="Tenants (non-pt)">
+                    </uib-tab>
+                    <uib-tab heading="Tenants (non-pt)">
                         <table class="table table-striped">
                             <tr>
                                 <th>Tenant</th>
@@ -51,8 +51,8 @@
                                 <td>{{ addressesByTenant[tenant.id].join(", ") }}</td>
                             </tr>
                         </table>
-                    </tab>
-                    <tab heading="People (non-pt)">
+                    </uib-tab>
+                    <uib-tab heading="People (non-pt)">
                         <table class="table table-striped">
                             <tr>
                                 <th>Address</th>
@@ -63,8 +63,8 @@
                                 <td>{{ membershipByAccount[account.id].map(getMembershipName).sort().join(", ") }}</td>
                             </tr>
                         </table>
-                    </tab>
-                </tabset>
+                    </uib-tab>
+                </uib-tabset>
             </div>
         </div>
 
