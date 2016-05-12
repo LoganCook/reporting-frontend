@@ -74,10 +74,10 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
             _.forEach(usageSummary, function(usage) {
                 data.push([
                     usage.name,
-                    $scope.formatNumber(usage.capacity),
-                    $scope.formatNumber(usage.free / usage.usageCount),
-                    $scope.formatNumber(usage.live_usage / usage.usageCount),
-                    $scope.formatNumber(usage.snapshot_usage) 
+                    $scope.formatNumber(usage.capacity) + ' MB',
+                    $scope.formatNumber(usage.free / usage.usageCount) + ' MB',
+                    $scope.formatNumber(usage.live_usage / usage.usageCount) + ' MB',
+                    $scope.formatNumber(usage.snapshot_usage)  + ' MB'
                 ]);
             });
             

@@ -28,9 +28,9 @@
                         <td>{{ usage.virtual_volume_name }}</td>
                         <td>{{ usage.filesystem_name }}</td>
                         <td>{{ usage.owner }}</td>
-                        <td>{{ formatSize(usage.quota) }}</td>
+                        <td>{{ formatNumber(usage.quota) }} MB</td>
                         <td>{{ formatNumber(usage.files / usage.usageCount) }}</td>
-                        <td>{{ formatSize(usage.usage / usage.usageCount) }}</td>  
+                        <td>{{ formatNumber(usage.usage / usage.usageCount) }} MB</td>  
                     </tr>
                 </table> 
                 

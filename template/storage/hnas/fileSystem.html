@@ -25,10 +25,10 @@
                     </tr>
                     <tr ng-repeat="usage in filesystemUsage | orderBy: 'name'">
                         <td>{{ usage.name }}</td>
-                        <td>{{ formatSize(usage.capacity) }}</td>
-                        <td>{{ formatSize(usage.free / usage.usageCount) }}</td>
-                        <td>{{ formatSize(usage.live_usage / usage.usageCount) }}</td>  
-                        <td>{{ formatSize(usage.snapshot_usage) }}</td> 
+                        <td>{{ formatNumber(usage.capacity) }} MB</td>
+                        <td>{{ formatNumber(usage.free / usage.usageCount) }} MB</td>
+                        <td>{{ formatNumber(usage.live_usage / usage.usageCount) }} MB</td>  
+                        <td>{{ formatNumber(usage.snapshot_usage) }} MB</td> 
                     </tr>
                 </table> 
             </div>

@@ -94,7 +94,7 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
          */
         $scope.export = function() {
             var dataWithTitle = [
-                ["Volume", "File system", "Quota", "Files(avg)", "Usage(avg)"]
+                ["Volume", "File system", "Owner", "Quota", "Files(avg)", "Usage(avg)"]
             ];
             var data = [];
 
@@ -102,9 +102,10 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
                 data.push([
                     usage.virtual_volume_name,
                     usage.filesystem_name,
-                    $scope.formatNumber(usage.quota),
+                    usage.owner,
+                    $scope.formatNumber(usage.quota) + ' MB',
                     $scope.formatNumber(usage.files / usage.usageCount),
-                    $scope.formatNumber(usage.usage / usage.usageCount) 
+                    $scope.formatNumber(usage.usage / usage.usageCount) + ' MB' 
                 ]);
             });
             

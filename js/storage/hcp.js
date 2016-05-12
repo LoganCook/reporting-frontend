@@ -13,7 +13,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
   
         $scope.cache = {}; 
         $scope.cache.usage = [];
-        $scope.usage = []; 
+        $scope.usages = []; 
    
         $scope.owners = {};    
         
@@ -109,9 +109,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 });       
             } 
         }; 
-
-
-
+ 
         clear();
         initHcp();     
 
@@ -120,17 +118,21 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
          */
         $scope.export = function() {
             var dataWithTitle = [
-                ["Name", "Capacity", "Free(avg)", "Live usage(avg)", "Snapshot usage"]
+                ["Name", "Ingested(avg)", "Raw bytes(avg)", "Reads(avg)", "Writes(avg)", "Deletes(avg)", "Objects(avg)", "Bytes in(avg)", "Bytes out(avg)"]
             ];
             var data = [];
 
             _.forEach(usageSummary, function(usage) {
                 data.push([
-                    usage.name,
-                    $scope.formatNumber(usage.capacity),
-                    $scope.formatNumber(usage.free / usage.usageCount),
-                    $scope.formatNumber(usage.live_usage / usage.usageCount),
-                    $scope.formatNumber(usage.snapshot_usage) 
+                    usage.namespace_name,
+                    $scope.formatSize(usage.ingested_bytes),
+                    $scope.formatSize(usage.raw_bytes / usage.usageCount),
+                    $scope.formatSize(usage.reads / usage.usageCount),
+                    $scope.formatSize(usage.writes / usage.usageCount),
+                    $scope.formatNumber(usage.deletes / usage.usageCount),
+                    $scope.formatNumber(usage.objects / usage.usageCount),
+                    $scope.formatSize(usage.bytes_in / usage.usageCount),
+                    $scope.formatSize(usage.bytes_out / usage.usageCount) 
                 ]);
             });
             
@@ -216,7 +218,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 $rootScope.spinnerActive = false;
                 
                 mapUsage($scope.cache.usage); 
-                $scope.filesystemUsage = _.values(usageSummary);
+                $scope.usages = _.values(usageSummary);
             } 
         };
                  
@@ -240,6 +242,14 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                         reads : 0,
                         writes : 0,
                         deletes : 0,
+                        objects : 0,
+                        bytes_in : 0,
+                        bytes_out : 0,
+                        metadata_only_objects : 0,
+                        metadata_only_bytes : 0,
+                        tiered_objects : 0,
+                        tiered_bytes : 0,
+                        snapshot : '',
                         usageCount: 0
                     };     
                     
@@ -263,9 +273,16 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                     usageSummary[_usage.namespace].reads += _usage.reads;
                     usageSummary[_usage.namespace].writes += _usage.writes;
                     usageSummary[_usage.namespace].deletes += _usage.deletes;
+                    usageSummary[_usage.namespace].objects += _usage.objects;
+                    usageSummary[_usage.namespace].bytes_in += _usage.bytes_in;
+                    usageSummary[_usage.namespace].bytes_out += _usage.bytes_out;
+                    usageSummary[_usage.namespace].metadata_only_objects += _usage.metadata_only_objects;
+                    usageSummary[_usage.namespace].metadata_only_bytes += _usage.metadata_only_bytes;
+                    usageSummary[_usage.namespace].tiered_objects += _usage.tiered_objects;
+                    usageSummary[_usage.namespace].tiered_bytes += _usage.tiered_bytes; 
                 }      
                 //swap.push(_.values(usageSummary));                
-            });
+            }); 
             return swap;
         }  
         
