@@ -1,4 +1,4 @@
-define(["app", "lodash", "../util"], function(app, _, util) {
+define(["app", "lodash", "../util", "menu-data"], function(app, _, util, menuData) {
     app.controller("HPCController", ["$rootScope", "$scope", "$timeout", "reporting", "$uibModal", "org",
     function($rootScope, $scope, $timeout, reporting, $uibModal, org) {
 
@@ -39,12 +39,23 @@ define(["app", "lodash", "../util"], function(app, _, util) {
 
         //Here it loads crm data into $scope.crm["host", "queue", "owner"]
         reporting.hpcBase(function(svc, type, data) {
-            $scope[type] = util.keyArray(data);
 
-            if (type == "queue") {
-                _.forEach($scope.selectedQueues, function(q) {
-                    $scope.selectedQueues[q.id] = false;
-                });
+            if (type == "queue") {  
+                var filtered = [];
+                if(menuData['HPC']['HPC'].length > 2){ 
+                    var preDefineQueues = menuData['HPC']['HPC'][2];
+                    _.forEach(data, function(_queu) {
+                        if(preDefineQueues.indexOf(_queu.name) > -1){
+                            filtered.push(_queu);
+                        } 
+                    });     
+                }else{
+                    filtered = data;
+                }
+                
+                $scope[type] = util.keyArray(filtered);  
+            }else{ 
+                $scope[type] = util.keyArray(data);
             }
         });
 

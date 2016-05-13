@@ -9,7 +9,7 @@
                         <div>
                             <select class="form-control" ng-model="select.snapshot" ng-change="selectSnapshot()">
                                 <option value="">Snapshot</option>
-                                <option ng-repeat="snapshot in values(keystone.snapshot) | orderBy: 'ts'" value="{{ snapshot.id }}">
+                                <option ng-repeat="snapshot in values(keystone.snapshot) | orderBy: '-ts'" value="{{ snapshot.id }}">
                                     {{ formatTimestamp(snapshot.ts) }}
                                 </option>
                             </select>

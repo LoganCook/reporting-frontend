@@ -50,7 +50,7 @@
                             <td>{{ ((instance.snapshotmax - instance.snapshotmin) / 3600).toFixed(1) }}</td>  
                             <td>{{ instance.vcpus }}</td>
                             <td>{{ formatDuration((instance.snapshotmax - instance.snapshotmin) * instance.vcpus, "seconds") }}</td>  
-                            <td>{{ instance.ram }}</td>
+                            <td>{{ formatNumber(instance.ram) }}</td>
                             <td>{{ instance.disk }}</td>
                             <td>{{ instance.ephemeral }}</td>  
                         </tr>

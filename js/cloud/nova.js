@@ -402,7 +402,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                     ((_instance.snapshotmax - _instance.snapshotmin) / 3600).toFixed(1) ,
                     _instance.vcpus ,
                     $scope.formatDuration((_instance.snapshotmax - _instance.snapshotmin) * _instance.vcpus, "seconds") ,
-                    _instance.ram ,
+                    $scope.formatNumber(_instance.ram),
                     _instance.disk ,
                     _instance.ephemeral 
                 ]);
@@ -423,12 +423,16 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                     _instances.tenant_allocation = memberships[_instances.account_openstack + _instances.tenant_openstack].allocation; 
                     _instances.tenant_name = memberships[_instances.account_openstack + _instances.tenant_openstack].name; 
                     _instances.tenant_description = memberships[_instances.account_openstack + _instances.tenant_openstack].description;
-                    //swap.push(_instances);
+                    
+                    swap.push(_instances);
                 }else{
                     _instances.tenant_name =  _instances.account_openstack + " | " + _instances.tenant_openstack; 
                 }
             });
-            //instances = swap;
+            
+            //Uncomment if you want to display instances which is not mathced with membership in keystone. 
+            instances = swap;
+            
             $scope.instances = util.keyArray(instances); 
             
             // fetch instance state
