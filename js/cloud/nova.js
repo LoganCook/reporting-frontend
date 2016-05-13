@@ -19,7 +19,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
         $scope.instances = {};  
         
         //only sa zone 
-        var saZonefilter =  {filter: [props['nova.availability.zone']]}; 
+        var zonefilter = ""; 
  
         var keystone = {memberships : [] };   
         var instances = {};    
@@ -181,6 +181,18 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
         var processInitData = function(svc, type, data) {  
             if (type == "az") {  
                 azs  = util.keyArray(data);  
+                zonefilter = "";
+                _.forEach(data, function(_az) {
+                    if(props['nova.availability.zone'].indexOf(_az.name) > -1){ 
+                        zonefilter += _az.id ;
+                        zonefilter += ",";
+                    }
+                });  
+                zonefilter = zonefilter.replace(/,\s*$/, "");//remove last comma" 
+                var filter =  {filter: ["availability_zone.in." + zonefilter]};                  
+                var query = _.merge(baseFilters(), filter);
+                reporting.novaQuery("instance", query, processInstance);
+                
             }else if (type == "hypervisor") {  
                 hypervisors  = util.keyArray(data);   
             }else if (type == "flavor") {  
@@ -288,9 +300,6 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
          
         var initNova = function() {  
             reporting.novaBase(processInitData); 
-             
-            var query = _.merge(baseFilters(), saZonefilter);
-            reporting.novaQuery("instance", query, processInstance);
         };
 
 
