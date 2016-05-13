@@ -1,10 +1,7 @@
-define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
+define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, math, util, props) {
     app.controller("NovaController", ["$rootScope", "$scope", "$timeout", "reporting", "$uibModal", "org",
     function($rootScope, $scope, $timeout, reporting, $uibModal, org) {
   
-        //only sa zone 
-        var saZonefilter =  {filter: ["availability_zone.in.6e2fcd7c-63a9-4f03-a2f8-cd545366de82"]}; 
-
         $scope.values = _.values;
 
         $scope.formatTimestamp = util.formatTimeSecStamp;
@@ -18,11 +15,12 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         $scope.cache = {}; 
         $scope.cache.instancesState = [];
         
-        $scope.domains = [{"id": 1, "name":"Flinders"},
-                          {"id": 2, "name":"Adelaide"},
-                          {"id": 3, "name":"UniSA"}];  
+        $scope.domains = props['nova.domains'];  
         $scope.instances = {};  
-          
+        
+        //only sa zone 
+        var saZonefilter =  {filter: [props['nova.availability.zone']]}; 
+ 
         var keystone = {memberships : [] };   
         var instances = {};    
         var snapshots= {};    

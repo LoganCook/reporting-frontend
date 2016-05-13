@@ -1,4 +1,4 @@
-define(["app", "lodash", "../util", "menu-data"], function(app, _, util, menuData) {
+define(["app", "lodash", "../util", "properties"], function(app, _, util, props) {
     app.controller("HPCController", ["$rootScope", "$scope", "$timeout", "reporting", "$uibModal", "org",
     function($rootScope, $scope, $timeout, reporting, $uibModal, org) {
 
@@ -42,10 +42,9 @@ define(["app", "lodash", "../util", "menu-data"], function(app, _, util, menuDat
 
             if (type == "queue") {  
                 var filtered = [];
-                if(menuData['HPC']['HPC'].length > 2){ 
-                    var preDefineQueues = menuData['HPC']['HPC'][2];
+                if(props['hpc.queues']){   
                     _.forEach(data, function(_queu) {
-                        if(preDefineQueues.indexOf(_queu.name) > -1){
+                        if(props['hpc.queues'].indexOf(_queu.name) > -1){
                             filtered.push(_queu);
                         } 
                     });     
