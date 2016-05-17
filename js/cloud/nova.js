@@ -51,15 +51,14 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
 
         // Keystone data
         var initKeystone = function() {  
-            reporting.novaBase(processInitData); 
-             
             var query = { order:"-ts", count : 1};
             reporting.keystoneQuery("snapshot", query, processKeystoneSnapshot);
         };
 
         var processKeystoneSnapshot = function(svc, type, query, data) { 
             
-            if (data && data.length > 0) {  
+            if (data && data.length > 0) {   
+                $rootScope.spinnerActive = true;
                 var snapshotId = data[0].id;  
                 var query = { count: 10000, page:1, filter: ["snapshot.in." + snapshotId]}; 
                 reporting.keystoneQuery("membership", query, processKeystoneMembership);
@@ -76,15 +75,13 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                 Array.prototype.push.apply(keystone.memberships,  data);  
                 $scope.status = "Loaded " + data.length + " membership."; 
                 
-                loadKeystoneAccountTenant(data);
-                
-                $rootScope.spinnerActive = false;
+                loadKeystoneAccountTenant(data); 
                   
                 var next = util.nextPage(query);
  
                 reporting.keystoneQuery("membership", next, processKeystoneMembership);
             } else { 
-                $rootScope.spinnerActive = false;
+                //$rootScope.spinnerActive = false;
             } 
         };
                 
@@ -138,7 +135,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             
             if (data && data.length > 0) {  
                  
-                $scope.status = "Loaded " + data.length + " membership."; 
+                $scope.status = "Loaded memberships."; 
                 
                 var accounts = util.keyArray(data);  
                 
@@ -148,7 +145,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                     }     
                 }); 
             } else { 
-                $rootScope.spinnerActive = false;
+                //$rootScope.spinnerActive = false;
             } 
         };
         
@@ -157,7 +154,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             
             if (data && data.length > 0) {  
                  
-                $scope.status = "Loaded " + data.length + " tenent."; 
+                $scope.status = "Loaded tenants."; 
                 
                 var tenants = util.keyArray(data);  
                 
@@ -170,7 +167,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                     }     
                 }); 
             } else {
-                $rootScope.spinnerActive = false;
+                //$rootScope.spinnerActive = false;
             } 
         }; 
         
@@ -264,7 +261,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
         var processNovaAccount = function(svc, type, query, data) { 
             
             if (data && data.length > 0) {  
-                 
+                  
                 $scope.status = "Loaded " + data.length + " membership."; 
                 
                 var accounts = util.keyArray(data);  
@@ -274,6 +271,8 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                         _instance.account_openstack = accounts[_instance.account].openstack_id; 
                     } 
                 });  
+                
+                $rootScope.spinnerActive = false;
             } else { 
                 $rootScope.spinnerActive = false;
             } 
@@ -283,7 +282,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
         var processNovaTenant = function(svc, type, query, data) { 
             
             if (data && data.length > 0) {  
-                 
+                  
                 $scope.status = "Loaded " + data.length + " tenant."; 
                 
                 var tenants = util.keyArray(data);  
@@ -293,6 +292,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                         _instance.tenant_openstack = tenants[_instance.tenant].openstack_id;  
                     }     
                 }); 
+                $rootScope.spinnerActive = false;
             } else {
                  $rootScope.spinnerActive = false;
             } 

@@ -39,6 +39,9 @@ define(["app", "lodash", "../util"], function(app, _, util) {
         };
 
         var initKeystone = function() {
+            
+            $rootScope.spinnerActive = true;
+            
             reporting.keystoneBase(function(svc, type, data) {
                 if (type == "snapshot") {
                     $scope.snapshotByTimestamp = util.keyArray(data, "ts");
@@ -72,6 +75,9 @@ define(["app", "lodash", "../util"], function(app, _, util) {
                     }
 
                     $scope.referenceByDomain = referenceByDomain;
+                    
+                    
+                    $rootScope.spinnerActive = false;
                 }
                 // "account", "domain"
                 keystone[type] = $scope.keystone[type] = util.keyArray(data);

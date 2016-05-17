@@ -1,21 +1,21 @@
 require.config({
   //enforceDefine: true, //This is for IE error handling: http://requirejs.org/docs/api.html#ieloadfail. use define instead of a normal js file
   paths: {
-      'ng-csv' : '/lib/ng-csv/build/ng-csv.min',
-      'axios' : '/lib/axios/dist/axios.min',
-      'lodash': '/lib/lodash/lodash.min',
-      'filesize': '/lib/filesize/lib/filesize.min',
-      "mathjs": '/lib/mathjs/dist/math.min',
-      "moment": '/lib/moment/min/moment.min',
-      "numeral": '/lib/numeral/min/numeral.min',
-      "loadingSpinner": '/lib/angular-spinner/angular-spinner.min',
-      'qs': '/node_modules/qs/dist/qs',
-      'ngGoogleChart': '/lib/angular-google-chart/ng-google-chart.min.js'
+      'ng-csv' : '../lib/ng-csv/build/ng-csv.min',
+      'axios' : '../lib/axios/dist/axios.min',
+      'lodash': '../lib/lodash/lodash.min',
+      'filesize': '../lib/filesize/lib/filesize.min',
+      "mathjs": '../lib/mathjs/dist/math.min',
+      "moment": '../lib/moment/min/moment.min',
+      "numeral": '../lib/numeral/min/numeral.min',
+      "loadingSpinner": '../lib/angular-spinner/angular-spinner.min',
+      'qs': '../node_modules/qs/dist/qs',
+      'ngGoogleChart': '../lib/angular-google-chart/ng-google-chart.min.js'
   },
   shim: {
       "ng-csv": { exports: "ng-csv" }
   },
-  baseUrl: '/js'
+  baseUrl: 'js'
 });
 
 //TODO: May have seperated dev and production main.js files or gulp it?

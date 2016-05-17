@@ -35,12 +35,14 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         var xfs = {};
 
         var initXFS = function() {
+            $rootScope.spinnerActive = true;
             reporting.xfsBase(function(svc, type, data) {
                 xfs[type] = $scope.xfs[type] = util.keyArray(data);
 
                 if (type == "snapshot") {
                     xfs.snapshotByTimestamp = $scope.xfs.snapshotByTimestamp = util.keyArray(data, "ts");
                 }
+                $rootScope.spinnerActive = false;
             });
         }; 
 
