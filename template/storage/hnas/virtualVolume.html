@@ -1,0 +1,46 @@
+<div class="container-fluid">
+    <h3 class="text-center">Virtual Volume usage</h3>
+    <p ng-show="error" class="alert alert-danger">{{ error }}</p>
+    <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
+    <div>
+
+        <form>
+            <div class="row"> 
+                <ersa-search 
+                    start-date-class="col-md-4" end-date-class="col-md-4" 
+                    button-class="col-md-4" 
+                    export-file-name="vv.tsv"/> 
+            </div> 
+        </form>
+
+        <div class="row" style="padding-top: 25px;">
+            <div class="col-md-12">
+                <table class="table table-striped">
+                    <tr>
+                        <th>Volume</th>
+                        <th>File system</th>
+                        <th>Owner</th>
+                        <th>Quota</th>
+                        <th>Files(avg)</th> 
+                        <th>Usage(avg)</th> 
+                    </tr>
+                    <tr ng-repeat="usage in virtualVolumeUsage | orderBy: 'virtual_volume_name'">
+                        <td>{{ usage.virtual_volume_name }}</td>
+                        <td>{{ usage.filesystem_name }}</td>
+                        <td>{{ usage.owner }}</td>
+                        <td>{{ formatNumber(usage.quota) }} MB</td>
+                        <td>{{ formatNumber(usage.files / usage.usageCount) }}</td>
+                        <td>{{ formatNumber(usage.usage / usage.usageCount) }} MB</td>  
+                    </tr>
+                </table> 
+                
+            </div>
+        </div>
+        <!-- 
+            http://jsfiddle.net/alexsuch/RLQhh/ 
+            https://angular-ui.github.io/bootstrap/
+        -->
+        <!-- button type="button" class="btn btn-default" ng-click="openJobMessage('lg')">Open me!</button -->
+    </div> 
+       
+</div>

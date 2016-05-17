@@ -151,6 +151,42 @@ return function($timeout) {
         loadQuery("keystone", type, query, callback);
     };
 
+    // Nova
+
+    service.novaBase = function(callback) {
+        ["az", "flavor", "hypervisor"].forEach(function(type) {
+            load("nova", type, callback);
+        });
+    };
+
+    service.novaQuery = function(type, query, callback) {
+        loadQuery("nova", type, query, callback);
+    };
+
+    // Hnas
+
+    service.hnasBase = function(callback) {
+        ["filesystem", "owner"].forEach(function(type) {
+            load("hnas", type, callback);
+        });
+    };
+
+    service.hnasQuery = function(type, query, callback) {
+        loadQuery("hnas", type, query, callback);
+    };
+
+    // Hcp
+
+    service.hcpBase = function(callback) {
+        ["allocation"].forEach(function(type) {
+            load("hcp", type, callback);
+        });
+    };
+
+    service.hcpQuery = function(type, query, callback) {
+        loadQuery("hcp", type, query, callback);
+    };
+
     // Generic
 
     service.populateFromUsername = function(snapshot, object) {
@@ -172,12 +208,12 @@ return function($timeout) {
             object.fullname = "?";
             object.organisation = "?";
         } else {
-            var usernameID = top.crmLookup.username[object.username].id;
+            //var usernameID = top.crmLookup.username[object.username].id;
 
             var usernameFilters = {
                 filter: [
-                    "snapshot.eq." + snapshot,
-                    "username.eq." + usernameID
+                    "snapshot.eq." + snapshot//,
+                    //"username.eq." + usernameID
                 ]
             };
 

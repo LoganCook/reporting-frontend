@@ -1,8 +1,8 @@
-var numeral = require("numeral");
-var moment = require("moment");
-var _ = require("lodash");
-
-module.exports = function ($rootScope, $scope, $timeout, reporting) {
+define(["app", "numeral", "moment", "mathjs", "lodash", "../util"], function(app, numeral, moment, math, _, util) {
+    app.controller("SwiftController", ["$rootScope", "$scope", "$timeout", "reporting", "$uibModal", "org",
+    function($rootScope, $scope, $timeout, reporting, $uibModal, org) {
+ 
+ 
     // TODO: replace prehistoric sandbox code
 
     /*
@@ -79,5 +79,7 @@ module.exports = function ($rootScope, $scope, $timeout, reporting) {
             $scope.usage = usage;
         });
     };
-    */
-};
+    */ 
+    
+    }]);   
+});

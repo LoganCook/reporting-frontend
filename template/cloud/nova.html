@@ -2,42 +2,61 @@
     <h3 class="text-center">NeCTAR Virtual Machines (Nova)</h3>
 
     <div>
-        <div class="row">
-            <div class="col-sm-4 col-sm-offset-4">
+        <form>
+            <div class="row">
+                <div class="col-md-3">
+                    <p>Domain</p>
+                    <div class="form-group">
+                        <select name="domainSelect" id="domainSelect" ng-model="selectedDomain" ng-change="domainChanged()" class="form-control">
+                            <option value="">All</option>
+                            <option ng-repeat="domain in domains" value="{{ domain.id }}">{{ domain.name }}</option>
+                        </select>
+                    </div>
+                </div> 
+                <ersa-search 
+                    start-date-class="col-md-3" end-date-class="col-md-3" 
+                    button-class="col-md-3" 
+                    export-file-name="nova.tsv"/> 
+            </div> 
+        </form>
 
-                <div style="padding-top: 25px;">
-                    <form class="form-horizontal">
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Snapshot</label>
-                            <div class="col-sm-8">
-                                <select class="form-control" ng-change="selectSnapshot()" ng-model="select.ts">
-                                    <option ng-repeat="snap in snapshots" value="{{ snap.id }}">{{ formatTimestamp(snap.ts) }}</option>
-                                </select>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
+        <div class="row"> 
             <div class="col-sm-12">
                 <div style="padding-top: 25px;">
                     <table class="table table-striped" style="width: 100%;">
                         <tr>
-                            <th>Foo</th>
+                            <th>Tenant</th> 
+                            <th>Server ID</th> 
+                            <th>Server Name</th>
+                            <!-- th>Instance Status ID </th --> 
+                            <!-- th>Account ID</th --> 
+                            <th>Hypervisorname </th>
+                            <th>Inventory Code</th>
+                            <th>Hours</th>    
+                            <th>VCPUs</th>
+                            <th>Usage</th>    
+                            <th>RAM</th>
+                            <th>Disk</th>
+                            <th>Ephemeral</th>  
                         </tr>
-                        <tr ng-repeat="item in items">
-                            <td>{{ vs.name }}</td>
-                            <td>{{ vs.ownerName }}</td>
-                            <td>{{ vs.tenantName }}</td>
-                            <td>{{ formatSize(vs.size) }}</td>
-                            <td>{{ vs.status.name }}</td>
-                            <td>{{ vs.volume.az.name }}</td>
+                        <tr ng-repeat="instance in instancesState | orderBy: 'tenant_name'"> 
+                            <td>{{ instance.tenant_name }}</td> 
+                            <td>{{ instance.openstack_id }}</td> 
+                            <td>{{ instance.name }}</td> 
+                            <!-- td>{{ instance.id}}</td --> 
+                            <!-- td>{{ instance.account }}</td --> 
+                            <td>{{ instance.hypervisorname }}</td> 
+                            <td>{{ instance.flavorname }}</td>
+                            <td>{{ ((instance.snapshotmax - instance.snapshotmin) / 3600).toFixed(1) }}</td>  
+                            <td>{{ instance.vcpus }}</td>
+                            <td>{{ formatDuration((instance.snapshotmax - instance.snapshotmin) * instance.vcpus, "seconds") }}</td>  
+                            <td>{{ formatNumber(instance.ram) }}</td>
+                            <td>{{ instance.disk }}</td>
+                            <td>{{ instance.ephemeral }}</td>  
                         </tr>
                     </table>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</div> 

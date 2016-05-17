@@ -4,7 +4,9 @@ return {
     formatTimestamp: function(t) {
         return moment.unix(t).format("LLL");
     },
-
+    formatTimeSecStamp: function(t) {
+        return moment.unix(t).format("YYYY-MM-DD HH:mm");
+    },
     formatSize: function(bytes) {
         if (bytes === 0) { return "-"; }
         return filesize(bytes);
@@ -36,8 +38,17 @@ return {
         });
 
         return result;
-    },
+    }, 
+    multiKeyArray: function(records, key1, key2) {
+        var result = {};
 
+        _.forEach(records, function(record) {
+            result[record[key1] + record[key2]] = record;
+        });
+
+        return result;
+    },
+    
     keyMultiArray: function(records, key) {
         var result = {};
 
@@ -96,8 +107,10 @@ return {
     },
 
     nextPage: function(query) {
-        if ("page" in query) {
-            query.page += 1;
+        var _query = this.clone(query);
+        
+        if ("page" in _query) {
+            _query.page += 1;
         }
         // var next = [];
         // _.forEach(query, function(param) {
@@ -107,7 +120,42 @@ return {
         //         next.push(param);
         //     }
         // });
-        return query;
-    }
+        return _query;
+    },
+
+    clone: function(obj) {
+        var copy;
+
+        // Handle the 3 simple types, and null or undefined
+        if (null == obj || "object" != typeof obj) return obj;
+
+        // Handle Date
+        if (obj instanceof Date) {
+            copy = new Date();
+            copy.setTime(obj.getTime());
+            return copy;
+        }  
+
+        // Handle Array
+        if (obj instanceof Array) {
+            copy = [];
+            for (var i = 0, len = obj.length; i < len; i++) {
+                copy[i] = this.clone(obj[i]);
+            }
+            return copy;
+        }
+
+        // Handle Object
+        if (obj instanceof Object) {
+            copy = {};
+            for (var attr in obj) {
+                if (obj.hasOwnProperty(attr)) copy[attr] = this.clone(obj[attr]);
+            }
+            return copy;
+        }
+
+        throw new Error("Unable to copy obj! Its type isn't supported.");
+    },
+        
 };
 });

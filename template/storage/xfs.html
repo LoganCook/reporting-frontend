@@ -1,10 +1,11 @@
 <div class="container-fluid">
     <h3 class="text-center">XFS</h3>
-
+    <p ng-show="error" class="alert alert-danger">{{ error }}</p>
+    <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
     <div>
         <form>
             <div class="row">
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <p>Host</p>
                     <div class="form-group">
                         <div>
@@ -17,22 +18,8 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="col-md-2">
-                    <p>CRM Snapshot</p>
-                    <div class="form-group">
-                        <div>
-                            <select class="form-control" ng-model="select.crm">
-                                <option value="">Snapshot</option>
-                                <option ng-repeat="snapshot in values(crm.snapshot) | orderBy: 'ts'" value="{{ snapshot.id }}">
-                                    {{ formatTimestamp(snapshot.ts) }}
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-2">
+ 
+                <div class="col-md-3">
                     <p>Filesystem</p>
                     <div class="form-group">
                         <div>
@@ -46,26 +33,11 @@
                     </div>
                 </div>
 
-                <div class="col-md-2">
-                    <p>Start Date</p>
-                    <p class="input-group">
-                        <input type="text" class="form-control" datepicker-popup ng-model="rangeStart" is-open="rangeStartOpen" show-weeks="false" />
-                        <span class="input-group-btn">
-                            <button type="button" class="btn btn-default" ng-click="openRangeStart()">📅</button>
-                        </span>
-                    </p>
-                </div>
-
-                <div class="col-md-2">
-                    <p>End Date</p>
-                    <p class="input-group">
-                        <input type="text" class="form-control" datepicker-popup ng-model="rangeEnd" is-open="rangeEndOpen" show-weeks="false" />
-                        <span class="input-group-btn">
-                            <button type="button" class="btn btn-default" ng-click="openRangeEnd()">📅</button>
-                        </span>
-                    </p>
-                </div>
-
+                <ersa-search 
+                    start-date-class="col-md-2" end-date-class="col-md-2" 
+                    button-class="col-md-2" 
+                    export-file-name="xfs.tsv"
+                />
 
                 <!-- <div class="col-md-2">
                     <p>Usage Snapshot</p>
@@ -81,7 +53,7 @@
                     </div>
                 </div> -->
 
-                <div class="col-md-2">
+                <!--div class="col-md-2">
                     <p>{{ status }}</p>
                     <div class="btn-group btn-group-justified" role="group">
                         <div class="btn-group" role="group">
@@ -91,23 +63,24 @@
                             <button class="btn btn-default" field-separator="\t" filename="xfs.tsv" ng-csv="exportUsageRange()" type="button">Export as TSV</button>
                         </div>
                     </div>
-                </div>
+                </div-->
             </div>
 
-            <div class="row" ng-show="select.host && select.crm && select.filesystem" style="padding-top: 25px;">
+            <!-- div class="row" ng-show="select.host && select.crm && select.filesystem" style="padding-top: 25px;" -->
+            <div class="row" ng-show="select.host" style="padding-top: 25px;">
                 <div class="col-md-12">
                     <table class="table table-striped">
                         <tr>
-                            <th>Full Name</th>
+                            <!--th>Full Name</th -->
                             <th>Username</th>
-                            <th>Organisation</th>
+                            <!--th>Organisation</th -->
                             <th>Usage (Weighted Mean)</th>
                             <th>Usage (Peak)</th>
                         </tr>
                         <tr ng-repeat="entry in output.summed | orderBy: 'username'">
-                            <td>{{ entry.fullname }}</td>
+                            <!-- td>{{ entry.fullname }}</td -->
                             <td>{{ entry.username }}</td>
-                            <td>{{ entry.organisation }}</td>
+                            <!-- td>{{ entry.organisation }}</td -->
                             <td>{{ formatSize(entry.usage) }}</td>
                             <td>{{ formatSize(entry.peak) }}</td>
                         </tr>

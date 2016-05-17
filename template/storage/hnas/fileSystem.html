@@ -1,0 +1,43 @@
+<div class="container-fluid">
+    <h3 class="text-center">File system usage</h3>
+    <p ng-show="error" class="alert alert-danger">{{ error }}</p>
+    <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
+    <div>
+
+        <form>
+            <div class="row"> 
+                <ersa-search 
+                    start-date-class="col-md-4" end-date-class="col-md-4" 
+                    button-class="col-md-4" 
+                    export-file-name="fs.tsv"/> 
+            </div> 
+        </form>
+
+        <div class="row" style="padding-top: 25px;">
+            <div class="col-md-12">
+                <table class="table table-striped">
+                    <tr>
+                        <th>Name</th>
+                        <th>Capacity</th>
+                        <th>Free(avg)</th> 
+                        <th>Live usage(avg)</th>
+                        <th>Snapshot usage</th> 
+                    </tr>
+                    <tr ng-repeat="usage in filesystemUsage | orderBy: 'name'">
+                        <td>{{ usage.name }}</td>
+                        <td>{{ formatNumber(usage.capacity) }} MB</td>
+                        <td>{{ formatNumber(usage.free / usage.usageCount) }} MB</td>
+                        <td>{{ formatNumber(usage.live_usage / usage.usageCount) }} MB</td>  
+                        <td>{{ formatNumber(usage.snapshot_usage) }} MB</td> 
+                    </tr>
+                </table> 
+            </div>
+        </div>
+        <!-- 
+            http://jsfiddle.net/alexsuch/RLQhh/ 
+            https://angular-ui.github.io/bootstrap/
+        -->
+        <!-- button type="button" class="btn btn-default" ng-click="openJobMessage('lg')">Open me!</button -->
+    </div> 
+       
+</div>

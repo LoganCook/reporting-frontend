@@ -1,8 +1,7 @@
-var _ = require("lodash");
-
-var util = require("../util");
-
-module.exports = function ($rootScope, $scope, $timeout, reporting) {
+define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
+    app.controller("CinderController", ["$rootScope", "$scope", "$timeout", "reporting", "$uibModal", "org",
+    function($rootScope, $scope, $timeout, reporting, $uibModal, org) {
+ 
     // TODO: replace prehistoric sandbox code
 
     /*
@@ -120,4 +119,6 @@ module.exports = function ($rootScope, $scope, $timeout, reporting) {
         });
     };
     */
-};
+    
+    }]);   
+});
