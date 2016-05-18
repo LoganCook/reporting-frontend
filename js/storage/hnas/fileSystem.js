@@ -16,7 +16,7 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
    
         $scope.owners = {};    
         
-        var snapshots= {};    
+        var snapshots = {};    
         var filesystems = {};   
         var usageSummary = {};  
         
@@ -28,7 +28,7 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
         }; 
    
         var clear = function() {    
-            snapshots= {};      
+            snapshots = {};      
             
             $scope.cache = {}; 
             $scope.cache.filesystemUsage = []; 
@@ -54,7 +54,7 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
                 }  
                 
                 $rootScope.spinnerActive = false; 
-            }else if (type == "owner") {  
+            } else if (type == "owner") {  
                 $scope.owners  = util.keyArray(data);    
             }  
         };   
@@ -82,7 +82,7 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
             });
             
             data.sort(function(a, b) {
-                if(a[0].toLowerCase() >= b[0].toLowerCase()){return 1;}
+                if (a[0].toLowerCase() >= b[0].toLowerCase()) {return 1;}
                 return -1; 
             });
             
@@ -123,9 +123,9 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
 
                 var allsnapshot = data.length;    
                 var _param = "";
-                for(var i = 1; i <= allsnapshot; i++){
+                for (var i = 1; i <= allsnapshot; i++) {
                     _param += data[i - 1].id ;
-                    if( i != allsnapshot){  
+                    if ( i != allsnapshot) {  
                         _param += ",";
                     } 
                 }                
@@ -189,20 +189,20 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
                         usageCount: 0
                     };     
                     
-                    if(_usage.snapshot in snapshots){ 
-                        usageSummary[_usage.filesystem].snapshotmin= snapshots[_usage.snapshot].ts;
-                        usageSummary[_usage.filesystem].snapshotmax= snapshots[_usage.snapshot].ts;
+                    if (_usage.snapshot in snapshots) { 
+                        usageSummary[_usage.filesystem].snapshotmin = snapshots[_usage.snapshot].ts;
+                        usageSummary[_usage.filesystem].snapshotmax = snapshots[_usage.snapshot].ts;
                     } 
                 }   
                   
-                if(_usage.snapshot in snapshots){
+                if (_usage.snapshot in snapshots) {
                     var _min = usageSummary[_usage.filesystem].snapshotmin;
                     var _max = usageSummary[_usage.filesystem].snapshotmax; 
                     usageSummary[_usage.filesystem].snapshotmin = Math.min(_min, snapshots[_usage.snapshot].ts);
                     usageSummary[_usage.filesystem].snapshotmax = Math.max(_max, snapshots[_usage.snapshot].ts);
                 }  
                                 
-                if(_usage.filesystem in filesystemMap){   
+                if (_usage.filesystem in filesystemMap) {   
                     usageSummary[_usage.filesystem].usageCount++;
                     usageSummary[_usage.filesystem].capacity = _usage.capacity;
                     usageSummary[_usage.filesystem].free += _usage.free;
@@ -212,7 +212,7 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
                 //swap.push(_.values(usageSummary));                
             });
             return swap;
-        }  
+        };  
         
         $scope.$on('$viewContentLoaded', function() { 
 
@@ -221,7 +221,7 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
                             
             var startDate = new Date();
             var endDate = new Date();
-            startDate.setDate(startDate.getDate() -1);
+            startDate.setDate(startDate.getDate() - 1);
            // $scope.rangeStart = startDate;
             //endDate.setDate(endDate.getDate() -82);
             //$scope.rangeEnd = endDate;

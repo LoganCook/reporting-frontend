@@ -1,5 +1,5 @@
 define(["app", "lodash", "axios", "qs", "./util"], function (app, _, axios, qs, util) {
-return function($timeout) {
+return function($timeout, queryResource) {
     var defaultHeaders = function(name) {
         // name not currently used
         return {
@@ -18,28 +18,55 @@ return function($timeout) {
         raw: {}
     };
 
-    // API
+    function load(svc, type, callback) {
+      console.log("Query on ", svc, type);
+      var nq = queryResource.build(sessionStorage[svc]);
 
-    var load = function(svc, type, callback) {
-        client(svc).get(type + "?count=100000").then(function(response) {
-            $timeout(function() {
-                if (!(svc in service.raw)) {
-                    service.raw[svc] = {};
-                }
+      var args = {"object": type, "count": 5000, "page": 1};
 
-                service.raw[svc][type] = response.data;
+      if (!(svc in service.raw)) {
+        service.raw[svc] = {};
+      }
+      service.raw[svc][type] = [];
 
-                if (callback) {
-                    callback(svc, type, response.data);
-                }
-            });
-        }).catch(function(response) {
-            console.log(response);
-        });
-    };
+      function append(data) {
+        if (data && data.length) {
+          console.log(svc, type, ": cache data before appending", service.raw[svc][type].length);
+          console.log("Received data", data.length);
+          Array.prototype.push.apply(service.raw[svc][type], data);
+          console.log("Cache data after appending", service.raw[svc][type].length);
+          args["page"]++;
+          console.log("Try one more query on page ", args["page"]);
+          nq.query(args, append, returnCall);
+        } else {
+          returnCall();
+        }
+      }
 
+      // This is used when paginated query failed instead of []: e.g. default fashion of error_out=True in Flask-SQLAlchemy
+      function returnCall(httpResponse) {
+        // Actual error callback has httpResponse as its argument
+        if (httpResponse) {
+          console.log("Query is finished in error. Return to caller ");
+          console.warn("Error:", httpResponse.status, " ", httpResponse.statusText);
+        } else {
+          console.log("Query is finished in normal fashion. return to caller ");
+        }
+
+        if (callback) {
+            callback(svc, type, service.raw[svc][type]);
+        } else {
+          throw "No callback for the query: " + JSON.stringify(args);
+        }
+      }
+
+      nq.query(args, append, returnCall);
+    }
+
+    // FIXME: this is the most ugly query - breaks convention of GET and POST metohds
     var loadQuery = function(svc, type, query, callback) {
         var queryString = qs.stringify(query, { arrayFormat: "repeat" });
+        console.log("query string: " + JSON.stringify(query));
 
         var queryClient = client(svc);
         var execute;
@@ -67,6 +94,7 @@ return function($timeout) {
                 service.raw[svc][type][query] = response.data;
 
                 if (callback) {
+                    console.log("old response data: ", response.data);
                     callback(svc, type, query, response.data);
                 }
             });
@@ -79,6 +107,31 @@ return function($timeout) {
                 console.log(response);
             }
         });
+
+        // Post is not a post, ordinary post method in agnularjs does not work until I fix unified API post method
+        // var nq = queryResource.build(sessionStorage[svc]);
+        // //console.log("checking nq in client.js: " + JSON.stringify(query));
+        // // var myQ = JSON.stringify(query);
+        // // console.log("Are they the same? ")
+        // // console.log(myQ);
+        // // console.log(queryString); //This is a query string, not a form data
+        // if (JSON.stringify(query).length >= 1024) {
+        //   // not working as it is not a query string which is expected by the API server
+        //   //~ nq.post({'object':type}, JSON.stringify(query), function(data){
+        //   //nq.post({'object':type}, queryString, function(data){
+        //   // nq.post({'object':type}, query, function(data){
+        //   // nq.post({'object':type}, {count:40}, function(data){
+        //   nq.post({'object':type}, "count=40", function(data){ // post form body has to be a string of query? WTF
+        //     console.log("Bloody thing by post:");
+        //     console.log(data.length);
+        //   });
+        // } else {
+        //   angular.extend(query, {'object':type});
+        //   nq.query(query, function(data){
+        //     console.log("Bloody thing:");
+        //     console.log(data);
+        //   });
+        // }
     };
 
     service.query = function(svc, type, query, callback) {

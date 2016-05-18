@@ -163,7 +163,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             var filter = {};
             if ($scope.select.filesystem == '' ) { 
                 filter = {filter: ["snapshot.eq." + $scope.select.snapshot]};
-            }else{
+            } else {
                 filter = {filter: ["snapshot.eq." + $scope.select.snapshot,"filesystem.eq." + $scope.select.filesystem]};
             }
             
@@ -243,7 +243,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 query.filter = [
                     "snapshot.in." + snapshots.map(function(s) { return s.id; }).join(",") 
                 ];
-            }else{
+            } else {
                 query.filter = [
                     "snapshot.in." + snapshots.map(function(s) { return s.id; }).join(","),
                     "filesystem.eq." + $scope.select.filesystem 

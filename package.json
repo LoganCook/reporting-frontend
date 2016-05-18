@@ -2,29 +2,29 @@
   "name": "ersa-reporting-frontend",
   "version": "0.1.0",
   "description": "eRSA Reporting Frontend",
-  "contributors": [
-    {
-      "name": "Craig Patten",
-      "email": "craig.patten@ersa.edu.au",
-      "url": "https://github.com/craigpatten"
-    }
-  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/eresearchsa/reporting-frontend"
   },
-  "main": "reporting.js",
   "devDependencies": {
-    "gulp": "",
-    "gulp-connect": "",
-    "gulp-jshint": "1.11.2",
-    "jshint-stylish": "~2.0.1",
-    "del": "~2.0.2"
+    "bower": "^1.7.9",
+    "browser-sync": "^2.13.0",
+    "eslint": "^2.0.0",
+    "jasmine-core": "^2.4.1",
+    "karma": "^1.1.1",
+    "karma-jasmine": "^1.0.2",
+    "karma-phantomjs-launcher": "^1.0.1",
+    "karma-requirejs": "^1.0.0",
+    "requirejs": "^2.2.0"
   },
-  "scripts": {},
-  "license": "Apache-2.0",
-  "private": true,
   "dependencies": {
     "qs": "^6.1.0"
+  },
+  "license": "Apache-2.0",
+  "private": true,
+  "scripts": {
+    "lint": "eslint js tests",
+    "test": "karma start karma.conf.js --single-run",
+    "dev": "browser-sync start --server --port 8080 --no-open --no-ui"
   }
 }

@@ -6,7 +6,7 @@ define({
         //    "Business": ["/business/business", "Business"]
         //},
         "HPC": {
-            "HPC": ["/hpc/hpc", "HPC", "tesla gpu gtx mecheng abraham short gtx3 "]
+            "HPC": ["/hpc/hpc", "HPC"]
         },
         "Storage": {
             //"Filesystem": ["/storage/fs", "Filesystem"],
@@ -18,7 +18,7 @@ define({
         },
         "Cloud": {
             "Identity (Keystone)": ["/cloud/keystone", "Keystone"],
-            "Virtual Machines (Nova)": ["/cloud/nova", "Nova"],
+            "Virtual Machines (Nova)": ["nova"],
             //"Block Storage (Cinder)": ["/cloud/cinder", "Cinder"],
             //"Object Storage (Swift)": ["/cloud/swift", "Swift"]
         }

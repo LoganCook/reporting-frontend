@@ -10,8 +10,8 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         $scope.alerts = []; 
   
  
-        var snapshots= {};    
-        var allocations= {};    
+        var snapshots = {};    
+        var allocations = {};    
         var owners = {};  
         var filesystems = {};  
         var virtualVolumes = {};  
@@ -23,7 +23,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         }; 
    
         var clear = function() {    
-            snapshots= {};      
+            snapshots = {};      
               
         }; 
 
@@ -43,7 +43,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 } else { 
                     $scope.status = "Allocation: " + $scope.jobCount; 
                 }  
-            }else if (type == "owner") {  
+            } else if (type == "owner") {  
                 owners  = util.keyArray(data);    
             }  
         }; 

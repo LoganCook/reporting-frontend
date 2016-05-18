@@ -1,0 +1,28 @@
+{
+  "env": {
+    "browser": true,
+    "amd": true,
+    "jasmine": true
+  },
+  "globals": {
+    "angular": true,
+    "module": true,
+    "inject": true,
+  },
+  "rules": {
+    "no-undefined": 2,
+    "no-undef": 2,
+    "no-unreachable": 2,
+    "no-unexpected-multiline": 2,
+    "camelcase": 1,
+    "no-unused-vars": 1,
+    "no-shadow": 1,
+    "no-irregular-whitespace": 1,
+    "no-whitespace-before-property": 1,
+    "space-infix-ops": 1,
+    "space-unary-ops": 1,
+    "keyword-spacing": 1,
+    "space-before-blocks": 1,
+    "semi": 1,
+  }
+}

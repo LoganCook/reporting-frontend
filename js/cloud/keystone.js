@@ -150,7 +150,7 @@ define(["app", "lodash", "../util"], function(app, _, util) {
                         if (mapping) {
                             var domain = $scope.keystone.reference[mapping.reference].domain;
                             return $scope.keystone.domain[domain].name;
-                        } else{
+                        } else {
                             return "?";
                         }
                     })).sort();

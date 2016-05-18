@@ -1,0 +1,46 @@
+<div class="container-fluid">
+    <h3 class="text-center">NeCTAR Virtual Machines (Nova)</h3>
+
+    <div>
+        <form>
+            <div class="row">
+                <div class="col-md-3">
+                    <p>Domain</p>
+                    <div class="form-group">
+                        <select name="domainSelect" id="domainSelect" ng-model="$ctrl.selectedDomain" class="form-control" disabled>
+                            <option value="">All</option>
+                            <option ng-repeat="domain in $ctrl.domains" value="{{domain}}">{{domain}}</option>
+                        </select>
+                    </div>
+                </div>
+                <date-pickers pickers="$ctrl.pickers" on-done="$ctrl.search(dates)" button-tilte="Search"></date-pickers>
+                <div class="col-md-1">
+                  <p>&nbsp;</p>
+                  <button type="button" class="btn btn-default" ng-csv="$ctrl.getCsvData()" filename={{$ctrl.csvFileName}}>Export as CSV</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div style="padding-top: 25px;">
+                    <table class="table table-striped" style="width: 100%;">
+                        <tr>
+                            <th ng-repeat="title in ::$ctrl.colTitles">{{title}}</th>
+                        </tr>
+                        <tr ng-repeat="instance in $ctrl.instancesState | orderBy: 'tenant_name'">
+                          <td ng-repeat="field in ::$ctrl.fieldNames">
+                            {{instance[field]}}
+                          </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4" ng-if="$ctrl.pages > 0">
+          Total pages <span class="badge">{{::$ctrl.pages}}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-primary" ng-if="$ctrl.currentPage < $ctrl.pages" ng-click="$ctrl.loadNextPage()">Load more <span class="badge">{{$ctrl.currentPage}}</span></button>
+        </div>
+    </div>
+</div>

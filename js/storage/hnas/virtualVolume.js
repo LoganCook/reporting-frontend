@@ -16,7 +16,7 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
         
         $scope.owners = {};   
         
-        var snapshots= {};    
+        var snapshots = {};    
         var filesystems = {};  
         var virtualVolumes = {};  
         var usageSummary = {};  
@@ -29,7 +29,7 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
         }; 
    
         var clear = function() {    
-            snapshots= {};      
+            snapshots = {};      
             
             $scope.cache = {}; 
             $scope.cache.virtualVolumeUsage = [];  
@@ -57,7 +57,7 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
                 } else { 
                     $scope.status = "Allocation: 0" ; 
                 }  
-            }else if (type == "owner") {  
+            } else if (type == "owner") {  
                 $scope.owners  = util.keyArray(data);    
             }  
         };  
@@ -110,7 +110,7 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
             });
             
             data.sort(function(a, b) {
-                if(a[0].toLowerCase() >= b[0].toLowerCase()){return 1;}
+                if (a[0].toLowerCase() >= b[0].toLowerCase()) {return 1;}
                 return -1; 
             });
                         
@@ -147,9 +147,9 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
 
                 var allsnapshot = data.length;    
                 var _param = "";
-                for(var i = 1; i <= allsnapshot; i++){
+                for (var i = 1; i <= allsnapshot; i++) {
                     _param += data[i - 1].id ;
-                    if( i != allsnapshot){  
+                    if ( i != allsnapshot) {  
                         _param += ",";
                     } 
                 }                
@@ -215,34 +215,34 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
                         usageCount: 0
                     };     
                     
-                    if(_usage.snapshot in snapshots){ 
-                        usageSummary[_usage.virtual_volume].snapshotmin= snapshots[_usage.snapshot].ts;
-                        usageSummary[_usage.virtual_volume].snapshotmax= snapshots[_usage.snapshot].ts;
+                    if (_usage.snapshot in snapshots) { 
+                        usageSummary[_usage.virtual_volume].snapshotmin = snapshots[_usage.snapshot].ts;
+                        usageSummary[_usage.virtual_volume].snapshotmax = snapshots[_usage.snapshot].ts;
                     } 
                 }     
                                 
-                if(_usage.snapshot in snapshots){
+                if (_usage.snapshot in snapshots) {
                     var _min = usageSummary[_usage.virtual_volume].snapshotmin;
                     var _max = usageSummary[_usage.virtual_volume].snapshotmax; 
                     usageSummary[_usage.virtual_volume].snapshotmin = Math.min(_min, snapshots[_usage.snapshot].ts);
                     usageSummary[_usage.virtual_volume].snapshotmax = Math.max(_max, snapshots[_usage.snapshot].ts);
                 }  
                                 
-                if(_usage.virtual_volume in virtualVolumeMap){   
+                if (_usage.virtual_volume in virtualVolumeMap) {   
                     usageSummary[_usage.virtual_volume].usageCount++;
                     usageSummary[_usage.virtual_volume].files += _usage.files;
                     usageSummary[_usage.virtual_volume].quota = _usage.quota;
                     usageSummary[_usage.virtual_volume].usage += _usage.usage;  
                 }         
                   
-                if(_usage.owner in $scope.owners){     
+                if (_usage.owner in $scope.owners) {     
                     usageSummary[_usage.virtual_volume].owner = $scope.owners[_usage.owner].name; 
                 }  
                 
                 //swap.push(_.values(instanceSummary));                
             });
             return swap;
-        } 
+        }; 
          
         
         $scope.$on('$viewContentLoaded', function() { 
@@ -252,7 +252,7 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
                             
             var startDate = new Date();
             var endDate = new Date();
-            startDate.setDate(startDate.getDate() -1);
+            startDate.setDate(startDate.getDate() - 1);
            // $scope.rangeStart = startDate;
             //endDate.setDate(endDate.getDate() -82);
             //$scope.rangeEnd = endDate;

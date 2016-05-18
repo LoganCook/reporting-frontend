@@ -1,6 +1,11 @@
 define(["app", "lodash", "../util", "properties"], function(app, _, util, props) {
-    app.controller("HPCController", ["$rootScope", "$scope", "$timeout", "reporting", "$uibModal", "org",
-    function($rootScope, $scope, $timeout, reporting, $uibModal, org) {
+    app.controller("HPCController", ["$rootScope", "$scope", "$timeout", "reporting", "$uibModal", "org", "queryResource",
+    function($rootScope, $scope, $timeout, reporting, $uibModal, org, queryResource) {
+
+      var nq = queryResource.build('https://hnas.reporting.ersa.edu.au');
+      console.log("checking nq");
+      // console.log(typeof nq.get);
+      nq.query({"object": "input"}, function(data) { console.log("resource call of nq"); console.log(data);});
 
         $scope.values = _.values;
 
@@ -9,12 +14,12 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
          */
         $scope.formatTimestamp = util.formatTimestamp;
         $scope.formatNumber = util.formatNumber;
-        $scope.formatDuration = util.formatDuration; 
-        
+        $scope.formatDuration = util.formatDuration;
+
         $scope.details = {};
         $scope.selectedQueues = {};
         $scope.allQueusSelected = false;
-        $scope.alerts = []; 
+        $scope.alerts = [];
 
         var baseFilters = function() {
             return {
@@ -24,15 +29,15 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
         };
 
         var jobSummary = {};
-        $scope.selectedOrg ='';
-        
+        $scope.selectedOrg = '';
+
         var clear = function() {
             jobSummary = {};
 
             $scope.status = "Zero jobs loaded.";
             $scope.jobs = [];
             $scope.jobCount = 0;
-            $scope.jobSummary = []; 
+            $scope.jobSummary = [];
         };
 
         clear();
@@ -40,20 +45,20 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
         //Here it loads crm data into $scope.crm["host", "queue", "owner"]
         reporting.hpcBase(function(svc, type, data) {
 
-            if (type == "queue") {  
+            if (type == "queue") {
                 var filtered = [];
-                if(props['hpc.queues']){   
+                if (props['hpc.queues']) {
                     _.forEach(data, function(_queu) {
-                        if(props['hpc.queues'].indexOf(_queu.name) > -1){
+                        if (props['hpc.queues'].indexOf(_queu.name) > -1) {
                             filtered.push(_queu);
-                        } 
-                    });     
-                }else{
+                        }
+                    });
+                } else {
                     filtered = data;
                 }
-                
-                $scope[type] = util.keyArray(filtered);  
-            }else{ 
+
+                $scope[type] = util.keyArray(filtered);
+            } else {
                 $scope[type] = util.keyArray(data);
             }
         });
@@ -69,36 +74,36 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
         };
 
         function mapUser(attachTo) {
-            var found = false; 
+            var found = false;
             if (angular.isDefined($scope.details)) {
-                var fields = ['fullname', 'email', 'organisation'], i;  
-                
+                var fields = ['fullname', 'email', 'organisation'], i;
+
                 //if (attachTo.username in $scope.details) {
-                if ($scope.selectedOrg != '' && attachTo.username in $scope.details[$scope.selectedOrg]) { 
+                if ($scope.selectedOrg != '' && attachTo.username in $scope.details[$scope.selectedOrg]) {
                     found = true;
-                    for(i = 0; i < 3; i++) {
+                    for (i = 0; i < 3; i++) {
                         attachTo[fields[i]] = $scope.details[$scope.selectedOrg][attachTo.username][fields[i]] ;
                     }
                 //This else clause added by Rex, to display jobs which is not matched wiht @scope.details(extends department)
-                }else{
-                    if ($scope.selectedOrg == '') { 
+                } else {
+                    if ($scope.selectedOrg == '') {
                         var fetchOrganisations = [];
-                        for(var i = 0 ; i < $scope.topOrgs.length; i++){   
+                        for (var i = 0 ; i < $scope.topOrgs.length; i++) {
                             fetchOrganisations.push($scope.topOrgs[i].pk);
-                        } 
-                        for(var i = 0 ; i < fetchOrganisations.length; i++){    
+                        }
+                        for (var i = 0 ; i < fetchOrganisations.length; i++) {
                             if (attachTo.username in $scope.details[fetchOrganisations[i]]) {
-                                for(var j = 0; j < 3; j++) {
+                                for (var j = 0; j < 3; j++) {
                                     attachTo[fields[j]] = $scope.details[fetchOrganisations[i]][attachTo.username][fields[j]] ;
                                 }
-                            }                 
-                        }   
-                        found = true; 
+                            }
+                        }
+                        found = true;
                     }
                 }
             } else {
                 $scope.error = "Data need to be loaded";
-            } 
+            }
             return found;
         }
 
@@ -106,7 +111,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
         //username is packed differently
         reporting.crmBase(function(svc, type, data) {
             if (type == "username") {
-                $scope.crm[type] = util.keyArray(data, "username"); 
+                $scope.crm[type] = util.keyArray(data, "username");
             } else {
                 $scope.crm[type] = util.keyArray(data);
             }
@@ -130,11 +135,11 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                 }
 
                 jobSummary[job.owner].jobCount++;
-                jobSummary[job.owner].cpuSeconds += job.cpu_seconds; 
+                jobSummary[job.owner].cpuSeconds += job.cpu_seconds;
             });
         };
- 
-        var mapJobSummary = function() { 
+
+        var mapJobSummary = function() {
             var username, swap = {};
             for (username in jobSummary) {
                 if (mapUser(jobSummary[username])) {
@@ -143,8 +148,8 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             }
             //jobSummary = swap;
             return swap;
-        }
-        
+        };
+
         var publishJobSummary = function(_jobSummary) {
             $scope.jobSummary = _.values(_jobSummary);
         };
@@ -163,21 +168,21 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                     summary.organisation,
                     summary.username,
                     summary.email,
-                    summary.jobCount, 
+                    summary.jobCount,
                     (summary.cpuSeconds / 3600).toFixed(1)
                 ]);
             });
-            
+
             data.sort(function(a, b) {
-                if(a[2] >= b[2]){return 1;}
-                return -1; 
+                if (a[2] >= b[2]) {return 1;}
+                return -1;
             });
-            
+
             return data;
         };
 
-        var processJobs = function(svc, type, query, data) { 
-            
+        var processJobs = function(svc, type, query, data) {
+
             if (data && data.length > 0) {
                 Array.prototype.push.apply($scope.jobs, data);
                 $scope.jobCount += data.length;
@@ -188,12 +193,12 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                 publishJobSummary(mappedJobSummary);
 
                 var next = util.nextPage(query);
- 
+
                 reporting.hpcQuery("job", next, processJobs);
             } else {
                 $scope.status = "Jobs: " + $scope.jobCount;
             }
-            
+
             $rootScope.spinnerActive = false;
         };
 
@@ -201,29 +206,29 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
         var validateJobs = function() {
             $scope.alerts = [];
             //if ($scope.selectedOrg =='') {
-            //    $scope.alerts.push({type: 'danger',msg: 'Please select an Organisation!'}); 
+            //    $scope.alerts.push({type: 'danger',msg: 'Please select an Organisation!'});
             //    return false;
             //}
-             
+
             return true;
         };
 
         /**
          * This function is called from _load() in ersa-search directive
          * arg : rangeEpochFilter - filter:["end.ge.1459953000", "end.lt.1460039400"]
-         */        
+         */
         $scope.load = function(rangeEpochFilter) {
-            if(!validateJobs()){
+            if (!validateJobs()) {
                 return;
             }
-            
-            $scope.selectedOrg = ''; 
+
+            $scope.selectedOrg = '';
 
             var query = _.merge(baseFilters(), rangeEpochFilter);
             //query : {count:25000, page:1, filter:["end.ge.1459953000", "end.lt.1460039400"]}
- 
-            var queueQuery = []; 
-            
+
+            var queueQuery = [];
+
             for (var qID in $scope.selectedQueues) {
                 if ($scope.selectedQueues[qID]) {
                     queueQuery.push(qID);
@@ -231,12 +236,12 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             }
 
             if (queueQuery.length == 0) {
-                $scope.alerts.push({type: 'danger',msg: "Select queues!"}); 
+                $scope.alerts.push({type: 'danger',msg: "Select queues!"});
                 return false;
             }
-            
+
             $rootScope.spinnerActive = true;
-            
+
             query.filter.push("queue.in." + queueQuery.join(","));
             //query : {count:25000, page:1, filter:["end.ge.1459953000", "end.lt.1460039400", "queue.in.1210458a-4145-4f67-a19d-02be24a29fb6,2841930e-e8aa-4eaf-b938-ade7033e8532,32c6532e-2b34-4d06-9873-38c9cc1cddf9"]}
 
@@ -247,35 +252,35 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             reporting.hpcQuery("job", query, processJobs);
         };
 
-        $rootScope.spinnerActive = true; 
-        org.getOrganisations().then(function(data) { 
-            $scope.topOrgs = data;  
-            org.getAllUsers().then(function(users) {    
-                $scope.details = users;    
-            });  
+        $rootScope.spinnerActive = true;
+        org.getOrganisations().then(function(data) {
+            $scope.topOrgs = data;
+            org.getAllUsers().then(function(users) {
+                $scope.details = users;
+            });
             $rootScope.spinnerActive = false;
         });
-        
-        $scope.orgChanged = function() {    
-            var mappedJobSummary = mapJobSummary();            
-            publishJobSummary(mappedJobSummary);    
-        }; 
-         
+
+        $scope.orgChanged = function() {
+            var mappedJobSummary = mapJobSummary();
+            publishJobSummary(mappedJobSummary);
+        };
+
 
         // Alert Util
         $scope.closeAlert = function(index) {
             $scope.alerts.splice(index, 1);
         };
-        
+
         // Modal Util
         $scope.animationsEnabled = true;
-        $scope.openJobMessage = function (size) { 
+        $scope.openJobMessage = function (size) {
 
             var modalInstance = $uibModal.open({
             animation: $scope.animationsEnabled,
-            templateUrl: 'template/hpc/hpc.html',  
-            restrict: 'E',  
-            controller: 'HPCController', 
+            templateUrl: 'template/hpc/hpc.html',
+            restrict: 'E',
+            controller: 'HPCController',
             size: size,
             resolve: {
                 items: function () {
@@ -286,7 +291,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
 
             modalInstance.result.then(function (selectedItem) {
                 //$scope.selected = selectedItem;
-                }, 
+                },
                 function () {
                 //console.info('Modal dismissed at: ' + new Date());
             });
@@ -294,36 +299,36 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
 
         $scope.toggleAnimation = function () {
             $scope.animationsEnabled = !$scope.animationsEnabled;
-        }; 
-        
+        };
+
         // cache data
         //https://www.phase2technology.com/blog/caching-json-arrays-using-cachefactory-in-angularjs-1-2-x/
- 
- 
-        
+
+
+
         $scope.$on('$viewContentLoaded', function() {
             $scope.allQueusSelected = true;
-            console.log('viewContentLoaded ...'); 
+            console.log('viewContentLoaded ...');
         });
-        
-        $scope.selectAllQueues = function () { 
-            for (var qID in $scope.selectedQueues) { 
-                $scope.selectedQueues[qID] = $scope.allQueusSelected; 
+
+        $scope.selectAllQueues = function () {
+            for (var qID in $scope.selectedQueues) {
+                $scope.selectedQueues[qID] = $scope.allQueusSelected;
             }
-        }     
-        
-        $scope.onChangeQueu = function (_qID) {  
-            //console.log('_qID=' + _qID);  
+        };
+
+        $scope.onChangeQueu = function (_qID) {
+            //console.log('_qID=' + _qID);
             var allQueusSelected = true;
             for (var qID in $scope.selectedQueues) {
-                if ($scope.selectedQueues[qID]) { 
-                    //console.log('$scope.selectedQueues[qID]=' + $scope.selectedQueues[qID]); 
-                }else{
-                    allQueusSelected = false; 
+                if ($scope.selectedQueues[qID]) {
+                    //console.log('$scope.selectedQueues[qID]=' + $scope.selectedQueues[qID]);
+                } else {
+                    allQueusSelected = false;
                 }
             }
             $scope.allQueusSelected = allQueusSelected;
-        }
-         
-    }]);   
+        };
+
+    }]);
 });

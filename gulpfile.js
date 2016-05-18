@@ -1,31 +1,16 @@
-var fs = require("fs");
 var gulp = require("gulp");
-var jshint = require("gulp-jshint");
-var stylish = require("jshint-stylish");
-var del = require("del");
+var eslint = require('gulp-eslint');
 var connect = require('gulp-connect');
 
-gulp.task("clean", function() {
-    return del(["build"]);
+gulp.task('lint', function() {
+  return gulp.src("js/**/*.js")
+    .pipe(eslint())
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError());
 });
 
-gulp.task("jshint", function() {
-    return gulp.src(["js/**/*.js"])
-        .pipe(jshint())
-        .pipe(jshint.reporter(stylish));
-});
-
-gulp.task("prep", ["clean", "jshint"]);
-
-gulp.task("static", ["prep"], function() {
-    return gulp.src(["css/**/*.css", "fonts/*", "images/**/*.???", "index.html", "template/**/*.html"], {
-            base: "."
-        })
-        .pipe(gulp.dest("build"));
-});
-
-gulp.task('connect', function() {
+gulp.task('run', function() {
   connect.server();
 });
 
-gulp.task("default", ["connect"]);
+gulp.task("default", ["run"]);

@@ -98,10 +98,10 @@ return {
         weights[timestamps[0]] = (timestamps[1] - t1) / range;
 
         for (var i = 1; i < timestamps.length - 1; i++) {
-            weights[timestamps[i]] = (timestamps[i+1] - timestamps[i]) / range;
+            weights[timestamps[i]] = (timestamps[i + 1] - timestamps[i]) / range;
         }
 
-        weights[timestamps[timestamps.length-1]] = (t2 - timestamps[timestamps.length - 1]) / range;
+        weights[timestamps[timestamps.length - 1]] = (t2 - timestamps[timestamps.length - 1]) / range;
 
         return weights;
     },

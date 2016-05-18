@@ -12,6 +12,9 @@ define(["menu-data"], function(menuData) {
                 var details = menuData[menu][item];
 
                 var name = details[0];
+                // This is a temporary solution until menu items and the states
+                // they represent have been rewirtten.
+                if (name == 'nova') continue;
                 var url = name;
                 var template = "template" + name + ".html";
                 var controller = details[1] + "Controller";
@@ -19,5 +22,7 @@ define(["menu-data"], function(menuData) {
                 $stateProvider.state(name, { url: url, templateUrl: template, controller: controller });
             }
         }
+
+        $stateProvider.state('nova', { url: '/nova', template: '<nova></nova>'});
     };
 });

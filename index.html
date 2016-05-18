@@ -4,9 +4,7 @@
     <meta charset="utf-8">
     <title>eRSA Reporting</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <link rel="stylesheet" href="css/slate-3.3.5.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 </head>
 
 <body ng-strict-di>
@@ -46,18 +44,10 @@
     </nav>
 
     <div ui-view></div>
-    
-    <!-- Loading modal popup -->
-    <!-- to display, set $rootScope.spinnerActive = true; in each controller -->
-    <!-- to close, set $rootScope.spinnerActive = false; in each controller  --> 
- 
-    <div us-spinner="{radius:30, width:8, length: 16}"></div>
-   
 
-    <!--
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-route.min.js"></script>
--->
+    <!-- angular-spinner element: use service spinner.start|stop to control for showing|hiding -->
+    <span us-spinner spinner-key="main-spinner"></span>
+
     <script src="lib/angular/angular.min.js"></script>
     <script src="lib/angular-resource/angular-resource.min.js"></script>
     <script src="lib/angular-bootstrap/ui-bootstrap.min.js"></script>
@@ -66,7 +56,6 @@
     <script src="lib/angular-sanitize/angular-sanitize.min.js"></script>
     <script src="lib/spin.js/spin.min.js"></script>
     <script src="lib/angular-spinner/angular-spinner.min.js"></script>
-    <script src="lib/angular-google-chart/ng-google-chart.min.js"></script>
     <script src="lib/requirejs/require.js" data-main="js/main.js"></script>
 </body>
 </html>
