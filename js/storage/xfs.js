@@ -131,7 +131,6 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 });
             }
         };
- 
         $scope.load = function(rangeEpochFilter) { 
             
             if (rangeEpochFilter) { 

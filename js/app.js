@@ -91,7 +91,6 @@ define(["client", "ng-csv", , "components/datePickers/date-pickers"], function(c
 
                     var rangeStartEpoch = dayStart(scope.rangeStart);
                     var rangeEndEpoch = dayEnd(scope.rangeEnd);
-
                     var filter =  {
                             filter: [
                                 "end.ge." + rangeStartEpoch,
@@ -151,7 +150,7 @@ define(["client", "ng-csv", , "components/datePickers/date-pickers"], function(c
     });
 
 
-    //Cacheable organisation-user data for all pages
+    // Cacheable organisation-user data for all pages, mandatory
     app.factory('org', function($http, $q) {
         // FIXME: This is different to any other sources: not using client.js to get data.
         // They should be unified.

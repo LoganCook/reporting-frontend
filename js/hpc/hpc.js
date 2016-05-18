@@ -68,7 +68,6 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                 } else {
                     $scope[type] = util.keyArray(data);
                 }
-
                 /**
                  * Find and remove item from serviceTypes array
                  * to display status of current processing.
@@ -118,7 +117,6 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             }
             return found;
         }
- 
 
         var updateSummary = function(data) {
             _.forEach(data, function(job) {
@@ -286,7 +284,6 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             var allQueusSelected = true;
             for (var _qID in $scope.selectedQueues) {
                 if ($scope.selectedQueues[_qID]) { 
-                    
                 } else {
                     allQueusSelected = false;
                 }
