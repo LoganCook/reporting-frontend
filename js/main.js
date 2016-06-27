@@ -207,8 +207,21 @@ define("app", ["client", "ng-csv"], function(client) {
                 deferred.resolve(users[orgId]);
             } else { 
                 $http.get(userUri.replace("#id", orgId)).then(function(response) {
-                    users[orgId] = response.data;
-                    deferred.resolve(users[orgId]);
+                    users[orgId] = response.data;       
+                    
+                    var userList = _.values(users[orgId]);
+                    _.forEach(userList, function(user) {  
+                        _.forEach(organisations, function(org) {  
+                            if(org.pk == user.billing){ 
+                                org.billing = user.billing;
+                                //if(user.billing == 21)
+                                //console.log('user ...' + JSON.stringify(user)); 
+                            }
+                        })    
+                    });
+                                                       
+                    deferred.resolve(users[orgId]);  
+                    deferred.resolve(organisations);     
                 });
             }
             return deferred.promise;
@@ -233,6 +246,11 @@ define("app", ["client", "ng-csv"], function(client) {
                 var deferred = $q.defer();
                 deferred.resolve(users);
                 return deferred.promise;
+            },
+            getBillings: function() {
+                var deferred = $q.defer();
+                deferred.resolve(organisations);
+                return deferred.promise;
             } 
         }
     }); 
@@ -246,7 +264,8 @@ require(["app", "menu",
             "identity/crm", 
             "hpc/hpc", 
             "storage/fs", "storage/hcp", "storage/hnas", "storage/hnas/fileSystem",  "storage/hnas/virtualVolume", "storage/xfs", 
-            "cloud/keystone", "cloud/nova", "cloud/cinder","cloud/swift"],
+            "cloud/keystone", "cloud/nova", "cloud/cinder","cloud/swift",
+            "summary/hpcsummary",],
     function (app) {
         require(["route"], function(route) {
             app.config(["$stateProvider", "$urlRouterProvider", route]);

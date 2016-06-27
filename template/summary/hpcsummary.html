@@ -1,0 +1,93 @@
+<div class="container-fluid">
+    <h3 class="text-center">HPC Summary</h3>
+    <p ng-show="error" class="alert alert-danger">{{ error }}</p>
+    <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
+    <div>
+
+        <form>
+            <div class="row">
+                <div class="col-md-4">
+                    <p>Organisation</p>
+                    <div class="form-group">
+                        <select name="orgSelect" id="orgSelect" ng-model="selectedBillingOrg" ng-change="orgChanged()" class="form-control">
+                            <option value="0">All</option>
+                            <option ng-repeat="org in topOrgs" ng-show="org.billing == org.pk" value="{{ org.billing }}">{{ org.fields.name}}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <p>Month</p>
+                    <p class="input-group">
+                        <input type="text" class="form-control" uib-datepicker-popup="MMM/yyyy" ng-model="rangeEnd" is-open="rangeEndOpen" showWeeks="false" datepicker-options="{minMode: 'month'}" datepicker-mode="'month'" ng-required="true" onkeydown="return false"/>
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="openRangeEnd()"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </p>
+                </div>
+
+                <div class="col-md-4">
+                    <p>{{ status }}</p>
+                    <div class="btn-group btn-group-justified" role="group">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" ng-click="load()">Update</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" ng-csv="export()" field-separator="\t" filename="hpc.summary.tsv">Export as TSV</button>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+
+            <div class="hidden">
+                <div class="col-md-12">
+                    <p class="text-center">
+                        <label class="checkbox-inline"> 
+                            <input type="checkbox" ng-model="allQueusSelected" ng-change="selectAllQueues()">All Queues
+                        </label>                    
+                    </p>
+                    <div class="form-group text-center">
+                        <label class="checkbox-inline" ng-repeat="(qID, q) in queue">
+                            <input type="checkbox" ng-change='onChangeQueu(qID)' ng-init="selectedQueues[qID] = true" ng-model="selectedQueues[qID]">{{ q.name }}
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="row" style="padding-top: 25px;">
+            <div class="col-md-12">
+                <table class="table table-striped">
+                    <tr> 
+                        <th>School</th>
+                        <th>Job Count</th>
+                        <th>Total Core Hours</th>
+                        <th>Total Core Duration</th>
+                        <th>Mean Core Duration</th>
+                    </tr>
+                    <tr ng-repeat="sum in jobSummary | orderBy: 'organisation'">
+                        <td>{{ sum.organisation }}</td>
+                        <td>{{ formatNumber(sum.jobCount) }}</td>
+                        <td>{{ formatNumber(sum.cpuSeconds / 3600) }}</td>
+                        <td>{{ formatDuration(sum.cpuSeconds, "seconds") }}</td>
+                        <td>{{ formatDuration(sum.cpuSeconds / sum.jobCount, "seconds") }}</td>
+                    </tr>
+                    <tr ng-show="jobSummary.length">
+                        <th>Grand Total</th>
+                        <th>{{ formatNumber(jobCountSum) }}</th>
+                        <th>{{ formatNumber(cpuSecondsSum / 3600) }}</th>
+                        <th>{{ formatDuration(cpuSecondsSum, "seconds") }}</th>
+                        <th>{{ formatDuration(cpuSecondsSum / jobCountSum, "seconds") }}</th>
+                    </tr>                    
+                </table>
+            </div>
+        </div>
+        <!-- 
+            http://jsfiddle.net/alexsuch/RLQhh/ 
+            https://angular-ui.github.io/bootstrap/
+        -->
+        <!-- button type="button" class="btn btn-default" ng-click="openJobMessage('lg')">Open me!</button -->
+    </div> 
+       
+</div>
