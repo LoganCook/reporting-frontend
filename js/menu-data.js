@@ -7,7 +7,7 @@ define({
         //},
         "HPC": {
             "HPC": ["/hpc/hpc", "HPC", "tesla gpu gtx mecheng abraham short gtx3 "],
-            "Summary": ["/summary/hpcsummary", "HPCSummary", "tesla gpu gtx mecheng abraham short gtx3 "],
+            "Summary": ["/hpc/hpcsummary", "HPCSummary", "tesla gpu gtx mecheng abraham short gtx3 "],
         },
         "Storage": {
             //"Filesystem": ["/storage/fs", "Filesystem"],

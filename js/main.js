@@ -262,10 +262,9 @@ define("app", ["client", "ng-csv"], function(client) {
 
 require(["app", "menu", 
             "identity/crm", 
-            "hpc/hpc", 
+            "hpc/hpc", "hpc/hpcsummary",
             "storage/fs", "storage/hcp", "storage/hnas", "storage/hnas/fileSystem",  "storage/hnas/virtualVolume", "storage/xfs", 
-            "cloud/keystone", "cloud/nova", "cloud/cinder","cloud/swift",
-            "summary/hpcsummary",],
+            "cloud/keystone", "cloud/nova", "cloud/cinder","cloud/swift",],
     function (app) {
         require(["route"], function(route) {
             app.config(["$stateProvider", "$urlRouterProvider", route]);
