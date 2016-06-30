@@ -1,0 +1,88 @@
+<div class="container-fluid">
+    <h3 class="text-center">HPC Storage</h3>
+    <p ng-show="error" class="alert alert-danger">{{ error }}</p>
+    <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
+    <div>
+        <form>
+            <div class="row">
+                <div class="{{values(xfs.host).length > 1 ? 'col-md-3' : 'col-md-4'}}">
+                    <p>Organisation</p>
+                    <div class="form-group">
+                        <select name="orgSelect" id="orgSelect" ng-model="selectedBillingOrg" ng-change="orgChanged()" class="form-control">
+                            <option value="0">All</option>
+                            <option ng-repeat="org in topOrgs" ng-show="org.billing == org.pk" value="{{ org.billing }}">{{ org.fields.name}}</option>
+                        </select>
+                    </div>
+                </div>                
+                <div ng-show="values(xfs.host).length > 1" class="col-md-3">
+                    <p>Host</p>
+                    <div class="form-group">
+                        <div>
+                            <select class="form-control" ng-model="select.host">
+                                <option value="">Name</option>
+                                <option ng-repeat="host in values(xfs.host) | orderBy: 'name'" value="{{ host.id }}">
+                                    {{ host.name }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div> 
+
+                <ersa-search 
+                    start-date-class="col-md-2" end-date-class="col-md-2" 
+                    button-class="col-md-2" 
+                    export-file-name="xfs.tsv"
+                />
+
+                <!-- <div class="col-md-2">
+                    <p>Usage Snapshot</p>
+                    <div class="form-group">
+                        <div>
+                            <select class="form-control" ng-disabled="!select.host" ng-model="select.snapshot">
+                                <option value="">Snapshot</option>
+                                <option ng-repeat="snapshot in values(xfs.snapshot) | orderBy: 'ts'" value="{{ snapshot.id }}">
+                                    {{ formatTimestamp(snapshot.ts) }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div> -->
+
+                <!--div class="col-md-2">
+                    <p>{{ status }}</p>
+                    <div class="btn-group btn-group-justified" role="group">
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-default" ng-click="loadUsageRange()" ng-disabled="!(select.host && select.crm && select.filesystem)" type="button">Update</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-default" field-separator="\t" filename="xfs.tsv" ng-csv="exportUsageRange()" type="button">Export as TSV</button>
+                        </div>
+                    </div>
+                </div-->
+            </div>
+
+            <!-- div class="row" ng-show="select.host && select.crm && select.filesystem" style="padding-top: 25px;" -->
+            <div class="row" ng-show="select.host" style="padding-top: 25px;">
+                <div class="col-md-12">
+                    <table class="table table-striped">
+                        <tr>
+                            <th>School</th> 
+                            <th>Usage (Weighted Mean)</th>
+                            <th>Usage (Peak)</th>
+                        </tr>
+                        <tr ng-repeat="entry in output.summed | orderBy: 'school'">
+                            <td>{{ entry.school }}</td> 
+                            <td>{{ formatSize(entry.usage) }}</td>
+                            <td>{{ formatSize(entry.peak) }}</td>
+                        </tr>
+                        <tr ng-show="output.summed.length">
+                            <th>Grand Total</th> 
+                            <th>{{ formatSize(usageSum) }}</th>
+                            <th>{{ formatSize(peak) }}</th> 
+                        </tr>                          
+                    </table>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

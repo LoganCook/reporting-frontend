@@ -62,23 +62,17 @@
                     <tr> 
                         <th>School</th>
                         <th>Job Count</th>
-                        <th>Total Core Hours</th>
-                        <th>Total Core Duration</th>
-                        <th>Mean Core Duration</th>
+                        <th>Total Core Hours</th> 
                     </tr>
                     <tr ng-repeat="sum in jobSummary | orderBy: 'organisation'">
                         <td>{{ sum.organisation }}</td>
                         <td>{{ formatNumber(sum.jobCount) }}</td>
-                        <td>{{ formatNumber(sum.cpuSeconds / 3600) }}</td>
-                        <td>{{ formatDuration(sum.cpuSeconds, "seconds") }}</td>
-                        <td>{{ formatDuration(sum.cpuSeconds / sum.jobCount, "seconds") }}</td>
+                        <td>{{ formatNumber(sum.cpuSeconds / 3600) }}</td> 
                     </tr>
                     <tr ng-show="jobSummary.length">
                         <th>Grand Total</th>
                         <th>{{ formatNumber(jobCountSum) }}</th>
-                        <th>{{ formatNumber(cpuSecondsSum / 3600) }}</th>
-                        <th>{{ formatDuration(cpuSecondsSum, "seconds") }}</th>
-                        <th>{{ formatDuration(cpuSecondsSum / jobCountSum, "seconds") }}</th>
+                        <th>{{ formatNumber(cpuSecondsSum / 3600) }}</th> 
                     </tr>                    
                 </table>
             </div>

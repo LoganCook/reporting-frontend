@@ -12,6 +12,7 @@ define({
         "Storage": {
             //"Filesystem": ["/storage/fs", "Filesystem"],
             "XFS": ["/storage/xfs", "XFS"],
+            "HPC Storage": ["/storage/hpcStorage", "HPCStorage"],
             //"HNAS": ["/storage/hnas", "HNAS"],
             "HNAS/FileSystem": ["/storage/hnas/fileSystem", "FileSystem"],
             "HNAS/VirtualVolume": ["/storage/hnas/virtualVolume", "VirtualVolume"],

@@ -204,7 +204,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
         $scope.export = function() {
                 
             var data = [
-                ["School", "Job Count", "Total Core Hours", "Total Core Duration", "Mean Core Duration"]
+                ["School", "Job Count", "Total Core Hours"]
             ];
 
             _.forEach($scope.jobSummary, function(summary) {

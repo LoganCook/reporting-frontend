@@ -264,6 +264,7 @@ require(["app", "menu",
             "identity/crm", 
             "hpc/hpc", "hpc/hpcsummary",
             "storage/fs", "storage/hcp", "storage/hnas", "storage/hnas/fileSystem",  "storage/hnas/virtualVolume", "storage/xfs", 
+            "storage/hpcStorage", 
             "cloud/keystone", "cloud/nova", "cloud/cinder","cloud/swift",],
     function (app) {
         require(["route"], function(route) {
