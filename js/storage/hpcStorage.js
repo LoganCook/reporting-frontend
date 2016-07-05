@@ -33,9 +33,16 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             summed: []
         };
 
+        $scope.rangeStart  =  new Date();
+        $scope.rangeEnd =  new Date();
+        $scope.rangeEndOpen = false;
+        $scope.openRangeEnd = function() {
+            $scope.rangeEndOpen = true;
+        }; 
+        
         var baseQuery = function() {
             return {
-                count: 25000,
+                count: 100000,
                 page: 1
             };
         };
@@ -117,6 +124,8 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
 
                 reporting.xfsQuery("usage", next, processUsageRange);
             } else {
+                
+                $rootScope.spinnerActive = false;
                 $scope.status = "Usage records: " + $scope.raw.length + ". Snapshots: " + $scope.select.snapshots.length + ".";
                 
                 updateSummary();
@@ -190,17 +199,18 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             });
             
             _.forEach(summed, function(entry) {
-                if (!(entry.school in summedBySchool)) {
-                    summedBySchool[entry.school] = {
-                        school: entry.school,
+                var _school = entry.school ? entry.school : '-';
+                if (!(_school in summedBySchool)) {
+                    summedBySchool[_school] = {
+                        school: _school,
                         usage: 0,
                         peak: 0
                     };
                 }
 
-                summedBySchool[entry.school].usage += entry.usage;
-                if (entry.peak > summedBySchool[entry.school].peak) {
-                    summedBySchool[entry.school].peak = entry.peak;
+                summedBySchool[_school].usage += entry.usage;
+                if (entry.peak > summedBySchool[_school].peak) {
+                    summedBySchool[_school].peak = entry.peak;
                 }
                 
                 $scope.usageSum += entry.usage;
@@ -210,9 +220,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             }); 
             
             $scope.output.summed = _.values(summedBySchool);
-            //$scope.output.summed = summed;  
-            console.log(JSON.stringify($scope.output.summed));
-            console.log(JSON.stringify($scope.output.summed));        
+            //$scope.output.summed = summed;     
         };
 
         //$scope.loadUsageRange = function() {
@@ -240,8 +248,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 $scope.alerts.push({type: 'danger',msg: "Host isn't loaded!"}); 
                 return false;
             }      
-             
-             
+              
             if ($scope.select.host) {
                 ["snapshot"].forEach(function(type) {
                     $scope.xfs[type] = {};
@@ -252,10 +259,13 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                     }
                 });
             }        
-             
+            
+            $scope.rangeStart = util.firstDayOfYearAndMonth($scope.rangeEnd);
+            $scope.rangeEnd = util.lastDayOfYearAndMonth($scope.rangeEnd); 
+              
             var t1 = util.dayStart($scope.rangeStart);
-            var t2 = util.dayEnd($scope.rangeEnd);
-
+            var t2 = util.dayEnd($scope.rangeEnd); 
+            console.log(t1 + ' --- ' + t2);
             var snapshots = _.filter(_.values($scope.xfs.snapshot), function(snapshot) {
                 return (snapshot.ts >= t1) && (snapshot.ts < t2);
             });
@@ -275,8 +285,8 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                     return 0;
                 }
             });
-
-            snapshots = snapshots.slice(0, snapshotLimit);
+            
+            //snapshots = snapshots.slice(0, snapshotLimit) -- comment out by Rex;
 
             var timestamps = snapshots.map(function(s) { return s.ts; });
 
@@ -299,7 +309,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             if (snapshots.length === 0) {
                 $scope.status = "No snapshots in that range.";
                 return;
-            }
+            } 
 
             var query = baseQuery();
 
@@ -310,6 +320,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
 
             clear();
 
+            $rootScope.spinnerActive = true;
             $scope.status = "Loading ...";
             $scope.jobCount = 0;
 
@@ -328,7 +339,13 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                     $scope.formatSize(entry.peak)
                 ]);
             });
-
+            
+            data.push([
+                'Grand Total', 
+                $scope.formatSize($scope.usageSum),
+                $scope.formatSize($scope.peak)
+            ]); 
+            
             return data;
         };
          
