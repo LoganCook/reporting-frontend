@@ -1,6 +1,6 @@
 define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
-    app.controller("HPCStorageController", ["$rootScope", "$scope", "$timeout", "reporting", "$uibModal", "org",
-    function($rootScope, $scope, $timeout, reporting, $uibModal, org) {
+    app.controller("HPCStorageController", ["$rootScope", "$scope", "$timeout", "$filter","reporting", "$uibModal", "org",
+    function($rootScope, $scope, $timeout, $filter, reporting, $uibModal, org) {
 
         $scope.values = _.values;
 
@@ -23,7 +23,8 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         $scope.select = {
             host: null,
             crm: null, 
-            snapshot: null
+            snapshot: null,
+            filesystem: null
         };
  
         $scope.xfs = {};
@@ -32,7 +33,9 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             usage: [],
             summed: []
         };
-
+        
+        $scope.userChecked = false; 
+        
         $scope.rangeStart  =  new Date();
         $scope.rangeEnd =  new Date();
         $scope.rangeEndOpen = false;
@@ -42,7 +45,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         
         var baseQuery = function() {
             return {
-                count: 100000,
+                count: 80000,
                 page: 1
             };
         };
@@ -65,6 +68,12 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                     xfs.snapshotByTimestamp = $scope.xfs.snapshotByTimestamp = util.keyArray(data, "ts");
                 }else if (type == "host" && data) { 
                     $scope.select.host = data[0].id;// default
+                }else if (type == "filesystem" && data) {             
+                    _.forEach(data, function(record) {
+                        if(record.name.endsWith('hpchome')){ 
+                            $scope.select.filesystem = record.id;// default :hpc home
+                        }
+                    });
                 }
                 
                 // Find and remove item from serviceTypes array 
@@ -83,6 +92,8 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             $scope.raw = [];
             $scope.output.usage = [];
             $scope.output.summed = [];
+            
+            $scope.userChecked = false; 
 
             $scope.status = "No data loaded.";
         };
@@ -102,8 +113,8 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         
         initXFS();
 
-        clear(); 
-        
+        clear();  
+             
         $scope.orgChanged = function() {  
             
             $scope.output.summed = [];
@@ -158,8 +169,10 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             var summed = {};
             
             _.forEach($scope.raw, function(record) {
-                if (!(record.owner in summed)) {
-                    summed[record.owner] = {
+                var _sumeKey = record.owner;
+                 
+                if (!(_sumeKey in summed)) {
+                    summed[_sumeKey] = {
                         username: xfs.owner[record.owner].name,
                         school: "",
                         organisation: "",
@@ -167,14 +180,19 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                         peak: 0
                     }; 
                     
-                    if(summed[record.owner].username in userAccountMap){
-                        summed[record.owner].school = userAccountMap[summed[record.owner].username].organisation;
+                    if(summed[_sumeKey].username in userAccountMap){
+                        summed[_sumeKey].school = userAccountMap[summed[_sumeKey].username].organisation;
                     }
+                }                
+                
+                if($scope.selectedBillingOrg != '0' && !summed[_sumeKey].school ) {
+                    delete summed[_sumeKey];
+                    return;
                 }
-
+                
                 var recordUsage = record.usage * 1024;
 
-                var userSum = summed[record.owner];
+                var userSum = summed[_sumeKey];
 
                 var snapshot = $scope.xfs.snapshot[record.snapshot];
 
@@ -185,24 +203,40 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 if (recordUsage > userSum.peak) {
                     userSum.peak = recordUsage;
                 }
+                 
+                $scope.usageSum += weightedUsage;
+                if (userSum.peak > $scope.peak) {
+                    $scope.peak = userSum.peak;
+                }
             });
             
-            // clear memory
-            userAccountMap = {};
-            var summedBySchool = {};
-                
+            /*
             summed = _.values(summed).filter(function(entry) {
                 if($scope.selectedBillingOrg != '0' && !entry.school ) {
                     return false;
                 }
-                return entry.usage > 0;
-            });
+                //return entry.usage > 0;
+                return true;
+            }); 
+            */
+            
+            if($scope.userChecked || $scope.filesystemChecked){
+                $scope.output.summed = _.values(summed); 
+                return;    
+            }
+            
+            // clear memory
+            userAccountMap = {};
+            var summedBySchool = {};
+            $scope.usageSum = 0;
+            $scope.peak = 0;
             
             _.forEach(summed, function(entry) {
                 var _school = entry.school ? entry.school : '-';
                 if (!(_school in summedBySchool)) {
                     summedBySchool[_school] = {
-                        school: _school,
+                        school: _school,               
+                        username: '',// dummy for orderby in page 
                         usage: 0,
                         peak: 0
                     };
@@ -220,7 +254,6 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             }); 
             
             $scope.output.summed = _.values(summedBySchool);
-            //$scope.output.summed = summed;     
         };
 
         //$scope.loadUsageRange = function() {
@@ -315,7 +348,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
 
             query.filter = [
                 "snapshot.in." + snapshots.map(function(s) { return s.id; }).join(","),
-                //"owner.in." + $scope.xfs['owner'].map(function(o) { return o.id; }).join(",") 
+                "filesystem.in." + $scope.select.filesystem
             ];
 
             clear();
@@ -328,20 +361,27 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         }; 
  
         $scope.export = function() {
-            data = [
-                ["School", "Usage (Weighted Mean, GB)", "Usage (Peak, GB)"]
-            ];
+            var records = [];
 
             _.forEach($scope.output.summed, function(entry) {
-                data.push([
+                records.push([
                     entry.school, 
+                    entry.username,  
                     $scope.formatSize(entry.usage),
                     $scope.formatSize(entry.peak)
                 ]);
             });
             
+            records = $filter('orderBy')(records, [0, 1]);
+            
+            var data = [
+                ["School", "User","Usage (Weighted Mean, GB)", "Usage (Peak, GB)"]
+            ];
+            
+            Array.prototype.push.apply(data, records) ;
             data.push([
                 'Grand Total', 
+                ' - ',  
                 $scope.formatSize($scope.usageSum),
                 $scope.formatSize($scope.peak)
             ]); 
