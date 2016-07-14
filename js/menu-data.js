@@ -16,7 +16,8 @@ define({
             //"HNAS": ["/storage/hnas", "HNAS"],
             "HNAS/FileSystem": ["/storage/hnas/fileSystem", "FileSystem"],
             "HNAS/VirtualVolume": ["/storage/hnas/virtualVolume", "VirtualVolume"],
-            "HCP": ["/storage/hcp", "HCP"]
+            "HCP": ["/storage/hcp", "HCP"],
+            "Allocation Summary": ["/storage/allocationSummary", "AllocationSummary"],
         },
         "Cloud": {
             "Identity (Keystone)": ["/cloud/keystone", "Keystone"],

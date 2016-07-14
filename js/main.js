@@ -199,7 +199,8 @@ define("app", ["client", "ng-csv"], function(client) {
         var requestUri = 'http://localhost:8000';
         var userUri = requestUri + '/api/Organisation/?id=#id&method=get_extented_accounts';
         var orgUri = requestUri + '/api/Organisation/?method=get_tops';
-        var organisations = [], users = {};
+        var rdsUri = requestUri + '/api/RDS/';
+        var organisations = [], users = {}, rdses = [];
         
         function _getUsersOf(orgId) {
             var deferred = $q.defer();
@@ -251,6 +252,18 @@ define("app", ["client", "ng-csv"], function(client) {
                 var deferred = $q.defer();
                 deferred.resolve(organisations);
                 return deferred.promise;
+            },
+            getRdses: function() {
+                var deferred = $q.defer();
+                if (rdses.length) {
+                    deferred.resolve(rdses);
+                } else {
+                    $http.get(rdsUri).then(function(response) { 
+                        rdses = response.data;  
+                        deferred.resolve(rdses);  
+                    });
+                }
+                return deferred.promise;
             } 
         }
     }); 
@@ -265,6 +278,7 @@ require(["app", "menu",
             "hpc/hpc", "hpc/hpcsummary",
             "storage/fs", "storage/hcp", "storage/hnas", "storage/hnas/fileSystem",  "storage/hnas/virtualVolume", "storage/xfs", 
             "storage/hpcStorage", 
+            "storage/allocationSummary", 
             "cloud/keystone", "cloud/nova", "cloud/cinder","cloud/swift",],
     function (app) {
         require(["route"], function(route) {
