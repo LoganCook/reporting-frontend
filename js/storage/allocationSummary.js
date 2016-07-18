@@ -1,6 +1,6 @@
 define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
-    app.controller("AllocationSummaryController", ["$rootScope", "$scope", "$timeout", "$q", "reporting", "$uibModal", "org",
-    function($rootScope, $scope, $timeout, $q, reporting, $uibModal, org) {
+    app.controller("AllocationSummaryController", ["$rootScope", "$scope", "$timeout", "$q", "$filter", "reporting", "$uibModal", "org",
+    function($rootScope, $scope, $timeout, $q, $filter, reporting, $uibModal, org) {
 
         $scope.values = _.values;
 
