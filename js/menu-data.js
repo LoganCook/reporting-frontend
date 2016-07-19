@@ -24,5 +24,6 @@ define({
             "Virtual Machines (Nova)": ["/cloud/nova", "Nova"],
             //"Block Storage (Cinder)": ["/cloud/cinder", "Cinder"],
             //"Object Storage (Swift)": ["/cloud/swift", "Swift"]
+            "Cloud Summary": ["/cloud/cloudSummary", "CloudSummary"],
         }
 });

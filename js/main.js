@@ -279,7 +279,8 @@ require(["app", "menu",
             "storage/fs", "storage/hcp", "storage/hnas", "storage/hnas/fileSystem",  "storage/hnas/virtualVolume", "storage/xfs", 
             "storage/hpcStorage", 
             "storage/allocationSummary", 
-            "cloud/keystone", "cloud/nova", "cloud/cinder","cloud/swift",],
+            "cloud/keystone", "cloud/nova", "cloud/cinder","cloud/swift",
+            "cloud/cloudSummary",],
     function (app) {
         require(["route"], function(route) {
             app.config(["$stateProvider", "$urlRouterProvider", route]);
