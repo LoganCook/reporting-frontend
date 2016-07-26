@@ -6,12 +6,21 @@
 
         <form>
             <div class="row"> 
+                <!-- div class="col-md-4">
+                    <p>Organisation</p>
+                    <div class="form-group">
+                        <select name="orgSelect" id="orgSelect" ng-model="selectedBillingOrg" ng-change="orgChanged()" class="form-control">
+                            <option value="0">All</option>
+                            <option ng-repeat="org in topOrgs" ng-show="org.billing == org.pk" value="{{ org.billing }}">{{ org.fields.name}}</option>
+                        </select>
+                    </div>
+                </div -->                  
                 <div class="{{values(xfs.host).length > 1 ? 'col-md-3' : 'col-md-4'}}">
                     <p>Organisation</p>
                     <div class="form-group">
                         <select name="orgSelect" id="orgSelect" ng-model="selectedBillingOrg" ng-change="orgChanged()" class="form-control">
                             <option value="0">All</option>
-                            <option ng-repeat="org in topOrgs" value="{{ org.id }}">{{ org.name}}</option>
+                            <option ng-repeat="org in topRdsOrgs" value="{{ org.id }}">{{ org.name}}</option>
                         </select>
                     </div>
                 </div>                
@@ -70,16 +79,40 @@
                 <table class="table table-striped">
                     <tr>
                         <th>Allocation</th>
+                        <th>User Name</th>
+                        <th>Email</th>
+                        <th>School</th>
                         <th ng-show="filesystemChecked">File System</th> 
-                        <th>Quota</th> 
-                        <th>Usage(avg)</th> 
+                        <th>RDS Allocated(GB)</th> 
+                        <th>Currrent Usage(GB)</th> <!--th>Quota</th --> 
+                        <th>250GB Quota Blocks</th> 
+                        <th>%age Used of Quota</th> 
+                        <th>$5 per 250GB</th> 
                     </tr>
                     <tr ng-repeat="usage in usages | orderBy: 'rds'">
-                        <td>{{ usage.source }} {{ usage.rds }}</td>
+                        <td>{{ usage.rds }}</td>
+                        <td>{{ usage.username }}</td>
+                        <td>{{ usage.email }}</td>
+                        <td>{{ usage.school }}</td>
                         <td ng-show="filesystemChecked">{{ usage.filesystem }}</td> 
-                        <td>{{ formatSize(usage.quota) }}</td> 
-                        <td>{{ formatSize(usage.usage) }}</td>  
+                        <td>{{ usage.approved_size }}</td>  
+                        <td> {{ usage.usage }}</td> 
+                        <td> {{ usage.quota250 }}</td>  
+                        <td> {{ usage.usage == 0 ? 0 : Math.ceil(((usage.usage / usage.quota250).toFixed(2)) * 100) }}%</td>  
+                        <td>${{ formatNumber(usage.per5dollar) }}.00</td>  
                     </tr> 
+                    <tr ng-show="usages.length">
+                        <td>Grand Total</td>
+                        <td> </td>
+                        <td> </td>
+                        <td> </td>
+                        <td ng-show="filesystemChecked"> </td> 
+                        <td>{{ total.rds }}</td>  
+                        <td>{{ total.currentUsage.toFixed(2) }}</td> 
+                        <td>{{ total.quota250 }}</td>  
+                        <td>{{ total.currentUsage == 0 ? 0 : Math.ceil(((total.currentUsage / total.quota250).toFixed(2)) * 100) }}%</td>  
+                        <td>${{ formatNumber(total.per5dollar) }}.00</td>  
+                    </tr>                     
                 </table> 
                 
             </div>

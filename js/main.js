@@ -199,8 +199,9 @@ define("app", ["client", "ng-csv"], function(client) {
         var requestUri = 'http://localhost:8000';
         var userUri = requestUri + '/api/Organisation/?id=#id&method=get_extented_accounts';
         var orgUri = requestUri + '/api/Organisation/?method=get_tops';
-        var rdsUri = requestUri + '/api/RDS/';
-        var organisations = [], users = {}, rdses = [];
+        var rdsUri = requestUri + '/api/RDS/'; 
+        var roleUri = requestUri + '/api/Role/'; 
+        var organisations = [], users = {}, rdses = [], roles = [];
         
         function _getUsersOf(orgId) {
             var deferred = $q.defer();
@@ -264,7 +265,19 @@ define("app", ["client", "ng-csv"], function(client) {
                     });
                 }
                 return deferred.promise;
-            } 
+            },
+            getRoles: function() {
+                var deferred = $q.defer();
+                if (roles.length) {
+                    deferred.resolve(roles);
+                } else {
+                    $http.get(roleUri).then(function(response) { 
+                        roles = response.data;  
+                        deferred.resolve(roles);  
+                    });
+                }
+                return deferred.promise;
+            }
         }
     }); 
 

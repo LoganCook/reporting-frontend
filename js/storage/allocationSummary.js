@@ -8,15 +8,19 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         $scope.formatTimestamp = util.formatTimeSecStamp;
         $scope.formatNumber = util.formatNumber;
         $scope.formatDuration = util.formatDuration;
+        $scope.Math = window.Math;
         
         $scope.alerts = []; 
   
         $scope.usages = [];  
         
         $scope.topOrgs = [];   
+        $scope.topRdsOrgs = [];  
         $scope.selectedBillingOrg ='0'; 
         $scope.select= {};
         $scope.filesystemChecked = false; 
+        
+        $scope.total= {};           
         
         $scope.rangeStart  =  new Date();
         $scope.rangeEnd =  new Date();
@@ -27,7 +31,8 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         
         var xfxDefaultHost = "";
         var users = {};
-        var rdses = {};
+        var rdses = {}; 
+        var roles = {};
         
         var cache = {};  
         cache.virtualVolumeUsage = [];  
@@ -71,6 +76,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             cache.xfsUsage = [];
              
             $scope.usages = []; 
+            $scope.total = {};
         }; 
 
         var initHnas = function() {  
@@ -180,39 +186,86 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         clear();
 
         // fetching initial data 
-        org.getRdses().then(function(data) {
-            //If Fileystem usage support owner field, 
-            //$scope.topOrgs should be replace to org.getusers();
-            $scope.topOrgs = [];
+        org.getOrganisations().then(function(_data) { 
+            $scope.topOrgs = _data;  
             
-            var _rdses = [];
-            _.forEach(data, function(rds) {
-                _rdses.push(rds.fields);
-                var _rds = {"id" : rds.fields.allocation_num.substring(0, 4) , "name" : rds.fields.allocation_num.substring(0, 4)};
-                if (_.findWhere($scope.topOrgs, _rds) == null) {
-                    $scope.topOrgs.push(_rds);
-                }
+            org.getAllUsers().then(function(_users) {    
+                users = _users;      
             }); 
-             
-            rdses = util.keyArray(_rdses, 'filesystem');
+
+            org.getBillings().then(function(_billings) {    
+                $scope.topOrgs = _billings;  
+            });                 
+        });     
+
+        org.getRoles().then(function(_roles) { 
             
-            initHnas();
-            initXFS();
-        });         
-        
-        // Currently not support 
-        var getOrganisationUsers = function() {  
+            roles = _roles;
+            org.getRdses().then(function(data) {  
+                var _rdses = [];
+                $scope.topRdsOrgs = [];
+                _.forEach(data, function(rds) {
+                    _rdses.push(rds.fields);                
+                    var _rds = {"id" : rds.fields.allocation_num.substring(0, 4) , "name" : rds.fields.allocation_num.substring(0, 4)};
+                    if (_.findWhere($scope.topRdsOrgs, _rds) == null) {
+                        $scope.topRdsOrgs.push(_rds);
+                    }
+                }); 
+                
+                rdses = util.keyArray(_rdses, 'filesystem');
+                
+                initHnas();
+                initXFS();
+            });           
+        });     
+            
+         
+        var setOrganisationUsers = function() {   
+            
+            
+            if(rdses['contrator']){// Do execute this function only 1 time
+                return;
+            }
+            console.log('rdses==' +  JSON.stringify(rdses));
+            console.log('users==' +  JSON.stringify(users));
+            console.log('roles==' +  JSON.stringify(roles));
+            
             var userAccountMap = {}; 
             _.forEach($scope.topOrgs, function(org) {
-                if($scope.selectedBillingOrg == '0') {
-                    _.extend(userAccountMap, users[org.pk]); 
-                }else{
-                    if($scope.selectedBillingOrg == org.billing) {
-                        _.extend(userAccountMap, users[org.pk]); 
-                    }
-                } 
+                _.extend(userAccountMap, users[org.pk]);   
             });
-            return userAccountMap;
+            
+            userAccountMap = _.values(userAccountMap); 
+            userAccountMap = util.keyArray(userAccountMap, 'personid'); 
+            
+            
+            var roleMap = _.values(roles); 
+            _.forEach(roles, function(_role) {
+                if (_role.fields.person in userAccountMap) { 
+                   userAccountMap[_role.fields.person].contractor = _role.pk;
+                   //userAccountMap[_role.fields.person].organisation = _role.fields.organisation;
+                }
+            });
+            
+            userAccountMap = _.values(userAccountMap); 
+            userAccountMap = util.keyArray(userAccountMap, 'contractor');  
+            
+            var contrator = 0; 
+            
+            for (var key in rdses){  
+                if (rdses[key].contractor in userAccountMap) {   
+                    rdses[key].email = userAccountMap[rdses[key].contractor].email; 
+                    rdses[key].fullname = userAccountMap[rdses[key].contractor].fullname; 
+                    rdses[key].billing = userAccountMap[rdses[key].contractor].billing; 
+                    rdses[key].school = userAccountMap[rdses[key].contractor].organisation; 
+                    contrator++;
+                }
+            }
+            
+            if(contrator > 0){ 
+                rdses['contrator'] = contrator;
+            }  
+            return;
         };     
              
         $scope.orgChanged = function() {  
@@ -243,24 +296,36 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             _.forEach($scope.usages, function(_usage) {
                 records.push([
                     _usage.rds,
+                    _usage.username, 
+                    _usage.email, 
+                    _usage.school, 
                     _usage.filesystem, 
-                    $scope.formatSize(_usage.quota),
-                    $scope.formatSize(_usage.usage)  
+                    _usage.approved_size, 
+                    _usage.usage, 
+                    _usage.quota250, 
+                    _usage.usage == 0 ? 0 : Math.ceil(((_usage.usage / _usage.quota250).toFixed(2)) * 100),
+                    $scope.formatNumber(_usage.per5dollar) + '.00'
                 ]);
             }); 
             
             records = $filter('orderBy')(records, [0, 1]);
                
             var data = [
-                ["Allocation", "File system", "Quota", "Usage(avg)"]
+                ["Allocation", "User Name", "Email", "School", "File system", "RDS Allocated(GB)", "Currrent Usage(GB)", "250GB Quota Blocks", "%age Used of Quota", "$5 per 250GB"]
             ];
             Array.prototype.push.apply(data, records) ;
             
             data.push([
                 'Grand Total', 
                 ' - ',  
-                $scope.formatSize($scope.usageSum),
-                $scope.formatSize($scope.peak)
+                ' - ',  
+                ' - ',  
+                ' - ',  
+                $scope.total.rds,
+                $scope.total.currentUsage,
+                $scope.total.quota250,
+                $scope.total.currentUsage == 0 ? 0 : Math.ceil((($scope.total.currentUsage / $scope.total.quota250).toFixed(2)) * 100) + '%',
+                '$' + $scope.formatNumber($scope.total.per5dollar) + '.00'
             ]); 
             
             return data;
@@ -269,6 +334,8 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         $scope.load = function() {
             
             clear();
+            
+            setOrganisationUsers();
             
             $scope.rangeStart = util.firstDayOfYearAndMonth($scope.rangeEnd);
             $scope.rangeEnd = util.lastDayOfYearAndMonth($scope.rangeEnd); 
@@ -320,6 +387,10 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             console.log("$scope.selectedBillingOrg=" + $scope.selectedBillingOrg ); 
             console.log("$scope.filesystemChecked=" + $scope.filesystemChecked );
             
+            setOrganisationUsers();
+            var rdsesMap = _.values(rdses); 
+            rdsesMap = util.keyArray(rdsesMap, 'allocation_num'); 
+            
             $scope.usages = {};
             [cache.virtualVolumeUsage, cache.filesystemUsage, cache.xfsUsage].forEach(function(usages) {    
                  
@@ -327,21 +398,38 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                     var _key =  $scope.filesystemChecked ? _usage.filesystem : _usage.rds;
                     if (!(_key in $scope.usages)) {
                         
-                        $scope.usages[_key] = {      
-                            rds: _usage.rds,                 
+                        $scope.usages[_key] = {       
+                            source: _usage.source,
+                            rds: _usage.rds,
+                            username : '',
+                            email : '',
+                            billing : '',
+                            school : '',
                             filesystem: $scope.filesystemChecked ? _usage.filesystem : '-', 
+                            approved_size : 0,
                             quota : 0,
+                            quota250 : 0,
+                            per5dollar : 0,
                             usage : 0
-                        }; 
+                        };
                     }
 
+                    if(rdsesMap[_usage.rds]){ 
+                        $scope.usages[_key].username = rdsesMap[_usage.rds].fullname;
+                        $scope.usages[_key].email = rdsesMap[_usage.rds].email;
+                        $scope.usages[_key].billing = rdsesMap[_usage.rds].billing;
+                        $scope.usages[_key].school = rdsesMap[_usage.rds].school;
+                        $scope.usages[_key].approved_size = rdsesMap[_usage.rds].approved_size;
+                    }
+                    
                     if($scope.selectedBillingOrg != '0'){
-                        if(!$scope.usages[_key].rds.startsWith($scope.selectedBillingOrg)) {
+                        //if(!$scope.usages[_key].billing ==  $scope.selectedBillingOrg) {
+                        if(!$scope.usages[_key].rds.startsWith($scope.selectedBillingOrg)){
                             delete $scope.usages[_key];
                             return;
                         }
                     }
-                                    
+                                                     
                     if(_usage.quota){
                         $scope.usages[_key].quota += _usage.quota; 
                     }
@@ -352,6 +440,26 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             });   
             
             $scope.usages = _.values($scope.usages); 
+            
+            $scope.total.rds = 0;
+            $scope.total.currentUsage = 0;
+            $scope.total.quota250 = 0;
+            $scope.total.per5dollar = 0;
+            
+            _.forEach($scope.usages, function(_usage) {            
+                //_usage.quota = (_usage.quota / 1000).toFixed(2); 
+                //_usage.quota250 = 250 * (window.Math.ceil(_usage.quota / 250));
+                //_usage.per5dollar = 5 * (window.Math.ceil(_usage.quota / 250));     
+                _usage.usage = (_usage.usage / 1000).toFixed(2);
+                _usage.quota250 = 250 * (window.Math.ceil(_usage.usage / 250));
+                _usage.per5dollar = 5 * (window.Math.ceil(_usage.usage / 250));
+           
+                $scope.total.rds += _usage.approved_size;
+                //$scope.total.currentUsage += _usage.quota  *1 ; 
+                $scope.total.currentUsage += _usage.usage  *1 ; 
+                $scope.total.quota250 += _usage.quota250  *1 ; 
+                $scope.total.per5dollar += _usage.per5dollar * 1 ;
+            });
             
             $rootScope.spinnerActive = false;  
         };
@@ -428,10 +536,16 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 if(_usage.virtual_volume in virtualVolumeMap){
                     usageSummary[_usage.virtual_volume].usageCount++;
                     usageSummary[_usage.virtual_volume].files += _usage.files;
-                    if(_usage.quota){                    
-                        usageSummary[_usage.virtual_volume].quota = _usage.quota  * 1024 * 1024; 
+                    //if(_usage.quota && _usage.quota > usageSummary[_usage.virtual_volume].quota){                    
+                        ////usageSummary[_usage.virtual_volume].quota = _usage.quota  * 1024 * 1024;
+                        ////usageSummary[_usage.virtual_volume].quota = _usage.quota; 
+                        //usageSummary[_usage.virtual_volume].quota = _usage.usage; 
+                    //}
+                    if(_usage.usage && _usage.usage > usageSummary[_usage.virtual_volume].usage){                    
+                        //usageSummary[_usage.virtual_volume].usage += _usage.usage;                
+                        usageSummary[_usage.virtual_volume].usage = _usage.usage; 
+                        usageSummary[_usage.virtual_volume].quota = _usage.usage; 
                     }
-                    usageSummary[_usage.virtual_volume].usage += _usage.usage;
                 }
                   
                 if(_usage.owner in hnas.owners){
@@ -509,11 +623,21 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                                 
                 if(_usage.filesystem in filesystemMap){   
                     usageSummary[_usage.filesystem].usageCount++;
-                    if(_usage.capacity){
-                        usageSummary[_usage.filesystem].quota = _usage.capacity * 1024 * 1024; 
-                    }
+                    /*
+                    if(_usage.capacity && _usage.capacity > usageSummary[_usage.filesystem].quota){
+                        //usageSummary[_usage.filesystem].quota = _usage.capacity * 1024 * 1024; 
+                        usageSummary[_usage.filesystem].quota = _usage.capacity ; 
+                    }                    
+                    if(_usage.live_usage && _usage.live_usage > usageSummary[_usage.filesystem].usage){
+                        //usageSummary[_usage.filesystem].usage += _usage.live_usage;
+                        usageSummary[_usage.filesystem].usage = _usage.live_usage ;  
+                    }*/
+                    if(_usage.live_usage && _usage.live_usage > usageSummary[_usage.filesystem].usage){
+                        //usageSummary[_usage.filesystem].quota = _usage.capacity * 1024 * 1024; 
+                        usageSummary[_usage.filesystem].usage = _usage.live_usage ; 
+                    } 
+                    
                     usageSummary[_usage.filesystem].free += _usage.free;
-                    usageSummary[_usage.filesystem].usage += _usage.live_usage;
                     usageSummary[_usage.filesystem].snapshot_usage = _usage.snapshot_usage;
                 }                      
             });
@@ -608,7 +732,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 "snapshot.in." + snapshots.map(function(s) { return s.id; }).join(","),
                 "filesystem.ne." + $scope.select.filesystem
             ]; 
- 
+
             $scope.status = "Loading ...";
             $scope.jobCount = 0;
 
@@ -675,7 +799,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 //    return;
                 //}
                 
-                var recordUsage = record.usage * 1024;
+                var recordUsage = record.usage * 1024; 
 
                 var userSum = summed[_sumeKey];
 
@@ -683,23 +807,17 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
 
                 var weightedUsage = weights[snapshot.ts] * recordUsage;
 
-                userSum.quota += record.hard;
+                //userSum.quota += record.hard;
+                userSum.quota = record.hard;
                 userSum.usage += weightedUsage;
 
                 if (recordUsage > userSum.peak) {
                     userSum.peak = recordUsage;
-                }
-                 
-                $scope.usageSum += weightedUsage;
-                if (userSum.peak > $scope.peak) {
-                    $scope.peak = userSum.peak;
-                }
+                } 
             });  
             
             // clear memory 
-            var summedByRds = {};
-            $scope.usageSum = 0;
-            $scope.peak = 0;
+            var summedByRds = {};  
             
             _.forEach(summed, function(entry) {
 
@@ -716,15 +834,19 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 }
 
                 summedByRds[entry.filesystem].quota = entry.quota;
-                summedByRds[entry.filesystem].usage += entry.usage;
+                //summedByRds[entry.filesystem].usage += entry.usage;
+                if(entry.usage && entry.usage > summedByRds[entry.filesystem].usage){ 
+                    //summedByRds[entry.filesystem].usage = entry.usage;
+                    if(summedByRds[entry.filesystem].usage > (1024 * 1024)){ 
+                        summedByRds[entry.filesystem].usage  = entry.usage / (1024 * 1024); 
+                        summedByRds[entry.filesystem].usage  = summedByRds[entry.filesystem].usage.toFixed(2);
+                    }else{
+                        summedByRds[entry.filesystem].usage  = 0;
+                    }
+                }
                 if (entry.peak > summedByRds[entry.filesystem].peak) {
                     summedByRds[entry.filesystem].peak = entry.peak;
-                }
-                
-                $scope.usageSum += entry.usage;
-                if (entry.peak > $scope.peak) {
-                    $scope.peak = entry.peak;
-                }
+                } 
             }); 
              
             return _.values(summedByRds); 
