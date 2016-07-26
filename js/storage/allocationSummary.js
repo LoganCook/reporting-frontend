@@ -1,4 +1,4 @@
-define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
+define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, math, util, props) {
     app.controller("AllocationSummaryController", ["$rootScope", "$scope", "$timeout", "$q", "$filter", "reporting", "$uibModal", "org",
     function($rootScope, $scope, $timeout, $q, $filter, reporting, $uibModal, org) {
 
@@ -9,6 +9,8 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         $scope.formatNumber = util.formatNumber;
         $scope.formatDuration = util.formatDuration;
         $scope.Math = window.Math;
+        
+        var invisible = props['allocation.summary.invisible.filesystem'];  
         
         $scope.alerts = []; 
   
@@ -395,6 +397,10 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             [cache.virtualVolumeUsage, cache.filesystemUsage, cache.xfsUsage].forEach(function(usages) {    
                  
                 _.forEach(usages, function(_usage) {
+                    if(invisible.join().indexOf(_usage.filesystem) > -1){
+                        return;
+                    } 
+                    
                     var _key =  $scope.filesystemChecked ? _usage.filesystem : _usage.rds;
                     if (!(_key in $scope.usages)) {
                         
