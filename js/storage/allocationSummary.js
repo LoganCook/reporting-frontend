@@ -431,10 +431,10 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                     }
                                                      
                     if(_usage.quota){
-                        $scope.usages[_key].quota += _usage.quota; 
+                        $scope.usages[_key].quota += _usage.quota * 1; 
                     }
                     if(_usage.usage){
-                        $scope.usages[_key].usage += _usage.usage; 
+                        $scope.usages[_key].usage += _usage.usage * 1; 
                     }
                 });   
             });   
@@ -837,9 +837,9 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 //summedByRds[entry.filesystem].usage += entry.usage;
                 if(entry.usage && entry.usage > summedByRds[entry.filesystem].usage){ 
                     //summedByRds[entry.filesystem].usage = entry.usage;
-                    if(summedByRds[entry.filesystem].usage > (1024 * 1024)){ 
-                        summedByRds[entry.filesystem].usage  = entry.usage / (1024 * 1024); 
-                        summedByRds[entry.filesystem].usage  = summedByRds[entry.filesystem].usage.toFixed(2);
+                    if(entry.usage > (1024 * 1024) + 1){ 
+                        summedByRds[entry.filesystem].usage  = (entry.usage / (1024 * 1024)).toFixed(2); 
+                        //summedByRds[entry.filesystem].usage  = summedByRds[entry.filesystem].usage.toFixed(2);
                     }else{
                         summedByRds[entry.filesystem].usage  = 0;
                     }
