@@ -227,10 +227,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             
             if(rdses['contrator']){// Do execute this function only 1 time
                 return;
-            }
-            console.log('rdses==' +  JSON.stringify(rdses));
-            console.log('users==' +  JSON.stringify(users));
-            console.log('roles==' +  JSON.stringify(roles));
+            } 
             
             var userAccountMap = {}; 
             _.forEach($scope.topOrgs, function(org) {
@@ -270,8 +267,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             return;
         };     
              
-        $scope.orgChanged = function() {  
-            console.log("orgChanged...");
+        $scope.orgChanged = function() {   
             updateAllUsages({'orgChanged' : $scope.selectedBillingOrg});   
         }; 
         
@@ -383,11 +379,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             } 
         };
 
-        var updateAllUsages = function(_data) {
-            
-            console.log("updateAllUsages=" + JSON.stringify(_data) );
-            console.log("$scope.selectedBillingOrg=" + $scope.selectedBillingOrg ); 
-            console.log("$scope.filesystemChecked=" + $scope.filesystemChecked );
+        var updateAllUsages = function(_data) { 
             
             setOrganisationUsers();
             var rdsesMap = _.values(rdses); 
@@ -428,8 +420,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                         $scope.usages[_key].approved_size = rdsesMap[_usage.rds].approved_size;
                     }
                     
-                    if($scope.selectedBillingOrg != '0'){
-                        //if(!$scope.usages[_key].billing ==  $scope.selectedBillingOrg) {
+                    if($scope.selectedBillingOrg != '0'){ 
                         if(!$scope.usages[_key].rds.startsWith($scope.selectedBillingOrg)){
                             delete $scope.usages[_key];
                             return;
@@ -452,10 +443,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             $scope.total.quota250 = 0;
             $scope.total.per5dollar = 0;
             
-            _.forEach($scope.usages, function(_usage) {            
-                //_usage.quota = (_usage.quota / 1000).toFixed(2); 
-                //_usage.quota250 = 250 * (window.Math.ceil(_usage.quota / 250));
-                //_usage.per5dollar = 5 * (window.Math.ceil(_usage.quota / 250));     
+            _.forEach($scope.usages, function(_usage) {  
                 _usage.usage = (_usage.usage / 1000).toFixed(2);
                 _usage.quota250 = 250 * (window.Math.ceil(_usage.usage / 250));
                 _usage.per5dollar = 5 * (window.Math.ceil(_usage.usage / 250));
@@ -506,10 +494,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             var virtualVolumeMap = util.keyArray(hnas.virtualVolumes);  
  
             var usageSummary = {}; 
-            _.forEach(data, function(_usage) {
-                //if($scope.selectedDomain != '' && $scope.selectedDomain != _instanceState.status){
-                //   return ; 
-                //}    
+            _.forEach(data, function(_usage) { 
 
                 if (!(_usage.virtual_volume in usageSummary)) {
                     
@@ -541,14 +526,8 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                                 
                 if(_usage.virtual_volume in virtualVolumeMap){
                     usageSummary[_usage.virtual_volume].usageCount++;
-                    usageSummary[_usage.virtual_volume].files += _usage.files;
-                    //if(_usage.quota && _usage.quota > usageSummary[_usage.virtual_volume].quota){                    
-                        ////usageSummary[_usage.virtual_volume].quota = _usage.quota  * 1024 * 1024;
-                        ////usageSummary[_usage.virtual_volume].quota = _usage.quota; 
-                        //usageSummary[_usage.virtual_volume].quota = _usage.usage; 
-                    //}
-                    if(_usage.usage && _usage.usage > usageSummary[_usage.virtual_volume].usage){                    
-                        //usageSummary[_usage.virtual_volume].usage += _usage.usage;                
+                    usageSummary[_usage.virtual_volume].files += _usage.files; 
+                    if(_usage.usage && _usage.usage > usageSummary[_usage.virtual_volume].usage){     
                         usageSummary[_usage.virtual_volume].usage = _usage.usage; 
                         usageSummary[_usage.virtual_volume].quota = _usage.usage; 
                     }
@@ -595,10 +574,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             
             var filesystemMap = util.keyArray(hnas.filesystems);
             var usageSummary = {};
-            _.forEach(data, function(_usage) {
-                //if($scope.selectedDomain != '' && $scope.selectedDomain != _instanceState.status){
-                //    return ; 
-                //}   
+            _.forEach(data, function(_usage) { 
 
                 if (!(_usage.filesystem in usageSummary)) {
 
@@ -629,15 +605,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                                 
                 if(_usage.filesystem in filesystemMap){   
                     usageSummary[_usage.filesystem].usageCount++;
-                    /*
-                    if(_usage.capacity && _usage.capacity > usageSummary[_usage.filesystem].quota){
-                        //usageSummary[_usage.filesystem].quota = _usage.capacity * 1024 * 1024; 
-                        usageSummary[_usage.filesystem].quota = _usage.capacity ; 
-                    }                    
-                    if(_usage.live_usage && _usage.live_usage > usageSummary[_usage.filesystem].usage){
-                        //usageSummary[_usage.filesystem].usage += _usage.live_usage;
-                        usageSummary[_usage.filesystem].usage = _usage.live_usage ;  
-                    }*/
+
                     if(_usage.live_usage && _usage.live_usage > usageSummary[_usage.filesystem].usage){
                         //usageSummary[_usage.filesystem].quota = _usage.capacity * 1024 * 1024; 
                         usageSummary[_usage.filesystem].usage = _usage.live_usage ; 
@@ -683,9 +651,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             var xfsSnapshots = getXfsHostSnapshots(xfxDefaultHost); 
             
             var t1 = util.dayStart($scope.rangeStart);
-            var t2 = util.dayEnd($scope.rangeEnd); 
-            
-            console.log(t1 + ' --- ' + t2); 
+            var t2 = util.dayEnd($scope.rangeEnd);  
             
             var snapshots = _.filter(_.values(xfsSnapshots), function(snapshot) {
                 return (snapshot.ts >= t1) && (snapshot.ts < t2);
@@ -771,8 +737,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
 
         var mapXfsUsage  = function(data) {
 
-            if (data.length === 0) {
-                console.log('data.length --' + data.length );
+            if (data.length === 0) { 
                 return;
             }
 
@@ -799,12 +764,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                         peak: 0
                     };  
                 }                
-                
-                //if($scope.selectedBillingOrg != '0' && !summed[_sumeKey].school ) {
-                //    delete summed[_sumeKey];
-                //    return;
-                //}
-                
+                 
                 var recordUsage = record.usage * 1024; 
 
                 var userSum = summed[_sumeKey];
@@ -812,8 +772,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                 var snapshot = xfsSnapshots[record.snapshot];
 
                 var weightedUsage = weights[snapshot.ts] * recordUsage;
-
-                //userSum.quota += record.hard;
+ 
                 userSum.quota = record.hard;
                 userSum.usage += weightedUsage;
 
@@ -839,10 +798,8 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                     };
                 }
 
-                summedByRds[entry.filesystem].quota = entry.quota;
-                //summedByRds[entry.filesystem].usage += entry.usage;
-                if(entry.usage && entry.usage > summedByRds[entry.filesystem].usage){ 
-                    //summedByRds[entry.filesystem].usage = entry.usage;
+                summedByRds[entry.filesystem].quota = entry.quota; 
+                if(entry.usage && entry.usage > summedByRds[entry.filesystem].usage){  
                     if(entry.usage > (1024 * 1024) + 1){ 
                         summedByRds[entry.filesystem].usage  = (entry.usage / (1024 * 1024)).toFixed(2); 
                         //summedByRds[entry.filesystem].usage  = summedByRds[entry.filesystem].usage.toFixed(2);
