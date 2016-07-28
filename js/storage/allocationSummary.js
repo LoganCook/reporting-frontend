@@ -765,7 +765,8 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                     };  
                 }                
                  
-                var recordUsage = record.usage * 1024; 
+                //var recordUsage = record.usage * 1024; 
+                var recordUsage = record.usage; 
 
                 var userSum = summed[_sumeKey];
 
