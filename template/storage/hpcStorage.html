@@ -67,22 +67,34 @@
                 <div class="col-md-12">
                     <table class="table table-striped">
                         <tr>
+                            <th ng-show="userChecked || filesystemChecked">User ID</th>
+                            <th ng-show="userChecked || filesystemChecked">User Name</th> 
+                            <th ng-show="userChecked || filesystemChecked">Email</th> 
                             <th>School</th> 
-                            <th ng-show="userChecked || filesystemChecked">User</th>  
-                            <th>Usage (Weighted Mean)</th>
-                            <th>Usage (Peak)</th>
+                            <th>Used GB</th>
+                            <th>250GB Quota Blocks</th>
+                            <th>%age Used of Quota</th>
+                            <th>$5 per 250GB Quota</th>
                         </tr>
                         <tr ng-repeat="entry in output.summed | orderBy: ['school','username']">
-                            <td>{{ entry.school }}</td> 
                             <td ng-show="userChecked || filesystemChecked">{{ entry.username }}</td> 
-                            <td>{{ formatSize(entry.usage) }}</td>
-                            <td>{{ formatSize(entry.peak) }}</td>
+                            <td ng-show="userChecked || filesystemChecked">{{ entry.email }}</td>
+                            <td ng-show="userChecked || filesystemChecked">{{ entry.fullname }}</td>  
+                            <td>{{ entry.school }}</td> 
+                            <td>{{ entry.usage }}</td>
+                            <td>{{ entry.quota250 }}</td>
+                            <td>{{ entry.usage == 0 ? 0 : Math.ceil(((entry.usage / entry.quota250).toFixed(2)) * 100) }}%</td>
+                            <td>${{ formatNumber(entry.per5dollar) }}.00</td>
                         </tr>
                         <tr ng-show="output.summed.length">
-                            <th>Grand Total</th> 
+                            <th>Grand Total</th>  
+                            <td ng-show="userChecked || filesystemChecked"> - </td> 
+                            <td ng-show="userChecked || filesystemChecked"> - </td> 
                             <td ng-show="userChecked || filesystemChecked"> - </td>  
-                            <th>{{ formatSize(usageSum) }}</th>
-                            <th>{{ formatSize(peak) }}</th> 
+                            <th>{{ total.currentUsage.toFixed(2) }}</th>
+                            <th>{{ total.quota250 }} </th> 
+                            <th>{{ total.currentUsage == 0 ? 0 : Math.ceil(((total.currentUsage / total.quota250).toFixed(2)) * 100) }}%</th>
+                            <th>${{ formatNumber(total.per5dollar) }}.00</th>  
                         </tr                          
                     </table>
                 </div>

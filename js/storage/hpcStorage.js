@@ -8,21 +8,22 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         $scope.formatNumber = util.formatNumber;
         $scope.formatDuration = util.formatDuration;
         $scope.formatSize = util.formatSize;
-        $scope.basename = util.basename; 
-
-        $scope.topOrgs = [];  
+        $scope.basename = util.basename;
+        $scope.Math = window.Math;
+ 
+        $scope.total = {};
+        $scope.topOrgs = [];
         $scope.details = {};
-                
+
         $scope.selectedBillingOrg ='0';
         
         $scope.peak = 0;
         $scope.usageSum = 0;
-                
-        
-        $scope.alerts = []; 
+                 
+        $scope.alerts = [];
         $scope.select = {
             host: null,
-            crm: null, 
+            crm: null,
             snapshot: null,
             filesystem: null
         };
@@ -34,14 +35,14 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             summed: []
         };
         
-        $scope.userChecked = false; 
+        $scope.userChecked = false;
         
         $scope.rangeStart  =  new Date();
         $scope.rangeEnd =  new Date();
         $scope.rangeEndOpen = false;
         $scope.openRangeEnd = function() {
             $scope.rangeEndOpen = true;
-        }; 
+        };
         
         var baseQuery = function() {
             return {
@@ -52,7 +53,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
 
         var xfs = {};
 
-        // Refer to service.xfsBase in client.js 
+        // Refer to service.xfsBase in client.js
         var serviceTypes = ["snapshot", "host", "filesystem", "owner"];
         
         var initXFS = function() {
@@ -66,63 +67,63 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
 
                 if (type == "snapshot") {
                     xfs.snapshotByTimestamp = $scope.xfs.snapshotByTimestamp = util.keyArray(data, "ts");
-                }else if (type == "host" && data) { 
+                }else if (type == "host" && data) {
                     $scope.select.host = data[0].id;// default
-                }else if (type == "filesystem" && data) {             
+                }else if (type == "filesystem" && data) {
                     _.forEach(data, function(record) {
-                        if(record.name.endsWith('hpchome')){ 
+                        if(record.name.endsWith('hpchome')){
                             $scope.select.filesystem = record.id;// default :hpc home
                         }
                     });
                 }
                 
-                // Find and remove item from serviceTypes array 
+                // Find and remove item from serviceTypes array
                 if(serviceTypes.indexOf(type) != -1) {
                     serviceTypes.splice(serviceTypes.indexOf(type), 1);
                     $scope.status = "Downloading "  + serviceTypes;
                 }
                 if(!serviceTypes.length){
-                    $rootScope.spinnerActive = false; 
+                    $rootScope.spinnerActive = false;
                     $scope.status = "Initial data loaded.";
                 }
             });
-        }; 
+        };
 
         var clear = function() {
             $scope.raw = [];
             $scope.output.usage = [];
             $scope.output.summed = [];
             
-            $scope.userChecked = false; 
+            $scope.userChecked = false;
 
             $scope.status = "No data loaded.";
         };
- 
-        //Fetch user account for school name 
-        org.getOrganisations().then(function(data) { 
-            $scope.topOrgs = data; 
+
+        //Fetch user account for school name
+        org.getOrganisations().then(function(data) {
+            $scope.topOrgs = data;
             
-            org.getAllUsers().then(function(users) {    
-                $scope.details = users;    
-            }); 
+            org.getAllUsers().then(function(users) {
+                $scope.details = users;
+            });
             
-            org.getBillings().then(function(billings) {    
+            org.getBillings().then(function(billings) {
                 $scope.topOrgs = billings;
-            }); 
+            });
         });
         
         initXFS();
 
-        clear();  
+        clear();
              
-        $scope.orgChanged = function() {  
+        $scope.orgChanged = function() {
             
             $scope.output.summed = [];
             $scope.peak = 0;
             $scope.usageSum = 0;
             
-            updateSummary();   
-        };         
+            updateSummary();
+        };
          
          
         var processUsageRange = function(svc, type, query, data) {
@@ -143,7 +144,36 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             }
         };
 
+        var summarizeStorage = function(data) {
+            _.forEach(data, function(entry) {
+                if(entry.usage && entry.usage > (1024 * 1024) + 1){
+                    entry.usage  = (entry.usage / (1024 * 1024)).toFixed(2);
+                    entry.quota250 = 250 * (window.Math.ceil(entry.usage / 250));
+                    entry.per5dollar = 5 * (window.Math.ceil(entry.usage / 250));
+                }else{
+                    entry.usage  = 0;
+                    entry.quota250 = 0;
+                    entry.per5dollar = 0;
+                }
+                $scope.total.currentUsage += entry.usage *1;
+                $scope.total.quota250 += entry.quota250  *1 ;
+                $scope.total.per5dollar += entry.per5dollar * 1 ;
+            });
+             
+            return data;
+        };
 
+/*
+SELECT soft, hard, usage, owner_id, snapshot_id, filesystem_id
+FROM usage usage
+	inner join owner owner on owner.id = usage.owner_id 
+	inner join snapshot snap on snap.id = usage.snapshot_id 
+	inner join filesystem file on file.id = usage.filesystem_id
+where file.name = '/export/compellent/hpchome'	
+  and owner.name = 'halbadi'
+order by snap.ts  
+;
+*/
         var updateSummary  = function() {
 
             if ($scope.raw.length === 0) {
@@ -155,42 +185,49 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
 
             var weights = util.durationWeight(t1, t2, $scope.select.timestamps);
 
-            var userAccountMap = {}; 
+            var userAccountMap = {};
             _.forEach($scope.topOrgs, function(org) {
                 if($scope.selectedBillingOrg == '0') {
-                    _.extend(userAccountMap, $scope.details[org.pk]); 
+                    _.extend(userAccountMap, $scope.details[org.pk]);
                 }else{
                     if($scope.selectedBillingOrg == org.billing) {
-                        _.extend(userAccountMap, $scope.details[org.pk]); 
+                        _.extend(userAccountMap, $scope.details[org.pk]);
                     }
-                } 
-            }); 
+                }
+            });
             
             var summed = {};
-            
+            $scope.total.currentUsage = 0;
+            $scope.total.quota250 = 0;
+            $scope.total.per5dollar = 0;
+                        
             _.forEach($scope.raw, function(record) {
                 var _sumeKey = record.owner;
-                 
+                
                 if (!(_sumeKey in summed)) {
                     summed[_sumeKey] = {
+                        fullname: xfs.owner[record.owner].fullname,
+                        email: xfs.owner[record.owner].email,
                         username: xfs.owner[record.owner].name,
                         school: "",
                         organisation: "",
-                        usage: 0,
-                        peak: 0
-                    }; 
+                        usage: 0
+                    };
                     
                     if(summed[_sumeKey].username in userAccountMap){
+                        summed[_sumeKey].fullname = userAccountMap[summed[_sumeKey].username].fullname;
+                        summed[_sumeKey].email = userAccountMap[summed[_sumeKey].username].email;
                         summed[_sumeKey].school = userAccountMap[summed[_sumeKey].username].organisation;
                     }
-                }                
+                }   
                 
                 if($scope.selectedBillingOrg != '0' && !summed[_sumeKey].school ) {
                     delete summed[_sumeKey];
                     return;
                 }
                 
-                var recordUsage = record.usage * 1024;
+                //var recordUsage = record.usage * 1024;
+                var recordUsage = record.usage;
 
                 var userSum = summed[_sumeKey];
 
@@ -198,89 +235,70 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
 
                 var weightedUsage = weights[snapshot.ts] * recordUsage;
 
-                userSum.usage += weightedUsage;
-
-                if (recordUsage > userSum.peak) {
-                    userSum.peak = recordUsage;
-                }
-                 
-                $scope.usageSum += weightedUsage;
-                if (userSum.peak > $scope.peak) {
-                    $scope.peak = userSum.peak;
-                }
-            });
-            
-            /*
-            summed = _.values(summed).filter(function(entry) {
-                if($scope.selectedBillingOrg != '0' && !entry.school ) {
-                    return false;
-                }
-                //return entry.usage > 0;
-                return true;
+                userSum.usage += weightedUsage ;
+                //if(userSum.usage < record.usage){  
+                //    userSum.usage = record.usage;
+                //}
+                
             }); 
-            */
-            
+             
             if($scope.userChecked || $scope.filesystemChecked){
-                $scope.output.summed = _.values(summed); 
-                return;    
+                $scope.output.summed = _.values(summed);
+                $scope.output.summed = summarizeStorage($scope.output.summed);
+                
+                return;
             }
             
             // clear memory
             userAccountMap = {};
             var summedBySchool = {};
-            $scope.usageSum = 0;
-            $scope.peak = 0;
             
             _.forEach(summed, function(entry) {
                 var _school = entry.school ? entry.school : '-';
                 if (!(_school in summedBySchool)) {
                     summedBySchool[_school] = {
-                        school: _school,               
-                        username: '',// dummy for orderby in page 
+                        school: _school,
+                        username: '',// dummy for orderby in page
                         usage: 0,
-                        peak: 0
+                        quota250 : 0,
+                        per5dollar : 0
                     };
                 }
 
                 summedBySchool[_school].usage += entry.usage;
-                if (entry.peak > summedBySchool[_school].peak) {
-                    summedBySchool[_school].peak = entry.peak;
-                }
-                
-                $scope.usageSum += entry.usage;
-                if (entry.peak > $scope.peak) {
-                    $scope.peak = entry.peak;
-                }
-            }); 
+                summedBySchool[_school].quota250 = 250 * (window.Math.ceil(entry.usage / 250));
+                summedBySchool[_school].per5dollar = 5 * (window.Math.ceil(entry.usage / 250));
+            });
             
             $scope.output.summed = _.values(summedBySchool);
+            $scope.output.summed = summarizeStorage($scope.output.summed);
         };
 
         //$scope.loadUsageRange = function() {
-        $scope.load = function(rangeEpochFilter) { 
-            clear();  
+        $scope.load = function(rangeEpochFilter) {
+            clear();
             
             $scope.alerts = [];
-            $scope.selectedBillingOrg = '0'; 
+            $scope.selectedBillingOrg = '0';
 
             if (!(xfs['snapshot'])) {
-                $scope.alerts.push({type: 'danger',msg: "Snapshot isn't loaded!"}); 
+                $scope.alerts.push({type: 'danger',msg: "Snapshot isn't loaded!"});
                 return false;
-            }   
+            }
                 
             if (!(xfs['owner'])) {
-                $scope.alerts.push({type: 'danger',msg: "Owner isn't loaded!"}); 
+                $scope.alerts.push({type: 'danger',msg: "Owner isn't loaded!"});
                 return false;
-            }   
+            }
             if (!$scope.topOrgs) {
-                $scope.alerts.push({type: 'danger',msg: "Orgainsation isn't loaded!"}); 
+                $scope.alerts.push({type: 'danger',msg: "Orgainsation isn't loaded!"});
                 return false;
-            }   
+            }
             
             if (!($scope.select.host)) {
-                $scope.alerts.push({type: 'danger',msg: "Host isn't loaded!"}); 
+                $scope.alerts.push({type: 'danger',msg: "Host isn't loaded!"});
                 return false;
-            }      
+            }
               
             if ($scope.select.host) {
                 ["snapshot"].forEach(function(type) {
@@ -291,13 +309,13 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                         }
                     }
                 });
-            }        
+            }
             
             $scope.rangeStart = util.firstDayOfYearAndMonth($scope.rangeEnd);
-            $scope.rangeEnd = util.lastDayOfYearAndMonth($scope.rangeEnd); 
+            $scope.rangeEnd = util.lastDayOfYearAndMonth($scope.rangeEnd);
               
             var t1 = util.dayStart($scope.rangeStart);
-            var t2 = util.dayEnd($scope.rangeEnd); 
+            var t2 = util.dayEnd($scope.rangeEnd);
             console.log(t1 + ' --- ' + t2);
             var snapshots = _.filter(_.values($scope.xfs.snapshot), function(snapshot) {
                 return (snapshot.ts >= t1) && (snapshot.ts < t2);
@@ -342,7 +360,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             if (snapshots.length === 0) {
                 $scope.status = "No snapshots in that range.";
                 return;
-            } 
+            }
 
             var query = baseQuery();
 
@@ -358,40 +376,48 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             $scope.jobCount = 0;
 
             reporting.xfsQuery("usage", query, processUsageRange);
-        }; 
+        };
  
         $scope.export = function() {
             var records = [];
 
             _.forEach($scope.output.summed, function(entry) {
                 records.push([
-                    entry.school, 
-                    entry.username,  
-                    $scope.formatSize(entry.usage),
-                    $scope.formatSize(entry.peak)
+                    entry.school,
+                    entry.username,
+                    entry.email,
+                    entry.fullname,
+                    entry.usage,
+                    entry.quota250,
+                    entry.usage == 0 ? 0 : $scope.Math.ceil(((entry.usage / entry.quota250).toFixed(2)) * 100) + '%',
+                    '$' + $scope.formatNumber(entry.per5dollar) + '.00'
                 ]);
             });
-            
+          
             records = $filter('orderBy')(records, [0, 1]);
             
             var data = [
-                ["School", "User","Usage (Weighted Mean, GB)", "Usage (Peak, GB)"]
+                ["School", "User ID", "User Name", "Email","Used GB", "250GB Quota Blocks", "%age Used of Quota", "$5 per 250GB Quota"]
             ];
-            
+        
             Array.prototype.push.apply(data, records) ;
             data.push([
-                'Grand Total', 
-                ' - ',  
-                $scope.formatSize($scope.usageSum),
-                $scope.formatSize($scope.peak)
-            ]); 
+                'Grand Total',
+                ' - ',
+                ' - ',
+                ' - ',
+                $scope.total.currentUsage.toFixed(2),
+                $scope.total.quota250,
+                $scope.total.currentUsage == 0 ? 0 + '%' : Math.ceil((($scope.total.currentUsage / $scope.total.quota250).toFixed(2)) * 100) + '%',
+                '$' + $scope.formatNumber($scope.total.per5dollar) + '.00'
+            ]);
             
             return data;
         };
-         
+       
         // Alert Util
         $scope.closeAlert = function(index) {
             $scope.alerts.splice(index, 1);
         };
-    }]);   
+    }]);
 });
