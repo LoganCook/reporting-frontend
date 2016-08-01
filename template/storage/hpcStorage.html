@@ -78,8 +78,8 @@
                         </tr>
                         <tr ng-repeat="entry in output.summed | orderBy: ['school','username']">
                             <td ng-show="userChecked || filesystemChecked">{{ entry.username }}</td> 
-                            <td ng-show="userChecked || filesystemChecked">{{ entry.email }}</td>
                             <td ng-show="userChecked || filesystemChecked">{{ entry.fullname }}</td>  
+                            <td ng-show="userChecked || filesystemChecked">{{ entry.email }}</td>
                             <td>{{ entry.school }}</td> 
                             <td>{{ entry.usage }}</td>
                             <td>{{ entry.quota250 }}</td>

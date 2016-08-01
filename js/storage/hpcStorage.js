@@ -162,18 +162,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
              
             return data;
         };
-
-/*
-SELECT soft, hard, usage, owner_id, snapshot_id, filesystem_id
-FROM usage usage
-	inner join owner owner on owner.id = usage.owner_id 
-	inner join snapshot snap on snap.id = usage.snapshot_id 
-	inner join filesystem file on file.id = usage.filesystem_id
-where file.name = '/export/compellent/hpchome'	
-  and owner.name = 'halbadi'
-order by snap.ts  
-;
-*/
+ 
         var updateSummary  = function() {
 
             if ($scope.raw.length === 0) {
@@ -219,27 +208,18 @@ order by snap.ts
                         summed[_sumeKey].email = userAccountMap[summed[_sumeKey].username].email;
                         summed[_sumeKey].school = userAccountMap[summed[_sumeKey].username].organisation;
                     }
-                }   
+                }
                 
                 if($scope.selectedBillingOrg != '0' && !summed[_sumeKey].school ) {
                     delete summed[_sumeKey];
                     return;
                 }
-                
-                //var recordUsage = record.usage * 1024;
-                var recordUsage = record.usage;
-
-                var userSum = summed[_sumeKey];
-
-                var snapshot = $scope.xfs.snapshot[record.snapshot];
-
-                var weightedUsage = weights[snapshot.ts] * recordUsage;
-
-                userSum.usage += weightedUsage ;
-                //if(userSum.usage < record.usage){  
-                //    userSum.usage = record.usage;
-                //}
-                
+                 
+                var recordUsage = record.usage; 
+                var userSum = summed[_sumeKey]; 
+                var snapshot = $scope.xfs.snapshot[record.snapshot]; 
+                var weightedUsage = weights[snapshot.ts] * recordUsage; 
+                userSum.usage += weightedUsage ; 
             }); 
              
             if($scope.userChecked || $scope.filesystemChecked){
@@ -273,8 +253,7 @@ order by snap.ts
             $scope.output.summed = _.values(summedBySchool);
             $scope.output.summed = summarizeStorage($scope.output.summed);
         };
-
-        //$scope.loadUsageRange = function() {
+ 
         $scope.load = function(rangeEpochFilter) {
             clear();
             
@@ -316,17 +295,11 @@ order by snap.ts
               
             var t1 = util.dayStart($scope.rangeStart);
             var t2 = util.dayEnd($scope.rangeEnd);
-            console.log(t1 + ' --- ' + t2);
+
             var snapshots = _.filter(_.values($scope.xfs.snapshot), function(snapshot) {
                 return (snapshot.ts >= t1) && (snapshot.ts < t2);
             });
-
-            // Take a sample of snapshots to keep things manageable. Sort by UUID (which
-            // is consistent and pseudorandom) and grab the first N (snapshotLimit).
-
-            var days = (t2 - t1) / (24 * 60 * 60);
-            var snapshotLimit = Math.max(250, days);
-
+  
             snapshots.sort(function(s1, s2) {
                 if (s1.id > s2.id) {
                     return 1;
@@ -335,9 +308,7 @@ order by snap.ts
                 } else {
                     return 0;
                 }
-            });
-            
-            //snapshots = snapshots.slice(0, snapshotLimit) -- comment out by Rex;
+            }); 
 
             var timestamps = snapshots.map(function(s) { return s.ts; });
 
