@@ -144,7 +144,6 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
  
                     hnas.filesystems = util.keyArray(data);  
  
-                    //var query = { count: 10000, page:1 ,filter: ["allocation.in." + allocationId]}; 
                     reporting.hnasQuery("virtual-volume", baseFilters(), processVirtualVolume); 
 
                 } else { 
@@ -235,14 +234,12 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             });
             
             userAccountMap = _.values(userAccountMap); 
-            userAccountMap = util.keyArray(userAccountMap, 'personid'); 
-            
+            userAccountMap = util.keyArray(userAccountMap, 'personid');  
             
             var roleMap = _.values(roles); 
             _.forEach(roles, function(_role) {
                 if (_role.fields.person in userAccountMap) { 
-                   userAccountMap[_role.fields.person].contractor = _role.pk;
-                   //userAccountMap[_role.fields.person].organisation = _role.fields.organisation;
+                   userAccountMap[_role.fields.person].contractor = _role.pk; 
                 }
             });
             
@@ -404,8 +401,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                             billing : '',
                             school : '',
                             filesystem: $scope.filesystemChecked ? _usage.filesystem : '-', 
-                            approved_size : 0,
-                            quota : 0,
+                            approved_size : 0, 
                             quota250 : 0,
                             per5dollar : 0,
                             usage : 0
@@ -426,10 +422,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                             return;
                         }
                     }
-                                                     
-                    if(_usage.quota){
-                        $scope.usages[_key].quota += _usage.quota * 1; 
-                    }
+                                                      
                     if(_usage.usage){
                         $scope.usages[_key].usage += _usage.usage * 1; 
                     }
@@ -448,8 +441,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                 _usage.quota250 = 250 * (window.Math.ceil(_usage.usage / 250));
                 _usage.per5dollar = 5 * (window.Math.ceil(_usage.usage / 250));
            
-                $scope.total.rds += _usage.approved_size;
-                //$scope.total.currentUsage += _usage.quota  *1 ; 
+                $scope.total.rds += _usage.approved_size; 
                 $scope.total.currentUsage += _usage.usage  *1 ; 
                 $scope.total.quota250 += _usage.quota250  *1 ; 
                 $scope.total.per5dollar += _usage.per5dollar * 1 ;
@@ -503,33 +495,15 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                         rds: virtualVolumeMap[_usage.virtual_volume].rds,
                         virtual_volumeId: _usage.virtual_volume,                          
                         filesystem: virtualVolumeMap[_usage.virtual_volume].name,
-                        filesystem_name: virtualVolumeMap[_usage.virtual_volume].filesystem_name,
-                        files : 0,
-                        quota : 0,
+                        filesystem_name: virtualVolumeMap[_usage.virtual_volume].filesystem_name, 
                         usage : 0,
-                        owner : '',
-                        usageCount: 0
-                    };
-                    
-                    if(_usage.snapshot in hnas.snapshots){
-                        usageSummary[_usage.virtual_volume].snapshotmin= hnas.snapshots[_usage.snapshot].ts;
-                        usageSummary[_usage.virtual_volume].snapshotmax= hnas.snapshots[_usage.snapshot].ts;
-                    }
-                }
+                        owner : '' 
+                    }; 
+                }           
                                 
-                if(_usage.snapshot in hnas.snapshots){
-                    var _min = usageSummary[_usage.virtual_volume].snapshotmin;
-                    var _max = usageSummary[_usage.virtual_volume].snapshotmax;
-                    usageSummary[_usage.virtual_volume].snapshotmin = Math.min(_min, hnas.snapshots[_usage.snapshot].ts);
-                    usageSummary[_usage.virtual_volume].snapshotmax = Math.max(_max, hnas.snapshots[_usage.snapshot].ts);
-                }
-                                
-                if(_usage.virtual_volume in virtualVolumeMap){
-                    usageSummary[_usage.virtual_volume].usageCount++;
-                    usageSummary[_usage.virtual_volume].files += _usage.files; 
+                if(_usage.virtual_volume in virtualVolumeMap){ 
                     if(_usage.usage && _usage.usage > usageSummary[_usage.virtual_volume].usage){     
-                        usageSummary[_usage.virtual_volume].usage = _usage.usage; 
-                        usageSummary[_usage.virtual_volume].quota = _usage.usage; 
+                        usageSummary[_usage.virtual_volume].usage = _usage.usage;  
                     }
                 }
                   
@@ -582,37 +556,15 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                         source: 'F',
                         rds: filesystemMap[_usage.filesystem].rds,
                         filesystemId: _usage.filesystem,
-                        filesystem: filesystemMap[_usage.filesystem].name,
-                        quota : 0, //    capacity : 0,
-                        free : 0,
-                        usage : 0, //live_usage : 0,
-                        snapshot_usage : 0,
-                        usageCount: 0
-                    };     
-                    
-                    if(_usage.snapshot in hnas.snapshots){ 
-                        usageSummary[_usage.filesystem].snapshotmin= hnas.snapshots[_usage.snapshot].ts;
-                        usageSummary[_usage.filesystem].snapshotmax= hnas.snapshots[_usage.snapshot].ts;
-                    } 
-                }   
-                  
-                if(_usage.snapshot in hnas.snapshots){
-                    var _min = usageSummary[_usage.filesystem].snapshotmin;
-                    var _max = usageSummary[_usage.filesystem].snapshotmax; 
-                    usageSummary[_usage.filesystem].snapshotmin = Math.min(_min, hnas.snapshots[_usage.snapshot].ts);
-                    usageSummary[_usage.filesystem].snapshotmax = Math.max(_max, hnas.snapshots[_usage.snapshot].ts);
+                        filesystem: filesystemMap[_usage.filesystem].name,  
+                        usage : 0, //live_usage : 0 
+                    };  
                 }  
                                 
-                if(_usage.filesystem in filesystemMap){   
-                    usageSummary[_usage.filesystem].usageCount++;
-
-                    if(_usage.live_usage && _usage.live_usage > usageSummary[_usage.filesystem].usage){
-                        //usageSummary[_usage.filesystem].quota = _usage.capacity * 1024 * 1024; 
+                if(_usage.filesystem in filesystemMap){    
+                    if(_usage.live_usage && _usage.live_usage > usageSummary[_usage.filesystem].usage){ 
                         usageSummary[_usage.filesystem].usage = _usage.live_usage ; 
-                    } 
-                    
-                    usageSummary[_usage.filesystem].free += _usage.free;
-                    usageSummary[_usage.filesystem].snapshot_usage = _usage.snapshot_usage;
+                    }  
                 }                      
             });
             return usageSummary;
@@ -656,13 +608,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             var snapshots = _.filter(_.values(xfsSnapshots), function(snapshot) {
                 return (snapshot.ts >= t1) && (snapshot.ts < t2);
             });
-
-            // Take a sample of snapshots to keep things manageable. Sort by UUID (which
-            // is consistent and pseudorandom) and grab the first N (snapshotLimit).
-
-            var days = (t2 - t1) / (24 * 60 * 60);
-            var snapshotLimit = Math.max(250, days);
-
+            
             snapshots.sort(function(s1, s2) {
                 if (s1.id > s2.id) {
                     return 1;
@@ -672,9 +618,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                     return 0;
                 }
             });
-            
-            //snapshots = snapshots.slice(0, snapshotLimit) -- comment out by Rex;
-
+             
             var timestamps = snapshots.map(function(s) { return s.ts; });
 
             var earlierSnapshots = _.values(xfsSnapshots).filter(function(s) {
@@ -758,23 +702,16 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                         rds: xfsFilesystems[_sumeKey].rds, 
                         filesystem: xfsFilesystems[_sumeKey].name, 
                         school: "",
-                        organisation: "",
-                        quota: 0,
+                        organisation: "", 
                         usage: 0,
                         peak: 0
                     };  
                 }                
-                 
-                //var recordUsage = record.usage * 1024; 
-                var recordUsage = record.usage; 
-
-                var userSum = summed[_sumeKey];
-
-                var snapshot = xfsSnapshots[record.snapshot];
-
-                var weightedUsage = weights[snapshot.ts] * recordUsage;
- 
-                userSum.quota = record.hard;
+                  
+                var recordUsage = record.usage;  
+                var userSum = summed[_sumeKey]; 
+                var snapshot = xfsSnapshots[record.snapshot]; 
+                var weightedUsage = weights[snapshot.ts] * recordUsage; 
                 userSum.usage += weightedUsage;
 
                 if (recordUsage > userSum.peak) {
@@ -792,18 +729,15 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                         source: 'X',
                         rds: entry.rds,   
                         filesystem: entry.filesystem,
-                        username: '',// dummy for orderby in page 
-                        quota: 0,
+                        username: '',// dummy for orderby in page  
                         usage: 0,
                         peak: 0
                     };
                 }
-
-                summedByRds[entry.filesystem].quota = entry.quota; 
+ 
                 if(entry.usage && entry.usage > summedByRds[entry.filesystem].usage){  
                     if(entry.usage > (1024 * 1024) + 1){ 
                         summedByRds[entry.filesystem].usage  = (entry.usage / (1024 * 1024)).toFixed(2); 
-                        //summedByRds[entry.filesystem].usage  = summedByRds[entry.filesystem].usage.toFixed(2);
                     }else{
                         summedByRds[entry.filesystem].usage  = 0;
                     }
@@ -815,21 +749,15 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
              
             return _.values(summedByRds); 
         };         
-         
           
-         
         
         $scope.$on('$viewContentLoaded', function() { 
 
             $scope.startDateTitle = "Snapshot Start Date";
             $scope.endDateTitle = "Snapshot End Date";
                             
-            var startDate = new Date();
-            var endDate = new Date();
-            startDate.setDate(startDate.getDate() -1);
-           // $scope.rangeStart = startDate;
-            //endDate.setDate(endDate.getDate() -82);
-            //$scope.rangeEnd = endDate;
+            var startDate = new Date(); 
+            startDate.setDate(startDate.getDate() -1); 
             console.log('viewContentLoaded ...'); 
         }); 
                             
