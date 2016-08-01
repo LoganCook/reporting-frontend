@@ -356,8 +356,8 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 records.push([
                     entry.school,
                     entry.username,
-                    entry.email,
                     entry.fullname,
+                    entry.email,
                     entry.usage,
                     entry.quota250,
                     entry.usage == 0 ? 0 : $scope.Math.ceil(((entry.usage / entry.quota250).toFixed(2)) * 100) + '%',

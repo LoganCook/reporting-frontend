@@ -67,20 +67,20 @@
                 <div class="col-md-12">
                     <table class="table table-striped">
                         <tr>
+                            <th>School</th> 
                             <th ng-show="userChecked || filesystemChecked">User ID</th>
                             <th ng-show="userChecked || filesystemChecked">User Name</th> 
                             <th ng-show="userChecked || filesystemChecked">Email</th> 
-                            <th>School</th> 
                             <th>Used GB</th>
                             <th>250GB Quota Blocks</th>
                             <th>%age Used of Quota</th>
                             <th>$5 per 250GB Quota</th>
                         </tr>
                         <tr ng-repeat="entry in output.summed | orderBy: ['school','username']">
+                            <td>{{ entry.school }}</td> 
                             <td ng-show="userChecked || filesystemChecked">{{ entry.username }}</td> 
                             <td ng-show="userChecked || filesystemChecked">{{ entry.fullname }}</td>  
                             <td ng-show="userChecked || filesystemChecked">{{ entry.email }}</td>
-                            <td>{{ entry.school }}</td> 
                             <td>{{ entry.usage }}</td>
                             <td>{{ entry.quota250 }}</td>
                             <td>{{ entry.usage == 0 ? 0 : Math.ceil(((entry.usage / entry.quota250).toFixed(2)) * 100) }}%</td>
