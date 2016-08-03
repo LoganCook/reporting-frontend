@@ -63,25 +63,23 @@
                         <th>School</th>
                         <th>Job Count</th>
                         <th>Total Core Hours</th> 
+                        <th>$</th> 
                     </tr>
                     <tr ng-repeat="sum in jobSummary | orderBy: 'organisation'">
                         <td>{{ sum.organisation }}</td>
                         <td>{{ formatNumber(sum.jobCount) }}</td>
-                        <td>{{ formatNumber(sum.cpuSeconds / 3600) }}</td> 
+                        <td>{{ formatNumber(sum.cpuSeconds / 3600) }}</td>
+                        <td>${{ sum.cost }}</td> 
                     </tr>
                     <tr ng-show="jobSummary.length">
                         <th>Grand Total</th>
                         <th>{{ formatNumber(jobCountSum) }}</th>
                         <th>{{ formatNumber(cpuSecondsSum / 3600) }}</th> 
+                        <td>${{ costSum }}</td> 
                     </tr>                    
                 </table>
             </div>
         </div>
-        <!-- 
-            http://jsfiddle.net/alexsuch/RLQhh/ 
-            https://angular-ui.github.io/bootstrap/
-        -->
-        <!-- button type="button" class="btn btn-default" ng-click="openJobMessage('lg')">Open me!</button -->
     </div> 
        
 </div>
