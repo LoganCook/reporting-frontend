@@ -54,6 +54,17 @@
                     </div>
                 </div>
             </div>
+            
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group text-center">
+                        <label class="checkbox-inline">
+                            <input type="checkbox" ng-model="userChecked" ng-change="orgChanged()"> User
+                        </label> 
+                    </div>                    
+                </div>
+            </div>            
         </form>
 
         <div class="row" style="padding-top: 25px;">
@@ -61,18 +72,27 @@
                 <table class="table table-striped">
                     <tr> 
                         <th>School</th>
+                        <th ng-show="userChecked">User ID</th>
+                        <th ng-show="userChecked">User Name</th> 
+                        <th ng-show="userChecked">Email</th> 
                         <th>Job Count</th>
                         <th>Total Core Hours</th> 
                         <th>$</th> 
                     </tr>
                     <tr ng-repeat="sum in jobSummary | orderBy: 'organisation'">
                         <td>{{ sum.organisation }}</td>
+                        <td ng-show="userChecked">{{ sum.username }}</td> 
+                        <td ng-show="userChecked">{{ sum.fullname }}</td>  
+                        <td ng-show="userChecked">{{ sum.email }}</td>                        
                         <td>{{ formatNumber(sum.jobCount) }}</td>
                         <td>{{ formatNumber(sum.cpuSeconds / 3600) }}</td>
                         <td>${{ sum.cost }}</td> 
                     </tr>
                     <tr ng-show="jobSummary.length">
                         <th>Grand Total</th>
+                        <td ng-show="userChecked"> - </td> 
+                        <td ng-show="userChecked"> - </td> 
+                        <td ng-show="userChecked"> - </td>  
                         <th>{{ formatNumber(jobCountSum) }}</th>
                         <th>{{ formatNumber(cpuSecondsSum / 3600) }}</th> 
                         <td>${{ costSum }}</td> 

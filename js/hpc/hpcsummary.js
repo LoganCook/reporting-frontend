@@ -1,9 +1,11 @@
 define(["app", "lodash", "../util", "properties"], function(app, _, util, props) {
     app.controller("HPCSummaryController", ["$rootScope", "$scope", "$timeout", "reporting", "$uibModal", "org",
     function($rootScope, $scope, $timeout, reporting, $uibModal, org) {
-        
-        //3 uni(FUSA, UOFA and UOSA) have responsiblity for paying $180,000 
-        var  totalAmountToDivided = 180000;
+         
+        /**
+         * 3 uni(FUSA, UOFA and UOSA) have responsiblity for paying $60,000 
+         */ 
+        var  totalAmountToDivided = 60000;
         var  uniToDivide = {};
         
         $scope.values = _.values; 
@@ -25,6 +27,8 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             $scope.rangeEndOpen = true;
         }; 
         
+        $scope.userChecked = false;
+        
         var baseFilters = function() {
             return {
                 count: 25000,
@@ -39,6 +43,12 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
         $scope.cpuSecondsSum = 0;
         $scope.costSum = 0;
             
+        /**
+         * Whenever user click 'Update' button, this is called  
+         * to clear variable and remove stored data.
+         *   
+         * @return {Void}
+         */ 
         var clear = function() {
             jobSummary = {};
 
@@ -57,13 +67,24 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
         }; 
            
         clear();
-
-        //Here it loads hpc base data         
+    
+        /**
+         * Service names that should be requested before feching HPC data
+         * This is for displaying status of current processing on the page
+         */     
         var serviceHpcTypes = ["host", "queue", "owner"];  
+        
+        /**
+         * When this page is requested, this fucnction is called automatically
+         * to fetch basic HPC data ("host", "queue", "owner").
+         *   
+         * @return {Void}
+         */ 
         var initHpc = function() {            
              
-            $scope.status = "Downloading "  + serviceHpcTypes;
-                
+            $scope.status = "Downloading "  + serviceHpcTypes; 
+
+            $rootScope.spinnerActive = true; 
             reporting.hpcBase(function(svc, type, data) {
 
                 if (type == "queue") {  
@@ -82,12 +103,18 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                 }else{ 
                     $scope[type] = util.keyArray(data);
                 }
-                
-                // Find and remove item from serviceTypes array
+                 
+                /**
+                 * Find and remove item from serviceTypes array
+                 * to display status of current processing.
+                 */ 
                 if(serviceHpcTypes.indexOf(type) != -1) {
                     serviceHpcTypes.splice(serviceHpcTypes.indexOf(type), 1);
                     $scope.status = "Downloading "  + serviceHpcTypes;
                 }
+                /**
+                 * If not remained in serviceTypes array, it display "Initial data loaded."
+                 */ 
                 if(!serviceHpcTypes.length){
                     $rootScope.spinnerActive = false;
                     $scope.status = "Initial data loaded.";
@@ -95,8 +122,12 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             });
         };
  
-
-        $rootScope.spinnerActive = true; 
+        /**
+         * When this page is requested, this fucnction is called automatically
+         * to fetch CRM data (orgainsation, user details, billing organisation).
+         * 
+         * @return {Void}
+         */ 
         org.getOrganisations().then(function(data) { 
             $scope.topOrgs = data; 
             
@@ -109,11 +140,21 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             }); 
         }); 
          
+        /**
+         * When this page is requested, this fucnction call initHpc
+         * to fetch basic HPC data ("host", "queue", "owner"). 
+         */ 
         initHpc();  
         
 
-        var updateSummary = function(data) {
-            //summarize by user
+        /**
+         * Summarize by owner
+         * 
+         * @param {Array} data 
+         * @return {Void}
+         */ 
+        var updateOwnerSummary = function(data) { 
+            
             _.forEach(data, function(job) {
                 if (!(job.owner in jobSummary)) {
                     jobSummary[job.owner] = {
@@ -133,15 +174,19 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
         };
         
 
-        var updateOrganisationSummary = function() {        
-            //assigne user's details to each user
-            //and summarize cpuSeconds for only 3 uni
+        /**
+         * assigne user's details to each user and summarize cpuSeconds for only 3 uni
+         *   
+         * @return {Void}
+         */ 
+        var mapOrganisationJob = function() {     
             var userAccountMap = {}; 
             var totalCpuSeconds = 0; 
           
             _.forEach($scope.topOrgs, function(org) {
                 _.extend(userAccountMap, $scope.details[org.pk]);   
-            }); 
+            });
+            
             
             for (owner in jobSummary) { 
                 if (userAccountMap[jobSummary[owner].username]) {
@@ -158,7 +203,9 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                 }
             }
              
-            //allocation %age to each uni 
+            /**
+             * allocate %age to only 3 uni 
+             */ 
             for (uni in uniToDivide) { 
                 uniToDivide[uni].cpuSeconds = uniToDivide[uni].cpuSeconds;
                 if(uniToDivide[uni].cpuSeconds === 0){
@@ -168,8 +215,17 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                 }
             } 
         };
- 
-        var mapJobSummary = function() { 
+
+        /**
+         * Create HPC summary data by orgainsation.
+         * 3 university(University of Adelaide, Flinders University and Flinders University)
+         * shoud pay $180,000.00 for their total Job hours.
+         * 
+         * $180,000.00 will be divied by percentage of their total Job hours. 
+         * 
+         * @return {Void}
+         */ 
+        var updateJobSummary = function() { 
              
             var username, organisations = [];
             $scope.jobCountSum = 0;
@@ -179,77 +235,99 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             var userJobSummary = _.values(jobSummary);
              
             _.forEach(userJobSummary, function(userSummary) {
-                if (!(userSummary.organisation in organisations)) {
-                    organisations[userSummary.organisation] = {
+                
+                var _key = $scope.userChecked ? userSummary.username : userSummary.organisation;
+                
+                if (!(_key in organisations)) {
+                    organisations[_key] = {
                         organisation: userSummary.organisation,
+                        fullname: $scope.userChecked ? userSummary.fullname : "",
+                        email: $scope.userChecked ? userSummary.email : "",
+                        username: $scope.userChecked ? userSummary.username : "", 
                         billing : 0,
                         jobCount: 0,
                         cpuSeconds: 0,
                         cost: 0
                     };
                 }
-
-                if($scope.selectedBillingOrg != '0'){
-                    
+                
+                /**
+                 * Check if billing organisation selected
+                 * if selected, remove other school summary in other billing organisation
+                 */ 
+                if($scope.selectedBillingOrg != '0'){ 
                     if(!userSummary.billing) {
-                        delete organisations[userSummary.organisation];
+                        delete organisations[_key];
                         return;
                     }
                     if($scope.selectedBillingOrg != userSummary.billing) {
-                        delete organisations[userSummary.organisation];
+                        delete organisations[_key];
                         return;
                     }
                 } 
                  
-                organisations[userSummary.organisation].jobCount += userSummary.jobCount;
-                organisations[userSummary.organisation].cpuSeconds += userSummary.cpuSeconds; 
+                organisations[_key].jobCount += userSummary.jobCount;
+                organisations[_key].cpuSeconds += userSummary.cpuSeconds; 
                 if(userSummary.billing){ 
-                    organisations[userSummary.organisation].billing = userSummary.billing;
+                    organisations[_key].billing = userSummary.billing;
                 } 
                 
                 $scope.jobCountSum += userSummary.jobCount;
                 $scope.cpuSecondsSum += userSummary.cpuSeconds; 
             });
-              
-            //calulate cost
-            
+               
+            /**
+             * Calulate cost for payable school in 3 university (University of Adelaide, Flinders University and Flinders University)
+             */ 
             for (organisation in organisations) {
                 if(organisations[organisation].billing){
                     
-                    if (uniToDivide[organisations[organisation].billing]) {// payable organisation  
+                    if (uniToDivide[organisations[organisation].billing]) {
                         if(uniToDivide[organisations[organisation].billing].cpuSeconds === 0){
                             organisations[organisation].cost = 0.00  + "";
                         }else{
                             organisations[organisation].cost = (uniToDivide[organisations[organisation].billing].cost * (organisations[organisation].cpuSeconds / uniToDivide[organisations[organisation].billing].cpuSeconds).toFixed(4)).toFixed(2);
                         }
-                        
                         $scope.costSum += organisations[organisation].cost * 1; 
                     }  
                 } 
             }  
             
-            $scope.jobSummary = _.values(organisations);
-            return organisations; 
+            $scope.jobSummary = _.values(organisations); 
         }
          
- 
+
+
+        /**
+         * create TSV file data with summary data that has already fetched and stored.
+         *  
+         * @export
+         * @return{Array} data
+         */ 
         $scope.export = function() {
                 
             var data = [
-                ["School", "Job Count", "Total Core Hours", "$"]
+                ["School", "User ID", "User Name", "Email", "Job Count", "Total Core Hours", "$"]
             ];
 
             _.forEach($scope.jobSummary, function(summary) {
                 data.push([ 
                     summary.organisation , 
+                    summary.username , 
+                    summary.fullname , 
+                    summary.email , 
                     $scope.formatNumber(summary.jobCount) , 
                     $scope.formatNumber(summary.cpuSeconds / 3600), 
                     summary.cost
                 ]);
             });
             
+            /** Grand total data. */
             data.push([ 
                 'Grand Total', 
+                ' - ', 
+                ' - ', 
+                ' - ', 
                 $scope.formatNumber($scope.jobCountSum), 
                 $scope.formatNumber($scope.cpuSecondsSum / 3600),
                 $scope.costSum
@@ -258,6 +336,17 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             return data;
         };
 
+        /**
+         * Callback function for fetching HPC data.
+         * When finish request HPC data, this will call updateOwnerSummary,  mapOrganisationJob 
+         * and updateJobSummary function sequentially to create HPC summary data.
+         *  
+         * @param {String} svc - service name ('hpc')
+         * @param {String} type - 'job'
+         * @param {Object} query - for next query
+         * @param {Array} data - fetched data
+         * @return {Object} filter
+         */ 
         var processJobs = function(svc, type, query, data) { 
             
             if (data && data.length > 0) {
@@ -268,16 +357,23 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                 var next = util.nextPage(query);
  
                 reporting.hpcQuery("job", next, processJobs);
-            }else{
-                $scope.status = "Jobs: " + $scope.jobCount;
+            }else{ 
+                /** Turn off loading image. */
                 $rootScope.spinnerActive = false;
+                $scope.status = "Jobs: " + $scope.jobCount;
                 
-                updateSummary($scope.jobs);
-                updateOrganisationSummary();
-                mapJobSummary(); 
+                updateOwnerSummary($scope.jobs);
+                mapOrganisationJob();
+                updateJobSummary(); 
             } 
         }; 
 
+
+        /**
+         * create search filter for start epoch and end epoch 
+         *  
+         * @return{Object} filter
+         */ 
         var getSearchDateFilter = function() {
             
             $scope.rangeStart = util.firstDayOfYearAndMonth($scope.rangeEnd);
@@ -293,12 +389,15 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                     ]
                 }; 
             return filter;
-        };
-                
+        };       
+        
+
         /**
-         * This function is called from _load() in ersa-search directive
-         * arg : rangeEpochFilter - filter:["end.ge.1459953000", "end.lt.1460039400"]
-         */        
+         * Request HPC data with qeury string.
+         * Queues is defined ['hpc.queues'] in properties.js
+         *  
+         * @export
+         */ 
         $scope.load = function() {
             $scope.selectedBillingOrg = '0'; 
 
@@ -317,8 +416,8 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                 return false;
             }
             
-            $rootScope.spinnerActive = true;
-            
+            /**  Turn on loading image.  */
+            $rootScope.spinnerActive = true; 
             query.filter.push("queue.in." + queueQuery.join(","));
 
             clear();
@@ -329,19 +428,34 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
         };
   
         
+        /**
+         * When user change organisation on the page, this fucnction will be called 
+         * to filter data.
+         *  
+         * @export
+         */ 
         $scope.orgChanged = function() {    
-            mapJobSummary();              
+            updateJobSummary();              
         }; 
           
-        // Alert Util
+        /**
+         * When user click a close alert button on the page, this fucnction will be called 
+         * to remove warnning message.
+         *  
+         * @export
+         */ 
         $scope.closeAlert = function(index) {
             $scope.alerts.splice(index, 1);
         };
          
+        /**
+         * Page onload event
+         *  
+         * @export
+         */ 
         $scope.$on('$viewContentLoaded', function() {
             $scope.allQueusSelected = true;
             $scope.selectedBillingOrg = '0';
-            console.log('viewContentLoaded ...'); 
         }); 
          
     }]);   
