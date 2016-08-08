@@ -66,11 +66,15 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             $scope.costSum = 0;
         }; 
            
+        /**
+         * initialize all variable
+         */ 
         clear();
     
         /**
          * Service names that should be requested before feching HPC data
          * This is for displaying status of current processing on the page
+         * Refer to service.xfsBase in client.js.
          */     
         var serviceHpcTypes = ["host", "queue", "owner"];  
         
@@ -221,7 +225,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
          * 3 university(University of Adelaide, Flinders University and Flinders University)
          * shoud pay $180,000.00 for their total Job hours.
          * 
-         * $180,000.00 will be divied by percentage of their total Job hours. 
+         * Monthly $60,000.00 will be divied by percentage of their total Job hours. 
          * 
          * @return {Void}
          */ 
