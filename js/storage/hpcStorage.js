@@ -53,9 +53,41 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
 
         var xfs = {};
 
-        // Refer to service.xfsBase in client.js
+        /**
+         * Whenever user click 'Update' button, this is called  
+         * to clear variable and remove stored data.
+         *   
+         * @return {Void}
+         */ 
+        var clear = function() {
+            $scope.raw = [];
+            $scope.output.usage = [];
+            $scope.output.summed = [];
+            
+            $scope.userChecked = false;
+
+            $scope.status = "No data loaded.";
+        };
+
+        /**
+         * initialize all variable
+         */ 
+        clear();
+                 
+        /**
+         * Service names that should be requested before feching XFS data
+         * This is for displaying status of current processing on the page.
+         * Refer to service.xfsBase in client.js.
+         */      
         var serviceTypes = ["snapshot", "host", "filesystem", "owner"];
-        
+
+
+        /**
+         * When this page is requested, this fucnction is called automatically
+         * to fetch basic XFS data ("snapshot", "host", "filesystem", "owner").
+         *   
+         * @return {Void}
+         */         
         var initXFS = function() {
             $rootScope.spinnerActive = true;
 
@@ -68,38 +100,45 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 if (type == "snapshot") {
                     xfs.snapshotByTimestamp = $scope.xfs.snapshotByTimestamp = util.keyArray(data, "ts");
                 }else if (type == "host" && data) {
-                    $scope.select.host = data[0].id;// default
+                    
+                    /** host pl-cml-nss-01.blue.ersa.edu.au is default */                    
+                    $scope.select.host = data[0].id; 
                 }else if (type == "filesystem" && data) {
                     _.forEach(data, function(record) {
-                        if(record.name.endsWith('hpchome')){
-                            $scope.select.filesystem = record.id;// default :hpc home
+
+                        /** 
+                         * This summary is for only '/export/compellent/hpchome' filesystem. 
+                         */                        
+                        if(record.name.endsWith('/hpchome')){
+                            $scope.select.filesystem = record.id; 
                         }
                     });
                 }
                 
-                // Find and remove item from serviceTypes array
+                /**
+                 * Find and remove item from serviceTypes array
+                 * to display status of current processing.
+                 */ 
                 if(serviceTypes.indexOf(type) != -1) {
                     serviceTypes.splice(serviceTypes.indexOf(type), 1);
                     $scope.status = "Downloading "  + serviceTypes;
                 }
+                /**
+                 * If not remained in serviceTypes array, it display "Initial data loaded."
+                 */ 
                 if(!serviceTypes.length){
                     $rootScope.spinnerActive = false;
                     $scope.status = "Initial data loaded.";
                 }
             });
-        };
+        }; 
 
-        var clear = function() {
-            $scope.raw = [];
-            $scope.output.usage = [];
-            $scope.output.summed = [];
-            
-            $scope.userChecked = false;
-
-            $scope.status = "No data loaded.";
-        };
-
-        //Fetch user account for school name
+        /**
+         * When this page is requested, this fucnction is called automatically
+         * to fetch CRM data (orgainsation, user details, billing organisation).
+         * 
+         * @return {Void}
+         */ 
         org.getOrganisations().then(function(data) {
             $scope.topOrgs = data;
             
@@ -111,39 +150,19 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 $scope.topOrgs = billings;
             });
         });
-        
+ 
+        /**
+         * When this page is requested, this fucnction call initHpc
+         * to fetch basic HPC data ("snapshot", "host", "filesystem", "owner"). 
+         */        
         initXFS();
-
-        clear();
-             
-        $scope.orgChanged = function() {
-            
-            $scope.output.summed = [];
-            $scope.peak = 0;
-            $scope.usageSum = 0;
-            
-            updateSummary();
-        };
          
-         
-        var processUsageRange = function(svc, type, query, data) {
-            if (data && data.length > 0) {
-                Array.prototype.push.apply($scope.raw, data);
-
-                $scope.status = "Loaded " + $scope.raw.length + " usage records.";
-
-                var next = util.nextPage(query);
-
-                reporting.xfsQuery("usage", next, processUsageRange);
-            } else {
-                
-                $rootScope.spinnerActive = false;
-                $scope.status = "Usage records: " + $scope.raw.length + ". Snapshots: " + $scope.select.snapshots.length + ".";
-                
-                updateSummary();
-            }
-        };
-
+        /**
+         * Calculate grand total usage data. 
+         *   
+         * @param {Array}data  
+         * @return {Array} data  
+         */ 
         var summarizeStorage = function(data) {
             _.forEach(data, function(entry) {
                 if(entry.usage && entry.usage > (1024 * 1024) + 1){
@@ -162,7 +181,12 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
              
             return data;
         };
- 
+
+        /**
+         * Create XFS summary data by owner or scholl based.  
+         * 
+         * @return {Void}
+         */  
         var updateSummary  = function() {
 
             if ($scope.raw.length === 0) {
@@ -175,6 +199,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             var weights = util.durationWeight(t1, t2, $scope.select.timestamps);
 
             var userAccountMap = {};
+            /** creat map for all user account */
             _.forEach($scope.topOrgs, function(org) {
                 if($scope.selectedBillingOrg == '0') {
                     _.extend(userAccountMap, $scope.details[org.pk]);
@@ -185,6 +210,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 }
             });
             
+            /** clear cached memory */ 
             var summed = {};
             $scope.total.currentUsage = 0;
             $scope.total.quota250 = 0;
@@ -210,6 +236,10 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                     }
                 }
                 
+                /**
+                 * Check if billing organisation selected
+                 * if selected, remove other school summary in other billing organisation
+                 */ 
                 if($scope.selectedBillingOrg != '0' && !summed[_sumeKey].school ) {
                     delete summed[_sumeKey];
                     return;
@@ -222,7 +252,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 userSum.usage += weightedUsage ; 
             }); 
              
-            if($scope.userChecked || $scope.filesystemChecked){
+            if($scope.userChecked){
                 $scope.output.summed = _.values(summed);
                 $scope.output.summed = summarizeStorage($scope.output.summed);
                 
@@ -232,13 +262,13 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             // clear memory
             userAccountMap = {};
             var summedBySchool = {};
-            
+      
             _.forEach(summed, function(entry) {
                 var _school = entry.school ? entry.school : '-';
                 if (!(_school in summedBySchool)) {
                     summedBySchool[_school] = {
                         school: _school,
-                        username: '',// dummy for orderby in page
+                        username: '', 
                         usage: 0,
                         quota250 : 0,
                         per5dollar : 0
@@ -252,8 +282,88 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             
             $scope.output.summed = _.values(summedBySchool);
             $scope.output.summed = summarizeStorage($scope.output.summed);
+        }; 
+
+
+        /**
+         * create TSV file data with summary data that has already fetched and stored.
+         *  
+         * @export
+         * @return{Array} data
+         */ 
+        $scope.export = function() {
+            var records = [];
+
+            _.forEach($scope.output.summed, function(entry) {
+                records.push([
+                    entry.school,
+                    entry.username,
+                    entry.fullname,
+                    entry.email,
+                    entry.usage,
+                    entry.quota250,
+                    entry.usage == 0 ? 0 : $scope.Math.ceil(((entry.usage / entry.quota250).toFixed(2)) * 100) + '%',
+                    '$' + $scope.formatNumber(entry.per5dollar) + '.00'
+                ]);
+            });
+          
+            records = $filter('orderBy')(records, [0, 1]);
+            
+            var data = [
+                ["School", "User ID", "User Name", "Email","Used GB", "250GB Quota Blocks", "%age Used of Quota", "$5 per 250GB Quota"]
+            ];
+        
+            Array.prototype.push.apply(data, records) ;
+            
+            /** Grand total data. */
+            data.push([
+                'Grand Total',
+                ' - ',
+                ' - ',
+                ' - ',
+                $scope.total.currentUsage.toFixed(2),
+                $scope.total.quota250,
+                $scope.total.currentUsage == 0 ? 0 + '%' : Math.ceil((($scope.total.currentUsage / $scope.total.quota250).toFixed(2)) * 100) + '%',
+                '$' + $scope.formatNumber($scope.total.per5dollar) + '.00'
+            ]);
+            
+            return data;
+        };
+       
+        /**
+         * Callback function for fetching  in '/export/compellent/hpchome' host of XFS data.
+         * When finish request HPC data, this will call updateOwnerSummary,  mapOrganisationJob 
+         * and updateJobSummary function sequentially to create HPC summary data.
+         *  
+         * @param {String} svc - service name ('hpc')
+         * @param {String} type - 'job'
+         * @param {Object} query - for next query
+         * @param {Array} data - fetched data
+         * @return {Object} filter
+         */ 
+        var processUsageRange = function(svc, type, query, data) {
+            if (data && data.length > 0) {
+                Array.prototype.push.apply($scope.raw, data);
+
+                $scope.status = "Loaded " + $scope.raw.length + " usage records.";
+
+                var next = util.nextPage(query);
+
+                reporting.xfsQuery("usage", next, processUsageRange);
+            } else {
+                
+                $rootScope.spinnerActive = false;
+                $scope.status = "Usage records: " + $scope.raw.length + ". Snapshots: " + $scope.select.snapshots.length + ".";
+                
+                updateSummary();
+            }
         };
  
+        /**
+         * Request XFS data with qeury string. 
+         *  
+         * @export
+         */ 
         $scope.load = function(rangeEpochFilter) {
             clear();
             
@@ -278,7 +388,11 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 $scope.alerts.push({type: 'danger',msg: "Host isn't loaded!"});
                 return false;
             }
-              
+            
+            /**
+             * Filter filesystems data to fetch
+             * what is related with only 'pl-cml-nss-01.blue.ersa.edu.au' host.  
+             */                
             if ($scope.select.host) {
                 ["snapshot"].forEach(function(type) {
                     $scope.xfs[type] = {};
@@ -349,44 +463,28 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             reporting.xfsQuery("usage", query, processUsageRange);
         };
  
-        $scope.export = function() {
-            var records = [];
-
-            _.forEach($scope.output.summed, function(entry) {
-                records.push([
-                    entry.school,
-                    entry.username,
-                    entry.fullname,
-                    entry.email,
-                    entry.usage,
-                    entry.quota250,
-                    entry.usage == 0 ? 0 : $scope.Math.ceil(((entry.usage / entry.quota250).toFixed(2)) * 100) + '%',
-                    '$' + $scope.formatNumber(entry.per5dollar) + '.00'
-                ]);
-            });
-          
-            records = $filter('orderBy')(records, [0, 1]);
-            
-            var data = [
-                ["School", "User ID", "User Name", "Email","Used GB", "250GB Quota Blocks", "%age Used of Quota", "$5 per 250GB Quota"]
-            ];
-        
-            Array.prototype.push.apply(data, records) ;
-            data.push([
-                'Grand Total',
-                ' - ',
-                ' - ',
-                ' - ',
-                $scope.total.currentUsage.toFixed(2),
-                $scope.total.quota250,
-                $scope.total.currentUsage == 0 ? 0 + '%' : Math.ceil((($scope.total.currentUsage / $scope.total.quota250).toFixed(2)) * 100) + '%',
-                '$' + $scope.formatNumber($scope.total.per5dollar) + '.00'
-            ]);
-            
-            return data;
-        };
        
-        // Alert Util
+        /**
+         * When user change organisation on the page, this fucnction will be called 
+         * to filter data.
+         *  
+         * @export
+         */             
+        $scope.orgChanged = function() {
+            
+            $scope.output.summed = [];
+            $scope.peak = 0;
+            $scope.usageSum = 0;
+            
+            updateSummary();
+        }; 
+         
+        /**
+         * When user click a close alert button on the page, this fucnction will be called 
+         * to remove warnning message.
+         *  
+         * @export
+         */ 
         $scope.closeAlert = function(index) {
             $scope.alerts.splice(index, 1);
         };
