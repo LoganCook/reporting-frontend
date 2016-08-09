@@ -2,6 +2,13 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
     app.controller("AllocationSummaryController", ["$rootScope", "$scope", "$timeout", "$q", "$filter", "reporting", "$uibModal", "org",
     function($rootScope, $scope, $timeout, $q, $filter, reporting, $uibModal, org) {
 
+        /**
+         * There are some filesystem which don't need to summary and display.
+         * It is defined in properties.js
+         */ 
+        var invisible = props['allocation.summary.invisible.filesystem'];  
+        var hpchomeFilesystem =''; 
+        
         $scope.values = _.values;
 
         $scope.formatSize = util.formatSize;
@@ -9,8 +16,6 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
         $scope.formatNumber = util.formatNumber;
         $scope.formatDuration = util.formatDuration;
         $scope.Math = window.Math;
-        
-        var invisible = props['allocation.summary.invisible.filesystem'];  
         
         $scope.alerts = []; 
   
@@ -62,11 +67,21 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                 page: 1
             };
         }; 
-   
-        // Refer to service.xfsBase in client.js 
+    
+        /**
+         * Service names that should be requested before feching XFS and HNAS data
+         * This is for displaying status of current processing on the page.
+         * Refer to service.xfsBase in client.js.
+         */         
         var serviceXFSTypes = ["snapshot", "host", "filesystem", "owner"]; 
         var serviceHnasTypes = ["filesystem", "owner", "virtual-volume"];
-        
+
+        /**
+         * Whenever user click 'Update' button, this is called  
+         * to clear variable and remove stored data.
+         *   
+         * @return {Void}
+         */         
         var clear = function() {   
             vuDeferred = {};
             fuDeferred = {};
@@ -81,6 +96,12 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             $scope.total = {};
         }; 
 
+        /**
+         * When this page is requested, this fucnction is called automatically
+         * to fetch basic HNAS data ("filesystem", "owner", "virtual-volume").
+         *   
+         * @return {Void}
+         */ 
         var initHnas = function() {  
             $scope.status = "Loading ...";  
             $rootScope.spinnerActive = true; 
@@ -89,45 +110,15 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
         }; 
         
 
-        var initXFS = function() { 
-                
-            reporting.xfsBase(function(svc, type, data) { 
-
-                if (type == "snapshot") {
-                    xfs.snapshots = util.keyArray(data); 
-                    
-                }else if (type == "host" && data) { 
-                    xfs.host = util.keyArray(data);
-                    xfxDefaultHost = data[0].id;// default
-                    
-                }else if (type == "filesystem" && data) {             
-                    _.forEach(data, function(_filesystem) {
-                        if(_filesystem.name.endsWith('hpchome')){ 
-                            $scope.select.filesystem = _filesystem.id;// default :hpc home
-                        }
-                        
-                        var fileName = _filesystem.name;
-                        var idx = fileName.lastIndexOf("/");
-                        if(idx > -1){
-                             fileName = fileName.substring(idx + 1);
-                        } 
-                        
-                        if(fileName in rdses) {  
-                            _filesystem.rds = rdses[fileName].allocation_num;  
-                        }else{
-                            _filesystem.rds = '-';
-                        }   
-                    }); 
- 
-                    xfs.filesystems = util.keyArray(data);     
-                }else if (type == "owner" && data) {  
-                    xfs.owners = util.keyArray(data); 
-                }
-
-                checkInitProcess(serviceXFSTypes, type); 
-            });
-        }; 
-
+        /**
+         * Callback function for fetching init HNAS data.
+         * When finish request filesystem data, this will call processVirtualVolume(). 
+         *  
+         * @param {String} svc - 'hnas'
+         * @param {String} type - service name ("filesystem", "owner", "virtual-volume")
+         * @param {Array} data - fetched data
+         * @return {Void} 
+         */ 
         var processInitData = function(svc, type, data) {  
             if (type == "filesystem") {  
 
@@ -154,8 +145,18 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             }  
 
             checkInitProcess(serviceHnasTypes, type); 
-        };  
+        }; 
 
+        /**
+         * Callback function for fetching 'virtual-volume' data.
+         * When finish request this data, this will assign an allocation name with RDS dta from CRM. 
+         *  
+         * @param {String} svc - 'hnas'
+         * @param {String} type - service name (virtual-volume)
+         * @param {Object} query - for next query
+         * @param {Array} data - fetched data
+         * @return {Void} 
+         */ 
         var processVirtualVolume = function(svc, type, query, data) { 
             
             if (data && data.length > 0) {  
@@ -182,11 +183,91 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                     }
                 });
             }
-        };
+        }; 
 
+        /**
+         * When this page is requested, this fucnction is called automatically
+         * to fetch basic XFS data ("snapshot", "host", "filesystem", "owner").
+         *   
+         * @return {Void}
+         */ 
+        var initXFS = function() { 
+                
+            reporting.xfsBase(function(svc, type, data) { 
+
+                if (type == "snapshot") {
+                    xfs.snapshots = util.keyArray(data); 
+                    
+                }else if (type == "host" && data) { 
+                    xfs.host = util.keyArray(data);
+                    
+                    /** host pl-cml-nss-01.blue.ersa.edu.au is default */
+                    xfxDefaultHost = data[0].id; 
+                    
+                }else if (type == "filesystem" && data) {             
+                    _.forEach(data, function(_filesystem) {
+                        
+                        /** 
+                         * This summary is for all host excluding only '/export/compellent/hpchome' filesystem 
+                         * hpchomeFilesystem is used in query string with 'ne'
+                         */
+                        if(_filesystem.name.endsWith('/hpchome')){ 
+                            hpchomeFilesystem = _filesystem.id;
+                        }
+                        
+                        var fileName = _filesystem.name;
+                        var idx = fileName.lastIndexOf("/");
+                        if(idx > -1){
+                             fileName = fileName.substring(idx + 1);
+                        } 
+                        
+                        if(fileName in rdses) {  
+                            _filesystem.rds = rdses[fileName].allocation_num;  
+                        }else{
+                            _filesystem.rds = '-';
+                        }   
+                    }); 
+ 
+                    xfs.filesystems = util.keyArray(data);     
+                }else if (type == "owner" && data) {  
+                    xfs.owners = util.keyArray(data); 
+                }
+
+                checkInitProcess(serviceXFSTypes, type); 
+            });
+        }; 
+
+        /**
+         * Display current processing name or finished work. 
+         * 
+         * @param {Array} serviceTypesArray - Service type array
+         * @param {String} type - Service type to remove in serviceTypesArray
+         * @return {Void}
+         */  
+        var checkInitProcess = function(serviceTypesArray, type) { 
+            
+            /** Find and remove item from serviceTypes array  */
+            if(serviceTypesArray.indexOf(type) != -1) {
+                serviceTypesArray.splice(serviceTypesArray.indexOf(type), 1);
+                $scope.status = "Downloading "  + serviceXFSTypes + serviceHnasTypes; 
+            }
+            if(!serviceXFSTypes.length && !serviceHnasTypes.length){
+                $rootScope.spinnerActive = false; 
+                $scope.status = "Initial data loaded.";
+            }   
+        }; 
+
+        /**
+         * initialize all variable
+         */ 
         clear();
 
-        // fetching initial data 
+        /**
+         * When this page is requested, this fucnction is called automatically
+         * to fetch CRM data (orgainsation, user details, billing organisation).
+         * 
+         * @return {Void}
+         */ 
         org.getOrganisations().then(function(_data) { 
             $scope.topOrgs = _data;  
             
@@ -199,6 +280,12 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             });                 
         });     
 
+        /**
+         * When this page is requested, this fucnction is called automatically
+         * to fetch initial HNAS and intial XFS data.
+         * 
+         * @return {Void}
+         */ 
         org.getRoles().then(function(_roles) { 
             
             roles = _roles;
@@ -221,10 +308,15 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
         });     
             
          
-        var setOrganisationUsers = function() {   
-            
-            
-            if(rdses['contrator']){// Do execute this function only 1 time
+        /**
+         * Assign user of organisation to RDS map.
+         * rdses map will use to summarize usage by allocation name.
+         * 
+         * @return {Void}
+         */ 
+        var setOrganisationUsers = function() {    
+            /** 'contrator' is a flag to execute this function only 1 time */
+            if(rdses['contrator']){
                 return;
             } 
             
@@ -264,27 +356,23 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             return;
         };     
              
+        /**
+         * Whe srganisation selected , this function is called
+         * to update and display summary usages for the only organisation
+         *  
+         * @export 
+         */ 
         $scope.orgChanged = function() {   
             updateAllUsages({'orgChanged' : $scope.selectedBillingOrg});   
         }; 
         
-        var checkInitProcess = function(serviceTypesArray, type) { 
-            
-            // Find and remove item from serviceTypes array 
-            if(serviceTypesArray.indexOf(type) != -1) {
-                serviceTypesArray.splice(serviceTypesArray.indexOf(type), 1);
-                $scope.status = "Downloading "  + serviceXFSTypes + serviceHnasTypes; 
-            }
-            if(!serviceXFSTypes.length && !serviceHnasTypes.length){
-                $rootScope.spinnerActive = false; 
-                $scope.status = "Initial data loaded.";
-            }   
-        };     
-        
         
         /**
-         * This function is called from _export() in ersa-search directive
-         */
+         * create TSV file data with summary data that has already fetched and stored.
+         *  
+         * @export
+         * @return{Array} data
+         */ 
         $scope.export = function() {
             var records = [];
 
@@ -310,6 +398,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             ];
             Array.prototype.push.apply(data, records) ;
             
+            /** Grand total data. */
             data.push([
                 'Grand Total', 
                 ' - ',  
@@ -325,7 +414,13 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             
             return data;
         };
-    
+
+
+        /**
+         * Request HNAS and XFS data with qeury string. 
+         *  
+         * @export
+         */    
         $scope.load = function() {
             
             clear();
@@ -348,15 +443,26 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             var query =  _.merge({count: 100000}, filter);
             $scope.status = "Loading snapshots ...";
              
+            /** for calling updateAllUsages() when all requests complete */
             vuDeferred = $q.defer();
             fuDeferred = $q.defer();  
             xfsDeferred = $q.defer();  
             
+            /** Once all requests completed, this call updateAllUsages() */
             $q.all([vuDeferred.promise, fuDeferred.promise, xfsDeferred.promise]).then(updateAllUsages);
             
             reporting.hnasQuery("snapshot", query, processHnasSnapshot);
         };
         
+        /**
+         * Request HNAS snapshot, and then call loadVirtualVolumeUsage(), loadFilesystemUsage and  loadXfsUsage.
+         *  
+         * @param {String} svc - service name ('hnas')
+         * @param {String} type - 'snapshot'
+         * @param {Object} query - for next query
+         * @param {Array} data - fetched data
+         * @return {Void}
+         */ 
         var processHnasSnapshot = function(svc, type, query, data) { 
             
             $rootScope.spinnerActive = true; 
@@ -376,13 +482,19 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             } 
         };
 
-        var updateAllUsages = function(_data) { 
+        /**
+         * Summarize virtualVolumeUsage, filesystemUsage and xfsUsage(excluding hpchome).
+         * 
+         * @return {Void}
+         */ 
+        var updateAllUsages = function() { 
             
             setOrganisationUsers();
             var rdsesMap = _.values(rdses); 
             rdsesMap = util.keyArray(rdsesMap, 'allocation_num'); 
             
             $scope.usages = {};
+            /** ummarize virtualVolumeUsage, filesystemUsage and xfsUsage(excluding hpchome) */
             [cache.virtualVolumeUsage, cache.filesystemUsage, cache.xfsUsage].forEach(function(usages) {    
                  
                 _.forEach(usages, function(_usage) {
@@ -429,8 +541,9 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                 });   
             });   
             
-            $scope.usages = _.values($scope.usages); 
+            $scope.usages = _.values($scope.usages);  
             
+            /** calulate grand total usage */
             $scope.total.rds = 0;
             $scope.total.currentUsage = 0;
             $scope.total.quota250 = 0;
@@ -451,8 +564,12 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
         };
 
         /**
-         * 01.Virtural Volume Usage
-         */
+         * Main function for call Virtural Volume Usage.
+         * This create request query for it.
+         *   
+         * @param {String} _snapshotParams - snapshot string
+         * @return {Void}
+         */         
         var loadVirtualVolumeUsage = function(_snapshotParams) {  
             
             var filter =  {filter: ["snapshot.in." + _snapshotParams]};  
@@ -462,7 +579,16 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             $scope.status = "Loading ...";  
             reporting.hnasQuery("virtual-volume/usage", query, processVirtualVolumeUsage);     
         };
-   
+
+        /**
+         * Callback function for fetching Virtual-Volume Usage of HNAS.
+         *  
+         * @param {String} svc - service name ('hans')
+         * @param {String} type - 'virtual-volume usage'
+         * @param {Object} query - for next query
+         * @param {Array} data - fetched data
+         * @return {Void}
+         */     
         var processVirtualVolumeUsage = function(svc, type, query, data) { 
             
             if (data && data.length > 0) { 
@@ -480,7 +606,13 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             } 
         };
                  
-        
+        /**
+         * When request of VirtualVolumeUsage completed, this assign allocation name and owner for it.
+         * And then, summarize it by virtual_volume_id.
+         *   
+         * @param {Array} data - Virtual-volume usage data
+         * @return {Object} usageSummary
+         */             
         var mapVirtualVolumeUsage = function(data) {  
             
             var virtualVolumeMap = util.keyArray(hnas.virtualVolumes);  
@@ -512,20 +644,32 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                 }
             });
             return usageSummary;
-        }
-         
+        } 
 
         /**
-         * 02.File system Usage
-         */
+         * Main function for call Filesystem Usage.
+         * This create request query for it.
+         *   
+         * @param {String} _snapshotParams - snapshot string
+         * @return {Void}
+         */         
         var loadFilesystemUsage = function(_snapshotParams) {
             var filter =  {filter: ["snapshot.in." + _snapshotParams]};
             var query = _.merge(baseFilters(), filter); 
 
             $scope.status = "Loading ...";
             reporting.hnasQuery("filesystem/usage", query, processFilesystemUsage);
-        };
-   
+        }; 
+
+        /**
+         * Callback function for fetching Filesystem Usage of HNAS.
+         *  
+         * @param {String} svc - service name ('hans')
+         * @param {String} type - 'filesystem usage'
+         * @param {Object} query - for next query
+         * @param {Array} data - fetched data
+         * @return {Void}
+         */        
         var processFilesystemUsage = function(svc, type, query, data) {
             
             if (data && data.length > 0) {
@@ -543,7 +687,13 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             }
         };
                  
-        
+        /**
+         * When request of Filesystem Usage completed, this assign allocation name for it.
+         * And then, summarize it by filesystem_id.
+         *   
+         * @param {Array} data - Filesystem usage data
+         * @return {Object} usageSummary
+         */         
         var mapFilesystemUsage = function(data) {
             
             var filesystemMap = util.keyArray(hnas.filesystems);
@@ -569,11 +719,13 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             });
             return usageSummary;
         } 
-          
-
+           
         /**
-         * 03.XFS
-         */
+         * Util function for filtering snapshots data to fetch
+         * what is related with only 'pl-cml-nss-01.blue.ersa.edu.au' host. 
+         *    
+         * @return {Object} xfsSnapshots
+         */      
         var getXfsHostSnapshots = function(xfxDefaultHost) {  
             var xfsSnapshots = {};
             if (xfxDefaultHost) {
@@ -584,8 +736,14 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                 }
             } 
             return xfsSnapshots;        
-        }
-        
+        } 
+
+        /**
+         * Util function for filtering filesystems data to fetch
+         * what is related with only 'pl-cml-nss-01.blue.ersa.edu.au' host. 
+         *    
+         * @return {Object} xfsSnapshots
+         */       
         var getXfsHostFilesystems = function(xfxDefaultHost) {  
             var xfsFilesystems = {};
             if (xfxDefaultHost) {
@@ -597,7 +755,14 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             } 
             return xfsFilesystems;        
         }
-        
+                 
+       
+        /**
+         * Main function for call XFS Usage ecluding 'hpchome'.
+         * This create request query with snapshot for it.
+         *    
+         * @return {Void}
+         */       
         var loadXfsUsage = function() {  
             
             var xfsSnapshots = getXfsHostSnapshots(xfxDefaultHost); 
@@ -646,7 +811,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
 
             query.filter = [
                 "snapshot.in." + snapshots.map(function(s) { return s.id; }).join(","),
-                "filesystem.ne." + $scope.select.filesystem
+                "filesystem.ne." + hpchomeFilesystem
             ]; 
 
             $scope.status = "Loading ...";
@@ -656,8 +821,16 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             
         };
          
-         
 
+        /**
+         * Callback function for fetching usage of XFS.
+         *  
+         * @param {String} svc - service name ('xfs')
+         * @param {String} type - 'usage'
+         * @param {Object} query - for next query
+         * @param {Array} data - fetched data
+         * @return {Void}
+         */  
         var processXfsUsageRange = function(svc, type, query, data) {
             
             if (data && data.length > 0) {
@@ -677,8 +850,13 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             } 
         };         
          
-         
-
+        /**
+         * When request of XFS Usage completed, this assign allocation name of RDS for it.
+         * And then, summarize it by filesystem_id.
+         *   
+         * @param {Array} data - Usage data
+         * @return {Object} usageSummary
+         */         
         var mapXfsUsage  = function(data) {
 
             if (data.length === 0) { 
@@ -719,7 +897,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                 } 
             });  
             
-            // clear memory 
+            /** clear cached memory */ 
             var summedByRds = {};  
             
             _.forEach(summed, function(entry) {
@@ -729,7 +907,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                         source: 'X',
                         rds: entry.rds,   
                         filesystem: entry.filesystem,
-                        username: '',// dummy for orderby in page  
+                        username: '',
                         usage: 0,
                         peak: 0
                     };
@@ -749,18 +927,8 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
              
             return _.values(summedByRds); 
         };         
-          
-        
-        $scope.$on('$viewContentLoaded', function() { 
-
-            $scope.startDateTitle = "Snapshot Start Date";
-            $scope.endDateTitle = "Snapshot End Date";
-                            
-            var startDate = new Date(); 
-            startDate.setDate(startDate.getDate() -1); 
-            console.log('viewContentLoaded ...'); 
-        }); 
-                            
+           
+                      
     }]);   
 });
 
