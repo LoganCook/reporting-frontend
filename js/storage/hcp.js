@@ -1,6 +1,6 @@
 define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
-    app.controller("HCPController", ["$rootScope", "$scope", "$timeout", "reporting", "$uibModal", "org",
-    function($rootScope, $scope, $timeout, reporting, $uibModal, org) {
+    app.controller("HCPController", ["$rootScope", "$scope", "$timeout", "reporting",
+    function($rootScope, $scope, $timeout, reporting) {
  
  
         $scope.values = _.values;
@@ -150,9 +150,9 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
          * arg : rangeEpochFilter - filter:["end.ge.1459953000", "end.lt.1460039400"]
          */        
         $scope.load = function(rangeEpochFilter) { 
-            
             clear();  
             
+            /** rangeEpochFilter not used because this function use ts.ge and ts.lt */
             var rangeStartEpoch = util.dayStart($scope.rangeStart);
             var rangeEndEpoch = util.dayEnd($scope.rangeEnd);
             
@@ -291,13 +291,8 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             $scope.startDateTitle = "Snapshot Start Date";
             $scope.endDateTitle = "Snapshot End Date";
                             
-            var startDate = new Date();
-            var endDate = new Date();
-            startDate.setDate(startDate.getDate() - 1);
-           // $scope.rangeStart = startDate;
-            //endDate.setDate(endDate.getDate() -82);
-            //$scope.rangeEnd = endDate;
-            console.log('viewContentLoaded ...'); 
+            var startDate = new Date(); 
+            startDate.setDate(startDate.getDate() - 1); 
         });    
         
     }]);   

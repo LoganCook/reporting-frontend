@@ -157,7 +157,8 @@ define(["client", "ng-csv", , "components/datePickers/date-pickers"], function(c
         }
         var requestUri = sessionStorage['bman'];
         // TODO: verify below two api urls
-        var userUri = requestUri + '/api/Organisation/#id/get_extented_accounts/';
+        //var userUri = requestUri + '/api/Organisation/#id/get_extented_accounts/';
+        var userUri = requestUri + '/api/Organisation/?id=#id&method=get_extented_accounts';
         var orgUri = requestUri + '/api/Organisation/?method=get_tops';
         var organisations = [], users = {};
 

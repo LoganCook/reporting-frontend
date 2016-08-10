@@ -49,6 +49,7 @@ return function($timeout, queryResource) {
         if (httpResponse) {
           console.log("Query is finished in error. Return to caller ");
           console.warn("Error:", httpResponse.status, " ", httpResponse.statusText);
+          console.warn("Error:", JSON.stringify(httpResponse));
         } else {
           console.log("Query is finished in normal fashion. return to caller ");
         }

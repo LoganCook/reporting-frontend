@@ -85,11 +85,11 @@ return {
         return Math.round(modified.getTime() / 1000);
     },
     
-    firstDayOfYearAndMonth(theDay){ 
+    firstDayOfYearAndMonth: function(theDay) { 
         return new Date(new Date(theDay.getFullYear(), theDay.getMonth(), 1));
     },
     
-    lastDayOfYearAndMonth(theDay){ 
+    lastDayOfYearAndMonth: function(theDay) { 
         return new Date((new Date(theDay.getFullYear(), theDay.getMonth() + 1, 1)) - 1);
     },
     

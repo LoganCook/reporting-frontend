@@ -1,0 +1,256 @@
+
+> ersa-reporting-frontend@0.1.0 lint /home/dev01/projects/patchwork/reporting-frontend
+> eslint js tests
+
+
+/home/dev01/projects/patchwork/reporting-frontend/js/app.js
+  103:21  warning  'dayStart' is defined but never used  no-unused-vars
+  114:21  warning  'dayEnd' is defined but never used    no-unused-vars
+
+/home/dev01/projects/patchwork/reporting-frontend/js/client.js
+    3:35  warning  'name' is defined but never used                no-unused-vars
+  274:80  warning  'type' is already declared in the upper scope   no-shadow
+  290:80  warning  'svc' is already declared in the upper scope    no-shadow
+  290:85  warning  'type' is already declared in the upper scope   no-shadow
+  290:91  warning  'query' is already declared in the upper scope  no-shadow
+  290:98  warning  'data' is already declared in the upper scope   no-shadow
+
+/home/dev01/projects/patchwork/reporting-frontend/js/cloud/services.js
+  28:18  warning  Identifier 'openstack_id' is not in camel case  camelcase
+  30:11  warning  Identifier 'openstack_id' is not in camel case  camelcase
+  34:43  warning  Identifier 'openstack_id' is not in camel case  camelcase
+  38:19  warning  Identifier 'openstack_id' is not in camel case  camelcase
+
+/home/dev01/projects/patchwork/reporting-frontend/js/hpc/hpcsummary.js
+   40:35   warning  Infix operators must be spaced                space-infix-ops
+   96:21   warning  Expected space(s) after "if"                  keyword-spacing
+   96:44   warning  Missing space before opening brace            space-before-blocks
+   98:29   warning  Expected space(s) after "if"                  keyword-spacing
+   98:77   warning  Missing space before opening brace            space-before-blocks
+  102:22   warning  Expected space(s) after "else"                keyword-spacing
+  102:22   warning  Expected space(s) before "else"               keyword-spacing
+  107:18   warning  Expected space(s) after "else"                keyword-spacing
+  107:18   warning  Expected space(s) before "else"               keyword-spacing
+  115:17   warning  Expected space(s) after "if"                  keyword-spacing
+  122:17   warning  Expected space(s) after "if"                  keyword-spacing
+  122:44   warning  Missing space before opening brace            space-before-blocks
+  190:48   warning  'org' is already declared in the upper scope  no-shadow
+  195:18   error    'owner' is not defined                        no-undef
+  196:47   error    'owner' is not defined                        no-undef
+  197:32   error    'owner' is not defined                        no-undef
+  197:76   error    'owner' is not defined                        no-undef
+  198:32   error    'owner' is not defined                        no-undef
+  198:73   error    'owner' is not defined                        no-undef
+  199:32   error    'owner' is not defined                        no-undef
+  199:75   error    'owner' is not defined                        no-undef
+  200:32   error    'owner' is not defined                        no-undef
+  200:80   error    'owner' is not defined                        no-undef
+  203:44   error    'owner' is not defined                        no-undef
+  204:44   error    'owner' is not defined                        no-undef
+  204:85   error    'owner' is not defined                        no-undef
+  205:44   error    'owner' is not defined                        no-undef
+  205:83   error    'owner' is not defined                        no-undef
+  206:51   error    'owner' is not defined                        no-undef
+  213:18   error    'uni' is not defined                          no-undef
+  214:29   error    'uni' is not defined                          no-undef
+  214:59   error    'uni' is not defined                          no-undef
+  215:17   warning  Expected space(s) after "if"                  keyword-spacing
+  215:32   error    'uni' is not defined                          no-undef
+  215:54   warning  Missing space before opening brace            space-before-blocks
+  216:33   error    'uni' is not defined                          no-undef
+  217:18   warning  Expected space(s) after "else"                keyword-spacing
+  217:18   warning  Expected space(s) before "else"               keyword-spacing
+  218:33   error    'uni' is not defined                          no-undef
+  218:82   error    'uni' is not defined                          no-undef
+  234:17   warning  'username' is defined but never used          no-unused-vars
+  262:17   warning  Expected space(s) after "if"                  keyword-spacing
+  262:53   warning  Missing space before opening brace            space-before-blocks
+  263:21   warning  Expected space(s) after "if"                  keyword-spacing
+  267:21   warning  Expected space(s) after "if"                  keyword-spacing
+  275:17   warning  Expected space(s) after "if"                  keyword-spacing
+  275:40   warning  Missing space before opening brace            space-before-blocks
+  286:18   error    'organisation' is not defined                 no-undef
+  287:17   warning  Expected space(s) after "if"                  keyword-spacing
+  287:34   error    'organisation' is not defined                 no-undef
+  287:56   warning  Missing space before opening brace            space-before-blocks
+  289:51   error    'organisation' is not defined                 no-undef
+  290:25   warning  Expected space(s) after "if"                  keyword-spacing
+  290:54   error    'organisation' is not defined                 no-undef
+  290:94   warning  Missing space before opening brace            space-before-blocks
+  291:43   error    'organisation' is not defined                 no-undef
+  292:26   warning  Expected space(s) before "else"               keyword-spacing
+  292:26   warning  Expected space(s) after "else"                keyword-spacing
+  293:43   error    'organisation' is not defined                 no-undef
+  293:91   error    'organisation' is not defined                 no-undef
+  293:136  error    'organisation' is not defined                 no-undef
+  293:189  error    'organisation' is not defined                 no-undef
+  295:57   error    'organisation' is not defined                 no-undef
+  301:10   warning  Missing semicolon                             semi
+  364:14   warning  Expected space(s) before "else"               keyword-spacing
+  364:14   warning  Expected space(s) after "else"                keyword-spacing
+
+/home/dev01/projects/patchwork/reporting-frontend/js/main.js
+  26:18  warning  'err' is defined but never used  no-unused-vars
+
+/home/dev01/projects/patchwork/reporting-frontend/js/storage/allocationSummary.js
+   10:31   warning  Infix operators must be spaced                           space-infix-ops
+   26:35   warning  Infix operators must be spaced                           space-infix-ops
+   27:22   warning  Infix operators must be spaced                           space-infix-ops
+   30:21   warning  Infix operators must be spaced                           space-infix-ops
+   62:13   warning  'hnasDeferred' is defined but never used                 no-unused-vars
+  129:25   warning  Expected space(s) after "if"                             keyword-spacing
+  131:26   warning  Expected space(s) before "else"                          keyword-spacing
+  131:26   warning  Expected space(s) after "else"                           keyword-spacing
+  143:14   warning  Expected space(s) before "else"                          keyword-spacing
+  176:40   warning  Identifier 'filesystem_name' is not in camel case        camelcase
+  179:21   warning  Expected space(s) after "if"                             keyword-spacing
+  181:23   warning  Expected space(s) after "else"                           keyword-spacing
+  181:23   warning  Expected space(s) before "else"                          keyword-spacing
+  201:18   warning  Expected space(s) before "else"                          keyword-spacing
+  207:18   warning  Expected space(s) before "else"                          keyword-spacing
+  214:25   warning  Expected space(s) after "if"                             keyword-spacing
+  214:66   warning  Missing space before opening brace                       space-before-blocks
+  220:25   warning  Expected space(s) after "if"                             keyword-spacing
+  220:37   warning  Missing space before opening brace                       space-before-blocks
+  224:25   warning  Expected space(s) after "if"                             keyword-spacing
+  226:26   warning  Expected space(s) before "else"                          keyword-spacing
+  226:26   warning  Expected space(s) after "else"                           keyword-spacing
+  232:18   warning  Expected space(s) before "else"                          keyword-spacing
+  250:13   warning  Expected space(s) after "if"                             keyword-spacing
+  254:13   warning  Expected space(s) after "if"                             keyword-spacing
+  254:68   warning  Missing space before opening brace                       space-before-blocks
+  319:13   warning  Expected space(s) after "if"                             keyword-spacing
+  319:35   warning  Missing space before opening brace                       space-before-blocks
+  324:48   warning  'org' is already declared in the upper scope             no-shadow
+  331:17   warning  'roleMap' is defined but never used                      no-unused-vars
+  343:35   warning  Missing space before opening brace                       space-before-blocks
+  353:13   warning  Expected space(s) after "if"                             keyword-spacing
+  353:30   warning  Missing space before opening brace                       space-before-blocks
+  449:13   error    'xfsDeferred' is not defined                             no-undef
+  452:61   error    'xfsDeferred' is not defined                             no-undef
+  501:21   warning  Expected space(s) after "if"                             keyword-spacing
+  501:73   warning  Missing space before opening brace                       space-before-blocks
+  516:29   warning  Identifier 'approved_size' is not in camel case          camelcase
+  523:21   warning  Expected space(s) after "if"                             keyword-spacing
+  523:45   warning  Missing space before opening brace                       space-before-blocks
+  528:45   warning  Identifier 'approved_size' is not in camel case          camelcase
+  528:82   warning  Identifier 'approved_size' is not in camel case          camelcase
+  531:21   warning  Expected space(s) after "if"                             keyword-spacing
+  531:57   warning  Missing space before opening brace                       space-before-blocks
+  532:25   warning  Expected space(s) after "if"                             keyword-spacing
+  532:91   warning  Missing space before opening brace                       space-before-blocks
+  538:21   warning  Expected space(s) after "if"                             keyword-spacing
+  538:37   warning  Missing space before opening brace                       space-before-blocks
+  558:60   warning  Infix operators must be spaced                           space-infix-ops
+  559:59   warning  Infix operators must be spaced                           space-infix-ops
+  628:25   warning  Identifier 'virtual_volumeId' is not in camel case       camelcase
+  630:25   warning  Identifier 'filesystem_name' is not in camel case        camelcase
+  636:17   warning  Expected space(s) after "if"                             keyword-spacing
+  636:62   warning  Missing space before opening brace                       space-before-blocks
+  637:21   warning  Expected space(s) after "if"                             keyword-spacing
+  637:97   warning  Missing space before opening brace                       space-before-blocks
+  642:17   warning  Expected space(s) after "if"                             keyword-spacing
+  642:48   warning  Missing space before opening brace                       space-before-blocks
+  647:10   warning  Missing semicolon                                        semi
+  714:17   warning  Expected space(s) after "if"                             keyword-spacing
+  714:55   warning  Missing space before opening brace                       space-before-blocks
+  715:21   warning  Expected space(s) after "if"                             keyword-spacing
+  715:103  warning  Missing space before opening brace                       space-before-blocks
+  721:10   warning  Missing semicolon                                        semi
+  729:44   warning  'xfxDefaultHost' is already declared in the upper scope  no-shadow
+  739:10   warning  Missing semicolon                                        semi
+  747:46   warning  'xfxDefaultHost' is already declared in the upper scope  no-shadow
+  757:10   warning  Missing semicolon                                        semi
+  849:17   error    'xfsDeferred' is not defined                             no-undef
+  916:17   warning  Expected space(s) after "if"                             keyword-spacing
+  916:85   warning  Missing space before opening brace                       space-before-blocks
+  917:21   warning  Expected space(s) after "if"                             keyword-spacing
+  917:56   warning  Missing space before opening brace                       space-before-blocks
+  919:22   warning  Expected space(s) after "else"                           keyword-spacing
+  919:22   warning  Expected space(s) before "else"                          keyword-spacing
+
+/home/dev01/projects/patchwork/reporting-frontend/js/storage/hcp.js
+   80:33  warning  Identifier 'allocation_name' is not in camel case        camelcase
+  107:36  warning  Identifier 'tenant_name' is not in camel case            camelcase
+  152:32  warning  'rangeEpochFilter' is defined but never used             no-unused-vars
+  238:25  warning  Identifier 'namespace_id' is not in camel case           camelcase
+  239:25  warning  Identifier 'namespace_name' is not in camel case         camelcase
+  240:25  warning  Identifier 'ingested_bytes' is not in camel case         camelcase
+  241:25  warning  Identifier 'raw_bytes' is not in camel case              camelcase
+  246:25  warning  Identifier 'bytes_in' is not in camel case               camelcase
+  247:25  warning  Identifier 'bytes_out' is not in camel case              camelcase
+  248:25  warning  Identifier 'metadata_only_objects' is not in camel case  camelcase
+  249:25  warning  Identifier 'metadata_only_bytes' is not in camel case    camelcase
+  250:25  warning  Identifier 'tiered_objects' is not in camel case         camelcase
+  251:25  warning  Identifier 'tiered_bytes' is not in camel case           camelcase
+  271:52  warning  Identifier 'ingested_bytes' is not in camel case         camelcase
+  271:77  warning  Identifier 'ingested_bytes' is not in camel case         camelcase
+  272:52  warning  Identifier 'raw_bytes' is not in camel case              camelcase
+  272:72  warning  Identifier 'raw_bytes' is not in camel case              camelcase
+  277:52  warning  Identifier 'bytes_in' is not in camel case               camelcase
+  277:71  warning  Identifier 'bytes_in' is not in camel case               camelcase
+  278:52  warning  Identifier 'bytes_out' is not in camel case              camelcase
+  278:72  warning  Identifier 'bytes_out' is not in camel case              camelcase
+  279:52  warning  Identifier 'metadata_only_objects' is not in camel case  camelcase
+  279:84  warning  Identifier 'metadata_only_objects' is not in camel case  camelcase
+  280:52  warning  Identifier 'metadata_only_bytes' is not in camel case    camelcase
+  280:82  warning  Identifier 'metadata_only_bytes' is not in camel case    camelcase
+  281:52  warning  Identifier 'tiered_objects' is not in camel case         camelcase
+  281:77  warning  Identifier 'tiered_objects' is not in camel case         camelcase
+  282:52  warning  Identifier 'tiered_bytes' is not in camel case           camelcase
+  282:75  warning  Identifier 'tiered_bytes' is not in camel case           camelcase
+
+/home/dev01/projects/patchwork/reporting-frontend/js/storage/hnas/fileSystem.js
+   97:32  warning  'rangeEpochFilter' is defined but never used      no-unused-vars
+  184:25  warning  Identifier 'filesystem_id' is not in camel case   camelcase
+  188:25  warning  Identifier 'live_usage' is not in camel case      camelcase
+  189:25  warning  Identifier 'snapshot_usage' is not in camel case  camelcase
+  210:53  warning  Identifier 'live_usage' is not in camel case      camelcase
+  210:74  warning  Identifier 'live_usage' is not in camel case      camelcase
+  211:53  warning  Identifier 'snapshot_usage' is not in camel case  camelcase
+  211:77  warning  Identifier 'snapshot_usage' is not in camel case  camelcase
+
+/home/dev01/projects/patchwork/reporting-frontend/js/storage/hnas/virtualVolume.js
+   83:40  warning  Identifier 'filesystem_name' is not in camel case      camelcase
+  125:32  warning  'rangeEpochFilter' is defined but never used           no-unused-vars
+  213:25  warning  Identifier 'virtual_volume' is not in camel case       camelcase
+  214:25  warning  Identifier 'virtual_volume_name' is not in camel case  camelcase
+  215:25  warning  Identifier 'filesystem_name' is not in camel case      camelcase
+
+/home/dev01/projects/patchwork/reporting-frontend/js/storage/hpcStorage.js
+   18:35  warning  Infix operators must be spaced                space-infix-ops
+  102:18  warning  Expected space(s) before "else"               keyword-spacing
+  106:18  warning  Expected space(s) before "else"               keyword-spacing
+  112:25  warning  Expected space(s) after "if"                  keyword-spacing
+  112:61  warning  Missing space before opening brace            space-before-blocks
+  122:17  warning  Expected space(s) after "if"                  keyword-spacing
+  129:17  warning  Expected space(s) after "if"                  keyword-spacing
+  129:41  warning  Missing space before opening brace            space-before-blocks
+  168:17  warning  Expected space(s) after "if"                  keyword-spacing
+  168:67  warning  Missing space before opening brace            space-before-blocks
+  172:18  warning  Expected space(s) before "else"               keyword-spacing
+  172:18  warning  Expected space(s) after "else"                keyword-spacing
+  177:58  warning  Infix operators must be spaced                space-infix-ops
+  178:58  warning  Infix operators must be spaced                space-infix-ops
+  203:48  warning  'org' is already declared in the upper scope  no-shadow
+  204:17  warning  Expected space(s) after "if"                  keyword-spacing
+  206:18  warning  Expected space(s) before "else"               keyword-spacing
+  206:18  warning  Expected space(s) after "else"                keyword-spacing
+  207:21  warning  Expected space(s) after "if"                  keyword-spacing
+  232:21  warning  Expected space(s) after "if"                  keyword-spacing
+  232:68  warning  Missing space before opening brace            space-before-blocks
+  243:17  warning  Expected space(s) after "if"                  keyword-spacing
+  255:13  warning  Expected space(s) after "if"                  keyword-spacing
+  255:35  warning  Missing space before opening brace            space-before-blocks
+  367:32  warning  'rangeEpochFilter' is defined but never used  no-unused-vars
+
+/home/dev01/projects/patchwork/reporting-frontend/js/storage/xfs.js
+  134:32  warning  'rangeEpochFilter' is defined but never used  no-unused-vars
+
+/home/dev01/projects/patchwork/reporting-frontend/tests/cloud.service.spec.js
+  13:9   warning  Identifier 'openstack_id' is not in camel case  camelcase
+  16:9   warning  Identifier 'openstack_id' is not in camel case  camelcase
+  67:15  warning  Identifier 'openstack_id' is not in camel case  camelcase
+
+✖ 225 problems (36 errors, 189 warnings)
+

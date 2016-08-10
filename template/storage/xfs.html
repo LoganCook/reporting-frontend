@@ -37,37 +37,10 @@
                     start-date-class="col-md-2" end-date-class="col-md-2" 
                     button-class="col-md-2" 
                     export-file-name="xfs.tsv"
-                />
-
-                <!-- <div class="col-md-2">
-                    <p>Usage Snapshot</p>
-                    <div class="form-group">
-                        <div>
-                            <select class="form-control" ng-disabled="!select.host" ng-model="select.snapshot">
-                                <option value="">Snapshot</option>
-                                <option ng-repeat="snapshot in values(xfs.snapshot) | orderBy: 'ts'" value="{{ snapshot.id }}">
-                                    {{ formatTimestamp(snapshot.ts) }}
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-                </div> -->
-
-                <!--div class="col-md-2">
-                    <p>{{ status }}</p>
-                    <div class="btn-group btn-group-justified" role="group">
-                        <div class="btn-group" role="group">
-                            <button class="btn btn-default" ng-click="loadUsageRange()" ng-disabled="!(select.host && select.crm && select.filesystem)" type="button">Update</button>
-                        </div>
-                        <div class="btn-group" role="group">
-                            <button class="btn btn-default" field-separator="\t" filename="xfs.tsv" ng-csv="exportUsageRange()" type="button">Export as TSV</button>
-                        </div>
-                    </div>
-                </div-->
+                /> 
             </div>
 
-            <!-- div class="row" ng-show="select.host && select.crm && select.filesystem" style="padding-top: 25px;" -->
-            <div class="row" ng-show="select.host" style="padding-top: 25px;">
+             <div class="row" ng-show="select.host" style="padding-top: 25px;">
                 <div class="col-md-12">
                     <table class="table table-striped">
                         <tr>

@@ -1,6 +1,6 @@
 define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
-    app.controller("XFSController", ["$rootScope", "$scope", "$timeout", "reporting", "$uibModal", "org",
-    function($rootScope, $scope, $timeout, reporting, $uibModal, org) {
+    app.controller("XFSController", ["$rootScope", "$scope", "$timeout", "reporting",
+    function($rootScope, $scope, $timeout, reporting) {
 
         $scope.values = _.values;
 
@@ -73,35 +73,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                     }
                 });
             }
-        };
-
-        var processUsage = function(svc, type, query, data) {
-            if (data && data.length > 0) {
-                $scope.status = "Loaded " + data.length + " usage records.";
-
-                $scope.output.usage = [];
-
-                data.forEach(function(entry) {
-                    if (entry.usage === 0) {
-                        return;
-                    }
-
-                    entry.username = "?";
-
-                    if (entry.owner in $scope.xfs.owner) {
-                        ["soft", "hard", "usage"].forEach(function(key) {
-                            entry[key] *= 1024;
-                        });
-
-                        entry.username = $scope.xfs.owner[entry.owner].name;
-                        entry.fullname = "";
-                        entry.organisation = "";
-                     }
-
-                    $scope.output.usage.push(entry);
-                });
-            }
-        };
+        }; 
 
         var processUsageRange = function(svc, type, query, data) {
             if (data && data.length > 0) {
@@ -158,25 +130,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 });
             }
         };
-
-        $scope.loadUsageSnapshot = function() {
-            var filter = {};
-            if ($scope.select.filesystem == '' ) { 
-                filter = {filter: ["snapshot.eq." + $scope.select.snapshot]};
-            } else {
-                filter = {filter: ["snapshot.eq." + $scope.select.snapshot,"filesystem.eq." + $scope.select.filesystem]};
-            }
-            
-            var query = _.merge(baseQuery(), filter);
-
-            clear();
-
-            $scope.status = "Loading ...";
-
-            reporting.xfsQuery("usage", query, processUsage);
-        };
-
-        //$scope.loadUsageRange = function() {
+ 
         $scope.load = function(rangeEpochFilter) { 
             $scope.alerts = [];
             if (!($scope.select.host)) {
@@ -197,10 +151,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             });
 
             // Take a sample of snapshots to keep things manageable. Sort by UUID (which
-            // is consistent and pseudorandom) and grab the first N (snapshotLimit).
-
-            var days = (t2 - t1) / (24 * 60 * 60);
-            var snapshotLimit = Math.max(250, days);
+            // is consistent and pseudorandom). 
 
             snapshots.sort(function(s1, s2) {
                 if (s1.id > s2.id) {
@@ -210,9 +161,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 } else {
                     return 0;
                 }
-            });
-
-            //snapshots = snapshots.slice(0, snapshotLimit) -- comment out by Rex;
+            }); 
 
             var timestamps = snapshots.map(function(s) { return s.ts; });
 
@@ -258,29 +207,9 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
 
             reporting.xfsQuery("usage", query, processUsageRange);
         };
-
-        $scope.exportUsage = function() {
-            data = [
-                ["Full Name", "Organisation", "Username", "Usage (GB)", "Soft Quota (GB)", "Hard Quota (GB)"]
-            ];
-
-            _.forEach($scope.output.usage, function(entry) {
-                data.push([
-                    entry.fullname,
-                    entry.organisation,
-                    entry.username,
-                    entry.usage / (1024 * 1024 * 1024),
-                    entry.soft / (1024 * 1024 * 1024),
-                    entry.hard / (1024 * 1024 * 1024)
-                ]);
-            });
-
-            return data;
-        };
-
-        //$scope.exportUsageRange = function() {
+ 
         $scope.export = function() {
-            data = [
+            var data = [
                 ["Full Name", "Organisation", "Username", "Usage (Weighted Mean, GB)", "Usage (Peak, GB)"]
             ];
 

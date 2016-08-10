@@ -42,7 +42,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
 
         clear();
 
-        //Here it loads crm data into $scope.crm["host", "queue", "owner"]
+        //Here it loads hpc data into $scope["host", "queue", "owner"]
         reporting.hpcBase(function(svc, type, data) {
 
             if (type == "queue") {
@@ -106,18 +106,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             }
             return found;
         }
-
-        //Here it loads crm data into $scope.crm["snapshot", "person", "organisation", "username", "email"]
-        //username is packed differently
-        reporting.crmBase(function(svc, type, data) {
-            if (type == "username") {
-                $scope.crm[type] = util.keyArray(data, "username");
-            } else {
-                $scope.crm[type] = util.keyArray(data);
-            }
-        });
-
-        var selectCRM = function() {};
+ 
 
         var updateSummary = function(data) {
             _.forEach(data, function(job) {
@@ -158,7 +147,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
          * This function is called from _export() in ersa-search directive
          */
         $scope.export = function() {
-            data = [
+            var data = [
                 ["Full Name", "Organisation", "Username", "Email", "Job Count", "Core Hours"]
             ];
 
@@ -270,41 +259,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
         // Alert Util
         $scope.closeAlert = function(index) {
             $scope.alerts.splice(index, 1);
-        };
-
-        // Modal Util
-        $scope.animationsEnabled = true;
-        $scope.openJobMessage = function (size) {
-
-            var modalInstance = $uibModal.open({
-            animation: $scope.animationsEnabled,
-            templateUrl: 'template/hpc/hpc.html',
-            restrict: 'E',
-            controller: 'HPCController',
-            size: size,
-            resolve: {
-                items: function () {
-                //return $scope.items;
-                }
-              }
-            });
-
-            modalInstance.result.then(function (selectedItem) {
-                //$scope.selected = selectedItem;
-                },
-                function () {
-                //console.info('Modal dismissed at: ' + new Date());
-            });
-        };
-
-        $scope.toggleAnimation = function () {
-            $scope.animationsEnabled = !$scope.animationsEnabled;
-        };
-
-        // cache data
-        //https://www.phase2technology.com/blog/caching-json-arrays-using-cachefactory-in-angularjs-1-2-x/
-
-
+        }; 
 
         $scope.$on('$viewContentLoaded', function() {
             $scope.allQueusSelected = true;
@@ -317,12 +272,11 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             }
         };
 
-        $scope.onChangeQueu = function (_qID) {
-            //console.log('_qID=' + _qID);
+        $scope.onChangeQueu = function (_qID) { 
             var allQueusSelected = true;
-            for (var qID in $scope.selectedQueues) {
-                if ($scope.selectedQueues[qID]) {
-                    //console.log('$scope.selectedQueues[qID]=' + $scope.selectedQueues[qID]);
+            for (var _qID in $scope.selectedQueues) {
+                if ($scope.selectedQueues[_qID]) { 
+                    
                 } else {
                     allQueusSelected = false;
                 }

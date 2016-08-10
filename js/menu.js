@@ -1,6 +1,6 @@
 define(["app", "menu-data"], function (app, menuData) {
-    app.controller("MenuController", ["$rootScope", "$scope", "$timeout",
-         function ($rootScope, $scope, $timeout) {
+    app.controller("MenuController", ["$rootScope", "$scope",
+         function ($rootScope, $scope) {
             $scope.menus = menuData;
 
             $scope.init = function() {

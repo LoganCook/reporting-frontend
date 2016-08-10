@@ -1,6 +1,6 @@
 define(["app", "lodash", "../util"], function(app, _, util) {
-    app.controller("KeystoneController", ["$rootScope", "$scope", "$timeout", "reporting", "$uibModal", "org",
-    function($rootScope, $scope, $timeout, reporting, $uibModal, org) {
+    app.controller("KeystoneController", ["$rootScope", "$scope", "$timeout", "reporting",
+    function($rootScope, $scope, $timeout, reporting) {
 
         $scope.values = _.values;
 
