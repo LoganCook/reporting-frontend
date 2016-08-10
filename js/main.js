@@ -26,14 +26,18 @@ require(["debug-settings"], function(d) {
     }, function (err) {
         console.log("Cannot load settings, skip set up debug session.");
 });
-
-require(["app", "menu",
-        // "identity/crm",
-        "hpc/hpc",
-        "storage/hcp", "storage/hnas/fileSystem", "storage/hnas/virtualVolume", "storage/xfs",
-        "cloud/keystone", "cloud/nova.component"
-    ],
-    function(app) {
+ 
+require(["app", "menu", 
+            //"identity/crm", 
+            "hpc/hpc", "hpc/hpcsummary",
+            "storage/hcp", "storage/hnas/fileSystem", "storage/hnas/virtualVolume", "storage/xfs",
+            //"storage/fs", "storage/hcp", "storage/hnas", "storage/hnas/fileSystem",  "storage/hnas/virtualVolume", "storage/xfs", 
+            "storage/hpcStorage", 
+            "storage/allocationSummary", 
+            "cloud/keystone", "cloud/nova.component"
+            //"cloud/keystone", "cloud/nova", "cloud/cinder","cloud/swift",
+            ],
+    function (app) { 
         require(["route"], function(route) {
             app.config(["$stateProvider", "$urlRouterProvider", route]);
             angular.bootstrap(document, ["reportingApp"]);

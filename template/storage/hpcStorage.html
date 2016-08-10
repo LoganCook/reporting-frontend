@@ -1,0 +1,104 @@
+<div class="container-fluid">
+    <h3 class="text-center">HPC Storage</h3>
+    <p ng-show="error" class="alert alert-danger">{{ error }}</p>
+    <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
+    <div>
+        <form>
+            <div class="row">
+                <div class="{{values(xfs.host).length > 1 ? 'col-md-3' : 'col-md-4'}}">
+                    <p>Organisation</p>
+                    <div class="form-group">
+                        <select name="orgSelect" id="orgSelect" ng-model="selectedBillingOrg" ng-change="orgChanged()" class="form-control">
+                            <option value="0">All</option>
+                            <option ng-repeat="org in topOrgs" ng-show="org.billing == org.pk" value="{{ org.billing }}">{{ org.fields.name}}</option>
+                        </select>
+                    </div>
+                </div>                
+                <div ng-show="values(xfs.host).length > 1" class="col-md-3">
+                    <p>Host</p>
+                    <div class="form-group">
+                        <div>
+                            <select class="form-control" ng-model="select.host">
+                                <option value="">Name</option>
+                                <option ng-repeat="host in values(xfs.host) | orderBy: 'name'" value="{{ host.id }}">
+                                    {{ host.name }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div> 
+
+
+                <div class="{{values(xfs.host).length > 1 ? 'col-md-3' : 'col-md-4'}}">
+                    <p>Month</p>
+                    <p class="input-group">
+                        <input type="text" class="form-control" uib-datepicker-popup="MMM/yyyy" ng-model="rangeEnd" is-open="rangeEndOpen" showWeeks="false" datepicker-options="{minMode: 'month'}" datepicker-mode="'month'" ng-required="true" onkeydown="return false"/>
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="openRangeEnd()"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </p>
+                </div>
+
+                <div class="{{values(xfs.host).length > 1 ? 'col-md-3' : 'col-md-4'}}">
+                    <p>{{ status }}</p>
+                    <div class="btn-group btn-group-justified" role="group">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" ng-click="load()">Update</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" ng-csv="export()" field-separator="\t" filename="hpc.storage.tsv">Export as TSV</button>
+                        </div>
+                    </div>
+                </div>
+                 
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group text-center">
+                        <label class="checkbox-inline">
+                            <input type="checkbox" ng-model="userChecked" ng-change="orgChanged()"> User
+                        </label> 
+                    </div>                    
+                </div>
+            </div>
+            <!-- div class="row" ng-show="select.host && select.crm && select.filesystem" style="padding-top: 25px;" -->
+            <div class="row" ng-show="select.host" style="padding-top: 25px;">
+                <div class="col-md-12">
+                    <table class="table table-striped">
+                        <tr>
+                            <th>School</th> 
+                            <th ng-show="userChecked || filesystemChecked">User ID</th>
+                            <th ng-show="userChecked || filesystemChecked">User Name</th> 
+                            <th ng-show="userChecked || filesystemChecked">Email</th> 
+                            <th>Used GB</th>
+                            <th>250GB Quota Blocks</th>
+                            <th>%age Used of Quota</th>
+                            <th>$5 per 250GB Quota</th>
+                        </tr>
+                        <tr ng-repeat="entry in output.summed | orderBy: ['school','username']">
+                            <td>{{ entry.school }}</td> 
+                            <td ng-show="userChecked || filesystemChecked">{{ entry.username }}</td> 
+                            <td ng-show="userChecked || filesystemChecked">{{ entry.fullname }}</td>  
+                            <td ng-show="userChecked || filesystemChecked">{{ entry.email }}</td>
+                            <td>{{ entry.usage }}</td>
+                            <td>{{ entry.quota250 }}</td>
+                            <td>{{ entry.usage == 0 ? 0 : Math.ceil(((entry.usage / entry.quota250).toFixed(2)) * 100) }}%</td>
+                            <td>${{ formatNumber(entry.per5dollar) }}.00</td>
+                        </tr>
+                        <tr ng-show="output.summed.length">
+                            <th>Grand Total</th>  
+                            <td ng-show="userChecked || filesystemChecked"> - </td> 
+                            <td ng-show="userChecked || filesystemChecked"> - </td> 
+                            <td ng-show="userChecked || filesystemChecked"> - </td>  
+                            <th>{{ total.currentUsage.toFixed(2) }}</th>
+                            <th>{{ total.quota250 }} </th> 
+                            <th>{{ total.currentUsage == 0 ? 0 : Math.ceil(((total.currentUsage / total.quota250).toFixed(2)) * 100) }}%</th>
+                            <th>${{ formatNumber(total.per5dollar) }}.00</th>  
+                        </tr                          
+                    </table>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

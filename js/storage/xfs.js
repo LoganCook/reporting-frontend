@@ -27,7 +27,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
 
         var baseQuery = function() {
             return {
-                count: 25000,
+                count: 100000,
                 page: 1
             };
         };
@@ -212,7 +212,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 }
             });
 
-            snapshots = snapshots.slice(0, snapshotLimit);
+            //snapshots = snapshots.slice(0, snapshotLimit) -- comment out by Rex;
 
             var timestamps = snapshots.map(function(s) { return s.ts; });
 

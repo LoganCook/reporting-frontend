@@ -84,7 +84,15 @@ return {
 
         return Math.round(modified.getTime() / 1000);
     },
-
+    
+    firstDayOfYearAndMonth(theDay){ 
+        return new Date(new Date(theDay.getFullYear(), theDay.getMonth(), 1));
+    },
+    
+    lastDayOfYearAndMonth(theDay){ 
+        return new Date((new Date(theDay.getFullYear(), theDay.getMonth() + 1, 1)) - 1);
+    },
+    
     durationWeight: function(t1, t2, timestamps) {
         if (timestamps.length == 1) {
             var soleSnapshot = [];
