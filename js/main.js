@@ -23,8 +23,8 @@ require(["debug-settings"], function(d) {
     for (var attr in d) {
         if (d.hasOwnProperty(attr)) sessionStorage[attr] = d[attr];
         }
-    }, function (err) {
-        console.log("Cannot load settings, skip set up debug session.");
+    }, function (err) { 
+        console.log("Cannot load settings, skip set up debug session.[" + JSON.stringify(err) + "]");
 });
  
 require(["app", "menu", 
