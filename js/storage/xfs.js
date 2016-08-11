@@ -134,6 +134,11 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         };
  
         $scope.load = function(rangeEpochFilter) { 
+            
+            if (rangeEpochFilter) { 
+                /** rangeEpochFilter not used because this function use ts.ge and ts.lt */
+            }
+            
             $scope.alerts = [];
             if (!($scope.select.host)) {
                 $scope.alerts.push({type: 'danger',msg: "Please select Host!"}); 

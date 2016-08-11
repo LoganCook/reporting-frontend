@@ -366,6 +366,10 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         $scope.load = function(rangeEpochFilter) {
             clear();
             
+            if (rangeEpochFilter) { 
+                /** rangeEpochFilter not used because this function use ts.ge and ts.lt */
+            }
+            
             $scope.alerts = [];
             $scope.selectedBillingOrg = '0';
 

@@ -147,7 +147,10 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         $scope.load = function(rangeEpochFilter) { 
             clear();  
             
-            /** rangeEpochFilter not used because this function use ts.ge and ts.lt */
+            if (rangeEpochFilter) { 
+                /** rangeEpochFilter not used because this function use ts.ge and ts.lt */
+            }
+            
             var rangeStartEpoch = util.dayStart($scope.rangeStart);
             var rangeEndEpoch = util.dayEnd($scope.rangeEnd);
             
