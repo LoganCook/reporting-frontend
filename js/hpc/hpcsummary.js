@@ -1,6 +1,6 @@
 define(["app", "lodash", "../util", "properties"], function(app, _, util, props) {
-    app.controller("HPCSummaryController", ["$rootScope", "$scope", "$timeout", "reporting", "$uibModal", "org",
-    function($rootScope, $scope, $timeout, reporting, $uibModal, org) {
+    app.controller("HPCSummaryController", ["$rootScope", "$scope", "$timeout", "reporting", "org", "spinner",
+    function($rootScope, $scope, $timeout, reporting, org, spinner) {
          
         /**
          * 3 uni(FUSA, UOFA and UOSA) have responsiblity for paying $60,000 
@@ -37,7 +37,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
         };
 
         var jobSummary = {};
-        $scope.selectedBillingOrg ='0';
+        $scope.selectedBillingOrg = '0';
         
         $scope.jobCountSum = 0;
         $scope.cpuSecondsSum = 0;
@@ -87,24 +87,24 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
         var initHpc = function() {            
              
             $scope.status = "Downloading "  + serviceHpcTypes; 
-
-            $rootScope.spinnerActive = true; 
+ 
+            spinner.start();
             reporting.hpcBase(function(svc, type, data) {
 
                 if (type == "queue") {  
                     var filtered = [];
-                    if(props['hpc.queues']){   
+                    if (props['hpc.queues']) {   
                         _.forEach(data, function(_queu) {
-                            if(props['hpc.queues'].indexOf(_queu.name) > -1){
+                            if (props['hpc.queues'].indexOf(_queu.name) > -1) {
                                 filtered.push(_queu);
                             } 
                         });     
-                    }else{
+                    } else {
                         filtered = data;
                     }
                     
                     $scope[type] = util.keyArray(filtered);  
-                }else{ 
+                } else { 
                     $scope[type] = util.keyArray(data);
                 }
                  
@@ -112,15 +112,15 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                  * Find and remove item from serviceTypes array
                  * to display status of current processing.
                  */ 
-                if(serviceHpcTypes.indexOf(type) != -1) {
+                if (serviceHpcTypes.indexOf(type) != -1) {
                     serviceHpcTypes.splice(serviceHpcTypes.indexOf(type), 1);
                     $scope.status = "Downloading "  + serviceHpcTypes;
                 }
                 /**
                  * If not remained in serviceTypes array, it display "Initial data loaded."
                  */ 
-                if(!serviceHpcTypes.length){
-                    $rootScope.spinnerActive = false;
+                if (!serviceHpcTypes.length) { 
+                    spinner.stop();
                     $scope.status = "Initial data loaded.";
                 }   
             });
@@ -187,12 +187,12 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             var userAccountMap = {}; 
             var totalCpuSeconds = 0; 
           
-            _.forEach($scope.topOrgs, function(org) {
-                _.extend(userAccountMap, $scope.details[org.pk]);   
+            _.forEach($scope.topOrgs, function(_org) {
+                _.extend(userAccountMap, $scope.details[_org.pk]);   
             });
             
             
-            for (owner in jobSummary) { 
+            for (var owner in jobSummary) { 
                 if (userAccountMap[jobSummary[owner].username]) {
                     jobSummary[owner].fullname = userAccountMap[jobSummary[owner].username].fullname;
                     jobSummary[owner].email = userAccountMap[jobSummary[owner].username].email;
@@ -210,11 +210,11 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             /**
              * allocate %age to only 3 uni 
              */ 
-            for (uni in uniToDivide) { 
+            for (var uni in uniToDivide) { 
                 uniToDivide[uni].cpuSeconds = uniToDivide[uni].cpuSeconds;
-                if(uniToDivide[uni].cpuSeconds === 0){
+                if (uniToDivide[uni].cpuSeconds === 0) {
                     uniToDivide[uni].cost = 0.00;
-                }else{
+                } else {
                     uniToDivide[uni].cost = (totalAmountToDivided * (uniToDivide[uni].cpuSeconds / totalCpuSeconds).toFixed(2)).toFixed(2);
                 }
             } 
@@ -231,7 +231,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
          */ 
         var updateJobSummary = function() { 
              
-            var username, organisations = [];
+            var organisations = [];
             $scope.jobCountSum = 0;
             $scope.cpuSecondsSum = 0;
             $scope.costSum = 0;
@@ -259,12 +259,12 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                  * Check if billing organisation selected
                  * if selected, remove other school summary in other billing organisation
                  */ 
-                if($scope.selectedBillingOrg != '0'){ 
-                    if(!userSummary.billing) {
+                if ($scope.selectedBillingOrg != '0') { 
+                    if (!userSummary.billing) {
                         delete organisations[_key];
                         return;
                     }
-                    if($scope.selectedBillingOrg != userSummary.billing) {
+                    if ($scope.selectedBillingOrg != userSummary.billing) {
                         delete organisations[_key];
                         return;
                     }
@@ -272,7 +272,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                  
                 organisations[_key].jobCount += userSummary.jobCount;
                 organisations[_key].cpuSeconds += userSummary.cpuSeconds; 
-                if(userSummary.billing){ 
+                if (userSummary.billing) { 
                     organisations[_key].billing = userSummary.billing;
                 } 
                 
@@ -283,13 +283,13 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             /**
              * Calulate cost for payable school in 3 university (University of Adelaide, Flinders University and Flinders University)
              */ 
-            for (organisation in organisations) {
-                if(organisations[organisation].billing){
+            for (var organisation in organisations) {
+                if (organisations[organisation].billing) {
                     
                     if (uniToDivide[organisations[organisation].billing]) {
-                        if(uniToDivide[organisations[organisation].billing].cpuSeconds === 0){
+                        if (uniToDivide[organisations[organisation].billing].cpuSeconds === 0) {
                             organisations[organisation].cost = 0.00  + "";
-                        }else{
+                        } else {
                             organisations[organisation].cost = (uniToDivide[organisations[organisation].billing].cost * (organisations[organisation].cpuSeconds / uniToDivide[organisations[organisation].billing].cpuSeconds).toFixed(4)).toFixed(2);
                         }
                         $scope.costSum += organisations[organisation].cost * 1; 
@@ -298,7 +298,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             }  
             
             $scope.jobSummary = _.values(organisations); 
-        }
+        };
          
 
 
@@ -361,9 +361,9 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                 var next = util.nextPage(query);
  
                 reporting.hpcQuery("job", next, processJobs);
-            }else{ 
-                /** Turn off loading image. */
-                $rootScope.spinnerActive = false;
+            } else { 
+                /** Turn off loading image. */ 
+                spinner.stop();
                 $scope.status = "Jobs: " + $scope.jobCount;
                 
                 updateOwnerSummary($scope.jobs);
@@ -420,8 +420,8 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                 return false;
             }
             
-            /**  Turn on loading image.  */
-            $rootScope.spinnerActive = true; 
+            /**  Turn on loading image.  */ 
+            spinner.start();
             query.filter.push("queue.in." + queueQuery.join(","));
 
             clear();

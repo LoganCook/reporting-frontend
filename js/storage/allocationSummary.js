@@ -1,13 +1,13 @@
 define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, math, util, props) {
-    app.controller("AllocationSummaryController", ["$rootScope", "$scope", "$timeout", "$q", "$filter", "reporting", "$uibModal", "org",
-    function($rootScope, $scope, $timeout, $q, $filter, reporting, $uibModal, org) {
+    app.controller("AllocationSummaryController", ["$rootScope", "$scope", "$timeout", "$q", "$filter", "reporting", "org", "spinner",
+    function($rootScope, $scope, $timeout, $q, $filter, reporting, org, spinner) {
 
         /**
          * There are some filesystem which don't need to summary and display.
          * It is defined in properties.js
          */ 
         var invisible = props['allocation.summary.invisible.filesystem'];  
-        var hpchomeFilesystem =''; 
+        var hpchomeFilesystem = ''; 
         
         $scope.values = _.values;
 
@@ -23,11 +23,11 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
         
         $scope.topOrgs = [];   
         $scope.topRdsOrgs = [];  
-        $scope.selectedBillingOrg ='0'; 
-        $scope.select= {};
+        $scope.selectedBillingOrg = '0'; 
+        $scope.select = {};
         $scope.filesystemChecked = false; 
         
-        $scope.total= {};           
+        $scope.total = {};           
         
         $scope.rangeStart  =  new Date();
         $scope.rangeEnd =  new Date();
@@ -36,7 +36,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             $scope.rangeEndOpen = true;
         }; 
         
-        var xfxDefaultHost = "";
+        var xfsDefaultHost = "";
         var users = {};
         var rdses = {}; 
         var roles = {};
@@ -59,7 +59,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
     
         var vuDeferred = {};
         var fuDeferred = {};
-        var hnasDeferred = {};
+        var xfsDeferred = {};
            
         var baseFilters = function() {
             return {
@@ -85,7 +85,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
         var clear = function() {   
             vuDeferred = {};
             fuDeferred = {};
-            hnasDeferred = {};
+            xfsDeferred = {};
              
             cache = {}; 
             cache.virtualVolumeUsage = [];  
@@ -103,8 +103,8 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
          * @return {Void}
          */ 
         var initHnas = function() {  
-            $scope.status = "Loading ...";  
-            $rootScope.spinnerActive = true; 
+            $scope.status = "Loading ...";   
+            spinner.start();
             
             reporting.hnasBase(processInitData);  
         }; 
@@ -126,9 +126,9 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                     $scope.status = "Loaded " + data.length + " filesystems.";  
  
                     _.forEach(data, function(_filesystem) {  
-                        if(_filesystem.name  in rdses) {  
+                        if (_filesystem.name  in rdses) {  
                             _filesystem.rds = rdses[_filesystem.name].allocation_num;  
-                        }else{
+                        } else {
                             _filesystem.rds = '-';
                         }    
                     });      
@@ -140,7 +140,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                 } else { 
                     $scope.status = "Allocation: 0" ; 
                 }  
-            }else if (type == "owner") {  
+            } else if (type == "owner") {  
                 hnas.owners  = util.keyArray(data);    
             }  
 
@@ -173,12 +173,12 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                 
                 _.forEach(hnas.virtualVolumes, function(_virtualVolume) {  
                     if (_virtualVolume.filesystem in hnas.filesystems) { 
-                        _virtualVolume.filesystem_name = hnas.filesystems[_virtualVolume.filesystem].name;  
+                        _virtualVolume.filesystemName = hnas.filesystems[_virtualVolume.filesystem].name;  
                     } 
                      
-                    if(_virtualVolume.name in rdses) {
+                    if (_virtualVolume.name in rdses) {
                         _virtualVolume.rds = rdses[_virtualVolume.name].allocation_num;  
-                     }else{
+                     } else {
                         _virtualVolume.rds = '-';
                     }
                 });
@@ -198,38 +198,38 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                 if (type == "snapshot") {
                     xfs.snapshots = util.keyArray(data); 
                     
-                }else if (type == "host" && data) { 
+                } else if (type == "host" && data) { 
                     xfs.host = util.keyArray(data);
                     
                     /** host pl-cml-nss-01.blue.ersa.edu.au is default */
-                    xfxDefaultHost = data[0].id; 
+                    xfsDefaultHost = data[0].id; 
                     
-                }else if (type == "filesystem" && data) {             
+                } else if (type == "filesystem" && data) {             
                     _.forEach(data, function(_filesystem) {
                         
                         /** 
                          * This summary is for all host excluding only '/export/compellent/hpchome' filesystem 
                          * hpchomeFilesystem is used in query string with 'ne'
                          */
-                        if(_filesystem.name.endsWith('/hpchome')){ 
+                        if (_filesystem.name.endsWith('/hpchome')) { 
                             hpchomeFilesystem = _filesystem.id;
                         }
                         
                         var fileName = _filesystem.name;
                         var idx = fileName.lastIndexOf("/");
-                        if(idx > -1){
+                        if (idx > -1) {
                              fileName = fileName.substring(idx + 1);
                         } 
                         
-                        if(fileName in rdses) {  
+                        if (fileName in rdses) {  
                             _filesystem.rds = rdses[fileName].allocation_num;  
-                        }else{
+                        } else {
                             _filesystem.rds = '-';
                         }   
                     }); 
  
                     xfs.filesystems = util.keyArray(data);     
-                }else if (type == "owner" && data) {  
+                } else if (type == "owner" && data) {  
                     xfs.owners = util.keyArray(data); 
                 }
 
@@ -247,12 +247,12 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
         var checkInitProcess = function(serviceTypesArray, type) { 
             
             /** Find and remove item from serviceTypes array  */
-            if(serviceTypesArray.indexOf(type) != -1) {
+            if (serviceTypesArray.indexOf(type) != -1) {
                 serviceTypesArray.splice(serviceTypesArray.indexOf(type), 1);
                 $scope.status = "Downloading "  + serviceXFSTypes + serviceHnasTypes; 
             }
-            if(!serviceXFSTypes.length && !serviceHnasTypes.length){
-                $rootScope.spinnerActive = false; 
+            if (!serviceXFSTypes.length && !serviceHnasTypes.length) { 
+                spinner.stop();
                 $scope.status = "Initial data loaded.";
             }   
         }; 
@@ -316,19 +316,18 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
          */ 
         var setOrganisationUsers = function() {    
             /** 'contrator' is a flag to execute this function only 1 time */
-            if(rdses['contrator']){
+            if (rdses['contrator']) {
                 return;
             } 
             
             var userAccountMap = {}; 
-            _.forEach($scope.topOrgs, function(org) {
-                _.extend(userAccountMap, users[org.pk]);   
+            _.forEach($scope.topOrgs, function(_org) {
+                _.extend(userAccountMap, users[_org.pk]);   
             });
             
             userAccountMap = _.values(userAccountMap); 
-            userAccountMap = util.keyArray(userAccountMap, 'personid');  
+            userAccountMap = util.keyArray(userAccountMap, 'personid');   
             
-            var roleMap = _.values(roles); 
             _.forEach(roles, function(_role) {
                 if (_role.fields.person in userAccountMap) { 
                    userAccountMap[_role.fields.person].contractor = _role.pk; 
@@ -340,7 +339,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             
             var contrator = 0; 
             
-            for (var key in rdses){  
+            for (var key in rdses) {
                 if (rdses[key].contractor in userAccountMap) {   
                     rdses[key].email = userAccountMap[rdses[key].contractor].email; 
                     rdses[key].fullname = userAccountMap[rdses[key].contractor].fullname; 
@@ -350,7 +349,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                 }
             }
             
-            if(contrator > 0){ 
+            if (contrator > 0) { 
                 rdses['contrator'] = contrator;
             }  
             return;
@@ -464,8 +463,8 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
          * @return {Void}
          */ 
         var processHnasSnapshot = function(svc, type, query, data) { 
-            
-            $rootScope.spinnerActive = true; 
+             
+            spinner.start();
             
             hnas.snapshots = util.keyArray(data); 
             
@@ -498,7 +497,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             [cache.virtualVolumeUsage, cache.filesystemUsage, cache.xfsUsage].forEach(function(usages) {    
                  
                 _.forEach(usages, function(_usage) {
-                    if(invisible.join().indexOf(_usage.filesystem) > -1){
+                    if (invisible.join().indexOf(_usage.filesystem) > -1) {
                         return;
                     } 
                     
@@ -513,29 +512,29 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                             billing : '',
                             school : '',
                             filesystem: $scope.filesystemChecked ? _usage.filesystem : '-', 
-                            approved_size : 0, 
+                            approvedSize : 0, 
                             quota250 : 0,
                             per5dollar : 0,
                             usage : 0
                         };
                     }
 
-                    if(rdsesMap[_usage.rds]){ 
+                    if (rdsesMap[_usage.rds]) { 
                         $scope.usages[_key].username = rdsesMap[_usage.rds].fullname;
                         $scope.usages[_key].email = rdsesMap[_usage.rds].email;
                         $scope.usages[_key].billing = rdsesMap[_usage.rds].billing;
                         $scope.usages[_key].school = rdsesMap[_usage.rds].school;
-                        $scope.usages[_key].approved_size = rdsesMap[_usage.rds].approved_size;
+                        $scope.usages[_key].approvedSize = rdsesMap[_usage.rds].approved_size;
                     }
                     
-                    if($scope.selectedBillingOrg != '0'){ 
-                        if(!$scope.usages[_key].rds.startsWith($scope.selectedBillingOrg)){
+                    if ($scope.selectedBillingOrg != '0') { 
+                        if (!$scope.usages[_key].rds.startsWith($scope.selectedBillingOrg)) {
                             delete $scope.usages[_key];
                             return;
                         }
                     }
                                                       
-                    if(_usage.usage){
+                    if (_usage.usage) {
                         $scope.usages[_key].usage += _usage.usage * 1; 
                     }
                 });   
@@ -554,13 +553,13 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                 _usage.quota250 = 250 * (window.Math.ceil(_usage.usage / 250));
                 _usage.per5dollar = 5 * (window.Math.ceil(_usage.usage / 250));
            
-                $scope.total.rds += _usage.approved_size; 
-                $scope.total.currentUsage += _usage.usage  *1 ; 
-                $scope.total.quota250 += _usage.quota250  *1 ; 
+                $scope.total.rds += _usage.approvedSize; 
+                $scope.total.currentUsage += _usage.usage  * 1 ; 
+                $scope.total.quota250 += _usage.quota250  * 1 ; 
                 $scope.total.per5dollar += _usage.per5dollar * 1 ;
             });
-            
-            $rootScope.spinnerActive = false;  
+             
+            spinner.stop();
         };
 
         /**
@@ -625,26 +624,26 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                     usageSummary[_usage.virtual_volume] = {     
                         source: 'V',
                         rds: virtualVolumeMap[_usage.virtual_volume].rds,
-                        virtual_volumeId: _usage.virtual_volume,                          
+                        virtualVolumeId: _usage.virtual_volume,                          
                         filesystem: virtualVolumeMap[_usage.virtual_volume].name,
-                        filesystem_name: virtualVolumeMap[_usage.virtual_volume].filesystem_name, 
+                        filesystemName: virtualVolumeMap[_usage.virtual_volume].filesystem_name, 
                         usage : 0,
                         owner : '' 
                     }; 
                 }           
                                 
-                if(_usage.virtual_volume in virtualVolumeMap){ 
-                    if(_usage.usage && _usage.usage > usageSummary[_usage.virtual_volume].usage){     
+                if (_usage.virtual_volume in virtualVolumeMap) { 
+                    if (_usage.usage && _usage.usage > usageSummary[_usage.virtual_volume].usage) {     
                         usageSummary[_usage.virtual_volume].usage = _usage.usage;  
                     }
                 }
                   
-                if(_usage.owner in hnas.owners){
+                if (_usage.owner in hnas.owners) {
                     usageSummary[_usage.virtual_volume].owner = hnas.owners[_usage.owner].name;
                 }
             });
             return usageSummary;
-        } 
+        };
 
         /**
          * Main function for call Filesystem Usage.
@@ -711,14 +710,14 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                     };  
                 }  
                                 
-                if(_usage.filesystem in filesystemMap){    
-                    if(_usage.live_usage && _usage.live_usage > usageSummary[_usage.filesystem].usage){ 
+                if (_usage.filesystem in filesystemMap) {    
+                    if (_usage.live_usage && _usage.live_usage > usageSummary[_usage.filesystem].usage) { 
                         usageSummary[_usage.filesystem].usage = _usage.live_usage ; 
                     }  
                 }                      
             });
             return usageSummary;
-        } 
+        };
            
         /**
          * Util function for filtering snapshots data to fetch
@@ -726,17 +725,17 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
          *    
          * @return {Object} xfsSnapshots
          */      
-        var getXfsHostSnapshots = function(xfxDefaultHost) {  
+        var getXfsHostSnapshots = function(_xfsDefaultHost) {  
             var xfsSnapshots = {};
-            if (xfxDefaultHost) {
+            if (_xfsDefaultHost) {
                 for (var key in xfs.snapshots) {
-                    if (xfs.snapshots[key].host == xfxDefaultHost) { 
+                    if (xfs.snapshots[key].host == _xfsDefaultHost) { 
                         xfsSnapshots[key] = xfs.snapshots[key];
                     }
                 }
             } 
             return xfsSnapshots;        
-        } 
+        };
 
         /**
          * Util function for filtering filesystems data to fetch
@@ -744,17 +743,17 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
          *    
          * @return {Object} xfsSnapshots
          */       
-        var getXfsHostFilesystems = function(xfxDefaultHost) {  
+        var getXfsHostFilesystems = function(_xfsDefaultHost) {  
             var xfsFilesystems = {};
-            if (xfxDefaultHost) {
+            if (_xfsDefaultHost) {
                 for (var key in xfs.filesystems) {
-                    if (xfs.filesystems[key].host == xfxDefaultHost) { 
+                    if (xfs.filesystems[key].host == _xfsDefaultHost) { 
                         xfsFilesystems[key] = xfs.filesystems[key];
                     }
                 }
             } 
             return xfsFilesystems;        
-        }
+        };
                  
        
         /**
@@ -765,7 +764,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
          */       
         var loadXfsUsage = function() {  
             
-            var xfsSnapshots = getXfsHostSnapshots(xfxDefaultHost); 
+            var xfsSnapshots = getXfsHostSnapshots(xfsDefaultHost); 
             
             var t1 = util.dayStart($scope.rangeStart);
             var t2 = util.dayEnd($scope.rangeEnd);  
@@ -863,8 +862,8 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                 return;
             }
 
-            var xfsSnapshots = getXfsHostSnapshots(xfxDefaultHost); 
-            var xfsFilesystems = getXfsHostFilesystems(xfxDefaultHost);
+            var xfsSnapshots = getXfsHostSnapshots(xfsDefaultHost); 
+            var xfsFilesystems = getXfsHostFilesystems(xfsDefaultHost);
             
             var t1 = util.dayStart($scope.rangeStart);
             var t2 = util.dayEnd($scope.rangeEnd);
@@ -913,10 +912,10 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                     };
                 }
  
-                if(entry.usage && entry.usage > summedByRds[entry.filesystem].usage){  
-                    if(entry.usage > (1024 * 1024) + 1){ 
+                if (entry.usage && entry.usage > summedByRds[entry.filesystem].usage) {  
+                    if (entry.usage > (1024 * 1024) + 1) { 
                         summedByRds[entry.filesystem].usage  = (entry.usage / (1024 * 1024)).toFixed(2); 
-                    }else{
+                    } else {
                         summedByRds[entry.filesystem].usage  = 0;
                     }
                 }

@@ -1,6 +1,6 @@
 define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
-    app.controller("HPCStorageController", ["$rootScope", "$scope", "$timeout", "$filter","reporting", "$uibModal", "org",
-    function($rootScope, $scope, $timeout, $filter, reporting, $uibModal, org) {
+    app.controller("HPCStorageController", ["$rootScope", "$scope", "$timeout", "$filter","reporting", "org", "spinner",
+    function($rootScope, $scope, $timeout, $filter, reporting, org, spinner) {
 
         $scope.values = _.values;
 
@@ -15,7 +15,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         $scope.topOrgs = [];
         $scope.details = {};
 
-        $scope.selectedBillingOrg ='0';
+        $scope.selectedBillingOrg = '0';
         
         $scope.peak = 0;
         $scope.usageSum = 0;
@@ -88,8 +88,8 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
          *   
          * @return {Void}
          */         
-        var initXFS = function() {
-            $rootScope.spinnerActive = true;
+        var initXFS = function() { 
+            spinner.start();
 
             $scope.status = "Downloading "  + serviceTypes;
                 
@@ -99,17 +99,17 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
 
                 if (type == "snapshot") {
                     xfs.snapshotByTimestamp = $scope.xfs.snapshotByTimestamp = util.keyArray(data, "ts");
-                }else if (type == "host" && data) {
+                } else if (type == "host" && data) {
                     
                     /** host pl-cml-nss-01.blue.ersa.edu.au is default */                    
                     $scope.select.host = data[0].id; 
-                }else if (type == "filesystem" && data) {
+                } else if (type == "filesystem" && data) {
                     _.forEach(data, function(record) {
 
                         /** 
                          * This summary is for only '/export/compellent/hpchome' filesystem. 
                          */                        
-                        if(record.name.endsWith('/hpchome')){
+                        if (record.name.endsWith('/hpchome')) {
                             $scope.select.filesystem = record.id; 
                         }
                     });
@@ -119,15 +119,15 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                  * Find and remove item from serviceTypes array
                  * to display status of current processing.
                  */ 
-                if(serviceTypes.indexOf(type) != -1) {
+                if (serviceTypes.indexOf(type) != -1) {
                     serviceTypes.splice(serviceTypes.indexOf(type), 1);
                     $scope.status = "Downloading "  + serviceTypes;
                 }
                 /**
                  * If not remained in serviceTypes array, it display "Initial data loaded."
                  */ 
-                if(!serviceTypes.length){
-                    $rootScope.spinnerActive = false;
+                if (!serviceTypes.length) { 
+                    spinner.stop();
                     $scope.status = "Initial data loaded.";
                 }
             });
@@ -165,17 +165,17 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
          */ 
         var summarizeStorage = function(data) {
             _.forEach(data, function(entry) {
-                if(entry.usage && entry.usage > (1024 * 1024) + 1){
+                if (entry.usage && entry.usage > (1024 * 1024) + 1) {
                     entry.usage  = (entry.usage / (1024 * 1024)).toFixed(2);
                     entry.quota250 = 250 * (window.Math.ceil(entry.usage / 250));
                     entry.per5dollar = 5 * (window.Math.ceil(entry.usage / 250));
-                }else{
+                } else {
                     entry.usage  = 0;
                     entry.quota250 = 0;
                     entry.per5dollar = 0;
                 }
-                $scope.total.currentUsage += entry.usage *1;
-                $scope.total.quota250 += entry.quota250  *1 ;
+                $scope.total.currentUsage += entry.usage * 1;
+                $scope.total.quota250 += entry.quota250  * 1 ;
                 $scope.total.per5dollar += entry.per5dollar * 1 ;
             });
              
@@ -200,12 +200,12 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
 
             var userAccountMap = {};
             /** creat map for all user account */
-            _.forEach($scope.topOrgs, function(org) {
-                if($scope.selectedBillingOrg == '0') {
-                    _.extend(userAccountMap, $scope.details[org.pk]);
-                }else{
-                    if($scope.selectedBillingOrg == org.billing) {
-                        _.extend(userAccountMap, $scope.details[org.pk]);
+            _.forEach ($scope.topOrgs, function(_org) {
+                if ($scope.selectedBillingOrg == '0') {
+                    _.extend(userAccountMap, $scope.details[_org.pk]);
+                } else {
+                    if ($scope.selectedBillingOrg == org.billing) {
+                        _.extend(userAccountMap, $scope.details[_org.pk]);
                     }
                 }
             });
@@ -229,7 +229,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                         usage: 0
                     };
                     
-                    if(summed[_sumeKey].username in userAccountMap){
+                    if (summed[_sumeKey].username in userAccountMap) {
                         summed[_sumeKey].fullname = userAccountMap[summed[_sumeKey].username].fullname;
                         summed[_sumeKey].email = userAccountMap[summed[_sumeKey].username].email;
                         summed[_sumeKey].school = userAccountMap[summed[_sumeKey].username].organisation;
@@ -240,7 +240,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                  * Check if billing organisation selected
                  * if selected, remove other school summary in other billing organisation
                  */ 
-                if($scope.selectedBillingOrg != '0' && !summed[_sumeKey].school ) {
+                if ($scope.selectedBillingOrg != '0' && !summed[_sumeKey].school ) {
                     delete summed[_sumeKey];
                     return;
                 }
@@ -252,7 +252,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 userSum.usage += weightedUsage ; 
             }); 
              
-            if($scope.userChecked){
+            if ($scope.userChecked) {
                 $scope.output.summed = _.values(summed);
                 $scope.output.summed = summarizeStorage($scope.output.summed);
                 
@@ -350,9 +350,8 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 var next = util.nextPage(query);
 
                 reporting.xfsQuery("usage", next, processUsageRange);
-            } else {
-                
-                $rootScope.spinnerActive = false;
+            } else { 
+                spinner.stop();
                 $scope.status = "Usage records: " + $scope.raw.length + ". Snapshots: " + $scope.select.snapshots.length + ".";
                 
                 updateSummary();
@@ -455,8 +454,8 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             ];
 
             clear();
-
-            $rootScope.spinnerActive = true;
+ 
+            spinner.start();
             $scope.status = "Loading ...";
             $scope.jobCount = 0;
 
