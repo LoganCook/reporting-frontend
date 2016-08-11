@@ -1,6 +1,6 @@
 define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
-    app.controller("HCPController", ["$rootScope", "$scope", "$timeout", "reporting",
-    function($rootScope, $scope, $timeout, reporting) {
+    app.controller("HCPController", ["$rootScope", "$scope", "$timeout", "reporting", "spinner",
+    function($rootScope, $scope, $timeout, reporting, spinner) {
  
  
         $scope.values = _.values;
@@ -41,7 +41,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
 
  
         var initHcp = function() {  
-            $rootScope.spinnerActive = true; 
+            spinner.start(); 
             $scope.status = "Loading ...";  
             reporting.hcpBase(processInitData);  
         };
@@ -64,20 +64,17 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             if (data && data.length > 0) {  
                 
                 Array.prototype.push.apply(tenants,  data);  
-                $scope.status = "Loaded " + data.length + " tenants.";  
-                
-                $rootScope.spinnerActive = true;
+                $scope.status = "Loaded " + data.length + " tenants.";   
                   
                 var next = util.nextPage(query);
  
                 reporting.hcpQuery("tenant", next, processTenant);
-            } else { 
-                $rootScope.spinnerActive = false;
+            } else {  
                 var allocationmMap = util.keyArray(allocations);  
                 
                 _.forEach(tenants, function(_tenant) {  
                     if (_tenant.allocation in allocationmMap) { 
-                        _tenant.allocation_name = allocationmMap[_tenant.allocation].allocation;  
+                        _tenant.allocationName = allocationmMap[_tenant.allocation].allocation;  
                     }                        
                 });      
                 
@@ -91,20 +88,18 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             if (data && data.length > 0) {  
                 
                 Array.prototype.push.apply(namespaces,  data);  
-                $scope.status = "Loaded " + data.length + " namespaces.";  
-                
-                $rootScope.spinnerActive = true;
+                $scope.status = "Loaded " + data.length + " namespaces.";   
                   
                 var next = util.nextPage(query);
  
                 reporting.hcpQuery("namespace", next, processNamespace);
             } else { 
-                $rootScope.spinnerActive = false;
+                spinner.stop(); 
                 var tenantmMap = util.keyArray(tenants);  
                 
                 _.forEach(namespaces, function(_namespace) {  
                     if (_namespace.tenant in tenantmMap) { 
-                        _namespace.tenant_name = tenantmMap[_namespace.tenant].name;  
+                        _namespace.tenantName = tenantmMap[_namespace.tenant].name;  
                     }                        
                 });       
             } 
@@ -124,15 +119,15 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
 
             _.forEach(usageSummary, function(usage) {
                 data.push([
-                    usage.namespace_name,
-                    $scope.formatSize(usage.ingested_bytes),
-                    $scope.formatSize(usage.raw_bytes / usage.usageCount),
+                    usage.namespaceName,
+                    $scope.formatSize(usage.ingestedBytes),
+                    $scope.formatSize(usage.rawBytes / usage.usageCount),
                     $scope.formatSize(usage.reads / usage.usageCount),
                     $scope.formatSize(usage.writes / usage.usageCount),
                     $scope.formatNumber(usage.deletes / usage.usageCount),
                     $scope.formatNumber(usage.objects / usage.usageCount),
-                    $scope.formatSize(usage.bytes_in / usage.usageCount),
-                    $scope.formatSize(usage.bytes_out / usage.usageCount) 
+                    $scope.formatSize(usage.bytesIn / usage.usageCount),
+                    $scope.formatSize(usage.bytesOut / usage.usageCount) 
                 ]);
             });
             
@@ -196,10 +191,10 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         var loadUsage = function(_snapshotParams) {   
             
             var filter =  {filter: ["snapshot.in." + _snapshotParams]};  
-            var query = _.merge(baseFilters(), filter);
+            var query = _.merge(baseFilters(), filter); 
 
-            $rootScope.spinnerActive = true; 
-
+            spinner.start();
+            
             $scope.status = "Loading ...";  
             reporting.hcpQuery("usage", query, processUsage);     
         };
@@ -209,13 +204,12 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             if (data && data.length > 0) { 
                 Array.prototype.push.apply($scope.cache.usage, data);  
                 $scope.status = "Loaded " + $scope.cache.usage.length + " usages"; 
-                
-                $rootScope.spinnerActive = true; 
+                 
                 var next = util.nextPage(query);
  
                 reporting.hcpQuery("usage", next, processUsage);
-            } else {  
-                $rootScope.spinnerActive = false;
+            } else { 
+                spinner.stop();
                 
                 mapUsage($scope.cache.usage); 
                 $scope.usages = _.values(usageSummary);
@@ -227,61 +221,57 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             
             var namespaceMap = util.keyArray(namespaces);  
             var swap = []; 
-            _.forEach(data, function(_usage) {
-                //if($scope.selectedDomain != '' && $scope.selectedDomain != _instanceState.status){
-                //    return ; 
-                //}   
+            _.forEach(data, function(_usage) { 
+                var _namespace = _usage.namespace;
+                if (!(_namespace in usageSummary)) {
 
-                if (!(_usage.namespace in usageSummary)) {
-
-                    usageSummary[_usage.namespace] = { 
-                        namespace_id: _usage.namespace,                       
-                        namespace_name: namespaceMap[_usage.namespace].name, 
-                        ingested_bytes : 0,
-                        raw_bytes : 0,
+                    usageSummary[_namespace] = { 
+                        namespaceId: _namespace,                       
+                        namespaceName: namespaceMap[_namespace].name, 
+                        ingestedBytes : 0,
+                        rawBytes : 0,
                         reads : 0,
                         writes : 0,
                         deletes : 0,
                         objects : 0,
-                        bytes_in : 0,
-                        bytes_out : 0,
-                        metadata_only_objects : 0,
-                        metadata_only_bytes : 0,
-                        tiered_objects : 0,
-                        tiered_bytes : 0,
+                        bytesIn : 0,
+                        bytesOut : 0,
+                        metadataOnlyObjects : 0,
+                        metadataOnlyBytes : 0,
+                        tieredObjects : 0,
+                        tieredBytes : 0,
                         snapshot : '',
                         usageCount: 0
                     };     
                     
                     if (_usage.snapshot in snapshots) { 
-                        usageSummary[_usage.namespace].snapshotmin = snapshots[_usage.snapshot].ts;
-                        usageSummary[_usage.namespace].snapshotmax = snapshots[_usage.snapshot].ts;
+                        usageSummary[_namespace].snapshotmin = snapshots[_usage.snapshot].ts;
+                        usageSummary[_namespace].snapshotmax = snapshots[_usage.snapshot].ts;
                     } 
                 }   
                   
                 if (_usage.snapshot in snapshots) {
-                    var _min = usageSummary[_usage.namespace].snapshotmin;
-                    var _max = usageSummary[_usage.namespace].snapshotmax; 
-                    usageSummary[_usage.namespace].snapshotmin = Math.min(_min, snapshots[_usage.snapshot].ts);
-                    usageSummary[_usage.namespace].snapshotmax = Math.max(_max, snapshots[_usage.snapshot].ts);
+                    var _min = usageSummary[_namespace].snapshotmin;
+                    var _max = usageSummary[_namespace].snapshotmax; 
+                    usageSummary[_namespace].snapshotmin = Math.min(_min, snapshots[_usage.snapshot].ts);
+                    usageSummary[_namespace].snapshotmax = Math.max(_max, snapshots[_usage.snapshot].ts);
                 }  
                                 
-                if (_usage.namespace in namespaceMap) {   
-                    usageSummary[_usage.namespace].usageCount++; 
-                    usageSummary[_usage.namespace].ingested_bytes += _usage.ingested_bytes;
-                    usageSummary[_usage.namespace].raw_bytes += _usage.raw_bytes;
-                    usageSummary[_usage.namespace].reads += _usage.reads;
-                    usageSummary[_usage.namespace].writes += _usage.writes;
-                    usageSummary[_usage.namespace].deletes += _usage.deletes;
-                    usageSummary[_usage.namespace].objects += _usage.objects;
-                    usageSummary[_usage.namespace].bytes_in += _usage.bytes_in;
-                    usageSummary[_usage.namespace].bytes_out += _usage.bytes_out;
-                    usageSummary[_usage.namespace].metadata_only_objects += _usage.metadata_only_objects;
-                    usageSummary[_usage.namespace].metadata_only_bytes += _usage.metadata_only_bytes;
-                    usageSummary[_usage.namespace].tiered_objects += _usage.tiered_objects;
-                    usageSummary[_usage.namespace].tiered_bytes += _usage.tiered_bytes; 
-                }      
-                //swap.push(_.values(usageSummary));                
+                if (_namespace in namespaceMap) {   
+                    usageSummary[_namespace].usageCount++; 
+                    usageSummary[_namespace].ingestedBytes += _usage.ingested_bytes;
+                    usageSummary[_namespace].rawBytes += _usage.raw_bytes;
+                    usageSummary[_namespace].reads += _usage.reads;
+                    usageSummary[_namespace].writes += _usage.writes;
+                    usageSummary[_namespace].deletes += _usage.deletes;
+                    usageSummary[_namespace].objects += _usage.objects;
+                    usageSummary[_namespace].bytesIn += _usage.bytes_in;
+                    usageSummary[_namespace].bytesOut += _usage.bytes_out;
+                    usageSummary[_namespace].metadataOnlyObjects += _usage.metadata_only_objects;
+                    usageSummary[_namespace].metadataOnlyBytes += _usage.metadata_only_bytes;
+                    usageSummary[_namespace].tieredObjects += _usage.tiered_objects;
+                    usageSummary[_namespace].tieredBytes += _usage.tiered_bytes; 
+                }                   
             }); 
             return swap;
         };  

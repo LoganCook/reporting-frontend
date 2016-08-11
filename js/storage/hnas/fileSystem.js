@@ -76,8 +76,8 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
                     usage.name,
                     $scope.formatNumber(usage.capacity) + ' MB',
                     $scope.formatNumber(usage.free / usage.usageCount) + ' MB',
-                    $scope.formatNumber(usage.live_usage / usage.usageCount) + ' MB',
-                    $scope.formatNumber(usage.snapshot_usage)  + ' MB'
+                    $scope.formatNumber(usage.liveUsage / usage.usageCount) + ' MB',
+                    $scope.formatNumber(usage.snapshotUsage)  + ' MB'
                 ]);
             });
             
@@ -173,44 +173,41 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
             
             var filesystemMap = util.keyArray(filesystems);  
             var swap = []; 
-            _.forEach(data, function(_usage) {
-                //if($scope.selectedDomain != '' && $scope.selectedDomain != _instanceState.status){
-                //    return ; 
-                //}   
+            _.forEach(data, function(_usage) { 
+                
+                var _filesystem = _usage.filesystem;
+                if (!(_filesystem in usageSummary)) {
 
-                if (!(_usage.filesystem in usageSummary)) {
-
-                    usageSummary[_usage.filesystem] = { 
-                        filesystem_id: _usage.filesystem,                       
-                        name: filesystemMap[_usage.filesystem].name, 
+                    usageSummary[_filesystem] = { 
+                        filesystemId: _filesystem,                       
+                        name: filesystemMap[_filesystem].name, 
                         capacity : 0,
                         free : 0,
-                        live_usage : 0,
-                        snapshot_usage : 0,
+                        liveUsage : 0,
+                        snapshotUsage : 0,
                         usageCount: 0
                     };     
                     
                     if (_usage.snapshot in snapshots) { 
-                        usageSummary[_usage.filesystem].snapshotmin = snapshots[_usage.snapshot].ts;
-                        usageSummary[_usage.filesystem].snapshotmax = snapshots[_usage.snapshot].ts;
+                        usageSummary[_filesystem].snapshotmin = snapshots[_usage.snapshot].ts;
+                        usageSummary[_filesystem].snapshotmax = snapshots[_usage.snapshot].ts;
                     } 
                 }   
                   
                 if (_usage.snapshot in snapshots) {
-                    var _min = usageSummary[_usage.filesystem].snapshotmin;
-                    var _max = usageSummary[_usage.filesystem].snapshotmax; 
-                    usageSummary[_usage.filesystem].snapshotmin = Math.min(_min, snapshots[_usage.snapshot].ts);
-                    usageSummary[_usage.filesystem].snapshotmax = Math.max(_max, snapshots[_usage.snapshot].ts);
+                    var _min = usageSummary[_filesystem].snapshotmin;
+                    var _max = usageSummary[_filesystem].snapshotmax; 
+                    usageSummary[_filesystem].snapshotmin = Math.min(_min, snapshots[_usage.snapshot].ts);
+                    usageSummary[_filesystem].snapshotmax = Math.max(_max, snapshots[_usage.snapshot].ts);
                 }  
-                                
-                if (_usage.filesystem in filesystemMap) {   
-                    usageSummary[_usage.filesystem].usageCount++;
-                    usageSummary[_usage.filesystem].capacity = _usage.capacity;
-                    usageSummary[_usage.filesystem].free += _usage.free;
-                    usageSummary[_usage.filesystem].live_usage += _usage.live_usage;
-                    usageSummary[_usage.filesystem].snapshot_usage = _usage.snapshot_usage;
-                }      
-                //swap.push(_.values(usageSummary));                
+
+                if (_filesystem in filesystemMap) {   
+                    usageSummary[_filesystem].usageCount++;
+                    usageSummary[_filesystem].capacity = _usage.capacity;
+                    usageSummary[_filesystem].free += _usage.free;
+                    usageSummary[_filesystem].liveUsage += _usage.live_usage;
+                    usageSummary[_filesystem].snapshotUsage = _usage.snapshot_usage;
+                }                       
             });
             return swap;
         };  

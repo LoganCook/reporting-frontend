@@ -31,16 +31,16 @@
                         <th>Tiered(Objects)</th> 
                         <th>Tiered(Bytes)</th --> 
                     </tr>
-                    <tr ng-repeat="usage in usages | orderBy: 'namespace_name'">
-                        <td>{{ usage.namespace_name }}</td>
-                        <td>{{ formatSize(usage.ingested_bytes / usage.usageCount) }}</td>
-                        <td>{{ formatSize(usage.raw_bytes / usage.usageCount) }}</td>
+                    <tr ng-repeat="usage in usages | orderBy: 'namespaceName'">
+                        <td>{{ usage.namespaceName }}</td>
+                        <td>{{ formatSize(usage.ingestedBytes / usage.usageCount) }}</td>
+                        <td>{{ formatSize(usage.rawBytes / usage.usageCount) }}</td>
                         <!--td>{{ formatSize(usage.reads / usage.usageCount) }}</td>  
                         <td>{{ formatSize(usage.writes / usage.usageCount) }}</td --> 
                         <td>{{ formatNumber(usage.deletes / usage.usageCount) }}</td> 
                         <td>{{ formatNumber(usage.objects / usage.usageCount) }}</td> 
-                        <td>{{ formatSize(usage.bytes_in / usage.usageCount) }}</td> 
-                        <td>{{ formatSize(usage.bytes_out / usage.usageCount) }}</td> 
+                        <td>{{ formatSize(usage.bytesIn / usage.usageCount) }}</td> 
+                        <td>{{ formatSize(usage.bytesOut / usage.usageCount) }}</td> 
                         <!-- td>{{ formatSize(usage.metadata_only_objects) }}</td> 
                         <td>{{ formatSize(usage.metadata_only_bytes) }}</td> 
                         <td>{{ formatSize(usage.tiered_objects) }}</td> 

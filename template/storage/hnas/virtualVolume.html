@@ -25,8 +25,8 @@
                         <th>Usage(avg)</th> 
                     </tr>
                     <tr ng-repeat="usage in virtualVolumeUsage | orderBy: 'virtual_volume_name'">
-                        <td>{{ usage.virtual_volume_name }}</td>
-                        <td>{{ usage.filesystem_name }}</td>
+                        <td>{{ usage.virtualVolumeName }}</td>
+                        <td>{{ usage.filesystemName }}</td>
                         <td>{{ usage.owner }}</td>
                         <td>{{ formatNumber(usage.quota) }} MB</td>
                         <td>{{ formatNumber(usage.files / usage.usageCount) }}</td>

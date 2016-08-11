@@ -1,6 +1,6 @@
 define(["app", "lodash", "../util", "properties"], function(app, _, util, props) {
-    app.controller("HPCController", ["$rootScope", "$scope", "$timeout", "reporting", "$uibModal", "org", "queryResource",
-    function($rootScope, $scope, $timeout, reporting, $uibModal, org, queryResource) {
+    app.controller("HPCController", ["$rootScope", "$scope", "$timeout", "reporting", "org", "queryResource", "spinner",
+    function($rootScope, $scope, $timeout, reporting, org, queryResource, spinner) {
 
       var nq = queryResource.build('https://hnas.reporting.ersa.edu.au');
       console.log("checking nq");
@@ -41,38 +41,50 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
         };
 
         clear();
+ 
+        /**
+         * Service names that should be requested before feching HPC data
+         * This is for displaying status of current processing on the page.
+         * Refer to service.hpcBase in client.js.
+         */      
+        var serviceTypes = ["host", "queue", "owner"];
+        
+        var initHPC = function() { 
+            reporting.hpcBase(function(svc, type, data) {
 
-        //Here it loads hpc data into $scope["host", "queue", "owner"]
-        reporting.hpcBase(function(svc, type, data) {
+                if (type == "queue") {
+                    var filtered = [];
+                    if (props['hpc.queues']) {
+                        _.forEach(data, function(_queu) {
+                            if (props['hpc.queues'].indexOf(_queu.name) > -1) {
+                                filtered.push(_queu);
+                            }
+                        });
+                    } else {
+                        filtered = data;
+                    }
 
-            if (type == "queue") {
-                var filtered = [];
-                if (props['hpc.queues']) {
-                    _.forEach(data, function(_queu) {
-                        if (props['hpc.queues'].indexOf(_queu.name) > -1) {
-                            filtered.push(_queu);
-                        }
-                    });
+                    $scope[type] = util.keyArray(filtered);
                 } else {
-                    filtered = data;
+                    $scope[type] = util.keyArray(data);
                 }
 
-                $scope[type] = util.keyArray(filtered);
-            } else {
-                $scope[type] = util.keyArray(data);
-            }
-        });
-
-        $scope.crm = {
-            id: null,
-            snapshots: [],
-            snapshot: {
-                "membership": [],
-                "addressMapping": [],
-                "usernameMapping": []
-            }
-        };
-
+                /**
+                 * Find and remove item from serviceTypes array
+                 * to display status of current processing.
+                 */ 
+                if (serviceTypes.indexOf(type) != -1) {
+                    serviceTypes.splice(serviceTypes.indexOf(type), 1); 
+                }
+                /**
+                 * If not remained in serviceTypes array, it display "Initial data loaded."
+                 */ 
+                if (!serviceTypes.length) {
+                    spinner.stop();
+                }            
+            });
+        }; 
+ 
         function mapUser(attachTo) {
             var found = false;
             if (angular.isDefined($scope.details)) {
@@ -119,9 +131,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                         jobCount: 0,
                         cpuSeconds: 0
                     };
-
-                    //reporting.populateFromUsername($scope.crm.id, jobSummary[job.owner]);
-                }
+                 }
 
                 jobSummary[job.owner].jobCount++;
                 jobSummary[job.owner].cpuSeconds += job.cpu_seconds;
@@ -185,10 +195,10 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
 
                 reporting.hpcQuery("job", next, processJobs);
             } else {
+                
+                spinner.stop();
                 $scope.status = "Jobs: " + $scope.jobCount;
-            }
-
-            $rootScope.spinnerActive = false;
+            } 
         };
 
 
@@ -229,7 +239,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                 return false;
             }
 
-            $rootScope.spinnerActive = true;
+            spinner.start();
 
             query.filter.push("queue.in." + queueQuery.join(","));
             //query : {count:25000, page:1, filter:["end.ge.1459953000", "end.lt.1460039400", "queue.in.1210458a-4145-4f67-a19d-02be24a29fb6,2841930e-e8aa-4eaf-b938-ade7033e8532,32c6532e-2b34-4d06-9873-38c9cc1cddf9"]}
@@ -239,15 +249,15 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             $scope.status = "Loading ...";
 
             reporting.hpcQuery("job", query, processJobs);
-        };
-
-        $rootScope.spinnerActive = true;
+        }; 
+ 
+        spinner.start();
         org.getOrganisations().then(function(data) {
             $scope.topOrgs = data;
             org.getAllUsers().then(function(users) {
                 $scope.details = users;
-            });
-            $rootScope.spinnerActive = false;
+                initHPC();
+            }); 
         });
 
         $scope.orgChanged = function() {

@@ -80,7 +80,7 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
                 
                 _.forEach(virtualVolumes, function(_virtualVolume) {  
                     if (_virtualVolume.filesystem in filesystemMap) { 
-                        _virtualVolume.filesystem_name = filesystemMap[_virtualVolume.filesystem].name;  
+                        _virtualVolume.filesystemName = filesystemMap[_virtualVolume.filesystem].name;  
                     }                        
                 });       
             } 
@@ -100,8 +100,8 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
 
             _.forEach(usageSummary, function(usage) {
                 data.push([
-                    usage.virtual_volume_name,
-                    usage.filesystem_name,
+                    usage.virtualVolumeName,
+                    usage.filesystemName,
                     usage.owner,
                     $scope.formatNumber(usage.quota) + ' MB',
                     $scope.formatNumber(usage.files / usage.usageCount),
@@ -126,7 +126,7 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
             
             clear();  
             
-             /** rangeEpochFilter not used because this function use ts.ge and ts.lt */ 
+            /** rangeEpochFilter not used because this function use ts.ge and ts.lt */
             var rangeStartEpoch = util.dayStart($scope.rangeStart);
             var rangeEndEpoch = util.dayEnd($scope.rangeEnd);
             
@@ -206,13 +206,14 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
                 //if($scope.selectedDomain != '' && $scope.selectedDomain != _instanceState.status){
                 //   return ; 
                 //}    
-
-                if (!(_usage.virtual_volume in usageSummary)) {
+                var _virtualVolume = _usage.virtual_volume;
+                
+                if (!(_virtualVolume in usageSummary)) {
                     
-                    usageSummary[_usage.virtual_volume] = { 
-                        virtual_volume: _usage.virtual_volume,                       
-                        virtual_volume_name: virtualVolumeMap[_usage.virtual_volume].name, 
-                        filesystem_name: virtualVolumeMap[_usage.virtual_volume].filesystem_name, 
+                    usageSummary[_virtualVolume] = { 
+                        virtualVolume: _virtualVolume,                       
+                        virtualVolumeName: virtualVolumeMap[_virtualVolume].name, 
+                        filesystemName: virtualVolumeMap[_virtualVolume].filesystemName, 
                         files : 0,
                         quota : 0,
                         usage : 0,
@@ -221,27 +222,27 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
                     };     
                     
                     if (_usage.snapshot in snapshots) { 
-                        usageSummary[_usage.virtual_volume].snapshotmin = snapshots[_usage.snapshot].ts;
-                        usageSummary[_usage.virtual_volume].snapshotmax = snapshots[_usage.snapshot].ts;
+                        usageSummary[_virtualVolume].snapshotmin = snapshots[_usage.snapshot].ts;
+                        usageSummary[_virtualVolume].snapshotmax = snapshots[_usage.snapshot].ts;
                     } 
                 }     
                                 
                 if (_usage.snapshot in snapshots) {
-                    var _min = usageSummary[_usage.virtual_volume].snapshotmin;
-                    var _max = usageSummary[_usage.virtual_volume].snapshotmax; 
-                    usageSummary[_usage.virtual_volume].snapshotmin = Math.min(_min, snapshots[_usage.snapshot].ts);
-                    usageSummary[_usage.virtual_volume].snapshotmax = Math.max(_max, snapshots[_usage.snapshot].ts);
+                    var _min = usageSummary[_virtualVolume].snapshotmin;
+                    var _max = usageSummary[_virtualVolume].snapshotmax; 
+                    usageSummary[_virtualVolume].snapshotmin = Math.min(_min, snapshots[_usage.snapshot].ts);
+                    usageSummary[_virtualVolume].snapshotmax = Math.max(_max, snapshots[_usage.snapshot].ts);
                 }  
                                 
-                if (_usage.virtual_volume in virtualVolumeMap) {   
-                    usageSummary[_usage.virtual_volume].usageCount++;
-                    usageSummary[_usage.virtual_volume].files += _usage.files;
-                    usageSummary[_usage.virtual_volume].quota = _usage.quota;
-                    usageSummary[_usage.virtual_volume].usage += _usage.usage;  
+                if (_virtualVolume in virtualVolumeMap) {   
+                    usageSummary[_virtualVolume].usageCount++;
+                    usageSummary[_virtualVolume].files += _usage.files;
+                    usageSummary[_virtualVolume].quota = _usage.quota;
+                    usageSummary[_virtualVolume].usage += _usage.usage;  
                 }         
                   
                 if (_usage.owner in $scope.owners) {     
-                    usageSummary[_usage.virtual_volume].owner = $scope.owners[_usage.owner].name; 
+                    usageSummary[_virtualVolume].owner = $scope.owners[_usage.owner].name; 
                 }  
                 
                 //swap.push(_.values(instanceSummary));                

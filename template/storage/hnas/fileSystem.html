@@ -27,8 +27,8 @@
                         <td>{{ usage.name }}</td>
                         <td>{{ formatNumber(usage.capacity) }} MB</td>
                         <td>{{ formatNumber(usage.free / usage.usageCount) }} MB</td>
-                        <td>{{ formatNumber(usage.live_usage / usage.usageCount) }} MB</td>  
-                        <td>{{ formatNumber(usage.snapshot_usage) }} MB</td> 
+                        <td>{{ formatNumber(usage.liveUsage / usage.usageCount) }} MB</td>  
+                        <td>{{ formatNumber(usage.snapshotUsage) }} MB</td> 
                     </tr>
                 </table> 
             </div>

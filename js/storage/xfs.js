@@ -1,6 +1,6 @@
 define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
-    app.controller("XFSController", ["$rootScope", "$scope", "$timeout", "reporting",
-    function($rootScope, $scope, $timeout, reporting) {
+    app.controller("XFSController", ["$rootScope", "$scope", "$timeout", "reporting", "spinner",
+    function($rootScope, $scope, $timeout, reporting, spinner) {
 
         $scope.values = _.values;
 
@@ -35,14 +35,14 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         var xfs = {};
 
         var initXFS = function() {
-            $rootScope.spinnerActive = true;
+            spinner.start();
             reporting.xfsBase(function(svc, type, data) {
                 xfs[type] = $scope.xfs[type] = util.keyArray(data);
 
                 if (type == "snapshot") {
                     xfs.snapshotByTimestamp = $scope.xfs.snapshotByTimestamp = util.keyArray(data, "ts");
                 }
-                $rootScope.spinnerActive = false;
+                spinner.stop();
             });
         }; 
 
@@ -125,6 +125,8 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                     }
                 });
 
+                spinner.stop();
+
                 $scope.output.summed = _.values(summed).filter(function(entry) {
                     return entry.usage > 0;
                 });
@@ -201,7 +203,8 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             
 
             clear();
-
+            
+            spinner.start();
             $scope.status = "Loading ...";
             $scope.jobCount = 0;
 
