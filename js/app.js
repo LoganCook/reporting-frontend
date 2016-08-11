@@ -13,7 +13,7 @@ define(["client", "ng-csv", , "components/datePickers/date-pickers"], function(c
     app.directive('ersaSearch',  function () {
         return {
             restrict: "AE",
-            controller: function ($scope, $element, $attrs, $transclude) {
+            controller: function ($scope, $element, $attrs) {
 
                 $scope.dateOptions = {
                     //dateDisabled: true,
@@ -80,15 +80,15 @@ define(["client", "ng-csv", , "components/datePickers/date-pickers"], function(c
                 /**
                  * start Util fuctions
                  */
-                getSearchDateFilter = function(scope) {
+                var getSearchDateFilter = function(scope) {
 
                     if (scope.rangeStart > scope.rangeEnd) {
                         scope.alerts.push({type: 'danger',msg: "Date options is invalid!"});
                         return '';
                     }
 
-                    var rangeStartEpoch = this.dayStart(scope.rangeStart);
-                    var rangeEndEpoch = this.dayEnd(scope.rangeEnd);
+                    var rangeStartEpoch = dayStart(scope.rangeStart);
+                    var rangeEndEpoch = dayEnd(scope.rangeEnd);
 
                     var filter =  {
                             filter: [
@@ -100,7 +100,7 @@ define(["client", "ng-csv", , "components/datePickers/date-pickers"], function(c
                 };
 
                 // FIXME: are there any differences between dayStart and dayEnd here and those in util.js?
-                dayStart = function(ts) {
+                var dayStart = function(ts) {
                     var modified = new Date(ts);
 
                     modified.setHours(0);
@@ -111,7 +111,7 @@ define(["client", "ng-csv", , "components/datePickers/date-pickers"], function(c
                     return Math.round(modified.getTime() / 1000);
                 };
 
-                dayEnd = function(ts) {
+                var dayEnd = function(ts) {
                     var modified = new Date(ts);
 
                     modified.setHours(23);
