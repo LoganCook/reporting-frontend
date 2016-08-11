@@ -1,7 +1,9 @@
 define(["app", "lodash", "axios", "qs", "./util"], function (app, _, axios, qs, util) {
 return function($timeout, queryResource) {
     var defaultHeaders = function(name) {
-        // name not currently used
+        if (name) {
+            // name not currently used 
+        }
         return {
             "x-ersa-auth-token": sessionStorage.secret
         };
@@ -249,11 +251,11 @@ return function($timeout, queryResource) {
         if (!("crmLookup" in top)) {
             top.crmLookup = {};
 
-            for (var type in top.raw.crm) {
-                if (type == "username") {
-                    top.crmLookup[type] = util.keyArray(top.raw.crm[type], "username");
+            for (var crmType in top.raw.crm) {
+                if (crmType == "username") {
+                    top.crmLookup[crmType] = util.keyArray(top.raw.crm[crmType], "username");
                 } else {
-                    top.crmLookup[type] = util.keyArray(top.raw.crm[type]);
+                    top.crmLookup[crmType] = util.keyArray(top.raw.crm[crmType]);
                 }
             }
         }
@@ -287,10 +289,10 @@ return function($timeout, queryResource) {
                         ]
                     };
 
-                    top.query("crm", "membership", membershipFilters, function(svc, type, query, data) {
+                    top.query("crm", "membership", membershipFilters, function(_svc, _type, _query, _data) {
                         var orgNames = [];
 
-                        _.forEach(data, function(entry) {
+                        _.forEach(_data, function(entry) {
                             var orgID = entry.organisation;
                             var org = top.crmLookup.organisation[orgID];
                             orgNames.push(org.name);
