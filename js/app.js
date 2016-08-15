@@ -8,7 +8,9 @@ define(["client", "ng-csv", , "components/datePickers/date-pickers"], function(c
     // cannot do global headers.common: it messes up bman CROS
     // .run(function($http) {$http.defaults.headers.common["x-ersa-auth-token"] = sessionStorage["secret"]})
     ;
-
+    
+    /* global _ */
+     
     //Global search form for all pages
     app.directive('ersaSearch',  function () {
         return {
@@ -176,12 +178,10 @@ define(["client", "ng-csv", , "components/datePickers/date-pickers"], function(c
                     var userList = _.values(users[orgId]);
                     _.forEach(userList, function(user) {  
                         _.forEach(organisations, function(org) {  
-                            if(org.pk == user.billing){ 
-                                org.billing = user.billing;
-                                //if(user.billing == 21)
-                                //console.log('user ...' + JSON.stringify(user)); 
+                            if (org.pk == user.billing) { 
+                                org.billing = user.billing;  
                             }
-                        })    
+                        });
                     });
                                                        
                     deferred.resolve(users[orgId]);  
@@ -240,7 +240,7 @@ define(["client", "ng-csv", , "components/datePickers/date-pickers"], function(c
                 }
                 return deferred.promise;
             }
-        }
+        };
     }); 
 
     app.factory("queryResource", ["$resource", function($resource) {
