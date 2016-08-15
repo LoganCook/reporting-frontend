@@ -148,7 +148,7 @@ define(["client", "ng-csv", , "components/datePickers/date-pickers"], function(c
     });
 
 
-    // Cacheable organisation-user data for all pages, mandatory
+    //Cacheable organisation-user data for all pages
     app.factory('org', function($http, $q) {
         // FIXME: This is different to any other sources: not using client.js to get data.
         // They should be unified.
@@ -158,19 +158,34 @@ define(["client", "ng-csv", , "components/datePickers/date-pickers"], function(c
         var requestUri = sessionStorage['bman'];
         // TODO: verify below two api urls
         //var userUri = requestUri + '/api/Organisation/#id/get_extented_accounts/';
+ 
         var userUri = requestUri + '/api/Organisation/?id=#id&method=get_extented_accounts';
         var orgUri = requestUri + '/api/Organisation/?method=get_tops';
-        var organisations = [], users = {};
-
+        var rdsUri = requestUri + '/api/RDS/'; 
+        var roleUri = requestUri + '/api/Role/'; 
+        var organisations = [], users = {}, rdses = [], roles = [];
+        
         function _getUsersOf(orgId) {
             var deferred = $q.defer();
             if (orgId in users) {
                 deferred.resolve(users[orgId]);
-            } else {
-              // FIXME: need to use native resource url and its replacement
+            } else { 
                 $http.get(userUri.replace("#id", orgId)).then(function(response) {
-                    users[orgId] = response.data;
-                    deferred.resolve(users[orgId]);
+                    users[orgId] = response.data;       
+                    
+                    var userList = _.values(users[orgId]);
+                    _.forEach(userList, function(user) {  
+                        _.forEach(organisations, function(org) {  
+                            if(org.pk == user.billing){ 
+                                org.billing = user.billing;
+                                //if(user.billing == 21)
+                                //console.log('user ...' + JSON.stringify(user)); 
+                            }
+                        })    
+                    });
+                                                       
+                    deferred.resolve(users[orgId]);  
+                    deferred.resolve(organisations);     
                 });
             }
             return deferred.promise;
@@ -181,23 +196,52 @@ define(["client", "ng-csv", , "components/datePickers/date-pickers"], function(c
                 if (organisations.length) {
                     deferred.resolve(organisations);
                 } else {
-                    $http.get(orgUri).then(function(response) {
-                        organisations = response.data;
-                        deferred.resolve(organisations);
+                    $http.get(orgUri).then(function(response) { 
+                        organisations = response.data;  
+                        deferred.resolve(organisations); 
                         for (var i = 0 ; i < organisations.length; i++) {
                            _getUsersOf(organisations[i].pk);
-                        }
+                        }  
                     });
                 }
                 return deferred.promise;
-            },
+            }, 
             getAllUsers: function() {
                 var deferred = $q.defer();
                 deferred.resolve(users);
                 return deferred.promise;
+            },
+            getBillings: function() {
+                var deferred = $q.defer();
+                deferred.resolve(organisations);
+                return deferred.promise;
+            },
+            getRdses: function() {
+                var deferred = $q.defer();
+                if (rdses.length) {
+                    deferred.resolve(rdses);
+                } else {
+                    $http.get(rdsUri).then(function(response) { 
+                        rdses = response.data;  
+                        deferred.resolve(rdses);  
+                    });
+                }
+                return deferred.promise;
+            },
+            getRoles: function() {
+                var deferred = $q.defer();
+                if (roles.length) {
+                    deferred.resolve(roles);
+                } else {
+                    $http.get(roleUri).then(function(response) { 
+                        roles = response.data;  
+                        deferred.resolve(roles);  
+                    });
+                }
+                return deferred.promise;
             }
-        };
-    });
+        }
+    }); 
 
     app.factory("queryResource", ["$resource", function($resource) {
       return {
