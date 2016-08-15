@@ -204,7 +204,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 if ($scope.selectedBillingOrg == '0') {
                     _.extend(userAccountMap, $scope.details[_org.pk]);
                 } else {
-                    if ($scope.selectedBillingOrg == org.billing) {
+                    if ($scope.selectedBillingOrg == _org.billing) {
                         _.extend(userAccountMap, $scope.details[_org.pk]);
                     }
                 }
