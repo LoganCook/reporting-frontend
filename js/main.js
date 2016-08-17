@@ -33,8 +33,8 @@ require(["app", "menu",
             "storage/hcp", "storage/hnas/fileSystem", "storage/hnas/virtualVolume", "storage/xfs",
             //"storage/fs", "storage/hcp", "storage/hnas", "storage/hnas/fileSystem",  "storage/hnas/virtualVolume", "storage/xfs", 
             "storage/hpcStorage", 
-            "storage/allocationSummary", 
-            "cloud/keystone", "cloud/nova.component"
+            "storage/allocationSummary",  
+            "cloud/keystone", "cloud/nova.component", "cloud/novasummary",
             //"cloud/keystone", "cloud/nova", "cloud/cinder","cloud/swift",
             ],
     function (app) { 

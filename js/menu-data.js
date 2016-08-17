@@ -23,6 +23,7 @@ define({
         "Cloud": {
             "Identity (Keystone)": ["/cloud/keystone", "Keystone"],
             "Virtual Machines (Nova)": ["nova"],
+            "Cloud Summary": ["/cloud/novasummary", "Novasummary"],
             //"Block Storage (Cinder)": ["/cloud/cinder", "Cinder"],
             //"Object Storage (Swift)": ["/cloud/swift", "Swift"]
             //"Cloud Summary": ["/cloud/cloudSummary", "CloudSummary"],
