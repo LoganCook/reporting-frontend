@@ -1,53 +1,68 @@
 define(['app', 'options', '../util2', '../util', './services'], function(app, options, util, formater) {
     'use strict';
-
+    
     app.controller("NovasummaryController", ["$rootScope", "$scope", "$timeout", "reporting", "org", "queryResource", "$q", "flavor", "tenant", "spinner",
     function($rootScope, $scope, $timeout, reporting, org, queryResource, $q, flavor, tenant, spinner) {
-         
-        // These variables are set in search and used in loadNextPage
+
+        /* global _ */
+        
+        /**
+         * These variables are set in search and used in loadNextPage
+         */ 
         var startTimestamp, endTimestamp;
 
         var cachedInstancesState = [];
         var cachedTenants = {};
-        
-        // defaults 
+         
+        /**
+         * defaults 
+         */ 
         $scope.domains = [];
         $scope.selectedDomain = '0';
         $scope.instancesState = []; 
         $scope.serverChecked = false;
-        
-        // summary variables
-        $scope.sum = { core : 0, cores_used : 0, cost : 0}; 
-        
-        // search range
+         
+        /**
+         * summary variables
+         */ 
+        $scope.sum = { core : 0, coresUsed : 0, cost : 0}; 
+         
+        /**
+         * search range
+         */ 
         $scope.rangeStart  =  new Date();
         $scope.rangeEnd =  new Date();
         $scope.rangeEndOpen = false;
         $scope.openRangeEnd = function() {
             $scope.rangeEndOpen = true;
         };
-
-        // For creating table and exporting csv
+ 
+        /**
+         * For creating table and exporting csv
+         */ 
         $scope.colTitles = []; 
         //$scope.colTitles .push(['Tenant', 'Server ID', 'Server Name', 'Hypervisorname',
         //                'Inventory Code', 'Hours', 'VCPUs', 'Usage', 'RAM', 'Disk', 'Ephemeral']);
-        $scope.colTitles .push(['Tenant', 'Server Name', 'Hypervisorname',
+        $scope.colTitles.push(['Tenant', 'Server Name', 'Hypervisorname',
                         'Inventory Code', 'Hours', 'VCPUs', 'Usage', 'Cores Used', '%age Used', 'Cost per Core Used ($15)']);
-        $scope.colTitles .push(['Tenant', 'VCPUs', 'Usage', 'Cores Used', '%age Used', 'Cost per Core Used ($15)']);
+        $scope.colTitles.push(['Tenant', 'VCPUs', 'Usage', 'Cores Used', '%age Used', 'Cost per Core Used ($15)']);
 
         $scope.fieldNames = [];
         var fieldNames = [];
-        //fieldNames.push(['tenant_name', 'server_id', 'server', 'hypervisor',
-        //                'flavorname', 'span', 'core', 'format_usage', 'ram', 'disk','ephemeral']);
-        fieldNames.push(['tenant_name', 'server', 'hypervisor',
-                        'flavorname', 'span', 'core', 'format_usage', 'cores_used', 'age_used', 'cost']);
-        fieldNames.push(['tenant_name', 'core', 'format_usage', 'cores_used', 'age_used', 'cost']);
+        //fieldNames.push(['tenantName', 'server_id', 'server', 'hypervisor',
+        //                'flavorname', 'span', 'core', 'formatUsage', 'ram', 'disk','ephemeral']);
+        fieldNames.push(['tenantName', 'server', 'hypervisor',
+                        'flavorname', 'span', 'core', 'formatUsage', 'coresUsed', 'ageUsed', 'cost1']);
+        fieldNames.push(['tenantName', 'core', 'formatUsage', 'coresUsed', 'ageUsed', 'cost1']);
   
         $scope.fieldNames = fieldNames[1];
-        
-        //$scope.pickers = options.nova.pickers;
- 
-        // retrieve dates inuts from user and do a search
+         
+  
+        /**
+         * retrieve data with qeury string.  
+         *  
+         * @export
+         */ 
         $scope.load = function() {
 
             $scope.rangeStart = formater.firstDayOfYearAndMonth($scope.rangeEnd);
@@ -57,18 +72,24 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
             endTimestamp = util.dateToTimestamp($scope.rangeEnd, true);
             
             /** log start */
-            var sdt = new Date(startTimestamp*1000);
+            var sdt = new Date(startTimestamp * 1000);
             console.log(startTimestamp + ' -- ' + sdt);
 
-            var edt = new Date(endTimestamp*1000);
+            var edt = new Date(endTimestamp * 1000);
             console.log(endTimestamp + ' -- ' + edt);
             /** log end */
 
             $scope.instancesState = []; 
             getInstances(startTimestamp, endTimestamp);
         };
- 
-        // prepare data for ng-csv
+  
+  
+        /**
+         * create TSV file data with summary data that has already fetched and stored.
+         * 
+         * @export
+         * @return{Array} data
+         */ 
         $scope.export = function () {
             var rowCount = $scope.instancesState.length;
             var csvData = Array(rowCount + 1);
@@ -78,16 +99,21 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
             for (i = 0; i < rowCount; i++) {
                 csvData[i + 1] = Array(fieldCount);
                 for (j = 0; j < fieldCount; j++) {
-                csvData[i + 1][j] = $scope.instancesState[i][$scope.fieldNames[j]];
+                    csvData[i + 1][j] = $scope.instancesState[i][$scope.fieldNames[j]];
                 }
             }
             return csvData;
         };
 
-        $scope.selectDomain = function() { 
-            //var states = summaryInstances(cachedInstancesState);   
+        /**
+         * When user change organisation on the page, this fucnction will be called 
+         * to filter data.
+         *  
+         * @export
+         */ 
+        $scope.selectDomain = function() {    
            
-            if($scope.selectedDomain === '0'){
+            if ($scope.selectedDomain === '0') {
                 $scope.instancesState = summaryInstances(cachedInstancesState);
                 return;
             }  
@@ -100,8 +126,14 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
             });  
             $scope.instancesState = summaryInstances(instanceStates);    
         }; 
-        
-        // Internal functions
+         
+        /**
+         * request instance summary main
+         *  
+         * @param {Date} startTime - start date for request
+         * @param {Date} endTime - end date for request 
+         * @return {Void}
+         */ 
         function getInstances(startTime, endTime) {
             spinner.start();
             var args = {
@@ -113,8 +145,7 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
             };
             //var nq = queryResource.build(sessionStorage['nova']);
             var nq = queryResource.build("http://localhost:8080/nova");
-            nq.query(args, function(summaries) { 
-                //console.log("summaries==" + JSON.stringify(summaries)); 
+            nq.query(args, function(summaries) {  
 
                 getInstanceState(summaries) 
                 .then(doCalculation)
@@ -134,6 +165,12 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
             });
         }
         
+        /**
+         * request instance state
+         * 
+         * @param {Array} states - array of instances 
+         * @return {Object} $q.defer 
+         */ 
         function getInstanceState(states) { 
 
             var deferred = $q.defer(); 
@@ -151,12 +188,19 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
                 });  
                 $scope.domains = _.union(topOrg);    
                 deferred.resolve(states); 
-            }else{ 
+            } else { 
                 deferred.reject(states);
             } 
             return deferred.promise;
         } 
 
+        /**
+         * request flavor and assign it to each instance summary data.
+         * calculate usage with the number of cup
+         * 
+         * @param {Array} states - array of instances 
+         * @return {Array} states
+         */ 
         function doCalculation(states) {
             return flavor(sessionStorage['nova']).then(function(flavorMap) {
                 for (var i = 0, l = states.length; i < l; i++) {
@@ -167,6 +211,13 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
             });
         }
 
+        /**
+         * assign it to each instance summary data
+         * 
+         * @param {Object} instance - summaried instances  
+         * @param {Object} flavorMap - flavor hashmap 
+         * @return {Void}
+         */ 
         function setFlavor(instance, flavorMap) {
             var flavorAttrs = ['name', 'vcpus', 'ram', 'disk', 'ephemeral'];
             if (instance['flavor'] in flavorMap) {
@@ -188,6 +239,12 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
             }
         }
 
+        /** 
+         * calculate usage with the number of cup
+         * 
+         * @param {Object} instance - summaried instances  
+         * @return {Void}
+         */ 
         function formatOutputs(instance) {
             // usage before rounding up span
             instance['usage'] = instance['span'] * instance['vcpus'];
@@ -195,15 +252,21 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
             instance['ram'] = formater.formatNumber(instance['ram']);
         }
 
+        /** 
+         * request tenant  and assign tenantName to each instance summary data.
+         * 
+         * @param {Array} states - array of instances 
+         * @return {Object} $q.defer 
+         */ 
         function fillTenants(states) {  
             var deferred = $q.defer();
             
             getTenants().then(function(tenants) {
                 angular.forEach(states, function(instance) { 
                     if (tenants[instance.tenant] && tenants[instance.tenant].name) {
-                        instance.tenant_name = tenants[instance.tenant].name;
+                        instance.tenantName = tenants[instance.tenant].name;
                     } else {
-                        instance.tenant_name = instance.tenant;
+                        instance.tenantName = instance.tenant;
                     }
                 });
                 deferred.resolve(states);
@@ -211,6 +274,11 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
             return deferred.promise;
         }  
         
+        /** 
+         * request tenant bulk data.
+         *  
+         * @return {Object} $q.defer 
+         */ 
         function getTenants() { 
             var deferred = $q.defer(); 
             
@@ -234,6 +302,12 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
             return deferred.promise;
         } 
         
+        /** 
+         * summary instance by server or tenantName.
+         * 
+         * @param {Array} states - array of instances 
+         * @return {Array} summed - array of instance summary 
+         */ 
         function summaryInstances(states) { 
             
             if ($scope.serverChecked) { 
@@ -244,10 +318,10 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
             var summed = {}; 
             $scope.fieldNames = fieldNames[1];
             angular.forEach(states, function(instance) {
-                var _key = instance.tenant_name; 
+                var _key = instance.tenantName; 
                 if (!(_key in summed)) {
                     summed[_key] = {
-                        tenant_name: instance.tenant_name, 
+                        tenantName: instance.tenantName, 
                         organisation: instance.organisation, 
                         core: 0, 
                         usage: 0
@@ -261,22 +335,28 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
             return summed;  
         }
         
+        /** 
+         * summary instance cost per core Used.
+         * 
+         * @param {Array} states - array of instances 
+         * @return {Array} states - array of instances summary 
+         */ 
         function formatUsageDuration(states) { 
-            $scope.sum = { core : 0, cores_used : 0, cost : 0};
+            $scope.sum = { core : 0, coresUsed : 0, cost : 0};
             
             angular.forEach(states, function(instance) {
-                if(instance.vcpus){// for filter by server 
+                if (instance.vcpus) {// for filter by server 
                     instance['core'] = instance.vcpus;
                 } 
                      
-                instance['format_usage'] = formater.formatDuration(instance.usage, 'seconds');  
-                instance['cores_used'] =  (instance.usage / (3600 * 24 * 30)).toFixed(2);  
-                instance['age_used'] =  ((instance.cores_used / instance.core) * 100).toFixed(2) + '%'; 
-                instance['cost'] =  '$' + (instance.cores_used * 15).toFixed(2);    
+                instance['formatUsage'] = formater.formatDuration(instance.usage, 'seconds');  
+                instance['coresUsed'] =  (instance.usage / (3600 * 24 * 30)).toFixed(2);  
+                instance['ageUsed'] =  ((instance.coresUsed / instance.core) * 100).toFixed(2) + '%'; 
+                instance['cost'] =  '$' + (instance.coresUsed * 15).toFixed(2);    
 
                 $scope.sum.core += instance.core ; 
-                $scope.sum.cores_used += instance.cores_used * 1; 
-                $scope.sum.cost += instance.cores_used * 15 ;                 
+                $scope.sum.coresUsed += instance.coresUsed * 1; 
+                $scope.sum.cost += instance.coresUsed * 15 ;                 
             });
             return states;
         }

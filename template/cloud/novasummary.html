@@ -59,7 +59,7 @@
                         <tr ng-show="!serverChecked"> 
                             <th ng-repeat="title in ::colTitles[1]">{{title}}</th>
                         </tr>
-                        <tr ng-repeat="instance in instancesState | orderBy: 'tenant_name'">
+                        <tr ng-repeat="instance in instancesState | orderBy: 'tenantName'">
                           <td ng-repeat="field in ::fieldNames">
                             {{instance[field]}}
                           </td>
@@ -73,8 +73,8 @@
                             <th ng-show="serverChecked"> - </th>  
                             <th>{{ sum.core }}</th>
                             <th> - </th>  
-                            <th>{{ sum.cores_used.toFixed(2)  }}</th> 
-                            <th>{{ ((sum.cores_used /  sum.core) * 100).toFixed(2)}}%</th> 
+                            <th>{{ sum.coresUsed.toFixed(2)  }}</th> 
+                            <th>{{ ((sum.coresUsed /  sum.core) * 100).toFixed(2)}}%</th> 
                             <th>${{ sum.cost.toFixed(2) }}</th> 
                         </tr>                                         
                     </table>
