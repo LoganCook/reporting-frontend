@@ -43,17 +43,17 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
         $scope.colTitles = []; 
         //$scope.colTitles .push(['Tenant', 'Server ID', 'Server Name', 'Hypervisorname',
         //                'Inventory Code', 'Hours', 'VCPUs', 'Usage', 'RAM', 'Disk', 'Ephemeral']);
-        $scope.colTitles.push(['Tenant', 'Server Name', 'Hypervisorname',
-                        'Inventory Code', 'Hours', 'VCPUs', 'Usage', 'Cores Used', '%age Used', 'Cost per Core Used ($15)']);
+        $scope.colTitles.push(['Tenant', 'Server Name',  
+                         'Hours', 'VCPUs', 'Usage', 'Cores Used', '%age Used', 'Cost per Core Used ($15)']);
         $scope.colTitles.push(['Tenant', 'VCPUs', 'Usage', 'Cores Used', '%age Used', 'Cost per Core Used ($15)']);
 
         $scope.fieldNames = [];
         var fieldNames = [];
         //fieldNames.push(['tenantName', 'server_id', 'server', 'hypervisor',
         //                'flavorname', 'span', 'core', 'formatUsage', 'ram', 'disk','ephemeral']);
-        fieldNames.push(['tenantName', 'server', 'hypervisor',
-                        'flavorname', 'span', 'core', 'formatUsage', 'coresUsed', 'ageUsed', 'cost1']);
-        fieldNames.push(['tenantName', 'core', 'formatUsage', 'coresUsed', 'ageUsed', 'cost1']);
+        fieldNames.push(['tenantName', 'server',  
+                         'span', 'core', 'formatUsage', 'coresUsed', 'ageUsed', 'cost']);
+        fieldNames.push(['tenantName', 'core', 'formatUsage', 'coresUsed', 'ageUsed', 'cost']);
   
         $scope.fieldNames = fieldNames[1];
          
