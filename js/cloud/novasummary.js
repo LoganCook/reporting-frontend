@@ -1,8 +1,8 @@
 define(['app', 'options', '../util2', '../util', './services'], function(app, options, util, formater) {
     'use strict';
     
-    app.controller("NovasummaryController", ["$rootScope", "$scope", "$timeout", "reporting", "org", "queryResource", "$q", "flavor", "tenant", "spinner",
-    function($rootScope, $scope, $timeout, reporting, org, queryResource, $q, flavor, tenant, spinner) {
+    app.controller("NovasummaryController", ["$rootScope", "$scope", "$timeout", "$filter", "reporting", "org", "queryResource", "$q", "flavor", "tenant", "spinner",
+    function($rootScope, $scope, $filter, timeout, reporting, org, queryResource, $q, flavor, tenant, spinner) {
 
         /* global _ */
         
@@ -25,7 +25,7 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
         /**
          * summary variables
          */ 
-        $scope.sum = { core : 0, coresUsed : 0, cost : 0}; 
+        $scope.sum = { core : 0, coreAllocation : 0, cost : 0};
          
         /**
          * search range
@@ -40,20 +40,18 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
         /**
          * For creating table and exporting csv
          */ 
-        $scope.colTitles = []; 
-        //$scope.colTitles .push(['Tenant', 'Server ID', 'Server Name', 'Hypervisorname',
-        //                'Inventory Code', 'Hours', 'VCPUs', 'Usage', 'RAM', 'Disk', 'Ephemeral']);
-        $scope.colTitles.push(['Tenant', 'Server Name',  
-                         'Hours', 'VCPUs', 'Usage', 'Cores Used', '%age Used', 'Cost per Core Used ($15)']);
-        $scope.colTitles.push(['Tenant', 'VCPUs', 'Usage', 'Cores Used', '%age Used', 'Cost per Core Used ($15)']);
+        $scope.colTitles = [];  
+        //$scope.colTitles.push(['Tenant', 'Server Name',  'Core Allocation', 'Current Core Usage',  '%age Used', 'Cost per Core Used ($10)']);
+        //$scope.colTitles.push(['Tenant',                 'Core Allocation', 'Current Core Usage',  '%age Used', 'Cost per Core Used ($10)']);
+        $scope.colTitles.push(['Tenant', 'Server Name', 'Current Core Usage',  'Cost per Core Used ($10)']);
+        $scope.colTitles.push(['Tenant',                 'Current Core Usage',  'Cost per Core Used ($10)']);
 
         $scope.fieldNames = [];
-        var fieldNames = [];
-        //fieldNames.push(['tenantName', 'server_id', 'server', 'hypervisor',
-        //                'flavorname', 'span', 'core', 'formatUsage', 'ram', 'disk','ephemeral']);
-        fieldNames.push(['tenantName', 'server',  
-                         'span', 'core', 'formatUsage', 'coresUsed', 'ageUsed', 'cost']);
-        fieldNames.push(['tenantName', 'core', 'formatUsage', 'coresUsed', 'ageUsed', 'cost']);
+        var fieldNames = []; 
+        //fieldNames.push(['tenantName', 'server', 'coreAllocation', 'core', 'ageUsed', 'cost']);
+        //fieldNames.push(['tenantName', 'coreAllocation', 'core', 'ageUsed', 'cost']);
+        fieldNames.push(['tenantName', 'server', 'core', 'cost']);
+        fieldNames.push(['tenantName',           'core', 'cost']);
   
         $scope.fieldNames = fieldNames[1];
          
@@ -92,8 +90,7 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
          */ 
         $scope.export = function () {
             var rowCount = $scope.instancesState.length;
-            var csvData = Array(rowCount + 1);
-            csvData[0] = $scope.colTitles[$scope.serverChecked ? 0 : 1];
+            var csvData = Array(rowCount + 1); 
 
             var fieldCount = $scope.fieldNames.length, i, j;
             for (i = 0; i < rowCount; i++) {
@@ -101,7 +98,30 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
                 for (j = 0; j < fieldCount; j++) {
                     csvData[i + 1][j] = $scope.instancesState[i][$scope.fieldNames[j]];
                 }
-            }
+            } 
+
+            csvData.sort(function(a, b) {
+                if (a[0] >= b[0]) {return 1;}
+                return -1;
+            });
+
+            csvData[0] = $scope.colTitles[$scope.serverChecked ? 0 : 1];
+ 
+            /** Grand total data. */
+            if ($scope.serverChecked) { 
+                csvData.push([ 
+                    'Grand Total', 
+                    ' - ',  
+                    $scope.sum.coreAllocation,  
+                    '$' + $scope.sum.cost.toFixed(2) 
+                ]);      
+            } else { 
+                csvData.push([ 
+                    'Grand Total',  
+                    $scope.sum.coreAllocation,  
+                    '$' + $scope.sum.cost.toFixed(2) 
+                ]); 
+            }  
             return csvData;
         };
 
@@ -135,16 +155,20 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
          * @return {Void}
          */ 
         function getInstances(startTime, endTime) {
+            
+            //var summaryUrl = '/usage/nova/NovaUsage_'  + startTime + '_' + endTime + '.json';
+            var summaryUrl = '/usage/nova/NovaUsage_'  + 1451568600 + '_' + 1454246999 + '.json';
+            console.log('summaryUrl=' + summaryUrl);
+            
             spinner.start();
-            var args = {
-                //object: 'summary',
-                object: 'NovaUsage_1451568600_1454246999.json', 
+            var args = { 
+                object: summaryUrl, 
                 start: startTime,
                 end: endTime, 
                 distinct: true
             };
             //var nq = queryResource.build(sessionStorage['nova']);
-            var nq = queryResource.build("http://localhost:8080/nova");
+            var nq = queryResource.build("http://localhost:8080");
             nq.query(args, function(summaries) {  
 
                 getInstanceState(summaries) 
@@ -240,13 +264,14 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
         }
 
         /** 
-         * calculate usage with the number of cup
+         * calculate usage with the number of cpu
          * 
          * @param {Object} instance - summaried instances  
          * @return {Void}
          */ 
         function formatOutputs(instance) {
             // usage before rounding up span
+            instance['coreAllocation'] = instance['vcpus'];
             instance['usage'] = instance['span'] * instance['vcpus'];
             instance['span'] = (instance['span'] / 3600).toFixed(1);
             instance['ram'] = formater.formatNumber(instance['ram']);
@@ -312,7 +337,7 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
             
             if ($scope.serverChecked) { 
                 $scope.fieldNames = fieldNames[0];
-                return formatUsageDuration(states);
+                return formatUsage(states);
             }
             
             var summed = {}; 
@@ -323,15 +348,17 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
                     summed[_key] = {
                         tenantName: instance.tenantName, 
                         organisation: instance.organisation, 
+                        coreAllocation: 0, 
                         core: 0, 
                         usage: 0
                     }; 
                 }  
+                summed[_key].coreAllocation += instance.coreAllocation ;  
                 summed[_key].core += instance.vcpus ;  
                 summed[_key].usage += instance.usage ; 
             });
             
-            summed = formatUsageDuration(_.values(summed));   
+            summed = formatUsage(_.values(summed));   
             return summed;  
         }
         
@@ -341,22 +368,20 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
          * @param {Array} states - array of instances 
          * @return {Array} states - array of instances summary 
          */ 
-        function formatUsageDuration(states) { 
-            $scope.sum = { core : 0, coresUsed : 0, cost : 0};
+        function formatUsage(states) { 
+            $scope.sum = { core : 0, coreAllocation : 0, cost : 0};
             
             angular.forEach(states, function(instance) {
                 if (instance.vcpus) {// for filter by server 
                     instance['core'] = instance.vcpus;
                 } 
-                     
-                instance['formatUsage'] = formater.formatDuration(instance.usage, 'seconds');  
-                instance['coresUsed'] =  (instance.usage / (3600 * 24 * 30)).toFixed(2);  
-                instance['ageUsed'] =  ((instance.coresUsed / instance.core) * 100).toFixed(2) + '%'; 
-                instance['cost'] =  '$' + (instance.coresUsed * 15).toFixed(2);    
+                      
+                instance['ageUsed'] =  ((instance.core / instance.coreAllocation) * 100).toFixed(2) + '%'; 
+                instance['cost'] =  '$' + (instance.coreAllocation * 10).toFixed(2);    
 
-                $scope.sum.core += instance.core ; 
-                $scope.sum.coresUsed += instance.coresUsed * 1; 
-                $scope.sum.cost += instance.coresUsed * 15 ;                 
+                $scope.sum.coreAllocation += instance.coreAllocation ; 
+                $scope.sum.core += instance.core ;  
+                $scope.sum.cost += instance.coreAllocation * 10 ;                 
             });
             return states;
         }

@@ -67,12 +67,10 @@
 
                         <tr ng-show="instancesState.length">
                             <th>Grand Total</th> 
-                            <th ng-show="serverChecked"> - </th>  
-                            <th ng-show="serverChecked"> - </th>  
-                            <th>{{ sum.core }}</th>
-                            <th> - </th>  
-                            <th>{{ sum.coresUsed.toFixed(2)  }}</th> 
-                            <th>{{ ((sum.coresUsed /  sum.core) * 100).toFixed(2)}}%</th> 
+                            <th ng-show="serverChecked"> - </th>   
+                            <!-- th>{{ sum.coreAllocation }}</th -->
+                            <th>{{ sum.core }}</th> 
+                            <!-- th>{{ ((sum.core /  sum.coreAllocation) * 100).toFixed(2)}}%</th --> 
                             <th>${{ sum.cost.toFixed(2) }}</th> 
                         </tr>                                         
                     </table>
