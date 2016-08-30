@@ -254,12 +254,19 @@ define(["client", "ng-csv", , "components/datePickers/date-pickers"], function(c
                 "x-ersa-auth-token": sessionStorage["secret"]
               }
             },
+            'getNoHeader': {
+              method: 'GET' 
+            },
             'query': {
               method: 'GET',
               isArray: true,
               headers: {
                 "x-ersa-auth-token": sessionStorage["secret"]
               }
+            },
+            'queryNoHeader': {
+              method: 'GET',
+              isArray: true 
             },
             'post': {
               method: 'POST',

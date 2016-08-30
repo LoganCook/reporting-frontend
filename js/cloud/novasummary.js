@@ -13,6 +13,8 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
 
         var cachedInstancesState = [];
         var cachedTenants = {};
+        var cachedUseres = [];
+        var cachedCrmNectar = [];         
          
         /**
          * defaults 
@@ -43,15 +45,15 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
         $scope.colTitles = [];  
         //$scope.colTitles.push(['Tenant', 'Server Name',  'Core Allocation', 'Current Core Usage',  '%age Used', 'Cost per Core Used ($10)']);
         //$scope.colTitles.push(['Tenant',                 'Core Allocation', 'Current Core Usage',  '%age Used', 'Cost per Core Used ($10)']);
-        $scope.colTitles.push(['Tenant', 'Server Name', 'Current Core Usage',  'Cost per Core Used ($10)']);
-        $scope.colTitles.push(['Tenant',                 'Current Core Usage',  'Cost per Core Used ($10)']);
+        $scope.colTitles.push(['Tenant', 'User Name', 'Email', 'School','Server Name', 'Current Core Usage',  'Cost per Core Used ($10)']);
+        $scope.colTitles.push(['Tenant', 'User Name', 'Email', 'School',               'Current Core Usage',  'Cost per Core Used ($10)']);
 
         $scope.fieldNames = [];
         var fieldNames = []; 
         //fieldNames.push(['tenantName', 'server', 'coreAllocation', 'core', 'ageUsed', 'cost']);
         //fieldNames.push(['tenantName', 'coreAllocation', 'core', 'ageUsed', 'cost']);
-        fieldNames.push(['tenantName', 'server', 'core', 'cost']);
-        fieldNames.push(['tenantName',           'core', 'cost']);
+        fieldNames.push(['tenantName', 'fullname', 'email11', 'school1','server', 'core', 'cost']);
+        fieldNames.push(['tenantName', 'fullname', 'email11', 'school1',          'core', 'cost']);
   
         $scope.fieldNames = fieldNames[1];
          
@@ -112,12 +114,18 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
                 csvData.push([ 
                     'Grand Total', 
                     ' - ',  
+                    ' - ',  
+                    ' - ',  
+                    ' - ',  
                     $scope.sum.coreAllocation,  
                     '$' + $scope.sum.cost.toFixed(2) 
                 ]);      
             } else { 
                 csvData.push([ 
                     'Grand Total',  
+                    ' - ',  
+                    ' - ',  
+                    ' - ',  
                     $scope.sum.coreAllocation,  
                     '$' + $scope.sum.cost.toFixed(2) 
                 ]); 
@@ -285,11 +293,17 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
          */ 
         function fillTenants(states) {  
             var deferred = $q.defer();
-            
-            getTenants().then(function(tenants) {
+            getCrms() 
+            .then(getTenants)
+            .then(function(tenants) {
+                 
                 angular.forEach(states, function(instance) { 
                     if (tenants[instance.tenant] && tenants[instance.tenant].name) {
                         instance.tenantName = tenants[instance.tenant].name;
+                        instance.openstack_id =  tenants[instance.tenant].openstack_id;
+                        instance.fullname = tenants[instance.tenant].fullname;
+                        instance.school = tenants[instance.tenant].organisation;
+                        instance.email = tenants[instance.tenant].email;
                     } else {
                         instance.tenantName = instance.tenant;
                     }
@@ -316,7 +330,19 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
                 }; 
                 var nq = queryResource.build(sessionStorage['keystone']);
                 nq.query(args, function(details) { 
-                    cachedTenants = formater.keyArray(details, 'openstack_id');    
+                      
+                    cachedTenants = formater.keyArray(details, 'openstack_id');   
+
+                    for (var tennantId in cachedTenants) {  
+                        if (cachedCrmNectar[tennantId]) { 
+                            cachedTenants[tennantId].fullname = cachedCrmNectar[tennantId].fullname; 
+                            cachedTenants[tennantId].organisation = cachedCrmNectar[tennantId].organisation;
+                            cachedTenants[tennantId].email = cachedCrmNectar[tennantId].email;
+                        }
+                    }                      
+                    
+                    console.log('getTenants==' + JSON.stringify(cachedTenants));
+                    
                     deferred.resolve(cachedTenants); 
                 }, function(rsp) { 
                     alert("Request failed");
@@ -326,7 +352,8 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
             } 
             return deferred.promise;
         } 
-        
+         
+
         /** 
          * summary instance by server or tenantName.
          * 
@@ -346,8 +373,12 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
                 var _key = instance.tenantName; 
                 if (!(_key in summed)) {
                     summed[_key] = {
+                        organisation: instance.organisation,
                         tenantName: instance.tenantName, 
-                        organisation: instance.organisation, 
+                        openstack_id : instance.openstack_id,
+                        fullname: instance.fullname, 
+                        school: instance.school,
+                        email: instance.email,
                         coreAllocation: 0, 
                         core: 0, 
                         usage: 0
@@ -361,7 +392,7 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
             summed = formatUsage(_.values(summed));   
             return summed;  
         }
-        
+                             
         /** 
          * summary instance cost per core Used.
          * 
@@ -386,6 +417,184 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
             return states;
         }
         
+                        
+        function getCrms() { 
+            var deferred = $q.defer();  
+
+            if (!_.isEmpty(cachedCrmNectar)) {  
+                deferred.resolve(cachedCrmNectar); 
+            } else {       
+                var requestUri = sessionStorage['bman'] + '/api/Organisation'; 
+                
+                var args = {  
+                    method: 'get_tops'
+                };   
+                var nq = queryResource.build(requestUri);
+                nq.queryNoHeader(args, function(organisations) {   
+                    getOrganisationUseres(organisations)
+                    .then(getRoles)
+                    .then(getNectar)
+                    .then(function(cachedCrmNectar) {
+                        
+                        deferred.resolve(cachedCrmNectar); 
+                    });  
+                }, function(rsp) { 
+                    alert("Request failed");
+                    console.log(rsp);
+                    deferred.reject(cachedCrmNectar);
+                });          
+            }        
+            return deferred.promise;
+        } 
+                 
+        
+        function getOrganisationUseres(organisations) { 
+            var deferred = $q.defer();  
+
+            var  queryies = [];
+            organisations.forEach(function(organisation) {
+                queryies.push(getUseres(organisation.pk));
+            });                
+            
+            $q.all(queryies).then(function(details) {
+                var buff = {};
+                organisations.forEach(function(organisation) { 
+                    _.extend(buff, cachedUseres[organisation.pk]); 
+                });  
+                cachedUseres = _.values(buff); 
+                cachedUseres = formater.keyArray(cachedUseres, 'personid');   
+        
+                console.log('cachedUseres==' + JSON.stringify(cachedUseres)); 
+                
+                deferred.resolve(cachedUseres); 
+            }, function(rsp) { 
+                alert("Request failed");
+                console.log(rsp);
+                deferred.reject(cachedUseres);
+            });         
+            return deferred.promise;
+        } 
+        
+        
+        function getUseres(organisationId) { 
+            var deferred = $q.defer(); 
+
+            if (organisationId in cachedUseres) {  
+                deferred.resolve(cachedUseres[organisationId]); 
+            } else {  
+                var requestUri = sessionStorage['bman'] + '/api/Organisation'; 
+                
+                var args = {
+                    id : organisationId,
+                    method: 'get_extented_accounts'
+                };  
+                
+                var nq = queryResource.build(requestUri);
+                nq.getNoHeader(args, function(details) { 
+
+                    console.log('getUseres==' + JSON.stringify(details)); 
+                    cachedUseres[organisationId] = details; 
+                
+                    deferred.resolve(cachedUseres[organisationId]);
+                }, function(rsp) { 
+                    alert("Request failed");
+                    console.log(rsp);
+                    deferred.reject(cachedUseres[organisationId]);
+                });            
+            }       
+            
+            return deferred.promise;
+        } 
+        
+ 
+        /** 
+         * request tenant bulk data from CRM.
+         *  
+         * @return {Object} $q.defer 
+         */ 
+        function getRoles() { 
+            var deferred = $q.defer(); 
+            
+            var args = { 
+                //method: 'get_all_services'
+            }; 
+            var roles = [];
+            var requestUri = sessionStorage['bman'] + '/api/Role';   
+            //var requestUri = sessionStorage['bman'] + '/api/Account';   
+            var nq = queryResource.build(requestUri);
+            nq.queryNoHeader(args, function(details) { 
+ 
+                angular.forEach(details, function(role) {
+                    if (role.fields.person in cachedUseres) { 
+                        cachedUseres[role.fields.person].contractor = role.pk;  
+                    }  
+                });       
+
+                console.log('getRoles==' + JSON.stringify(cachedUseres));
+                
+                deferred.resolve(cachedUseres); 
+            }, function(rsp) { 
+                alert("Request failed");
+                console.log(rsp);
+                deferred.reject(cachedUseres);
+            });
+            
+            return deferred.promise;
+        }  
+        
+
+        
+        /** 
+         * request tenant bulk data from CRM.
+         *  
+         * @return {Object} $q.defer 
+         */ 
+        function getNectar() { 
+            var deferred = $q.defer(); 
+            
+            if (!_.isEmpty(cachedCrmNectar)) {  
+                deferred.resolve(cachedCrmNectar); 
+            } else { 
+                var args = { 
+                    //count: 1000000
+                }; 
+                
+                var requestUri = sessionStorage['bman'] + '/api/Nectar';   
+                var nq = queryResource.build(requestUri);
+                nq.queryNoHeader(args, function(details) { 
+  
+                    cachedUseres = _.values(cachedUseres); 
+                    cachedUseres = formater.keyArray(cachedUseres, 'contractor');  
+                    var tempCrmNectar = [];
+                    angular.forEach(details, function(nectar) {
+                        tempCrmNectar.push(nectar.fields);   
+                    }); 
+                                    
+                    tempCrmNectar = formater.keyArray(tempCrmNectar, 'tennant_id');  
+
+                    for (var tennantId in tempCrmNectar) {
+                        var contractorId = tempCrmNectar[tennantId].contractor;
+                        if (contractorId && cachedUseres[contractorId]) { 
+                            tempCrmNectar[tennantId].fullname = cachedUseres[contractorId].fullname; 
+                            tempCrmNectar[tennantId].organisation = cachedUseres[contractorId].organisation; 
+                            tempCrmNectar[tennantId].email = cachedUseres[contractorId].email;
+                        }
+                    }
+                    
+                    console.log('getNectar==' + JSON.stringify(tempCrmNectar));  
+                               
+                    cachedCrmNectar = tempCrmNectar;
+                    deferred.resolve(cachedCrmNectar); 
+                }, function(rsp) { 
+                    alert("Request failed");
+                    console.log(rsp);
+                    deferred.reject(cachedCrmNectar);
+                });                      
+            } 
+            return deferred.promise;
+        }  
+                
+                
     }]);   
 }); 
  
