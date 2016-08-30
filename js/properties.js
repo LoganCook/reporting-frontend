@@ -1,5 +1,5 @@
 define({ 
-    "hpc.queues": "tesla gpu mecheng abraham short gtx3",
+    "hpc.queues": "tesla gpu tizard mecheng abraham short gtx3",
 
     "nova.domains": [{"id": 1, "name":"Flinders"}, 
                      {"id": 2, "name":"Adelaide"}, 
