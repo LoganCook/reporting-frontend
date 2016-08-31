@@ -59,7 +59,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             
             uniToDivide = {4 :{ name:'University of Adelaide', jobCount : 0, cpuSeconds : 0, cost :0}, 
                            11:{ name:'Flinders University', jobCount : 0, cpuSeconds : 0, cost :0}, 
-                           20:{ name:'Flinders University', jobCount : 0, cpuSeconds : 0, cost :0}};
+                           20:{ name:'University of South Australia', jobCount : 0, cpuSeconds : 0, cost :0}};
             
             $scope.jobCountSum = 0;
             $scope.cpuSecondsSum = 0;
@@ -205,18 +205,6 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                     uniToDivide[jobSummary[owner].billing].jobCount += jobSummary[owner].jobCount * 1;
                     totalCpuSeconds += jobSummary[owner].cpuSeconds * 1;
                 }
-            }
-             
-            /**
-             * allocate %age to only 3 uni 
-             */ 
-            for (var uni in uniToDivide) { 
-                uniToDivide[uni].cpuSeconds = uniToDivide[uni].cpuSeconds;
-                if (uniToDivide[uni].cpuSeconds === 0) {
-                    uniToDivide[uni].cost = 0.00;
-                } else {
-                    uniToDivide[uni].cost = (totalAmountToDivided * (uniToDivide[uni].cpuSeconds / totalCpuSeconds).toFixed(2)).toFixed(2);
-                }
             } 
         };
 
@@ -236,6 +224,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             $scope.cpuSecondsSum = 0;
             $scope.costSum = 0;
   
+            var cpuSecondsSumFor3Uni = 0;
             var userJobSummary = _.values(jobSummary);
              
             _.forEach(userJobSummary, function(userSummary) {
@@ -248,11 +237,15 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                         fullname: $scope.userChecked ? userSummary.fullname : "",
                         email: $scope.userChecked ? userSummary.email : "",
                         username: $scope.userChecked ? userSummary.username : "", 
-                        billing : 0,
+                        billing : userSummary.billing,
                         jobCount: 0,
                         cpuSeconds: 0,
                         cost: 0
                     };
+                }
+                
+                if (uniToDivide[organisations[_key].billing]) {
+                    cpuSecondsSumFor3Uni += userSummary.cpuSeconds;
                 }
                 
                 /**
@@ -289,8 +282,10 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                     if (uniToDivide[organisations[organisation].billing]) {
                         if (uniToDivide[organisations[organisation].billing].cpuSeconds === 0) {
                             organisations[organisation].cost = 0.00  + "";
+                        } else if (organisations[organisation].cpuSeconds === 0) {
+                            organisations[organisation].cost = 0.00  + "";
                         } else {
-                            organisations[organisation].cost = (uniToDivide[organisations[organisation].billing].cost * (organisations[organisation].cpuSeconds / uniToDivide[organisations[organisation].billing].cpuSeconds).toFixed(4)).toFixed(2);
+                             organisations[organisation].cost = (totalAmountToDivided * (organisations[organisation].cpuSeconds / cpuSecondsSumFor3Uni)).toFixed(2);
                         }
                         $scope.costSum += organisations[organisation].cost * 1; 
                     }  
