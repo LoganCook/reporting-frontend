@@ -150,7 +150,7 @@ define(['app', '../util'], function(app, util) {
                 alert("Request failed");
                 console.log(rsp);
                 deferred.reject(cachedCrmNectar);
-            });                      
+            });
         } 
         return deferred.promise;
     }  

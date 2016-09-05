@@ -112,12 +112,14 @@ define(['app', 'options', '../util2', '../util', './services', './crm'], functio
                     ' - ',  
                     ' - ',  
                     ' - ',  
+                    ' - ',  
                     $scope.sum.coreAllocation,  
                     '$' + $scope.sum.cost.toFixed(2) 
                 ]);      
             } else { 
                 csvData.push([ 
                     'Grand Total',  
+                    ' - ',  
                     ' - ',  
                     ' - ',  
                     ' - ',  
@@ -158,6 +160,8 @@ define(['app', 'options', '../util2', '../util', './services', './crm'], functio
          * @return {Void}
          */ 
         function getInstances(startTime, endTime) {
+            // initialize variables when fetching
+            cachedInstancesState = [];
             
             //var summaryUrl = '/usage/nova/NovaUsage_'  + startTime + '_' + endTime + '.json';
             var summaryUrl = '/usage/nova/NovaUsage_'  + 1451568600 + '_' + 1454246999 + '.json';
