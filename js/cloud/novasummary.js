@@ -42,13 +42,13 @@ define(['app', 'options', '../util2', '../util', './services', './crm'], functio
          * For creating table and exporting csv
          */ 
         $scope.colTitles = [];   
-        $scope.colTitles.push(['Tenant', 'openstack_id', 'User Name', 'Email', 'School','Server Name', 'Current Core Usage',  'Cost per Core Used ($10)']);
-        $scope.colTitles.push(['Tenant', 'openstack_id', 'User Name', 'Email', 'School',               'Current Core Usage',  'Cost per Core Used ($10)']);
+        $scope.colTitles.push(['Project',  'User Name', 'Email', 'School', 'Cores Used', 'Allocated Cores', '%age Used', 'Cost per Core Used', 'Server Name']);
+        $scope.colTitles.push(['Project',  'User Name', 'Email', 'School', 'Cores Used', 'Allocated Cores', '%age Used', 'Cost per Core Used']);
 
         $scope.fieldNames = [];
         var fieldNames = [];  
-        fieldNames.push(['tenantName', 'openstackId', 'fullname', 'email', 'school','server', 'core', 'cost']);
-        fieldNames.push(['tenantName', 'openstackId', 'fullname', 'email', 'school',          'core', 'cost']);
+        fieldNames.push(['tenantName',  'fullname', 'email', 'school', 'core', 'allocatedCore', 'ageUsed1', 'cost', 'server']);
+        fieldNames.push(['tenantName',  'fullname', 'email', 'school', 'core', 'allocatedCore', 'ageUsed1', 'cost']);
   
         $scope.fieldNames = fieldNames[1];
          
@@ -111,10 +111,11 @@ define(['app', 'options', '../util2', '../util', './services', './crm'], functio
                     ' - ',  
                     ' - ',  
                     ' - ',  
+                    $scope.sum.coreAllocation, 
                     ' - ',  
-                    ' - ',  
-                    $scope.sum.coreAllocation,  
-                    '$' + $scope.sum.cost.toFixed(2) 
+                    ' - ',   
+                    '$' + $scope.sum.cost.toFixed(2),
+                    ' - '
                 ]);      
             } else { 
                 csvData.push([ 
@@ -122,8 +123,9 @@ define(['app', 'options', '../util2', '../util', './services', './crm'], functio
                     ' - ',  
                     ' - ',  
                     ' - ',  
-                    ' - ',  
                     $scope.sum.coreAllocation,  
+                    ' - ',  
+                    ' - ',  
                     '$' + $scope.sum.cost.toFixed(2) 
                 ]); 
             }  

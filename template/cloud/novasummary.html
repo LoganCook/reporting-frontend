@@ -31,7 +31,7 @@
                             <button type="button" class="btn btn-default" ng-click="load()">Update</button>
                         </div>
                         <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-default" ng-csv="export()" field-separator="\t" filename="cloud.summary.tsv">Export as TSV</button>
+                            <button type="button" class="btn btn-default" ng-csv="export()" field-separator="\t" filename="cloud.summary.csv">Export as CSV</button>
                         </div>
                     </div>
                 </div>         
@@ -66,16 +66,17 @@
                         </tr>
 
                         <tr ng-show="instancesState.length">
-                            <th>Grand Total</th> 
-                            <th> - </th>   
+                            <th>Grand Total</th>    
                             <th> - </th>    
+                            <th> - </th>      
                             <th> - </th>   
-                            <th> - </th>   
-                            <th ng-show="serverChecked"> - </th>   
                             <!-- th>{{ sum.coreAllocation }}</th -->
-                            <th>{{ sum.core }}</th> 
+                            <th>{{ sum.core }}</th>  
+                            <th> - </th>    
+                            <th> - </th>  
                             <!-- th>{{ ((sum.core /  sum.coreAllocation) * 100).toFixed(2)}}%</th --> 
                             <th>${{ sum.cost.toFixed(2) }}</th> 
+                            <th ng-show="serverChecked"> - </th>  
                         </tr>                                         
                     </table>
                 </div>
