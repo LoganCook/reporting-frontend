@@ -95,7 +95,7 @@
                         <td>{{ usage.email }}</td>
                         <td>{{ usage.school }}</td>
                         <td ng-show="filesystemChecked">{{ usage.filesystem }}</td> 
-                        <td>{{ usage.approved_size }}</td>  
+                        <td>{{ usage.approvedSize }}</td>  
                         <td> {{ usage.usage }}</td> 
                         <td> {{ usage.quota250 }}</td>  
                         <td> {{ usage.usage == 0 ? 0 : Math.ceil(((usage.usage / usage.quota250).toFixed(2)) * 100) }}%</td>  
