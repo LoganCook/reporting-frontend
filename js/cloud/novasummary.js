@@ -1,8 +1,8 @@
-define(['app', 'options', '../util2', '../util', './services', './crm'], function(app, options, util, formater) {
+define(['app', 'options', '../util2', '../util', './services', './crm', './account'], function(app, options, util, formater) {
     'use strict';
     
-    app.controller("NovasummaryController", ["$rootScope", "$scope", "$timeout", "$filter", "reporting", "org", "queryResource", "$q", "flavor", "tenant", "crm", "spinner",
-    function($rootScope, $scope, $filter, timeout, reporting, org, queryResource, $q, flavor, tenant, crm, spinner) {
+    app.controller("NovasummaryController", ["$rootScope", "$scope", "$timeout", "$filter", "reporting", "org", "queryResource", "$q", "flavor", "tenant", "crm", "account", "spinner",
+    function($rootScope, $scope, $filter, timeout, reporting, org, queryResource, $q, flavor, tenant, crm, account, spinner) {
 
         /* global _ */
         
@@ -12,8 +12,7 @@ define(['app', 'options', '../util2', '../util', './services', './crm'], functio
         var startTimestamp, endTimestamp;
 
         var cachedInstancesState = [];
-        var cachedTenants = {}; 
-        var cachedCrmNectar = [];         
+        var cachedTenants = {};    
          
         /**
          * defaults 
@@ -43,12 +42,12 @@ define(['app', 'options', '../util2', '../util', './services', './crm'], functio
          */ 
         $scope.colTitles = [];   
         $scope.colTitles.push(['Project',  'User Name', 'Email', 'School', 'Cores Used', 'Allocated Cores', '%age Used', 'Cost per Core Used', 'Server Name']);
-        $scope.colTitles.push(['Project',  'User Name', 'Email', 'School', 'Cores Used', 'Allocated Cores', '%age Used', 'Cost per Core Used']);
+        $scope.colTitles.push(['Project',  'Cores Used', 'Allocated Cores', '%age Used', 'Cost per Core Used']);
 
         $scope.fieldNames = [];
         var fieldNames = [];  
         fieldNames.push(['tenantName',  'fullname', 'email', 'school', 'core', 'allocatedCore', 'ageUsed1', 'cost', 'server']);
-        fieldNames.push(['tenantName',  'fullname', 'email', 'school', 'core', 'allocatedCore', 'ageUsed1', 'cost']);
+        fieldNames.push(['tenantName',  'core', 'allocatedCore', 'ageUsed1', 'cost']);
   
         $scope.fieldNames = fieldNames[1];
          
@@ -119,10 +118,7 @@ define(['app', 'options', '../util2', '../util', './services', './crm'], functio
                 ]);      
             } else { 
                 csvData.push([ 
-                    'Grand Total',  
-                    ' - ',  
-                    ' - ',  
-                    ' - ',  
+                    'Grand Total',   
                     $scope.sum.coreAllocation,  
                     ' - ',  
                     ' - ',  
@@ -188,7 +184,7 @@ define(['app', 'options', '../util2', '../util', './services', './crm'], functio
                     
                     var summaryStates = summaryInstances(states);
                     $scope.instancesState = $scope.instancesState.concat(summaryStates); 
-                    
+                     
                     spinner.stop();
                 }); 
             }, function(rsp) {
@@ -210,7 +206,7 @@ define(['app', 'options', '../util2', '../util', './services', './crm'], functio
             var topOrg = []; 
             
             if (states.length) { 
-                angular.forEach(states, function(instance) {
+                angular.forEach(states, function(instance, idx) {
                     var arr = instance['manager'];
                     if (arr.length) {
                         instance['organisation'] = arr[0];
@@ -294,23 +290,32 @@ define(['app', 'options', '../util2', '../util', './services', './crm'], functio
          */ 
         function fillTenants(states) {  
             var deferred = $q.defer();
-            crm.getNectarUsers().then(function(data) {
-                cachedCrmNectar = data; 
-            }) 
+            crm.getUsers() 
+            .then(fillAccouns)
             .then(getTenants)
-            .then(function(tenants) {
+            .then(function(tenantsUsers) { 
+                cachedTenants = tenantsUsers.tenants; 
                 
                 angular.forEach(states, function(instance) { 
-                    if (tenants[instance.tenant] && tenants[instance.tenant].name) {
-                        instance.tenantName = tenants[instance.tenant].name;
-                        instance.openstackId =  tenants[instance.tenant].openstack_id;
-                        instance.fullname = tenants[instance.tenant].fullname;
-                        instance.school = tenants[instance.tenant].organisation;
-                        instance.email = tenants[instance.tenant].email;
+                    if (cachedTenants[instance.tenant] && cachedTenants[instance.tenant].name) {
+                        instance.tenantName = cachedTenants[instance.tenant].name; 
                     } else {
                         instance.tenantName = instance.tenant;
                     }
                 });
+
+                var users = tenantsUsers.users;                
+
+                users = formater.keyArray(users, 'openstack_id');   
+                
+                angular.forEach(states, function(instance) { 
+                    if (users[instance.account] && users[instance.account].email) { 
+                        instance.fullname = users[instance.account].fullname;
+                        instance.school = users[instance.account].organisation;
+                        instance.email = users[instance.account].email; 
+                    }
+                }); 
+                                
                 deferred.resolve(states);
             });
             return deferred.promise;
@@ -321,11 +326,12 @@ define(['app', 'options', '../util2', '../util', './services', './crm'], functio
          *  
          * @return {Object} $q.defer 
          */ 
-        function getTenants() { 
+        function getTenants(cachedCrmUsers) { 
             var deferred = $q.defer(); 
             
-            if (!_.isEmpty(cachedTenants)) {  
-                deferred.resolve(cachedTenants); 
+            if (!_.isEmpty(cachedTenants)) {
+                var obj = {tenants : cachedTenants , users : cachedCrmUsers};  
+                deferred.resolve(obj); 
             } else { 
                 var args = { 
                     object: 'tenant',
@@ -335,28 +341,46 @@ define(['app', 'options', '../util2', '../util', './services', './crm'], functio
                 nq.query(args, function(details) { 
                       
                     cachedTenants = formater.keyArray(details, 'openstack_id');   
-
-                    for (var tennantId in cachedTenants) {  
-                        if (cachedCrmNectar[tennantId]) { 
-                            cachedTenants[tennantId].fullname = cachedCrmNectar[tennantId].fullname; 
-                            cachedTenants[tennantId].organisation = cachedCrmNectar[tennantId].organisation;
-                            cachedTenants[tennantId].email = cachedCrmNectar[tennantId].email;
-                        }
-                    }                      
                     
-                    console.log('getTenants==' + JSON.stringify(cachedTenants));
-                    
-                    deferred.resolve(cachedTenants); 
+                    var tenantsUsers = {tenants : cachedTenants , users : cachedCrmUsers};
+                    deferred.resolve(tenantsUsers); 
                 }, function(rsp) { 
                     alert("Request failed");
                     console.log(rsp);
-                    deferred.reject(cachedTenants);
+                    deferred.reject({});
                 });                      
             } 
             return deferred.promise;
         } 
          
 
+        function fillAccouns(cachedCrmUsers) {  
+            var deferred = $q.defer();
+            
+            account(sessionStorage['keystone'],  startTimestamp, endTimestamp)
+            .then(function(accounts) {
+
+                cachedCrmUsers = formater.keyArray(cachedCrmUsers, 'email');  
+                accounts = _.values(accounts);   
+                 
+                angular.forEach(accounts, function(user) { 
+                    if (user.email && cachedCrmUsers[user.email]) { 
+                        user.fullname = cachedCrmUsers[user.email].fullname; 
+                        user.organisation = cachedCrmUsers[user.email].organisation; 
+                    } 
+                });             
+                
+                deferred.resolve(accounts);
+                
+            }, function(rsp) { 
+                alert("Request failed");
+                console.log(rsp);
+                deferred.reject({});
+            });     
+            
+            return deferred.promise; 
+        }   
+        
         /** 
          * summary instance by server or tenantName.
          * 
@@ -418,7 +442,7 @@ define(['app', 'options', '../util2', '../util', './services', './crm'], functio
                 $scope.sum.cost += instance.coreAllocation * 10 ;                 
             });
             return states;
-        }  
+        }      
     }]);   
 }); 
  

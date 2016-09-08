@@ -66,10 +66,10 @@
                         </tr>
 
                         <tr ng-show="instancesState.length">
-                            <th>Grand Total</th>    
-                            <th> - </th>    
-                            <th> - </th>      
-                            <th> - </th>   
+                            <th>Grand Total</th>     
+                            <th ng-show="serverChecked"> - </th>  
+                            <th ng-show="serverChecked"> - </th>  
+                            <th ng-show="serverChecked"> - </th>  
                             <!-- th>{{ sum.coreAllocation }}</th -->
                             <th>{{ sum.core }}</th>  
                             <th> - </th>    

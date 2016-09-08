@@ -23,10 +23,7 @@ define(['app', '../util'], function(app, util) {
                 angular.extend(buff, cachedUseres[organisation.pk]); 
             });  
             cachedUseres = _.values(buff); 
-            cachedUseres = util.keyArray(cachedUseres, 'personid');   
-    
-            console.log('cachedUseres==' + JSON.stringify(cachedUseres)); 
-            
+            cachedUseres = util.keyArray(cachedUseres, 'personid');    
             deferred.resolve(cachedUseres); 
         }, function(rsp) { 
             alert("Request failed");
@@ -51,11 +48,8 @@ define(['app', '../util'], function(app, util) {
             };  
             
             var nq = queryResource.build(requestUri);
-            nq.getNoHeader(args, function(details) { 
-
-                console.log('getUseres==' + JSON.stringify(details)); 
-                cachedUseres[organisationId] = details; 
-            
+            nq.getNoHeader(args, function(details) {  
+                cachedUseres[organisationId] = details;  
                 deferred.resolve(cachedUseres[organisationId]);
             }, function(rsp) { 
                 alert("Request failed");
@@ -80,8 +74,7 @@ define(['app', '../util'], function(app, util) {
             //method: 'get_all_services'
         }; 
 
-        var requestUri = sessionStorage['bman'] + '/api/Role';   
-        //var requestUri = sessionStorage['bman'] + '/api/Account';   
+        var requestUri = sessionStorage['bman'] + '/api/Role';    
         var nq = queryResource.build(requestUri);
         nq.queryNoHeader(args, function(details) { 
 
@@ -89,10 +82,7 @@ define(['app', '../util'], function(app, util) {
                 if (role.fields.person in cachedUseres) { 
                     cachedUseres[role.fields.person].contractor = role.pk;  
                 }  
-            });       
-
-            console.log('getRoles==' + JSON.stringify(cachedUseres));
-            
+            }); 
             deferred.resolve(cachedUseres); 
         }, function(rsp) { 
             alert("Request failed");
@@ -140,10 +130,7 @@ define(['app', '../util'], function(app, util) {
                         tempCrmNectar[tennantId].organisation = cachedUseres[contractorId].organisation; 
                         tempCrmNectar[tennantId].email = cachedUseres[contractorId].email;
                     }
-                }
-                
-                console.log('getNectar==' + JSON.stringify(tempCrmNectar));  
-                            
+                } 
                 cachedCrmNectar = tempCrmNectar;
                 deferred.resolve(cachedCrmNectar); 
             }, function(rsp) { 
@@ -172,8 +159,7 @@ define(['app', '../util'], function(app, util) {
                     getOrganisationUseres(organisations)
                     .then(getRoles)
                     .then(getNectar)
-                    .then(function() {
-                        
+                    .then(function() { 
                         deferred.resolve(cachedCrmNectar); 
                     });  
                 }, function(rsp) { 
