@@ -145,6 +145,7 @@ define(["client", "ng-csv", , "components/datePickers/date-pickers"], function(c
                     return $scope.export();
                 };
             },
+            replace: true,
             templateUrl: 'template/directives/ersa-search.html'
         };
     });

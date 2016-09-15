@@ -19,7 +19,7 @@
                     <p class="input-group">
                         <input type="text" class="form-control" uib-datepicker-popup="MMM/yyyy" ng-model="rangeEnd" is-open="rangeEndOpen" showWeeks="false" datepicker-options="{minMode: 'month'}" datepicker-mode="'month'" ng-required="true" onkeydown="return false"/>
                         <span class="input-group-btn">
-                            <button type="button" class="btn btn-default" ng-click="openRangeEnd()"><i class="glyphicon glyphicon-calendar"></i></button>
+                            <button type="button" class="btn btn-default btn-search" ng-click="openRangeEnd()"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
                     </p>
                 </div>                
@@ -28,10 +28,10 @@
                     <p>&nbsp;</p>
                     <div class="btn-group btn-group-justified" role="group">
                         <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-default" ng-click="load()">Update</button>
+                            <button type="button" class="btn btn-default btn-search" ng-click="load()">Update</button>
                         </div>
                         <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-default" ng-csv="export()" filename="cloud.summary.csv">Export as CSV</button>
+                            <button type="button" class="btn btn-default btn-search" ng-csv="export()" filename="cloud.summary.csv">Export as CSV</button>
                         </div>
                     </div>
                 </div>         
@@ -66,17 +66,17 @@
                         </tr>
 
                         <tr ng-show="instancesState.length">
-                            <th>Grand Total</th>     
-                            <th ng-show="serverChecked"> - </th>  
-                            <th ng-show="serverChecked"> - </th>  
-                            <th ng-show="serverChecked"> - </th>  
+                            <td><strong>Grand Total</strong></td>     
+                            <td ng-show="serverChecked"> - </td>  
+                            <td ng-show="serverChecked"> - </td>  
+                            <td ng-show="serverChecked"> - </td>  
                             <!-- th>{{ sum.coreAllocation }}</th -->
-                            <th>{{ sum.core }}</th>  
-                            <th> - </th>    
-                            <th> - </th>  
+                            <td><strong>{{ sum.core }}</strong></td>  
+                            <td> - </td>    
+                            <td> - </td>  
                             <!-- th>{{ ((sum.core /  sum.coreAllocation) * 100).toFixed(2)}}%</th --> 
-                            <th>${{ sum.cost.toFixed(2) }}</th> 
-                            <th ng-show="serverChecked"> - </th>  
+                            <td><strong>${{ sum.cost.toFixed(2) }}</strong></td> 
+                            <td ng-show="serverChecked"> - </td>  
                         </tr>                                         
                     </table>
                 </div>

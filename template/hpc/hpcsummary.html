@@ -21,7 +21,7 @@
                     <p class="input-group">
                         <input type="text" class="form-control" uib-datepicker-popup="MMM/yyyy" ng-model="rangeEnd" is-open="rangeEndOpen" showWeeks="false" datepicker-options="{minMode: 'month'}" datepicker-mode="'month'" ng-required="true" onkeydown="return false"/>
                         <span class="input-group-btn">
-                            <button type="button" class="btn btn-default" ng-click="openRangeEnd()"><i class="glyphicon glyphicon-calendar"></i></button>
+                            <button type="button" class="btn tn-default btn-search" ng-click="openRangeEnd()"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
                     </p>
                 </div>
@@ -30,10 +30,10 @@
                     <p>{{ status }}</p>
                     <div class="btn-group btn-group-justified" role="group">
                         <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-default" ng-click="load()">Update</button>
+                            <button type="button" class="btn tn-default btn-search" ng-click="load()">Update</button>
                         </div>
                         <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-default" ng-csv="export()" field-separator="\t" filename="hpc.summary.csv">Export as CSV</button>
+                            <button type="button" class="btn btn-default btn-search" ng-csv="export()" field-separator="\t" filename="hpc.summary.csv">Export as CSV</button>
                         </div>
                     </div>
                 </div>
@@ -89,13 +89,13 @@
                         <td>${{ sum.cost }}</td> 
                     </tr>
                     <tr ng-show="jobSummary.length">
-                        <th>Grand Total</th>
+                        <td><strong>Grand Total</strong></td>
                         <td ng-show="userChecked"> - </td> 
                         <td ng-show="userChecked"> - </td> 
                         <td ng-show="userChecked"> - </td>  
-                        <th>{{ formatNumber(jobCountSum) }}</th>
-                        <th>{{ formatNumber(cpuSecondsSum / 3600) }}</th> 
-                        <td>${{ costSum }}</td> 
+                        <td><strong>{{ formatNumber(jobCountSum) }}</strong></td>
+                        <td><strong>{{ formatNumber(cpuSecondsSum / 3600) }}</strong></td> 
+                        <td><strong>${{ costSum }}</td> 
                     </tr>                    
                 </table>
             </div>

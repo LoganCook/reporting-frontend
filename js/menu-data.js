@@ -15,17 +15,15 @@ define({
             "XFS": ["/storage/xfs", "XFS"],
             "HPC Storage": ["/storage/hpcStorage", "HPCStorage"],
             //"HNAS": ["/storage/hnas", "HNAS"],
-            "HNAS/FileSystem": ["/storage/hnas/fileSystem", "FileSystem"],
-            "HNAS/VirtualVolume": ["/storage/hnas/virtualVolume", "VirtualVolume"],
+            "HNAS": ["sub", ["/storage/hnas/fileSystem", "FileSystem"], ["/storage/hnas/virtualVolume","VirtualVolume"],], 
+            //"HNAS/FileSystem": ["/storage/hnas/fileSystem", "FileSystem"],
+            //"HNAS/VirtualVolume": ["/storage/hnas/virtualVolume", "VirtualVolume"],
             "HCP": ["/storage/hcp", "HCP"],
             "Allocation Summary": ["/storage/allocationSummary", "AllocationSummary"],
         },
         "Cloud": {
             "Identity (Keystone)": ["/cloud/keystone", "Keystone"],
             "Virtual Machines (Nova)": ["nova"],
-            "Cloud Summary": ["/cloud/novasummary", "Novasummary"],
-            //"Block Storage (Cinder)": ["/cloud/cinder", "Cinder"],
-            //"Object Storage (Swift)": ["/cloud/swift", "Swift"]
-            //"Cloud Summary": ["/cloud/cloudSummary", "CloudSummary"],
+            "Cloud Summary": ["/cloud/novasummary", "Novasummary"], 
         }
 });

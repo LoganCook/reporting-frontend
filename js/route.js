@@ -15,6 +15,7 @@ define(["menu-data"], function(menuData) {
                 // This is a temporary solution until menu items and the states
                 // they represent have been rewirtten.
                 if (name == 'nova') continue;
+                
                 var url = name;
                 var template = "template" + name + ".html";
                 var controller = details[1] + "Controller";
@@ -24,5 +25,8 @@ define(["menu-data"], function(menuData) {
         }
 
         $stateProvider.state('nova', { url: '/nova', template: '<nova></nova>'});
+        $stateProvider.state('/storage/hnas/fileSystem', { url: '/storage/hnas/fileSystem', templateUrl: 'template/storage/hnas/fileSystem.html', controller: 'FileSystemController'});
+        $stateProvider.state('/storage/hnas/virtualVolume', { url: '/storage/hnas/virtualVolume', templateUrl: 'template/storage/hnas/virtualVolume.html', controller: 'VirtualVolumeController'});
+        
     };
 });

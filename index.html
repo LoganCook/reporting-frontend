@@ -5,44 +5,86 @@
     <title>eRSA Reporting</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style-new.css">     
 </head>
 
 <body ng-strict-di>
 
-    <nav ng-cloak class="navbar navbar-default" style="margin-bottom: 0px;" role="navigation" ng-controller="MenuController">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" ng-init="navCollapsed = true" ng-click="navCollapsed = !navCollapsed">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" ui-sref="home">
-                <img style="max-width: 50px; margin-top: -15px;" src="images/ersa.png">
-            </a>
+    <header class="header desktop-menu">
+        <div class="row" data-equalizer data-options="equalize_on_stack: true">
+            <div class="column" ng-controller="MenuController">
+                <div class="menu-wrap">
+                    <div class="logo" data-equalizer-watch>
+                        <a class="logo-dark" ui-sref="home"><img src="../img/logo-dark.png"></a>
+                        <a class="logo-light" ui-sref="home"><img src="../img/logo-light.png"></a>
+                    </div>
+
+                    <div class="menu">
+                        <ul class="menu-list menu" data-equalizer-watch ng-show="configured"> 
+                            <li class="menu-item menu-item-has-children" ng-repeat="(menu, items) in menus">
+                                <a href="#">{{ menu }}</a>
+                                <ul class="sub-menu"> 
+                                    <li class="{{ states[0] == 'sub' ? 'menu-item menu-item-has-children' : 'menu-item'}}" ng-repeat="(item, states) in items">
+                                        <a ui-sref="{{ states[0] == 'sub' ? '#':states[0]}}">{{ item }}</a>
+                                        <ul class="sub-menu" ng-show="{{ states[0] == 'sub'}}">
+                                            <li class="menu-item" ng-repeat="(url, submenu) in states">
+                                                <a ng-show="{{ url != 0}}" ui-sref="{{submenu[0]}}">{{submenu[1]}}</a>
+                                            </li> 
+                                        </ul>
+                                    </li> 
+                                </ul>
+                            </li> 
+                        </ul>
+                    </div> 
+                    <!--div class="collapse navbar-collapse">
+                        <ul class="nav navbar-nav navbar-right">
+                            <li ng-show="configured"><a href="#">{{ email }}</a></li>
+                            <li ng-show="configured"><a ng-click="reset()" href="#">Logout</a></li>
+                            <li ng-hide="configured"><a href="https://rapid.aaf.edu.au/jwt/authnrequest/research/F4OXTn_Jp5YxQ1i0brnVYg">AAF Login</a></li>
+                            <li><a href="http://www.ersa.edu.au">eRSA</a></li>
+                        </ul>
+                    </div --> 
+                </div>
+            </div>
         </div>
+    </header>
 
-        <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
-            <ul class="nav navbar-nav" ng-show="configured">
-                <li uib-dropdown  ng-repeat="(menu, items) in menus">
-                    <a href="#" uib-dropdown-toggle>{{ menu }}</a>
-                    <ul uib-dropdown-menu role="menu">
-                        <li ng-repeat="(item, state) in items" >
-                            <a ui-sref="{{ state[0] }}">{{ item }}</a>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
 
-            <ul class="nav navbar-nav navbar-right">
-                <li ng-show="configured"><a href="#">{{ email }}</a></li>
-                <li ng-show="configured"><a ng-click="reset()" href="#">Logout</a></li>
-                <li ng-hide="configured"><a href="https://rapid.aaf.edu.au/jwt/authnrequest/research/F4OXTn_Jp5YxQ1i0brnVYg">AAF Login</a></li>
-                <li><a href="http://www.ersa.edu.au">eRSA</a></li>
-            </ul>
+    <header class="header mobile-menu">
+        <div class="row" data-equalizer data-options="equalize_on_stack: true">
+            <div class="column" ng-controller="MenuController">
+                <div class="menu-wrap">
+                    <div class="logo" data-equalizer-watch>
+                        <a class="logo-dark" ui-sref="home"><img src="../img/logo-dark.png"></a>
+                        <a class="logo-light" ui-sref="home"><img src="../img/logo-light.png"></a>
+                    </div>
+                    <div class="menu">
+                        <ul class="menu-list menu" data-equalizer-watch ng-show="configured"> 
+                            <li class="menu-item menu-item-has-children" ng-repeat="(menu, items) in menus">
+                                <a href="#">{{ menu }}</a>
+                                <ul class="sub-menu"> 
+                                    <li class="{{ states[0] == 'sub' ? 'menu-item menu-item-has-children' : 'menu-item'}}" ng-repeat="(item, states) in items">
+                                        <a ui-sref="{{ states[0] == 'sub' ? '#':states[0]}}">{{ item }}</a>
+                                        <ul class="sub-menu" ng-show="{{ states[0] == 'sub'}}">
+                                            <li class="menu-item" ng-repeat="(url, submenu) in states">
+                                                <a ng-show="{{ url != 0}}" ui-sref="{{submenu[0]}}">{{submenu[1]}}</a>
+                                            </li> 
+                                        </ul>
+                                    </li> 
+                                </ul>
+                            </li> 
+                        </ul>
+                    </div> 
+                </div>
+            </div>
         </div>
-    </nav>
-
+    </header>  
+    
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    
     <div ui-view></div>
 
     <!-- angular-spinner element: use service spinner.start|stop to control for showing|hiding -->

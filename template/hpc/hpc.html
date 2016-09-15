@@ -14,11 +14,11 @@
                             <option ng-repeat="org in topOrgs" value="{{ org.pk }}">{{ org.fields.name }}</option>
                         </select>
                     </div>
-                </div>
+                </div> 
 
-                <ersa-search 
-                    start-date-class="col-md-3" end-date-class="col-md-3" 
-                    button-class="col-md-3" 
+                <ersa-search class="col-md-9"
+                    start-date-class="col-md-4" end-date-class="col-md-4" 
+                    button-class="col-md-4" 
                     export-file-name="hpc.csv"/>
                 
             </div>

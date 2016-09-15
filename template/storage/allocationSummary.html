@@ -43,7 +43,7 @@
                     <p class="input-group">
                         <input type="text" class="form-control" uib-datepicker-popup="MMM/yyyy" ng-model="rangeEnd" is-open="rangeEndOpen" showWeeks="false" datepicker-options="{minMode: 'month'}" datepicker-mode="'month'" ng-required="true" onkeydown="return false"/>
                         <span class="input-group-btn">
-                            <button type="button" class="btn btn-default" ng-click="openRangeEnd()"><i class="glyphicon glyphicon-calendar"></i></button>
+                            <button type="button" class="btn btn-default btn-search" ng-click="openRangeEnd()"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
                     </p>
                 </div>
@@ -52,10 +52,10 @@
                     <p>{{ status }}</p>
                     <div class="btn-group btn-group-justified" role="group">
                         <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-default" ng-click="load()">Update</button>
+                            <button type="button" class="btn btn-default btn-search" ng-click="load()">Update</button>
                         </div>
                         <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-default" ng-csv="export()" filename="allocation.summary.csv">Export as CSV</button>
+                            <button type="button" class="btn btn-defaul btn-search" ng-csv="export()" filename="allocation.summary.csv">Export as CSV</button>
                         </div>
                     </div>
                 </div>
@@ -102,16 +102,16 @@
                         <td>${{ formatNumber(usage.per5dollar) }}.00</td>  
                     </tr> 
                     <tr ng-show="usages.length">
-                        <td>Grand Total</td>
+                        <td><strong>Grand Total</strong></td>
                         <td> </td>
                         <td> </td>
                         <td> </td>
                         <td ng-show="filesystemChecked"> </td> 
-                        <td>{{ total.rds }}</td>  
-                        <td>{{ total.currentUsage.toFixed(2) }}</td> 
-                        <td>{{ total.quota250 }}</td>  
-                        <td>{{ total.currentUsage == 0 ? 0 : Math.ceil(((total.currentUsage / total.quota250).toFixed(2)) * 100) }}%</td>  
-                        <td>${{ formatNumber(total.per5dollar) }}.00</td>  
+                        <td><strong>{{ total.rds }}</strong></td>  
+                        <td><strong>{{ total.currentUsage.toFixed(2) }}</strong></td> 
+                        <td><strong>{{ total.quota250 }}</strong></td>  
+                        <td><strong>{{ total.currentUsage == 0 ? 0 : Math.ceil(((total.currentUsage / total.quota250).toFixed(2)) * 100) }}%</strong></td>  
+                        <td><strong>${{ formatNumber(total.per5dollar) }}.00</strong></td>  
                     </tr>                     
                 </table> 
                 

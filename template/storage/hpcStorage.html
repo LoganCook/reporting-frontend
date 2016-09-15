@@ -34,7 +34,7 @@
                     <p class="input-group">
                         <input type="text" class="form-control" uib-datepicker-popup="MMM/yyyy" ng-model="rangeEnd" is-open="rangeEndOpen" showWeeks="false" datepicker-options="{minMode: 'month'}" datepicker-mode="'month'" ng-required="true" onkeydown="return false"/>
                         <span class="input-group-btn">
-                            <button type="button" class="btn btn-default" ng-click="openRangeEnd()"><i class="glyphicon glyphicon-calendar"></i></button>
+                            <button type="button" class="btn btn-default btn-search" ng-click="openRangeEnd()"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
                     </p>
                 </div>
@@ -43,10 +43,10 @@
                     <p>{{ status }}</p>
                     <div class="btn-group btn-group-justified" role="group">
                         <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-default" ng-click="load()">Update</button>
+                            <button type="button" class="btn btn-default btn-search" ng-click="load()">Update</button>
                         </div>
                         <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-default" ng-csv="export()" filename="hpc.storage.csv">Export as CSV</button>
+                            <button type="button" class="btn btn-default btn-search" ng-csv="export()" filename="hpc.storage.csv">Export as CSV</button>
                         </div>
                     </div>
                 </div>
@@ -87,14 +87,14 @@
                             <td>${{ formatNumber(entry.per5dollar) }}.00</td>
                         </tr>
                         <tr ng-show="output.summed.length">
-                            <th>Grand Total</th>  
+                            <td><strong>Grand Total</strong></td>  
                             <td ng-show="userChecked || filesystemChecked"> - </td> 
                             <td ng-show="userChecked || filesystemChecked"> - </td> 
                             <td ng-show="userChecked || filesystemChecked"> - </td>  
-                            <th>{{ total.currentUsage.toFixed(2) }}</th>
-                            <th>{{ total.quota250 }} </th> 
-                            <th>{{ total.currentUsage == 0 ? 0 : Math.ceil(((total.currentUsage / total.quota250).toFixed(2)) * 100) }}%</th>
-                            <th>${{ formatNumber(total.per5dollar) }}.00</th>  
+                            <td><strong>{{ total.currentUsage.toFixed(2) }}</strong></td>
+                            <td><strong>{{ total.quota250 }}</strong> </td> 
+                            <td><strong>{{ total.currentUsage == 0 ? 0 : Math.ceil(((total.currentUsage / total.quota250).toFixed(2)) * 100) }}%</strong></td>
+                            <td><strong>${{ formatNumber(total.per5dollar) }}.00</strong></td>  
                         </tr                          
                     </table>
                 </div>
