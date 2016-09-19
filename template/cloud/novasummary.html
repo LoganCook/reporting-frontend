@@ -1,11 +1,11 @@
 <div class="container-fluid">
-    <h3 class="text-center">Cloud (Nova) Summary</h3>
+    <h3 class="text-center">NECTAR USAGE</h3>
 
     <div>
         <form>
             <div class="row">
                 <div class="col-md-4">
-                    <p>Domain</p>
+                    <p>Organisation</p>
                     <div class="form-group">
                         <select name="domainSelect" id="domainSelect" ng-change="selectDomain()" ng-model="selectedDomain" class="form-control">
                             <option value="0">All</option>
@@ -15,7 +15,7 @@
                 </div> 
 
                 <div class="col-md-4">
-                    <p>Month</p>
+                    <p>Select Usage Month</p>
                     <p class="input-group">
                         <input type="text" class="form-control" uib-datepicker-popup="MMM/yyyy" ng-model="rangeEnd" is-open="rangeEndOpen" showWeeks="false" datepicker-options="{minMode: 'month'}" datepicker-mode="'month'" ng-required="true" onkeydown="return false"/>
                         <span class="input-group-btn">
@@ -28,7 +28,7 @@
                     <p>&nbsp;</p>
                     <div class="btn-group btn-group-justified" role="group">
                         <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-default btn-search" ng-click="load()">Update</button>
+                            <button type="button" class="btn btn-default btn-search" ng-click="load()">View Usage</button>
                         </div>
                         <div class="btn-group" role="group">
                             <button type="button" class="btn btn-default btn-search" ng-csv="export()" filename="cloud.summary.csv">Export as CSV</button>
@@ -41,7 +41,7 @@
                 <div class="col-md-12">
                     <div class="form-group text-center"> 
                         <label class="checkbox-inline">
-                            <input type="checkbox" ng-model="serverChecked" ng-change="selectDomain()">  Server
+                            <input type="checkbox" ng-model="serverChecked" ng-change="selectDomain()"> View Servers
                         </label> 
                     </div>                    
                 </div>
@@ -72,7 +72,6 @@
                             <td ng-show="serverChecked"> - </td>  
                             <!-- th>{{ sum.coreAllocation }}</th -->
                             <td><strong>{{ sum.core }}</strong></td>  
-                            <td> - </td>    
                             <td> - </td>  
                             <!-- th>{{ ((sum.core /  sum.coreAllocation) * 100).toFixed(2)}}%</th --> 
                             <td><strong>${{ sum.cost.toFixed(2) }}</strong></td> 

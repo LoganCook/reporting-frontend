@@ -41,13 +41,13 @@ define(['app', 'options', '../util2', '../util', './services', './crm', './accou
          * For creating table and exporting csv
          */ 
         $scope.colTitles = [];   
-        $scope.colTitles.push(['Project',  'User Name', 'Email', 'School', 'Cores Used', 'Allocated Cores', '%age Used', 'Cost per Core Used', 'Server Name']);
-        $scope.colTitles.push(['Project',  'Cores Used', 'Allocated Cores', '%age Used', 'Cost per Core Used']);
+        $scope.colTitles.push(['Project',  'User Name', 'Email', 'School', 'Total Cores Used', 'Core Quota Allocated', 'Cost per Core Used', 'Server Name']);
+        $scope.colTitles.push(['Project',                                  'Total Cores Used', 'Core Quota Allocated', 'Cost per Core Used']);
 
         $scope.fieldNames = [];
         var fieldNames = [];  
-        fieldNames.push(['tenantName',  'fullname', 'email', 'school', 'core', 'allocatedCore', 'ageUsed1', 'cost', 'server']);
-        fieldNames.push(['tenantName',  'core', 'allocatedCore', 'ageUsed1', 'cost']);
+        fieldNames.push(['tenantName',  'fullname', 'email', 'school', 'core', 'allocatedCore', 'cost', 'server']);
+        fieldNames.push(['tenantName',  'core', 'allocatedCore', 'cost']);
   
         $scope.fieldNames = fieldNames[1];
          

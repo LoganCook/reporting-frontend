@@ -39,7 +39,7 @@
                 </div> 
 
                 <div class="{{values(xfs.host).length > 1 ? 'col-md-3' : 'col-md-4'}}">
-                    <p>Month</p>
+                    <p>Select Usage Month</p>
                     <p class="input-group">
                         <input type="text" class="form-control" uib-datepicker-popup="MMM/yyyy" ng-model="rangeEnd" is-open="rangeEndOpen" showWeeks="false" datepicker-options="{minMode: 'month'}" datepicker-mode="'month'" ng-required="true" onkeydown="return false"/>
                         <span class="input-group-btn">
@@ -49,10 +49,10 @@
                 </div>
 
                 <div class="{{values(xfs.host).length > 1 ? 'col-md-3' : 'col-md-4'}}">
-                    <p>{{ status }}</p>
+                    <p>&nbsp;</p>
                     <div class="btn-group btn-group-justified" role="group">
                         <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-default btn-search" ng-click="load()">Update</button>
+                            <button type="button" class="btn btn-default btn-search" ng-click="load()">View Usage</button>
                         </div>
                         <div class="btn-group" role="group">
                             <button type="button" class="btn btn-defaul btn-search" ng-csv="export()" filename="allocation.summary.csv">Export as CSV</button>
@@ -66,7 +66,7 @@
                 <div class="col-md-12">
                     <div class="form-group text-center">
                         <label class="checkbox-inline">
-                            <input type="checkbox" ng-model="filesystemChecked" ng-change="orgChanged()"> File system
+                            <input type="checkbox" ng-model="filesystemChecked" ng-change="orgChanged()"> View File system
                         </label> 
                     </div>                    
                 </div>
@@ -78,27 +78,25 @@
             <div class="col-md-12">
                 <table class="table table-striped">
                     <tr>
-                        <th>Allocation</th>
+                        <th>{{ersaUser}} Allocation Name</th>
+                        <th>School</th>
                         <th>User Name</th>
                         <th>Email</th>
-                        <th>School</th>
                         <th ng-show="filesystemChecked">File System</th> 
-                        <th>RDS Allocated(GB)</th> 
-                        <th>Currrent Usage(GB)</th> <!--th>Quota</th --> 
-                        <th>250GB Quota Blocks</th> 
-                        <th>%age Used of Quota</th> 
-                        <th>$5 per 250GB</th> 
+                        <th>RDS GB Allocated</th> 
+                        <th>Total GB Usaged</th>  
+                        <th>250GB Quota Allocated</th>  
+                        <th>Cost per Quota</th> 
                     </tr>
                     <tr ng-repeat="usage in usages | orderBy: 'rds'">
                         <td>{{ usage.rds }}</td>
+                        <td>{{ usage.school }}</td>
                         <td>{{ usage.username }}</td>
                         <td>{{ usage.email }}</td>
-                        <td>{{ usage.school }}</td>
                         <td ng-show="filesystemChecked">{{ usage.filesystem }}</td> 
                         <td>{{ usage.approvedSize }}</td>  
                         <td> {{ usage.usage }}</td> 
                         <td> {{ usage.quota250 }}</td>  
-                        <td> {{ usage.usage == 0 ? 0 : Math.ceil(((usage.usage / usage.quota250).toFixed(2)) * 100) }}%</td>  
                         <td>${{ formatNumber(usage.per5dollar) }}.00</td>  
                     </tr> 
                     <tr ng-show="usages.length">
@@ -110,7 +108,6 @@
                         <td><strong>{{ total.rds }}</strong></td>  
                         <td><strong>{{ total.currentUsage.toFixed(2) }}</strong></td> 
                         <td><strong>{{ total.quota250 }}</strong></td>  
-                        <td><strong>{{ total.currentUsage == 0 ? 0 : Math.ceil(((total.currentUsage / total.quota250).toFixed(2)) * 100) }}%</strong></td>  
                         <td><strong>${{ formatNumber(total.per5dollar) }}.00</strong></td>  
                     </tr>                     
                 </table> 

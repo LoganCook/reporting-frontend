@@ -463,6 +463,20 @@ ul, ol, li {
     color: #fefefe;
 }
 
+
+.ng-scope .container-fluid {
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+.ng-scope .row {
+    /*max-width: 75rem; */
+    max-width: none;
+    margin-right: -15px;
+    margin-left: -15px;
+    flex-flow: row wrap;
+}
  
 table.table-striped {
   color: #0a0a0a; }
@@ -472,7 +486,6 @@ table.table-striped {
     table tr th {
       color: white; }
   table.table-striped th {
-    font-weight: normal;
-    font-size: 1.125rem;
+    font-weight: normal; 
     font-family: "Raleway", sans-serif; }
  
