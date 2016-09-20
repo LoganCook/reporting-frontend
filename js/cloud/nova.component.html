@@ -13,8 +13,8 @@
                         </select>
                     </div>
                 </div>
-                <date-pickers pickers="$ctrl.pickers" on-done="$ctrl.search(dates)" button-tilte="Search"></date-pickers>
-                <div class="col-md-1">
+                <date-pickers class="col-md-6" pickers="$ctrl.pickers" on-done="$ctrl.search(dates)" button-tilte="Search"></date-pickers>
+                <div class="col-md-3">
                   <p>&nbsp;</p>
                   <button type="button" class="btn btn-default btn-search" ng-csv="$ctrl.getCsvData()" filename={{$ctrl.csvFileName}}>Export as CSV</button>
                 </div>

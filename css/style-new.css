@@ -488,4 +488,7 @@ table.table-striped {
   table.table-striped th {
     font-weight: normal; 
     font-family: "Raleway", sans-serif; }
- 
+
+a:hover, a:focus { 
+    text-decoration: none;
+}

@@ -2,9 +2,13 @@ define(["app", "menu-data"], function (app, menuData) {
     app.controller("MenuController", ["$rootScope", "$scope",
          function ($rootScope, $scope) {  
             
+            $scope.isArray = angular.isArray;
+            
             var ersaUser = false; 
              
-            $scope.menus = menuData.portal;;  
+            $scope.menus = menuData.ersa;
+            //$scope.menus = menuData.portal;  
+            
             if(ersaUser === true){ 
                 $scope.menus = menuData.ersa;
                 sessionStorage['ersaUser'] = true; 

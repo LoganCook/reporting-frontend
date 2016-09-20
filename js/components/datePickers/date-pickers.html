@@ -1,8 +1,9 @@
-<div ng-repeat="picker in $ctrl.pickers">
+
+<div ng-repeat="picker in $ctrl.pickers" ng-class="col-md-8">
   <date-picker-uib picker="picker"></date-picker-uib>
 </div>
 
-<div class="col-md-1">
+<div class="col-md-4">
   <p>&nbsp;</p>
   <button type="button" class="btn btn-default btn-search" ng-click="$ctrl.collect()">{{ $ctrl.buttonTilte }}</button>
 </div>
