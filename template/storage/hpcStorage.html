@@ -67,7 +67,8 @@
                 <div class="col-md-12">
                     <table class="table table-striped">
                         <tr>
-                            <th width="30%"> School </th> 
+                            <th ng-show="loggedInAsErsaUser">Organisation</th>
+                            <th width="20%"> School </th> 
                             <th ng-show="userChecked || filesystemChecked">User ID</th>
                             <th ng-show="userChecked || filesystemChecked">User Name</th> 
                             <th ng-show="userChecked || filesystemChecked">Email</th> 
@@ -76,6 +77,7 @@
                             <th>Cost per Quota</th>
                         </tr>
                         <tr ng-repeat="entry in output.summed | orderBy: ['school','username']">
+                            <td ng-show="loggedInAsErsaUser">{{ entry.organisation }}</td>
                             <td>{{ entry.school }}</td> 
                             <td ng-show="userChecked || filesystemChecked">{{ entry.username }}</td> 
                             <td ng-show="userChecked || filesystemChecked">{{ entry.fullname }}</td>  
@@ -86,12 +88,13 @@
                         </tr>
                         <tr ng-show="output.summed.length">
                             <td><strong>Grand Total</strong></td>  
+                            <td ng-show="loggedInAsErsaUser"> - </td>
                             <td ng-show="userChecked || filesystemChecked"> - </td> 
                             <td ng-show="userChecked || filesystemChecked"> - </td> 
                             <td ng-show="userChecked || filesystemChecked"> - </td>  
                             <td><strong>{{ total.currentUsage.toFixed(2) }}</strong></td>
                             <td><strong>{{ total.quota250 }}</strong> </td> 
-                             <td><strong>${{ formatNumber(total.per5dollar) }}.00</strong></td>  
+                            <td><strong>${{ formatNumber(total.per5dollar) }}.00</strong></td>  
                         </tr                          
                     </table>
                 </div>

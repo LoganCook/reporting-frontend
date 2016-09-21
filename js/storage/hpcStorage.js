@@ -35,7 +35,8 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             summed: []
         };
         
-        $scope.userChecked = false;
+        $scope.userChecked = false;        
+        $scope.loggedInAsErsaUser = sessionStorage['ersaUser'] ;
         
         $scope.rangeStart  =  new Date();
         $scope.rangeEnd =  new Date();
@@ -209,6 +210,8 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                     }
                 }
             });
+                        
+            var topOrganisations =  util.keyArray($scope.topOrgs,  "pk"); 
             
             /** clear cached memory */ 
             var summed = {};
@@ -233,6 +236,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                         summed[_sumeKey].fullname = userAccountMap[summed[_sumeKey].username].fullname;
                         summed[_sumeKey].email = userAccountMap[summed[_sumeKey].username].email;
                         summed[_sumeKey].school = userAccountMap[summed[_sumeKey].username].organisation;
+                        summed[_sumeKey].organisation = topOrganisations[userAccountMap[summed[_sumeKey].username].billing].fields.name;
                     }
                 }
                 
@@ -267,6 +271,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 var _school = entry.school ? entry.school : '-';
                 if (!(_school in summedBySchool)) {
                     summedBySchool[_school] = {
+                        organisation : entry.organisation,
                         school: _school,
                         username: '', 
                         usage: 0,
@@ -293,40 +298,74 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
          */ 
         $scope.export = function() {
             var records = [];
+            var data = [];
 
-            _.forEach($scope.output.summed, function(entry) {
-                records.push([
-                    entry.school,
-                    entry.username,
-                    entry.fullname,
-                    entry.email,
-                    entry.usage,
-                    entry.quota250,
-                    entry.usage == 0 ? 0 : $scope.Math.ceil(((entry.usage / entry.quota250).toFixed(2)) * 100) + '%',
-                    '$' + $scope.formatNumber(entry.per5dollar) + '.00'
+            if($scope.loggedInAsErsaUser){
+                _.forEach($scope.output.summed, function(entry) {
+                    records.push([
+                        entry.organisation,
+                        entry.school,
+                        entry.username,
+                        entry.fullname,
+                        entry.email,
+                        entry.usage,
+                        entry.quota250,
+                        '$' + $scope.formatNumber(entry.per5dollar) + '.00'
+                    ]);
+                });
+            
+                records = $filter('orderBy')(records, [0, 1]);
+                
+                data = [
+                    ["Organisation", "School", "User ID", "User Name", "Email","Total GB Used", "250GB Quota Allocated", "Cost per Quota"]
+                ];
+            
+                Array.prototype.push.apply(data, records) ;
+                
+                /** Grand total data. */
+                data.push([
+                    'Grand Total',
+                    ' - ',
+                    ' - ',
+                    ' - ',
+                    ' - ',
+                    $scope.total.currentUsage.toFixed(2),
+                    $scope.total.quota250,
+                    '$' + $scope.formatNumber($scope.total.per5dollar) + '.00'
                 ]);
-            });
-          
-            records = $filter('orderBy')(records, [0, 1]);
+                           
+            }else{       
+                _.forEach($scope.output.summed, function(entry) {
+                    records.push([
+                        entry.school,
+                        entry.username,
+                        entry.fullname,
+                        entry.email,
+                        entry.usage,
+                        entry.quota250,
+                        '$' + $scope.formatNumber(entry.per5dollar) + '.00'
+                    ]);
+                });
             
-            var data = [
-                ["School", "User ID", "User Name", "Email","Used GB", "250GB Quota Blocks", "%age Used of Quota", "$5 per 250GB Quota"]
-            ];
-        
-            Array.prototype.push.apply(data, records) ;
+                records = $filter('orderBy')(records, [0, 1]);
+                
+                data = [
+                    ["School", "User ID", "User Name", "Email","Total GB Used", "250GB Quota Allocated", "Cost per Quota"]
+                ];
             
-            /** Grand total data. */
-            data.push([
-                'Grand Total',
-                ' - ',
-                ' - ',
-                ' - ',
-                $scope.total.currentUsage.toFixed(2),
-                $scope.total.quota250,
-                $scope.total.currentUsage == 0 ? 0 + '%' : Math.ceil((($scope.total.currentUsage / $scope.total.quota250).toFixed(2)) * 100) + '%',
-                '$' + $scope.formatNumber($scope.total.per5dollar) + '.00'
-            ]);
-            
+                Array.prototype.push.apply(data, records) ;
+                
+                /** Grand total data. */
+                data.push([
+                    'Grand Total',
+                    ' - ',
+                    ' - ',
+                    ' - ',
+                    $scope.total.currentUsage.toFixed(2),
+                    $scope.total.quota250,
+                    '$' + $scope.formatNumber($scope.total.per5dollar) + '.00'
+                ]);                       
+            } 
             return data;
         };
        
