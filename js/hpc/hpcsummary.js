@@ -28,6 +28,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
         }; 
         
         $scope.userChecked = false;
+        $scope.loggedInAsErsaUser = sessionStorage['ersaUser'] ;
         
         var baseFilters = function() {
             return {
@@ -166,6 +167,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                         username: $scope.owner[job.owner].name,
                         fullname: "",
                         email:"",
+                        billing: "",
                         organisation: "",
                         jobCount: 0,
                         cpuSeconds: 0
@@ -191,12 +193,14 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                 _.extend(userAccountMap, $scope.details[_org.pk]);   
             });
             
+            var topOrganisations =  util.keyArray($scope.topOrgs,  "pk"); 
             
             for (var owner in jobSummary) { 
                 if (userAccountMap[jobSummary[owner].username]) {
                     jobSummary[owner].fullname = userAccountMap[jobSummary[owner].username].fullname;
                     jobSummary[owner].email = userAccountMap[jobSummary[owner].username].email;
                     jobSummary[owner].billing = userAccountMap[jobSummary[owner].username].billing; 
+                    jobSummary[owner].billingName = topOrganisations[jobSummary[owner].billing].fields.name;
                     jobSummary[owner].organisation = userAccountMap[jobSummary[owner].username].organisation;
                 };
                 
@@ -238,6 +242,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                         email: $scope.userChecked ? userSummary.email : "",
                         username: $scope.userChecked ? userSummary.username : "", 
                         billing : userSummary.billing,
+                        billingName : userSummary.billingName,
                         jobCount: 0,
                         cpuSeconds: 0,
                         cost: 0
@@ -304,33 +309,65 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
          * @return{Array} data
          */ 
         $scope.export = function() {
-                
-            var data = [
-                ["School", "User ID", "User Name", "Email", "Job Count", "Total Core Hours", "$"]
-            ];
-
-            _.forEach($scope.jobSummary, function(summary) {
-                data.push([ 
-                    summary.organisation , 
-                    summary.username , 
-                    summary.fullname , 
-                    summary.email , 
-                    $scope.formatNumber(summary.jobCount) , 
-                    $scope.formatNumber(summary.cpuSeconds / 3600), 
-                    summary.cost
-                ]);
-            });
+            var data = [];
             
-            /** Grand total data. */
-            data.push([ 
-                'Grand Total', 
-                ' - ', 
-                ' - ', 
-                ' - ', 
-                $scope.formatNumber($scope.jobCountSum), 
-                $scope.formatNumber($scope.cpuSecondsSum / 3600),
-                $scope.costSum
-            ]);
+            if($scope.loggedInAsErsaUser){
+                data = [
+                    ["Organisation", "School", "User ID", "User Name", "Email", "Job Count", "Total Core Hours", "$"]
+                ];
+
+                _.forEach($scope.jobSummary, function(summary) {
+                    data.push([ 
+                        summary.billingName , 
+                        summary.organisation , 
+                        summary.username , 
+                        summary.fullname , 
+                        summary.email , 
+                        $scope.formatNumber(summary.jobCount) , 
+                        $scope.formatNumber(summary.cpuSeconds / 3600), 
+                        summary.cost
+                    ]);
+                });
+                
+                /** Grand total data. */
+                data.push([ 
+                    'Grand Total', 
+                    ' - ', 
+                    ' - ', 
+                    ' - ', 
+                    ' - ', 
+                    $scope.formatNumber($scope.jobCountSum), 
+                    $scope.formatNumber($scope.cpuSecondsSum / 3600),
+                    $scope.costSum
+                ]);                
+            }else{
+                data = [
+                    ["School", "User ID", "User Name", "Email", "Job Count", "Total Core Hours", "$"]
+                ];
+
+                _.forEach($scope.jobSummary, function(summary) {
+                    data.push([ 
+                        summary.organisation , 
+                        summary.username , 
+                        summary.fullname , 
+                        summary.email , 
+                        $scope.formatNumber(summary.jobCount) , 
+                        $scope.formatNumber(summary.cpuSeconds / 3600), 
+                        summary.cost
+                    ]);
+                });
+                
+                /** Grand total data. */
+                data.push([ 
+                    'Grand Total', 
+                    ' - ', 
+                    ' - ', 
+                    ' - ', 
+                    $scope.formatNumber($scope.jobCountSum), 
+                    $scope.formatNumber($scope.cpuSecondsSum / 3600),
+                    $scope.costSum
+                ]);                
+            } 
             
             return data;
         };

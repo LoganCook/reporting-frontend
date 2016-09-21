@@ -33,7 +33,7 @@
                             <button type="button" class="btn tn-default btn-search" ng-click="load()">View Usage</button>
                         </div>
                         <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-default btn-search" ng-csv="export()" field-separator="\t" filename="hpc.summary.csv">Export as CSV</button>
+                            <button type="button" class="btn btn-default btn-search" ng-csv="export()" filename="hpc.summary.csv">Export as CSV</button>
                         </div>
                     </div>
                 </div>
@@ -71,7 +71,8 @@
             <div class="col-md-12">
                 <table class="table table-striped">
                     <tr> 
-                        <th width="30%">School</th>
+                        <th ng-show="loggedInAsErsaUser">Organisation</th>
+                        <th width="20%">School</th>
                         <th ng-show="userChecked">User ID</th>
                         <th ng-show="userChecked">User Name</th> 
                         <th ng-show="userChecked">Email</th> 
@@ -80,6 +81,7 @@
                         <th>$</th> 
                     </tr>
                     <tr ng-repeat="sum in jobSummary | orderBy: 'organisation'">
+                        <td ng-show="loggedInAsErsaUser">{{ sum.billingName }}</td>
                         <td>{{ sum.organisation }}</td>
                         <td ng-show="userChecked">{{ sum.username }}</td> 
                         <td ng-show="userChecked">{{ sum.fullname }}</td>  
@@ -90,6 +92,7 @@
                     </tr>
                     <tr ng-show="jobSummary.length">
                         <td><strong>Grand Total</strong></td>
+                        <td ng-show="loggedInAsErsaUser"> - </td>
                         <td ng-show="userChecked"> - </td> 
                         <td ng-show="userChecked"> - </td> 
                         <td ng-show="userChecked"> - </td>  

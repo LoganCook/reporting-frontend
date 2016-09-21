@@ -36,8 +36,8 @@ define({"ersa" : {
                     "HNAS": ["sub", ["/storage/hnas/fileSystem", "FileSystem"], ["/storage/hnas/virtualVolume","VirtualVolume"],],  
                     "HCP": ["/storage/hcp", "HCP"], 
                 },
-                //"CASE STUDIES": { "exurl": "https://www.ersa.edu.au/case-studies/"
-                //}, 
+                "CASE STUDIES": { "exurl": "https://www.ersa.edu.au/case-studies/"
+                }, 
                 "hideFor3rdMenu": {// this data will be registered in 'state'
                     "SummaHPry": ["/hpc/hpcsummary", "HPCSummary", "tesla gpu gtx mecheng abraham short gtx3 "], 
                     "HPC Storage": ["/storage/hpcStorage", "HPCStorage"],

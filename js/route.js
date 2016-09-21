@@ -7,8 +7,16 @@ define(["menu-data"], function(menuAllData) {
             templateUrl: "template/home.html"
         });
         
-        var menuData = menuAllData.ersa;
-        //var menuData = menuAllData.portal;
+        sessionStorage['ersaUser'] = true;
+        
+        var menuData = {};
+        
+        if(sessionStorage['ersaUser'] === true){
+            menuData = menuAllData.ersa;
+        }else{
+            menuData = menuAllData.portal;
+        } 
+        
         
         for (var menu in menuData) {
             for (var item in menuData[menu]) {
