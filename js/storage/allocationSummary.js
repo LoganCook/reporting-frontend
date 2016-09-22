@@ -378,14 +378,13 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             _.forEach($scope.usages, function(_usage) {
                 records.push([
                     _usage.rds,
+                    _usage.school, 
                     _usage.username, 
                     _usage.email, 
-                    _usage.school, 
                     _usage.filesystem, 
                     _usage.approved_size, 
                     _usage.usage, 
                     _usage.quota250, 
-                    _usage.usage == 0 ? 0 : Math.ceil(((_usage.usage / _usage.quota250).toFixed(2)) * 100),
                     $scope.formatNumber(_usage.per5dollar) + '.00'
                 ]);
             }); 
@@ -393,7 +392,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             records = $filter('orderBy')(records, [0, 1]);
                
             var data = [
-                ["Allocation", "User Name", "Email", "School", "File system", "RDS Allocated(GB)", "Currrent Usage(GB)", "250GB Quota Blocks", "%age Used of Quota", "$5 per 250GB"]
+                ["Allocation Name", "School",  "User Name", "Email", "File system", "RDS GB Allocated", "Total GB Usage", "250GB Quota Allocated", "Cost per Quota"]
             ];
             Array.prototype.push.apply(data, records) ;
             
@@ -407,7 +406,6 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                 $scope.total.rds,
                 $scope.total.currentUsage,
                 $scope.total.quota250,
-                $scope.total.currentUsage == 0 ? 0 : Math.ceil((($scope.total.currentUsage / $scope.total.quota250).toFixed(2)) * 100) + '%',
                 '$' + $scope.formatNumber($scope.total.per5dollar) + '.00'
             ]); 
             

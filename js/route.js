@@ -11,18 +11,18 @@ define(["menu-data"], function(menuAllData) {
         
         var menuData = {};
         
-        if(sessionStorage['ersaUser'] === true){
+        if(sessionStorage['ersaUser']){
             menuData = menuAllData.ersa;
         }else{
             menuData = menuAllData.portal;
-        } 
+        }  
         
         
         for (var menu in menuData) {
             for (var item in menuData[menu]) {
                 
                 var details = menuData[menu][item];
-                
+                console.log("details="  + details);
                 if( angular.isArray(details)){ 
                     var name = details[0]; 
                     // This is a temporary solution until menu items and the states

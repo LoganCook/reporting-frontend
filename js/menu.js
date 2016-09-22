@@ -4,15 +4,14 @@ define(["app", "menu-data"], function (app, menuData) {
             
             $scope.isArray = angular.isArray;
             
-            var ersaUser = false; 
-             
-            $scope.menus = menuData.ersa;
-            //$scope.menus = menuData.portal;  
+            sessionStorage['ersaUser'] = true;
             
-            if(ersaUser === true){ 
+            if(sessionStorage['ersaUser']){ 
                 $scope.menus = menuData.ersa;
-                sessionStorage['ersaUser'] = true; 
+            }else{
+                $scope.menus = menuData.portal;   
             }
+            $scope.menus = menuData.ersa;
             
             $scope.init = function() {
                 $scope.configured = "secret" in sessionStorage;

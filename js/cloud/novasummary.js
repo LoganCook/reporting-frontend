@@ -13,7 +13,7 @@ define(['app', 'options', '../util2', '../util', './services', './crm', './accou
 
         var cachedInstancesState = [];
         var cachedTenants = {};    
-         
+          
         /**
          * defaults 
          */ 
@@ -21,7 +21,9 @@ define(['app', 'options', '../util2', '../util', './services', './crm', './accou
         $scope.selectedDomain = '0';
         $scope.instancesState = []; 
         $scope.serverChecked = false;
-         
+        $scope.loggedInAsErsaUser = sessionStorage['ersaUser'] ;
+ 
+ 
         /**
          * summary variables
          */ 
@@ -40,15 +42,23 @@ define(['app', 'options', '../util2', '../util', './services', './crm', './accou
         /**
          * For creating table and exporting csv
          */ 
-        $scope.colTitles = [];   
-        $scope.colTitles.push(['Project',  'User Name', 'Email', 'School', 'Total Cores Used', 'Core Quota Allocated', 'Cost per Core Used', 'Server Name']);
-        $scope.colTitles.push(['Project',                                  'Total Cores Used', 'Core Quota Allocated', 'Cost per Core Used']);
-
+        $scope.colTitles = [];  
         $scope.fieldNames = [];
-        var fieldNames = [];  
-        fieldNames.push(['tenantName',  'fullname', 'email', 'school', 'core', 'allocatedCore', 'cost', 'server']);
-        fieldNames.push(['tenantName',  'core', 'allocatedCore', 'cost']);
-  
+        var fieldNames = [];   
+        if($scope.loggedInAsErsaUser){
+            $scope.colTitles.push(['Organisation', 'Project',  'User Name', 'Email', 'School', 'Total Cores Used', 'Core Quota Allocated', 'Cost per Core Used', 'Server Name']);
+            $scope.colTitles.push(['Organisation', 'Project',                                  'Total Cores Used', 'Core Quota Allocated', 'Cost per Core Used']);
+
+            fieldNames.push(['organisation', 'tenantName',  'fullname', 'email', 'school', 'core', 'allocatedCore', 'cost', 'server']);
+            fieldNames.push(['organisation', 'tenantName',  'core', 'allocatedCore', 'cost']);
+        }else{
+            $scope.colTitles.push(['Project',  'User Name', 'Email', 'School', 'Total Cores Used', 'Core Quota Allocated', 'Cost per Core Used', 'Server Name']);
+            $scope.colTitles.push(['Project',                                  'Total Cores Used', 'Core Quota Allocated', 'Cost per Core Used']);
+
+            fieldNames.push(['tenantName',  'fullname', 'email', 'school', 'core', 'allocatedCore', 'cost', 'server']);
+            fieldNames.push(['tenantName',  'core', 'allocatedCore', 'cost']);
+        }
+
         $scope.fieldNames = fieldNames[1];
          
   
@@ -104,27 +114,50 @@ define(['app', 'options', '../util2', '../util', './services', './crm', './accou
             csvData[0] = $scope.colTitles[$scope.serverChecked ? 0 : 1];
  
             /** Grand total data. */
-            if ($scope.serverChecked) { 
-                csvData.push([ 
-                    'Grand Total', 
-                    ' - ',  
-                    ' - ',  
-                    ' - ',  
-                    $scope.sum.coreAllocation, 
-                    ' - ',  
-                    ' - ',   
-                    '$' + $scope.sum.cost.toFixed(2),
-                    ' - '
-                ]);      
-            } else { 
-                csvData.push([ 
-                    'Grand Total',   
-                    $scope.sum.coreAllocation,  
-                    ' - ',  
-                    ' - ',  
-                    '$' + $scope.sum.cost.toFixed(2) 
-                ]); 
-            }  
+            if($scope.loggedInAsErsaUser){
+         
+                if ($scope.serverChecked) { 
+                    csvData.push([ 
+                        'Grand Total', 
+                        ' - ',  
+                        ' - ',  
+                        ' - ',  
+                        ' - ',  
+                        $scope.sum.coreAllocation, 
+                        ' - ',   
+                        '$' + $scope.sum.cost.toFixed(2),
+                        ' - '
+                    ]);      
+                } else { 
+                    csvData.push([ 
+                        'Grand Total',   
+                        ' - ',  
+                        $scope.sum.coreAllocation,  
+                        ' - ',   
+                        '$' + $scope.sum.cost.toFixed(2) 
+                    ]); 
+                }                  
+            }else{
+                if ($scope.serverChecked) { 
+                    csvData.push([ 
+                        'Grand Total', 
+                        ' - ',  
+                        ' - ',  
+                        ' - ',  
+                        $scope.sum.coreAllocation, 
+                        ' - ',   
+                        '$' + $scope.sum.cost.toFixed(2),
+                        ' - '
+                    ]);      
+                } else { 
+                    csvData.push([ 
+                        'Grand Total',   
+                        $scope.sum.coreAllocation,  
+                        ' - ',   
+                        '$' + $scope.sum.cost.toFixed(2) 
+                    ]); 
+                }                   
+            }   
             return csvData;
         };
 
