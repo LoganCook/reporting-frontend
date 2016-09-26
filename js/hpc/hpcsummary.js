@@ -28,7 +28,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
         }; 
         
         $scope.userChecked = false;
-        $scope.loggedInAsErsaUser = sessionStorage['ersaUser'] ;
+        $scope.loggedInAsErsaUser = sessionStorage['ersaUser'] === 'true' ? true :false ;
         
         var baseFilters = function() {
             return {

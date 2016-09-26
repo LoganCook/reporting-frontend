@@ -21,8 +21,8 @@ define(['app', 'options', '../util2', '../util', './services', './crm', './accou
         $scope.selectedDomain = '0';
         $scope.instancesState = []; 
         $scope.serverChecked = false;
-        $scope.loggedInAsErsaUser = sessionStorage['ersaUser'] ;
- 
+        $scope.loggedInAsErsaUser = sessionStorage['ersaUser'] === 'true' ? true :false ;
+
  
         /**
          * summary variables

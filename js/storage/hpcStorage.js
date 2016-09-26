@@ -36,8 +36,8 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         };
         
         $scope.userChecked = false;        
-        $scope.loggedInAsErsaUser = sessionStorage['ersaUser'] ;
-        
+        $scope.loggedInAsErsaUser = sessionStorage['ersaUser'] === 'true' ? true :false ;
+       
         $scope.rangeStart  =  new Date();
         $scope.rangeEnd =  new Date();
         $scope.rangeEndOpen = false;

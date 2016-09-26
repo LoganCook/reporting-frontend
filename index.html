@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style-new.css">     
 </head>
-
+ 
 <body ng-strict-di>
 
     <header class="header desktop-menu">
@@ -25,18 +25,18 @@
                     <div class="menu">
                         <ul class="menu-list menu" data-equalizer-watch ng-show="configured"> 
                             <li class="{{ items['exurl'] ? 'menu-item' : 'menu-item menu-item-has-children' }}" ng-repeat="(menu, items) in menus">
-                                <a ng-show="{{ !menu.startsWith('hide') && items['exurl'] }}" href="{{items.exurlurl}}" >{{ menu }}</a> 
+                                <a ng-show="{{ !menu.startsWith('hide') && items['exurl'] ? true : false }}" href="{{items.exurl == null ? '' : items.exurl.replace('=', '://').replace('@', '/')}}" >{{ menu }}</a> 
                                 <a ng-show="{{ !menu.startsWith('hide') && !items['exurl'] }}" href>{{ menu }}</a> 
                                 <ul ng-show="{{ !items['exurl'] }}" class="sub-menu"> 
                                     <li class="{{ states[0].startsWith('sub') ? 'menu-item menu-item-has-children' : 'menu-item'}}" ng-repeat="(item, states) in items" ng-if="item!='exurl'">
                                         <a ng-show="{{ states[0].startsWith('sub') }}" href>{{ item }}</a>
-                                        <a ng-show="{{ !states[0].startsWith('sub')  && states[0].startsWith('/') }}" ui-sref="{{states[0]}}">{{ item }}</a>
-                                        <a ng-show="{{ !states[0].startsWith('sub')  && states[0].startsWith('http') }}" href="{{states[0]}}">{{ item }}</a>
+                                        <a ng-show="{{ !states[0].startsWith('sub')  && states[0].startsWith('/') }}" ui-sref="{{states[0]}}">{{ item }} </a>
+                                        <a ng-show="{{ !states[0].startsWith('sub')  && states[0].startsWith('http') }}" href="{{states[0]}}">{{ item }} </a>
                                         <ul class="sub-menu" ng-show="{{ states[0].startsWith('sub') }}">
                                             <li class="menu-item" ng-repeat="(url, submenu) in states">
                                                 <a ng-show="{{ url != 0 && submenu[0].startsWith('/')}}" ui-sref="{{submenu[0]}}">{{submenu[1]}}</a>
                                                 <a ng-show="{{ url != 0 && submenu[0].startsWith('http')}}" ui-sref="{{submenu[0]}}">{{submenu[1]}}</a>
-                                             </li> 
+                                             </li>  
                                         </ul>
                                     </li> 
                                 </ul>

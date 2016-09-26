@@ -32,11 +32,11 @@ define({"ersa" : {
                 },
                 "Solutions": {
                     //"Filesystem": ["/storage/fs", "Filesystem"],
-                    "XFS": ["https://www.ersa.edu.au/services/", "XFS"], 
+                    "XFS": ["http=www.ersa.edu.au/services", "XFS"], 
                     "HNAS": ["sub", ["/storage/hnas/fileSystem", "FileSystem"], ["/storage/hnas/virtualVolume","VirtualVolume"],],  
                     "HCP": ["/storage/hcp", "HCP"], 
                 },
-                "CASE STUDIES": { "exurl": "https://www.ersa.edu.au/case-studies/"
+                "CASE STUDIES": { "exurl": "http=www.ersa.edu.au/case/studies"
                 }, 
                 "hideFor3rdMenu": {// this data will be registered in 'state'
                     "SummaHPry": ["/hpc/hpcsummary", "HPCSummary", "tesla gpu gtx mecheng abraham short gtx3 "], 
