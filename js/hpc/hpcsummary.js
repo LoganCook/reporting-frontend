@@ -448,7 +448,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             }
 
             if (queueQuery.length == 0) {
-                $scope.alerts.push({type: 'danger',msg: "Select queues!"}); 
+                $scope.alerts.push({type: 'danger',msg: "Queues aren't loaded!"}); 
                 return false;
             }
             

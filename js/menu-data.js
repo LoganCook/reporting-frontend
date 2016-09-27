@@ -30,12 +30,10 @@ define({"ersa" : {
                     "COMPUTING": ["sub1", ["/hpc/hpcsummary", "HPC"], ["/cloud/novasummary", "NECTAR"],], 
                     "STORAGE": ["sub2", ["/storage/hpcStorage", "HPC"], ["/storage/allocationSummary", "ALLOCATION"],],  
                 },
-                "Solutions": {
-                    //"Filesystem": ["/storage/fs", "Filesystem"],
-                    "XFS": ["http=www.ersa.edu.au/services", "XFS"], 
-                    "HNAS": ["sub", ["/storage/hnas/fileSystem", "FileSystem"], ["/storage/hnas/virtualVolume","VirtualVolume"],],  
-                    "HCP": ["/storage/hcp", "HCP"], 
-                },
+                "Help": { "exurl": "http=www.ersa.edu.au/case/studies"
+                }, 
+                "Support": { "exurl": "http=www.ersa.edu.au/case/studies"
+                }, 
                 "CASE STUDIES": { "exurl": "http=www.ersa.edu.au/case/studies"
                 }, 
                 "hideFor3rdMenu": {// this data will be registered in 'state'

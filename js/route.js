@@ -7,7 +7,7 @@ define(["menu-data"], function(menuAllData) {
             templateUrl: "template/home.html"
         });
         
-        sessionStorage['ersaUser'] = 'true'; 
+        sessionStorage['ersaUser'] = 'false'; 
         
         var menuData = {};
          
