@@ -7,13 +7,13 @@ define(["menu-data"], function(menuAllData) {
             templateUrl: "template/home.html"
         });
         
-        sessionStorage['ersaUser'] = 'false'; 
+        sessionStorage['ersaUser'] = 'true'; 
         
         var menuData = {};
          
-        if(sessionStorage['ersaUser'] === 'true'){
+        if (sessionStorage['ersaUser'] === 'true') {
             menuData = menuAllData.ersa; 
-        }else{
+        } else {
             menuData = menuAllData.portal; 
         } 
         
@@ -21,20 +21,20 @@ define(["menu-data"], function(menuAllData) {
             for (var item in menuData[menu]) {
                 
                 var details = menuData[menu][item];
-                console.log("details="  + details);
-                if( angular.isArray(details)){ 
+
+                if ( angular.isArray(details)) { 
                     var name = details[0]; 
                     // This is a temporary solution until menu items and the states
                     // they represent have been rewirtten.
                     if (name == '/nova') continue;
-                    if( name.startsWith('http'))continue;//external url
+                    if ( name.startsWith('http')) continue;//external url
                     
                     var url = name;
                     var template = "template" + name + ".html";
                     var controller = details[1] + "Controller";  
                     
                     $stateProvider.state(name, { url: url, templateUrl: template, controller: controller });
-                }else{// some portal url does not include submenu 
+                } else {// some portal url does not include submenu 
                     
                 }
             }

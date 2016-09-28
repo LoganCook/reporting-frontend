@@ -2,10 +2,10 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
     app.controller("HPCController", ["$rootScope", "$scope", "$timeout", "reporting", "org", "queryResource", "spinner",
     function($rootScope, $scope, $timeout, reporting, org, queryResource, spinner) {
 
-      var nq = queryResource.build('https://hnas.reporting.ersa.edu.au');
-      console.log("checking nq");
+      //var nq = queryResource.build('https://hnas.reporting.ersa.edu.au');
+      //console.log("checking nq");
       // console.log(typeof nq.get);
-      nq.query({"object": "input"}, function(data) { console.log("resource call of nq"); console.log(data);});
+      //nq.query({"object": "input"}, function(data) { console.log("resource call of nq"); console.log(data);});
 
         $scope.values = _.values;
 
@@ -273,7 +273,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
 
         $scope.$on('$viewContentLoaded', function() {
             $scope.allQueusSelected = true;
-            console.log('viewContentLoaded ...');
+            //console.log('viewContentLoaded ...');
         });
 
         $scope.selectAllQueues = function () {

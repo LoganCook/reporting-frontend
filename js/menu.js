@@ -4,11 +4,11 @@ define(["app", "menu-data"], function (app, menuData) {
             
             $scope.isArray = angular.isArray;
             
-            sessionStorage['ersaUser'] = 'false'; 
+            sessionStorage['ersaUser'] = 'true'; 
             
-            if(sessionStorage['ersaUser'] === 'true'){ 
+            if (sessionStorage['ersaUser'] === 'true') { 
                 $scope.menus = menuData.ersa;
-            }else{
+            } else {
                 $scope.menus = menuData.portal;   
             } 
              

@@ -100,7 +100,6 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
 
                 _.forEach($scope.raw, function(record) {
                     if (!(record.owner in summed)) {
-                        console.log(record);
                         summed[record.owner] = {
                             username: $scope.xfs.owner[record.owner].name,
                             fullname: "",

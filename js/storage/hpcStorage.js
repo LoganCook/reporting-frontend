@@ -36,7 +36,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         };
         
         $scope.userChecked = false;        
-        $scope.loggedInAsErsaUser = sessionStorage['ersaUser'] === 'true' ? true :false ;
+        $scope.loggedInAsErsaUser = sessionStorage['ersaUser'] === 'true' ? true : false ;
        
         $scope.rangeStart  =  new Date();
         $scope.rangeEnd =  new Date();
@@ -300,7 +300,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             var records = [];
             var data = [];
 
-            if($scope.loggedInAsErsaUser){
+            if ($scope.loggedInAsErsaUser) {
                 _.forEach($scope.output.summed, function(entry) {
                     records.push([
                         entry.organisation,
@@ -334,7 +334,7 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                     '$' + $scope.formatNumber($scope.total.per5dollar) + '.00'
                 ]);
                            
-            }else{       
+            } else {       
                 _.forEach($scope.output.summed, function(entry) {
                     records.push([
                         entry.school,

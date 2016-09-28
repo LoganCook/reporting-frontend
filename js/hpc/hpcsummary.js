@@ -28,7 +28,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
         }; 
         
         $scope.userChecked = false;
-        $scope.loggedInAsErsaUser = sessionStorage['ersaUser'] === 'true' ? true :false ;
+        $scope.loggedInAsErsaUser = sessionStorage['ersaUser'] === 'true' ? true : false ;
         
         var baseFilters = function() {
             return {
@@ -311,7 +311,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
         $scope.export = function() {
             var data = [];
             
-            if($scope.loggedInAsErsaUser){
+            if ($scope.loggedInAsErsaUser) {
                 data = [
                     ["Organisation", "School", "User ID", "User Name", "Email", "Job Count", "Total Core Hours", "$"]
                 ];
@@ -340,7 +340,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                     $scope.formatNumber($scope.cpuSecondsSum / 3600),
                     $scope.costSum
                 ]);                
-            }else{
+            } else {
                 data = [
                     ["School", "User ID", "User Name", "Email", "Job Count", "Total Core Hours", "$"]
                 ];
@@ -448,7 +448,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             }
 
             if (queueQuery.length == 0) {
-                $scope.alerts.push({type: 'danger',msg: "Queues aren't loaded!"}); 
+                $scope.alerts.push({type: 'danger',msg: "Queues not loaded!"}); 
                 return false;
             }
             

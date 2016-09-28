@@ -21,7 +21,7 @@ define(['app', 'options', '../util2', '../util', './services', './crm', './accou
         $scope.selectedDomain = '0';
         $scope.instancesState = []; 
         $scope.serverChecked = false;
-        $scope.loggedInAsErsaUser = sessionStorage['ersaUser'] === 'true' ? true :false ;
+        $scope.loggedInAsErsaUser = sessionStorage['ersaUser'] === 'true' ? true : false ;
 
  
         /**
@@ -45,13 +45,13 @@ define(['app', 'options', '../util2', '../util', './services', './crm', './accou
         $scope.colTitles = [];  
         $scope.fieldNames = [];
         var fieldNames = [];   
-        if($scope.loggedInAsErsaUser){
+        if ($scope.loggedInAsErsaUser) {
             $scope.colTitles.push(['Organisation', 'Project',  'User Name', 'Email', 'School', 'Total Cores Used', 'Core Quota Allocated', 'Cost per Core Used', 'Server Name']);
             $scope.colTitles.push(['Organisation', 'Project',                                  'Total Cores Used', 'Core Quota Allocated', 'Cost per Core Used']);
 
             fieldNames.push(['organisation', 'tenantName',  'fullname', 'email', 'school', 'core', 'allocatedCore', 'cost', 'server']);
             fieldNames.push(['organisation', 'tenantName',  'core', 'allocatedCore', 'cost']);
-        }else{
+        } else {
             $scope.colTitles.push(['Project',  'User Name', 'Email', 'School', 'Total Cores Used', 'Core Quota Allocated', 'Cost per Core Used', 'Server Name']);
             $scope.colTitles.push(['Project',                                  'Total Cores Used', 'Core Quota Allocated', 'Cost per Core Used']);
 
@@ -74,15 +74,7 @@ define(['app', 'options', '../util2', '../util', './services', './crm', './accou
                
             startTimestamp = util.dateToTimestamp($scope.rangeStart);
             endTimestamp = util.dateToTimestamp($scope.rangeEnd, true);
-            
-            /** log start */
-            var sdt = new Date(startTimestamp * 1000);
-            console.log(startTimestamp + ' -- ' + sdt);
-
-            var edt = new Date(endTimestamp * 1000);
-            console.log(endTimestamp + ' -- ' + edt);
-            /** log end */
-
+             
             $scope.instancesState = []; 
             getInstances(startTimestamp, endTimestamp);
         };
@@ -114,7 +106,7 @@ define(['app', 'options', '../util2', '../util', './services', './crm', './accou
             csvData[0] = $scope.colTitles[$scope.serverChecked ? 0 : 1];
  
             /** Grand total data. */
-            if($scope.loggedInAsErsaUser){
+            if ($scope.loggedInAsErsaUser) {
          
                 if ($scope.serverChecked) { 
                     csvData.push([ 
@@ -137,7 +129,7 @@ define(['app', 'options', '../util2', '../util', './services', './crm', './accou
                         '$' + $scope.sum.cost.toFixed(2) 
                     ]); 
                 }                  
-            }else{
+            } else {
                 if ($scope.serverChecked) { 
                     csvData.push([ 
                         'Grand Total', 
@@ -196,8 +188,7 @@ define(['app', 'options', '../util2', '../util', './services', './crm', './accou
             
             //var summaryUrl = '/usage/nova/NovaUsage_'  + startTime + '_' + endTime + '.json';
             var summaryUrl = '/usage/nova/NovaUsage_'  + 1451568600 + '_' + 1454246999 + '.json';
-            console.log('summaryUrl=' + summaryUrl);
-            
+             
             spinner.start();
             var args = { 
                 object: summaryUrl, 
@@ -239,7 +230,7 @@ define(['app', 'options', '../util2', '../util', './services', './crm', './accou
             var topOrg = []; 
             
             if (states.length) { 
-                angular.forEach(states, function(instance, idx) {
+                angular.forEach(states, function(instance) {
                     var arr = instance['manager'];
                     if (arr.length) {
                         instance['organisation'] = arr[0];

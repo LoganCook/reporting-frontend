@@ -28,7 +28,7 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
 
     // retrieve dates inuts from user and do a search
     ctrl.search = function(dates) {
-      console.log(dates);
+      //console.log(dates);
 
       // Assume we have only two, and 0 should earlier than 1:
       if (dates[0] > dates[1]) {
@@ -36,8 +36,8 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
       } else {
         startTimestamp = util.dateToTimestamp(dates[0]);
         endTimestamp = util.dateToTimestamp(dates[1], true);
-        console.log(startTimestamp);
-        console.log(endTimestamp);
+        //console.log(startTimestamp);
+        //console.log(endTimestamp);
         ctrl.instancesState = [];
         ctrl.pages = 0;
         ctrl.currentPage = 0;
@@ -80,10 +80,10 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
       };
       var nq = queryResource.build(sessionStorage['nova']);
       nq.get(args, function(summaries) {
-        console.log(summaries.total, summaries.pages, summaries.page);
+        //console.log(summaries.total, summaries.pages, summaries.page);
 
         if (ctrl.currentPage == 0 && summaries.pages > 1) {
-          console.log("There are " + summaries.total + " records on " + summaries.pages + " pages and only the first page is loaded");
+          //console.log("There are " + summaries.total + " records on " + summaries.pages + " pages and only the first page is loaded");
           ctrl.pages = summaries.pages;
         }
 

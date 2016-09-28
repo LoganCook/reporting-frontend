@@ -21,7 +21,7 @@ return function($timeout, queryResource) {
     };
 
     function load(svc, type, callback) {
-      console.log("Query on ", svc, type);
+      //console.log("Query on ", svc, type);
       var nq = queryResource.build(sessionStorage[svc]);
 
       var args = {"object": type, "count": 5000, "page": 1};
@@ -33,12 +33,12 @@ return function($timeout, queryResource) {
 
       function append(data) {
         if (data && data.length) {
-          console.log(svc, type, ": cache data before appending", service.raw[svc][type].length);
-          console.log("Received data", data.length);
+          //console.log(svc, type, ": cache data before appending", service.raw[svc][type].length);
+          //console.log("Received data", data.length);
           Array.prototype.push.apply(service.raw[svc][type], data);
-          console.log("Cache data after appending", service.raw[svc][type].length);
+          //console.log("Cache data after appending", service.raw[svc][type].length);
           args["page"]++;
-          console.log("Try one more query on page ", args["page"]);
+          //console.log("Try one more query on page ", args["page"]);
           nq.query(args, append, returnCall);
         } else {
           returnCall();
@@ -49,11 +49,14 @@ return function($timeout, queryResource) {
       function returnCall(httpResponse) {
         // Actual error callback has httpResponse as its argument
         if (httpResponse) {
-          console.log("Query is finished in error. Return to caller ");
-          console.warn("Error:", httpResponse.status, " ", httpResponse.statusText);
-          console.warn("Error:", JSON.stringify(httpResponse));
+          if (httpResponse.status != 404) {
+            console.log("Query is finished in error. Return to caller ");
+            console.warn("Error:", JSON.stringify(httpResponse));
+            alert("Error:" + httpResponse.status + " " + httpResponse.statusText);
+          }
+          //console.warn("Error:", httpResponse.status , " ",httpResponse.statusText); 
         } else {
-          console.log("Query is finished in normal fashion. return to caller ");
+          //console.log("Query is finished in normal fashion. return to caller ");
         }
 
         if (callback) {
@@ -69,7 +72,7 @@ return function($timeout, queryResource) {
     // FIXME: this is the most ugly query - breaks convention of GET and POST metohds
     var loadQuery = function(svc, type, query, callback) {
         var queryString = qs.stringify(query, { arrayFormat: "repeat" });
-        console.log("query string: " + JSON.stringify(query));
+        //console.log("query string: " + JSON.stringify(query));
 
         var queryClient = client(svc);
         var execute;
@@ -97,7 +100,7 @@ return function($timeout, queryResource) {
                 service.raw[svc][type][query] = response.data;
 
                 if (callback) {
-                    console.log("old response data: ", response.data);
+                    //console.log("old response data: ", response.data);
                     callback(svc, type, query, response.data);
                 }
             });
