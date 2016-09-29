@@ -58,9 +58,9 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             $scope.jobCount = 0;
             $scope.jobSummary = []; 
             
-            uniToDivide = {4 :{ name:'University of Adelaide', jobCount : 0, cpuSeconds : 0, cost :0}, 
-                           11:{ name:'Flinders University', jobCount : 0, cpuSeconds : 0, cost :0}, 
-                           20:{ name:'University of South Australia', jobCount : 0, cpuSeconds : 0, cost :0}};
+            uniToDivide = {1 :{ name:'University of Adelaide', jobCount : 0, cpuSeconds : 0, cost :0}, 
+                           16:{ name:'Flinders University', jobCount : 0, cpuSeconds : 0, cost :0}, 
+                           13:{ name:'University of South Australia', jobCount : 0, cpuSeconds : 0, cost :0}};
             
             $scope.jobCountSum = 0;
             $scope.cpuSecondsSum = 0;
