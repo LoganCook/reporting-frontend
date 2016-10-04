@@ -18,6 +18,9 @@ define(['app', '../util'], function(app, formater) {
         nq.query({object: 'account', count : 1000000}, function(data) {
             data = formater.keyArray(data, 'openstack_id'); 
             deferred.resolve(data);
+        }, function(rsp) {  
+                console.log(rsp);
+                deferred.reject({});
         });
         
         return deferred.promise;
@@ -37,6 +40,9 @@ define(['app', '../util'], function(app, formater) {
             });   
                     
             deferred.resolve({ accounts : accounts , snapshotId : data[0].id }); 
+        }, function(rsp) {  
+                console.log(rsp);
+                deferred.reject({});
         }); 
         
         return deferred.promise;
@@ -61,6 +67,9 @@ define(['app', '../util'], function(app, formater) {
                 }
             }); 
             deferred.resolve(accounts); 
+        }, function(rsp) {  
+                console.log(rsp);
+                deferred.reject({});
         }); 
         
         return deferred.promise;
@@ -85,6 +94,9 @@ define(['app', '../util'], function(app, formater) {
                     }
                 });                
                 deferred.resolve(accounts);
+            }, function(rsp) {  
+                console.log(rsp);
+                deferred.reject({});
             });
         }
         return deferred.promise;
@@ -107,7 +119,7 @@ define(['app', '../util'], function(app, formater) {
                 cachedUsers = accounts;
                 deferred.resolve(cachedUsers);
             }, function(rsp) { 
-                alert("Request failed");
+                //alert("Request failed");
                 console.log(rsp);
                 deferred.reject({});
             }); 

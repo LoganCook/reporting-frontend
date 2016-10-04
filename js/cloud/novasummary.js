@@ -370,6 +370,7 @@ define(['app', 'options', '../util2', '../util', './services', './crm', './accou
                     deferred.resolve(tenantsUsers); 
                 }, function(rsp) { 
                     alert("Request failed");
+                    spinner.stop();
                     console.log(rsp);
                     deferred.reject({});
                 });                      
@@ -398,6 +399,7 @@ define(['app', 'options', '../util2', '../util', './services', './crm', './accou
                 
             }, function(rsp) { 
                 alert("Request failed");
+                spinner.stop();
                 console.log(rsp);
                 deferred.reject({});
             });     

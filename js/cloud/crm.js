@@ -26,7 +26,7 @@ define(['app', '../util'], function(app, util) {
             cachedUseres = util.keyArray(cachedUseres, 'personid');    
             deferred.resolve(cachedUseres); 
         }, function(rsp) { 
-            alert("Request failed");
+            //alert("Request failed");
             console.log(rsp);
             deferred.reject(cachedUseres);
         });         
@@ -52,7 +52,7 @@ define(['app', '../util'], function(app, util) {
                 cachedUseres[organisationId] = details;  
                 deferred.resolve(cachedUseres[organisationId]);
             }, function(rsp) { 
-                alert("Request failed");
+                //alert("Request failed");
                 console.log(rsp);
                 deferred.reject(cachedUseres[organisationId]);
             });            
@@ -85,7 +85,7 @@ define(['app', '../util'], function(app, util) {
             }); 
             deferred.resolve(cachedUseres); 
         }, function(rsp) { 
-            alert("Request failed");
+            //alert("Request failed");
             console.log(rsp);
             deferred.reject(cachedUseres);
         });
@@ -134,7 +134,7 @@ define(['app', '../util'], function(app, util) {
                 cachedCrmNectar = tempCrmNectar;
                 deferred.resolve(cachedCrmNectar); 
             }, function(rsp) { 
-                alert("Request failed");
+                //alert("Request failed");
                 console.log(rsp);
                 deferred.reject(cachedCrmNectar);
             });
@@ -163,7 +163,7 @@ define(['app', '../util'], function(app, util) {
                         deferred.resolve(cachedCrmNectar); 
                     });  
                 }, function(rsp) { 
-                    alert("Request failed");
+                    //alert("Request failed");
                     console.log(rsp);
                     deferred.reject(cachedCrmNectar);
                 });          
@@ -188,7 +188,7 @@ define(['app', '../util'], function(app, util) {
                         deferred.resolve(cachedUseres); 
                     });  
                 }, function(rsp) { 
-                    alert("Request failed");
+                    //alert("Request failed");
                     console.log(rsp);
                     deferred.reject(cachedUseres);
                 });          

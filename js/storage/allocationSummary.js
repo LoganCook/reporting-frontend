@@ -103,6 +103,12 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
          * @return {Void}
          */ 
         var initHnas = function() {  
+ 
+            if (!_.isEmpty(hnas) && !_.isEmpty(hnas.owners) &&
+                    !_.isEmpty(hnas.filesystems) && !_.isEmpty(hnas.virtualVolumes)) {
+                return;
+            }
+                        
             $scope.status = "Loading ...";   
             spinner.start();
             
@@ -192,7 +198,12 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
          * @return {Void}
          */ 
         var initXFS = function() { 
-                
+ 
+            if (!_.isEmpty(xfs) && !_.isEmpty(xfs.owners) &&  
+                    !_.isEmpty(xfs.snapshots) && !_.isEmpty(xfs.filesystems)) {
+                return;
+            }
+                            
             reporting.xfsBase(function(svc, type, data) { 
 
                 if (type == "snapshot") {
@@ -422,6 +433,9 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             
             clear();
             
+            initHnas(); 
+            initXFS(); 
+              
             setOrganisationUsers();
             
             $scope.rangeStart = util.firstDayOfYearAndMonth($scope.rangeEnd);

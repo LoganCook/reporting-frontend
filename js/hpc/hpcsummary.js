@@ -86,7 +86,11 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
          * @return {Void}
          */ 
         var initHpc = function() {            
-             
+
+            if (!_.isEmpty($scope.host) && !_.isEmpty($scope.queue) && !_.isEmpty($scope.owner)) {
+                return;
+            }
+                         
             $scope.status = "Downloading "  + serviceHpcTypes; 
  
             spinner.start();
@@ -142,6 +146,16 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             
             org.getBillings().then(function(billings) {    
                 $scope.topOrgs = billings;
+                
+                /*
+                var topOrganisations =  util.keyArray($scope.topOrgs,  "pk"); 
+                
+                _.forEach($scope.topOrgs, function(org) { 
+                    var candidate = org.fields.name.replace(/\s+/g, '');
+                    candidate = candidate.toLowerCase();
+                });
+                */
+                
             }); 
         }); 
          
@@ -436,6 +450,8 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
          */ 
         $scope.load = function() {
             $scope.selectedBillingOrg = '0'; 
+
+            initHpc();
 
             var query = _.merge(baseFilters(), getSearchDateFilter());
 

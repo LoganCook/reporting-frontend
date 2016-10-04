@@ -89,7 +89,14 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
          *   
          * @return {Void}
          */         
-        var initXFS = function() { 
+        var initXFS = function() {
+            
+            if (!_.isEmpty($scope.xfs) && !_.isEmpty($scope.xfs.snapshotByTimestamp) &&
+                    !_.isEmpty(xfs) && !_.isEmpty(xfs.owner) &&
+                    $scope.select.host !== null && $scope.select.filesystem !== null) {
+                return;
+            }
+            
             spinner.start();
 
             $scope.status = "Downloading "  + serviceTypes;
@@ -405,6 +412,8 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         $scope.load = function(rangeEpochFilter) {
             clear();
             
+            initXFS();
+           
             if (rangeEpochFilter) { 
                 /** rangeEpochFilter not used because this function use ts.ge and ts.lt */
             }
