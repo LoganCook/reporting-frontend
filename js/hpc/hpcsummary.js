@@ -154,12 +154,12 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                  * filter 3 university to allocate $60,000 for getting primary key
                  */
                 
-                _.forEach($scope.topOrgs, function(org) { 
-                    var candidate = org.fields.name.replace(/\s+/g, '');// remove spaces between characters
+                _.forEach ($scope.topOrgs, function(orgainsation) { 
+                    var candidate = orgainsation.fields.name.replace(/\s+/g, '');// remove spaces between characters
                     candidate = candidate.toLowerCase().trim(); // make lowcase
                     
                     if (uniToDivide[candidate]) {
-                        uniToDivide[candidate].id = org.pk;
+                        uniToDivide[candidate].id = orgainsation.pk;
                     }
                 });
                 
