@@ -6,8 +6,10 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
          * 3 uni(FUSA, UOFA and UOSA) have responsiblity for paying $60,000 
          */ 
         var  totalAmountToDivided = 60000;
-        var  uniToDivide = {};
-        
+        var  uniToDivide = {'universityofadelaide' :{ id: 0, name:'University of Adelaide', jobCount : 0, cpuSeconds : 0, cost :0}, 
+                            'flindersuniversity':{ id: 0,  name:'Flinders University', jobCount : 0, cpuSeconds : 0, cost :0}, 
+                            'universityofsouthaustralia':{ id: 0, name:'University of South Australia', jobCount : 0, cpuSeconds : 0, cost :0}};
+                          
         $scope.values = _.values; 
         $scope.formatTimestamp = util.formatTimestamp;
         $scope.formatNumber = util.formatNumber;
@@ -50,18 +52,19 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
          *   
          * @return {Void}
          */ 
-        var clear = function() {
+        var clear = function() { 
+            
+            uniToDivide = {'universityofadelaide' :{ id: 0, name:'University of Adelaide', jobCount : 0, cpuSeconds : 0, cost :0}, 
+                            'flindersuniversity':{ id: 0,  name:'Flinders University', jobCount : 0, cpuSeconds : 0, cost :0}, 
+                            'universityofsouthaustralia':{ id: 0, name:'University of South Australia', jobCount : 0, cpuSeconds : 0, cost :0}};
+
             jobSummary = {};
 
             $scope.status = "Zero jobs loaded.";
             $scope.jobs = [];
             $scope.jobCount = 0;
-            $scope.jobSummary = []; 
-            
-            uniToDivide = {1 :{ name:'University of Adelaide', jobCount : 0, cpuSeconds : 0, cost :0}, 
-                           16:{ name:'Flinders University', jobCount : 0, cpuSeconds : 0, cost :0}, 
-                           13:{ name:'University of South Australia', jobCount : 0, cpuSeconds : 0, cost :0}};
-            
+            $scope.jobSummary = [];  
+
             $scope.jobCountSum = 0;
             $scope.cpuSecondsSum = 0;
             $scope.costSum = 0;
@@ -147,17 +150,23 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             org.getBillings().then(function(billings) {    
                 $scope.topOrgs = billings;
                 
-                /*
-                var topOrganisations =  util.keyArray($scope.topOrgs,  "pk"); 
+                /**
+                 * filter 3 university to allocate $60,000 for getting primary key
+                 */
                 
                 _.forEach($scope.topOrgs, function(org) { 
-                    var candidate = org.fields.name.replace(/\s+/g, '');
-                    candidate = candidate.toLowerCase();
+                    var candidate = org.fields.name.replace(/\s+/g, '');// remove spaces between characters
+                    candidate = candidate.toLowerCase().trim(); // make lowcase
+                    
+                    if (uniToDivide[candidate]) {
+                        uniToDivide[candidate].id = org.pk;
+                    }
                 });
-                */
                 
+                var threeOfuniversity = _.values(uniToDivide);  
+                uniToDivide =  util.keyArray(threeOfuniversity);   
             }); 
-        }); 
+        });  
          
         /**
          * When this page is requested, this fucnction call initHpc
@@ -207,8 +216,8 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                 _.extend(userAccountMap, $scope.details[_org.pk]);   
             });
             
-            var topOrganisations =  util.keyArray($scope.topOrgs,  "pk"); 
-            
+            var topOrganisations =  util.keyArray($scope.topOrgs,  "pk");  
+                
             for (var owner in jobSummary) { 
                 if (userAccountMap[jobSummary[owner].username]) {
                     jobSummary[owner].fullname = userAccountMap[jobSummary[owner].username].fullname;
@@ -236,7 +245,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
          * @return {Void}
          */ 
         var updateJobSummary = function() { 
-             
+            
             var organisations = [];
             $scope.jobCountSum = 0;
             $scope.cpuSecondsSum = 0;
@@ -291,9 +300,9 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                 $scope.jobCountSum += userSummary.jobCount;
                 $scope.cpuSecondsSum += userSummary.cpuSeconds; 
             });
-               
+                
             /**
-             * Calulate cost for payable school in 3 university (University of Adelaide, Flinders University and Flinders University)
+             * Calculate cost for payable school in 3 university (University of Adelaide, Flinders University and Flinders University)
              */ 
             for (var organisation in organisations) {
                 if (organisations[organisation].billing) {
