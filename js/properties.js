@@ -25,10 +25,7 @@ define({
                      "ersa-ckan-prod-app", 
                      "ersa-ckan-prod-backup", 
                      "ersa-cml-earth", 
-                     "ersa-cml-tizarddeploy", 
-                     "ersa-uofa-ag-plantdb-plantdb-6", 
-                     "ersa-uofa-ag-plantdb-tpa_backup-6", 
-                     "ersa-uofa-ag-plantdb-zegami-6", 
+                     "ersa-cml-tizarddeploy",  
                      "SD_FS_01", 
                      "SD_FS_02"], 
     

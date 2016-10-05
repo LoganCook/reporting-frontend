@@ -53,11 +53,7 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
          * @return {Void}
          */ 
         var clear = function() { 
-            
-            uniToDivide = {'universityofadelaide' :{ id: 0, name:'University of Adelaide', jobCount : 0, cpuSeconds : 0, cost :0}, 
-                            'flindersuniversity':{ id: 0,  name:'Flinders University', jobCount : 0, cpuSeconds : 0, cost :0}, 
-                            'universityofsouthaustralia':{ id: 0, name:'University of South Australia', jobCount : 0, cpuSeconds : 0, cost :0}};
-
+             
             jobSummary = {};
 
             $scope.status = "Zero jobs loaded.";
