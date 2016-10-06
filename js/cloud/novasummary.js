@@ -1,4 +1,4 @@
-define(['app', 'options', '../util2', '../util', './services', './crm', './account'], function(app, options, util, formater) {
+define(['app', 'options', '../util2', '../util', './services', '../crm', './account'], function(app, options, util, formater) {
     'use strict';
     
     app.controller("NovasummaryController", ["$rootScope", "$scope", "$timeout", "$filter", "reporting", "org", "queryResource", "$q", "flavor", "tenant", "crm", "account", "spinner",
