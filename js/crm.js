@@ -35,7 +35,7 @@ define(['app', './util'], function(app, util) {
     } 
     
         
-    function getOrganisationUseres(orgs) { 
+    function getOrganisationUsers(orgs) { 
         var deferred = $q.defer();  
         organisations = orgs;
         
@@ -45,12 +45,6 @@ define(['app', './util'], function(app, util) {
         });                
         
         $q.all(queryies).then(function() {
-            var buff = {};
-            organisations.forEach(function(organisation) { 
-                angular.extend(buff, cachedUsers[organisation.pk]); 
-            });  
-            cachedUsers = _.values(buff); 
-            cachedUsers = util.keyArray(cachedUsers, 'personid'); 
             deferred.resolve(cachedUsers);  
         }, function(rsp) { 
             //alert("Request failed");
@@ -111,7 +105,7 @@ define(['app', './util'], function(app, util) {
             deferred.resolve(cachedUsers); 
         } else {       
             getTopOrganisations().then(function(topOrganisations) { 
-                getOrganisationUseres(topOrganisations) 
+                getOrganisationUsers(topOrganisations) 
                 .then(function() { 
                     deferred.resolve(cachedUsers); 
                 });  
@@ -233,14 +227,36 @@ define(['app', './util'], function(app, util) {
             }        
             return deferred.promise;
         },
-        getUsers: function() { 
+        getUsersByPersonId: function() {// used in Nectar usage 
             var deferred = $q.defer();  
 
             if (!_.isEmpty(cachedUsers)) {  
                 deferred.resolve(cachedUsers); 
             } else {       
-                getCachedUsers().then(function(cachedUsers) { 
-                    deferred.resolve(cachedUsers);   
+                getCachedUsers().then(function(buff) {   
+                    var buff = {};
+                    organisations.forEach(function(organisation) { 
+                        angular.extend(buff, cachedUsers[organisation.pk]); 
+                    });  
+                    buff = _.values(buff); 
+                    buff = util.keyArray(buff, 'personid');       
+                    deferred.resolve(buff);  
+                }, function(rsp) { 
+                    //alert("Request failed");
+                    console.log(rsp);
+                    deferred.reject(cachedUsers);
+                });          
+            }        
+            return deferred.promise;
+        },
+        getUsers: function() {// used in HPC 
+            var deferred = $q.defer();  
+
+            if (!_.isEmpty(cachedUsers)) {  
+                deferred.resolve(cachedUsers); 
+            } else {       
+                getCachedUsers().then(function(buff) {     
+                    deferred.resolve(cachedUsers);  
                 }, function(rsp) { 
                     //alert("Request failed");
                     console.log(rsp);

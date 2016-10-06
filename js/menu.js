@@ -4,7 +4,7 @@ define(["app", "menu-data"], function (app, menuData) {
             
             $scope.isArray = angular.isArray;
             
-            sessionStorage['ersaUser'] = 'true'; 
+            sessionStorage['ersaUser'] = 'false'; 
             
             if (sessionStorage['ersaUser'] === 'true') { 
                 $scope.menus = menuData.ersa;

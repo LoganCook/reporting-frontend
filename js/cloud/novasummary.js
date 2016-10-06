@@ -75,7 +75,10 @@ define(['app', 'options', '../util2', '../util', './services', '../crm', './acco
             startTimestamp = util.dateToTimestamp($scope.rangeStart);
             endTimestamp = util.dateToTimestamp($scope.rangeEnd, true);
              
+            $scope.selectedDomain = '0'; 
+            $scope.serverChecked = false;
             $scope.instancesState = []; 
+            
             getInstances(startTimestamp, endTimestamp);
         };
   
@@ -314,7 +317,7 @@ define(['app', 'options', '../util2', '../util', './services', '../crm', './acco
          */ 
         function fillTenants(states) {  
             var deferred = $q.defer();
-            crm.getUsers() 
+            crm.getUsersByPersonId() 
             .then(fillAccouns)
             .then(getTenants)
             .then(function(tenantsUsers) { 

@@ -1,6 +1,6 @@
-define(["app", "lodash", "../util", "properties"], function(app, _, util, props) {
-    app.controller("HPCSummaryController", ["$rootScope", "$scope", "$timeout", "reporting", "org", "spinner",
-    function($rootScope, $scope, $timeout, reporting, org, spinner) {
+define(["app", "lodash", "../util", "properties", '../crm'], function(app, _, util, props) {
+    app.controller("HPCSummaryController", ["$rootScope", "$scope", "$timeout", "reporting", "org", "spinner", "crm",
+    function($rootScope, $scope, $timeout, reporting, org, spinner, crm) {
          
         /**
          * 3 uni(FUSA, UOFA and UOSA) have responsiblity for paying $60,000 
@@ -135,17 +135,13 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
          * to fetch CRM data (orgainsation, user details, billing organisation).
          * 
          * @return {Void}
-         */ 
-        org.getOrganisations().then(function(data) { 
-            $scope.topOrgs = data; 
-            
-            org.getAllUsers().then(function(users) {    
-                $scope.details = users;    
-            }); 
-            
-            org.getBillings().then(function(billings) {    
-                $scope.topOrgs = billings;
-                
+         */        
+        crm.getUsers().then(function(users) {    
+            $scope.details = users;    
+
+            org.getOrganisations().then(function(data) { 
+                $scope.topOrgs = data;     
+
                 /**
                  * filter 3 university to allocate $60,000 for getting primary key
                  */
@@ -160,10 +156,14 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                 });
                 
                 var threeOfuniversity = _.values(uniToDivide);  
-                uniToDivide =  util.keyArray(threeOfuniversity);   
-            }); 
-        });  
-         
+                uniToDivide =  util.keyArray(threeOfuniversity);                        
+            });           
+        }, function(rsp) { 
+            //alert("Request failed");
+            console.log(rsp);
+            deferred.reject(cachedUsers);
+        }); 
+        
         /**
          * When this page is requested, this fucnction call initHpc
          * to fetch basic HPC data ("host", "queue", "owner"). 
