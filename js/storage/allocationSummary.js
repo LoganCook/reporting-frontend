@@ -490,6 +490,8 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                 loadXfsUsage();
             } else {  
                 $scope.status = "Loaded " + "0 hnas snapshots."; 
+                alert($scope.status); 
+                spinner.stop();
             } 
         };
 
