@@ -49,10 +49,8 @@ ul, ol, li {
   margin-right: auto;
   display: -ms-flexbox;
   display: flex;
-  display: -webkit-flex;
   -ms-flex-flow: row wrap;
-      flex-flow: row wrap; 
-  display: -webkit-flex; -webkit-flex-wrap: wrap; display: flex; flex-wrap: wrap;}
+      flex-flow: row wrap; }
   .row .row {
     max-width: none;
     margin-left: -0.625rem;

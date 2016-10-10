@@ -6,38 +6,39 @@
 
         <form>
             <div class="row">
-                <div class="col-md-4">
-                    <p>Organisation</p>
-                    <div class="form-group">
-                        <select name="orgSelect" id="orgSelect" ng-model="selectedBillingOrg" ng-change="orgChanged()" class="form-control">
-                            <option value="0">All</option>
-                            <option ng-repeat="org in topOrgs" ng-show="org.billing == org.pk" value="{{ org.billing }}">{{ org.fields.name}}</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <p>Select Usage Month</p>
-                    <p class="input-group">
-                        <input type="text" class="form-control" uib-datepicker-popup="MMM/yyyy" ng-model="rangeEnd" is-open="rangeEndOpen" showWeeks="false" datepicker-options="{minMode: 'month'}" datepicker-mode="'month'" ng-required="true" onkeydown="return false"/>
-                        <span class="input-group-btn">
-                            <button type="button" class="btn tn-default btn-search" ng-click="openRangeEnd()"><i class="glyphicon glyphicon-calendar"></i></button>
-                        </span>
-                    </p>
-                </div>
-
-                <div class="col-md-4">
-                    <p>&nbsp;</p>
-                    <div class="btn-group btn-group-justified" role="group">
-                        <div class="btn-group" role="group">
-                            <button type="button" class="btn tn-default btn-search" ng-click="load()">View Usage</button>
-                        </div>
-                        <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-default btn-search" ng-csv="export()" filename="hpc.usage.csv">Export as CSV</button>
+                <div class="col-md-12">
+                    <div class="col-md-4">
+                        <p>Organisation</p>
+                        <div class="form-group">
+                            <select name="orgSelect" id="orgSelect" ng-model="selectedBillingOrg" ng-change="orgChanged()" class="form-control">
+                                <option value="0">All</option>
+                                <option ng-repeat="org in topOrgs" ng-show="org.billing == org.pk" value="{{ org.billing }}">{{ org.fields.name}}</option>
+                            </select>
                         </div>
                     </div>
+
+                    <div class="col-md-4">
+                        <p>Select Usage Month</p>
+                        <p class="input-group">
+                            <input type="text" class="form-control" uib-datepicker-popup="MMM/yyyy" ng-model="rangeEnd" is-open="rangeEndOpen" showWeeks="false" datepicker-options="{minMode: 'month'}" datepicker-mode="'month'" ng-required="true" onkeydown="return false"/>
+                            <span class="input-group-btn">
+                                <button type="button" class="btn tn-default btn-search" ng-click="openRangeEnd()"><i class="glyphicon glyphicon-calendar"></i></button>
+                            </span>
+                        </p>
+                    </div>
+
+                    <div class="col-md-4">
+                        <p>&nbsp;</p>
+                        <div class="btn-group btn-group-justified" role="group">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn tn-default btn-search" ng-click="load()">View Usage</button>
+                            </div>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-default btn-search" ng-csv="export()" filename="hpc.usage.csv">Export as CSV</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                
             </div>
 
             <div class="hidden">
