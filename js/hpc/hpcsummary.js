@@ -108,8 +108,10 @@ define(["app", "lodash", "../util", "properties", '../crm'], function(app, _, ut
                     }
                     
                     $scope[type] = util.keyArray(filtered);  
-                } else { 
-                    $scope[type] = util.keyArray(data);
+                } else {
+                    if (data.length) { 
+                        $scope[type] = util.keyArray(data);
+                    } 
                 }
                  
                 /**
@@ -455,6 +457,7 @@ define(["app", "lodash", "../util", "properties", '../crm'], function(app, _, ut
          */ 
         $scope.load = function() {
             $scope.selectedBillingOrg = '0'; 
+            $scope.alerts = [];
 
             initHpc();
 
@@ -469,7 +472,7 @@ define(["app", "lodash", "../util", "properties", '../crm'], function(app, _, ut
             }
 
             if (queueQuery.length == 0) {
-                $scope.alerts.push({type: 'danger',msg: "Queues not loaded!"}); 
+                //$scope.alerts.push({type: 'danger',msg: "Queues not loaded!"}); 
                 return false;
             }
             

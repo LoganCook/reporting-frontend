@@ -287,18 +287,27 @@ define(['app', './util'], function(app, util) {
             if (!_.isEmpty(organisationLoggedin)) {  
                 deferred.resolve(organisationLoggedin); 
             } else {        
-                getCachedUsers().then(function(cachedUsers) { 
-                    angular.forEach(cachedUsers, function(user) {
+                getCachedUsers().then(function(cachedUsers) {
+                    
+                    var buff = {};
+                    organisations.forEach(function(organisation) { 
+                        angular.extend(buff, cachedUsers[organisation.pk]); 
+                    });                      
+                    angular.forEach(buff, function(user) { 
                          if (user.email === email) { 
-                            organisationLoggedin = user;
-                            deferred.resolve(organisationLoggedin); 
+                            var buff = util.keyArray(organisations, 'pk'); 
+                            if(buff[user.org]){ 
+                                organisationLoggedin = buff[user.org].fields;
+                                organisationLoggedin.id = user.org;
+                                deferred.resolve(organisationLoggedin); 
+                            }    
                         }  
                     });                     
                       
                 }, function(rsp) { 
                     //alert("Request failed");
                     console.log(rsp);
-                    deferred.reject(cachedUsers);
+                    deferred.reject(organisationLoggedin);
                 });      
             }        
             return deferred.promise;

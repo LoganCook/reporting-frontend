@@ -107,11 +107,11 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
 
                 if (type == "snapshot") {
                     xfs.snapshotByTimestamp = $scope.xfs.snapshotByTimestamp = util.keyArray(data, "ts");
-                } else if (type == "host" && data) {
+                } else if (type == "host" && data.length) {
                     
                     /** host pl-cml-nss-01.blue.ersa.edu.au is default */                    
                     $scope.select.host = data[0].id; 
-                } else if (type == "filesystem" && data) {
+                } else if (type == "filesystem" && data.length) {
                     _.forEach(data, function(record) {
 
                         /** 

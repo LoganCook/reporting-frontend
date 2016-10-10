@@ -206,16 +206,16 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                             
             reporting.xfsBase(function(svc, type, data) { 
 
-                if (type == "snapshot") {
+                if (type == "snapshot" && data.length) {
                     xfs.snapshots = util.keyArray(data); 
                     
-                } else if (type == "host" && data) { 
+                } else if (type == "host" && data.length) { 
                     xfs.host = util.keyArray(data);
                     
                     /** host pl-cml-nss-01.blue.ersa.edu.au is default */
                     xfsDefaultHost = data[0].id; 
                     
-                } else if (type == "filesystem" && data) {             
+                } else if (type == "filesystem" && data.length) {             
                     _.forEach(data, function(_filesystem) {
                         
                         /** 
@@ -240,7 +240,7 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                     }); 
  
                     xfs.filesystems = util.keyArray(data);     
-                } else if (type == "owner" && data) {  
+                } else if (type == "owner" && data.length) {  
                     xfs.owners = util.keyArray(data); 
                 }
 

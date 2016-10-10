@@ -207,6 +207,7 @@ define(['app', 'options', '../util2', '../util', './services', '../crm', './acco
                 .then(doCalculation)
                 .then(fillTenants)
                 .then(function(states) {
+                    
                     cachedInstancesState = cachedInstancesState.concat(states);
                     
                     var summaryStates = summaryInstances(states);
@@ -264,6 +265,8 @@ define(['app', 'options', '../util2', '../util', './services', '../crm', './acco
                     formatOutputs(states[i]);
                 }
                 return states;
+            }, function(rsp) {  
+                spinner.stop();  
             });
         }
 
@@ -308,6 +311,8 @@ define(['app', 'options', '../util2', '../util', './services', '../crm', './acco
             instance['span'] = (instance['span'] / 3600).toFixed(1);
             instance['ram'] = formater.formatNumber(instance['ram']);
         }
+        
+        var organisationLoggedin = {};
 
         /** 
          * request tenant  and assign tenantName to each instance summary data.
@@ -318,9 +323,18 @@ define(['app', 'options', '../util2', '../util', './services', '../crm', './acco
         function fillTenants(states) {  
             var deferred = $q.defer();
             crm.getUsersByPersonId() 
+            .then(function(users) {
+                /** attain top orgainsation which user logged in */
+                crm.getOrganisationLoggedin('hanieh.ghodrati@adelaide.edu.au').then(function(orgLoggedin) { 
+                    //$scope.selectedDomain = orgLoggedin.name; 
+                    //console.log('organisationLoggedin=' + JSON.stringify($scope.selectedDomain));
+                
+                    return users;
+                });
+            })
             .then(fillAccouns)
             .then(getTenants)
-            .then(function(tenantsUsers) { 
+            .then(function(tenantsUsers) {
                 cachedTenants = tenantsUsers.tenants; 
                 
                 angular.forEach(states, function(instance) { 
@@ -342,8 +356,11 @@ define(['app', 'options', '../util2', '../util', './services', '../crm', './acco
                         instance.email = users[instance.account].email; 
                     }
                 }); 
-                                
+                
                 deferred.resolve(states);
+            }, function(rsp) {  
+                spinner.stop(); 
+                deferred.reject({});
             });
             return deferred.promise;
         }  
@@ -440,6 +457,18 @@ define(['app', 'options', '../util2', '../util', './services', '../crm', './acco
                         usage: 0
                     }; 
                 }  
+                
+                /**
+                 * Check if billing organisation selected
+                 * if selected, remove other school summary in other billing organisation
+                 */ 
+                if ($scope.selectedDomain != '0') {
+                    if ($scope.selectedDomain != summed[_key].organisation) {
+                        delete summed[_key];
+                        return;
+                    }
+                }                
+                
                 summed[_key].coreAllocation += instance.coreAllocation ;  
                 summed[_key].core += instance.vcpus ;  
                 summed[_key].usage += instance.usage ; 
