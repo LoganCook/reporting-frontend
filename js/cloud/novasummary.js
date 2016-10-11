@@ -189,7 +189,7 @@ define(['app', 'options', '../util2', '../util', './services', '../crm', './acco
             // initialize variables when fetching
             cachedInstancesState = [];
             
-            //var summaryUrl = '/usage/nova/NovaUsage_'  + startTime + '_' + endTime + '.json';
+            //var summaryUrl = 'NovaUsage_'  + startTime + '_' + endTime + '.json';
             var summaryUrl = '/usage/nova/NovaUsage_'  + 1451568600 + '_' + 1454246999 + '.json';
              
             spinner.start();
@@ -199,7 +199,7 @@ define(['app', 'options', '../util2', '../util', './services', '../crm', './acco
                 end: endTime, 
                 distinct: true
             };
-            //var nq = queryResource.build(sessionStorage['nova']);
+            //var nq = queryResource.build("usage/nova");
             var nq = queryResource.build("http://localhost:8080");
             nq.query(args, function(summaries) {  
 

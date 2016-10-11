@@ -1,6 +1,6 @@
-define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
-    app.controller("HPCStorageController", ["$rootScope", "$scope", "$timeout", "$filter","reporting", "org", "spinner",
-    function($rootScope, $scope, $timeout, $filter, reporting, org, spinner) {
+define(["app", "lodash", "mathjs","../util", '../crm'], function(app, _, math, util) {
+    app.controller("HPCStorageController", ["$rootScope", "$scope", "$timeout", "$filter","reporting", "org", "spinner", "crm",
+    function($rootScope, $scope, $timeout, $filter, reporting, org, spinner, crm) {
 
         $scope.values = _.values;
 
@@ -13,6 +13,8 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
  
         $scope.total = {};
         $scope.topOrgs = [];
+        $scope.billingOrgs = []; 
+        
         $scope.details = {};
 
         $scope.selectedBillingOrg = '0';
@@ -137,6 +139,11 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
                 if (!serviceTypes.length) { 
                     spinner.stop();
                     $scope.status = "Initial data loaded.";
+                    if (_.isEmpty($scope.xfs) || _.isEmpty($scope.xfs.snapshotByTimestamp) ||
+                            _.isEmpty(xfs) || _.isEmpty(xfs.owner) ||
+                            $scope.select.host == null || $scope.select.filesystem == null) {
+                        alert("Request failed"); 
+                    }                    
                 }
             });
         }; 
@@ -146,25 +153,30 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
          * to fetch CRM data (orgainsation, user details, billing organisation).
          * 
          * @return {Void}
-         */ 
-        org.getOrganisations().then(function(data) {
-            $scope.topOrgs = data;
-            
-            org.getAllUsers().then(function(users) {
-                $scope.details = users;
-            });
-            
-            org.getBillings().then(function(billings) {
-                $scope.topOrgs = billings;
-            });
-        });
- 
-        /**
-         * When this page is requested, this fucnction call initHpc
-         * to fetch basic HPC data ("snapshot", "host", "filesystem", "owner"). 
-         */        
-        initXFS();
-         
+         */  
+        spinner.start();
+        crm.getUsers() 
+        .then(function(users) { 
+            $scope.details = users;   
+        }) 
+        .then(crm.getOrganisations)
+        .then(function(_billings) { 
+            $scope.topOrgs = _billings; 
+
+            _.forEach ($scope.topOrgs, function(orgainsation) {  
+                if (orgainsation.pk == orgainsation.billing) {
+                        $scope.billingOrgs.push(orgainsation);  
+                }      
+            });      
+        })
+        .then(function() {  
+               
+            initXFS();  
+         }, function(rsp) { 
+            alert("Request failed"); 
+            spinner.stop();  
+        });  
+        
         /**
          * Calculate grand total usage data. 
          *   

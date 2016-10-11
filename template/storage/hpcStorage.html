@@ -11,7 +11,7 @@
                         <div class="form-group">
                             <select name="orgSelect" id="orgSelect" ng-model="selectedBillingOrg" ng-change="orgChanged()" class="form-control">
                                 <option value="0">All</option>
-                                <option ng-repeat="org in topOrgs" ng-show="org.billing == org.pk" value="{{ org.billing }}">{{ org.fields.name}}</option>
+                                <option ng-repeat="org in billingOrgs" value="{{ org.billing }}">{{ org.fields.name}}</option>
                             </select>
                         </div>
                     </div>                

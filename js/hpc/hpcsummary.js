@@ -15,7 +15,8 @@ define(["app", "lodash", "../util", "properties", '../crm'], function(app, _, ut
         $scope.formatNumber = util.formatNumber;
         $scope.formatDuration = util.formatDuration; 
         
-        $scope.topOrgs = []; 
+        $scope.topOrgs = [];
+        $scope.billingOrgs = []; 
         
         $scope.details = {};
         $scope.selectedQueues = {};
@@ -89,7 +90,7 @@ define(["app", "lodash", "../util", "properties", '../crm'], function(app, _, ut
             if (!_.isEmpty($scope.host) && !_.isEmpty($scope.queue) && !_.isEmpty($scope.owner)) {
                 return;
             }
-                         
+                        
             $scope.status = "Downloading "  + serviceHpcTypes; 
  
             spinner.start();
@@ -113,7 +114,7 @@ define(["app", "lodash", "../util", "properties", '../crm'], function(app, _, ut
                         $scope[type] = util.keyArray(data);
                     } 
                 }
-                 
+                
                 /**
                  * Find and remove item from serviceTypes array
                  * to display status of current processing.
@@ -128,8 +129,12 @@ define(["app", "lodash", "../util", "properties", '../crm'], function(app, _, ut
                 if (!serviceHpcTypes.length) { 
                     spinner.stop();
                     $scope.status = "Initial data loaded.";
+                    
+                    if (_.isEmpty($scope.host) || _.isEmpty($scope.queue) || _.isEmpty($scope.owner)) {
+                        alert("Request failed");
+                    } 
                 }   
-            });
+            }); 
         };
  
         /**
@@ -137,41 +142,44 @@ define(["app", "lodash", "../util", "properties", '../crm'], function(app, _, ut
          * to fetch CRM data (orgainsation, user details, billing organisation).
          * 
          * @return {Void}
-         */        
-        crm.getUsers().then(function(users) {    
-            $scope.details = users;    
+         */    
+        spinner.start();
+        crm.getUsers() 
+        .then(function(users) { 
+            $scope.details = users;   
+        }) 
+        .then(crm.getOrganisations)
+        .then(function(_billings) { 
+            $scope.topOrgs = _billings; 
 
-            org.getOrganisations().then(function(data) { 
-                $scope.topOrgs = data;     
+            /**
+             * filter 3 university to allocate $60,000 for getting primary key
+             */
+            
+            _.forEach ($scope.topOrgs, function(orgainsation) { 
+                
+                if (orgainsation.pk == orgainsation.billing) {
+                        $scope.billingOrgs.push(orgainsation);  
+                }
 
-                /**
-                 * filter 3 university to allocate $60,000 for getting primary key
-                 */
+                var candidate = orgainsation.fields.name.replace(/\s+/g, '');// remove spaces between characters
+                candidate = candidate.toLowerCase().trim(); // make lowcase
                 
-                _.forEach ($scope.topOrgs, function(orgainsation) { 
-                    var candidate = orgainsation.fields.name.replace(/\s+/g, '');// remove spaces between characters
-                    candidate = candidate.toLowerCase().trim(); // make lowcase
-                    
-                    if (uniToDivide[candidate]) {
-                        uniToDivide[candidate].id = orgainsation.pk;
-                    }
-                });
-                
-                var threeOfuniversity = _.values(uniToDivide);  
-                uniToDivide =  util.keyArray(threeOfuniversity);                        
-            });           
-        }, function(rsp) { 
-            //alert("Request failed");
-            console.log(rsp);
-            deferred.reject(cachedUsers);
+                if (uniToDivide[candidate]) {
+                    uniToDivide[candidate].id = orgainsation.pk;
+                }
+            });
+            
+            var threeOfuniversity = _.values(uniToDivide);  
+            uniToDivide =  util.keyArray(threeOfuniversity);
+        })
+        .then(function() {  
+               
+            initHpc();  
+         }, function(rsp) { 
+            alert("Request failed"); 
+            spinner.stop(); 
         }); 
-        
-        /**
-         * When this page is requested, this fucnction call initHpc
-         * to fetch basic HPC data ("host", "queue", "owner"). 
-         */ 
-        initHpc();  
-        
 
         /**
          * Summarize by owner

@@ -265,6 +265,10 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
             if (!serviceXFSTypes.length && !serviceHnasTypes.length) { 
                 spinner.stop();
                 $scope.status = "Initial data loaded.";
+                
+                if (_.isEmpty(hnas.filesystems) || _.isEmpty(xfs.snapshots) ) {
+                    alert("Request failed");
+                }                 
             }   
         }; 
 
@@ -304,11 +308,13 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
                 var _rdses = [];
                 $scope.topRdsOrgs = [];
                 _.forEach(data, function(rds) {
-                    _rdses.push(rds.fields);                
-                    var _rds = {"id" : rds.fields.allocation_num.substring(0, 4) , "name" : rds.fields.allocation_num.substring(0, 4)};
-                    if (_.findWhere($scope.topRdsOrgs, _rds) == null) {
-                        $scope.topRdsOrgs.push(_rds);
-                    }
+                    if (rds.fields && rds.fields.allocation_num &&  rds.fields.allocation_num.length > 4) {// to avoide error "can't assign to properties of (new Boolean(true)): not an object"
+                         _rdses.push(rds.fields);                
+                        var _rds = {"id" : rds.fields.allocation_num.substring(0, 4) , "name" : rds.fields.allocation_num.substring(0, 4)};
+                        if (_.findWhere($scope.topRdsOrgs, _rds) == null) {
+                            $scope.topRdsOrgs.push(_rds);
+                        }
+                    }        
                 }); 
                 
                 rdses = util.keyArray(_rdses, 'filesystem');
