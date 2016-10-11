@@ -283,6 +283,8 @@ define(["app", "lodash", "mathjs","../util", "properties"], function(app, _, mat
          * 
          * @return {Void}
          */ 
+         
+        spinner.start();
         org.getOrganisations().then(function(_data) { 
             $scope.topOrgs = _data;  
             
