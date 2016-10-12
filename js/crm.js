@@ -213,7 +213,7 @@ define(['app', './util'], function(app, util) {
                 };   
                 var nq = queryResource.build(requestUri);
                 nq.queryNoHeader(args, function(organisations) {   
-                    getOrganisationUseres(organisations)
+                    getOrganisationUsers(organisations)
                     .then(getRoles)
                     .then(getNectar)
                     .then(function() { 
@@ -238,8 +238,8 @@ define(['app', './util'], function(app, util) {
                     organisations.forEach(function(organisation) { 
                         angular.extend(buff, cachedUsers[organisation.pk]); 
                     });  
-                    buff = _.values(buff); 
-                    buff = util.keyArray(buff, 'personid');       
+                    //buff = _.values(buff); 
+                    //buff = util.keyArray(buff, 'personid');       
                     deferred.resolve(buff);  
                 }, function(rsp) { 
                     //alert("Request failed");

@@ -51,37 +51,48 @@
                         
         </form>
 
-        <div class="row">
-            <div class="col-sm-12">
-                <div style="padding-top: 25px;">
-                    <table class="table table-striped" style="width: 100%;">
-                        <tr ng-show="serverChecked"> 
-                            <th ng-repeat="title in ::colTitles[0]">{{title}}</th>
-                        </tr>
-                        <tr ng-show="!serverChecked"> 
-                            <th ng-repeat="title in ::colTitles[1]">{{title}}</th>
-                        </tr>
-                        <tr ng-repeat="instance in instancesState | orderBy: 'tenantName'">
-                          <td ng-repeat="field in ::fieldNames">
-                            {{instance[field]}}
-                          </td>
-                        </tr>
+        <div class="row" style="padding-top: 25px;">
+            <div class="col-sm-12"> 
+                <table class="table table-striped" style="width: 100%;">
 
-                        <tr ng-show="instancesState.length">
-                            <td><strong>Grand Total</strong></td>     
-                            <td ng-show="loggedInAsErsaUser"> - </td>
-                            <td ng-show="serverChecked"> - </td>  
-                            <td ng-show="serverChecked"> - </td>  
-                            <td ng-show="serverChecked"> - </td>  
-                            <!-- th>{{ sum.coreAllocation }}</th -->
-                            <td><strong>{{ sum.core }}</strong></td>  
-                            <td> - </td>  
-                            <!-- th>{{ ((sum.core /  sum.coreAllocation) * 100).toFixed(2)}}%</th --> 
-                            <td><strong>${{ sum.cost.toFixed(2) }}</strong></td> 
-                            <td ng-show="serverChecked"> - </td>  
-                        </tr>                                         
-                    </table>
-                </div>
+                    <tr>
+                        <th ng-show="loggedInAsErsaUser">Organisation                            </th>
+                        <th>Project                                 </th>
+                        <th ng-show="serverChecked">User Name                     </th>
+                        <th ng-show="serverChecked">Email                         </th>
+                        <th ng-show="serverChecked">School                        </th> 
+                        <th><p class="text-right">Total Cores Used</th>  
+                        <th><p class="text-right">Core Quota Allocated</p></th>  
+                        <th><p class="text-right">Cost per Core Used</p></th> 
+                        <th ng-show="serverChecked">Server Name                    </th> 
+                    </tr>
+                    <tr ng-repeat="instance in instancesState | orderBy: 'tenantName'">
+                        <td ng-show="loggedInAsErsaUser">{{ instance.organisation }}</td>
+                        <td>{{ instance.tenantName }}</td>
+                        <td ng-show="serverChecked">{{ instance.fullname }}</td>
+                        <td ng-show="serverChecked">{{ instance.email }}</td>
+                        <td ng-show="serverChecked">{{ instance.school }}</td>
+                        <td><p class="text-right"> {{ instance.core }}</p></td>  
+                        <td><p class="text-right"> {{ instance.allocatedCore }}</p></td> 
+                        <td><p class="text-right"> {{ instance.cost }}</p></td>   
+                        <td ng-show="serverChecked">{{ instance.server }}</td>   
+                    </tr> 
+
+
+                    <tr ng-show="instancesState.length">
+                        <td><strong>Grand Total</strong></td>     
+                        <td ng-show="loggedInAsErsaUser"> - </td>
+                        <td ng-show="serverChecked"> - </td>  
+                        <td ng-show="serverChecked"> - </td>  
+                        <td ng-show="serverChecked"> - </td>  
+                        <!-- th>{{ sum.coreAllocation }}</th -->
+                        <td><p class="text-right"><strong>{{ sum.core }}</strong></p></td>  
+                        <td> - </td>  
+                        <!-- th>{{ ((sum.core /  sum.coreAllocation) * 100).toFixed(2)}}%</th --> 
+                        <td><p class="text-right"><strong>${{ sum.cost.toFixed(2) }}</strong></p></td> 
+                        <td ng-show="serverChecked"> - </td>  
+                    </tr>                                         
+                </table> 
             </div>
         </div>
 

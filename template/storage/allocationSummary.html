@@ -79,15 +79,15 @@
             <div class="col-md-12">
                 <table class="table table-striped">
                     <tr>
-                        <th>{{ersaUser}} Allocation Name</th>
-                        <th>School</th>
-                        <th>User Name</th>
-                        <th>Email</th>
-                        <th ng-show="filesystemChecked">File System</th> 
-                        <th>RDS GB Allocated</th> 
-                        <th>Total GB Usaged</th>  
-                        <th>250GB Quota Allocated</th>  
-                        <th>Cost per Quota</th> 
+                        <th> Allocation Name        </th>
+                        <th>School                        </th>
+                        <th>User Name                     </th>
+                        <th>Email                         </th>
+                        <th ng-show="filesystemChecked">File System                     </th> 
+                        <th><p class="text-right">RDS GB Allocated</th> 
+                        <th><p class="text-right">Total GB Usaged</p></th>  
+                        <th><p class="text-right">250GB Quota Allocated</p></th>  
+                        <th><p class="text-right">Cost per Quota</p></th> 
                     </tr>
                     <tr ng-repeat="usage in usages | orderBy: 'rds'">
                         <td>{{ usage.rds }}</td>
@@ -95,10 +95,10 @@
                         <td>{{ usage.username }}</td>
                         <td>{{ usage.email }}</td>
                         <td ng-show="filesystemChecked">{{ usage.filesystem }}</td> 
-                        <td>{{ usage.approvedSize }}</td>  
-                        <td> {{ usage.usage }}</td> 
-                        <td> {{ usage.quota250 }}</td>  
-                        <td>${{ formatNumber(usage.per5dollar) }}.00</td>  
+                        <td><p class="text-right">{{ usage.approvedSize }}</p></td>  
+                        <td><p class="text-right"> {{ usage.usage }}</p></td> 
+                        <td><p class="text-right"> {{ usage.quota250 }}</p></td>  
+                        <td><p class="text-right">${{ formatNumber(usage.per5dollar) }}.00</p></td>  
                     </tr> 
                     <tr ng-show="usages.length">
                         <td><strong>Grand Total</strong></td>
@@ -106,10 +106,10 @@
                         <td> </td>
                         <td> </td>
                         <td ng-show="filesystemChecked"> </td> 
-                        <td><strong>{{ total.rds }}</strong></td>  
-                        <td><strong>{{ total.currentUsage.toFixed(2) }}</strong></td> 
-                        <td><strong>{{ total.quota250 }}</strong></td>  
-                        <td><strong>${{ formatNumber(total.per5dollar) }}.00</strong></td>  
+                        <td><p class="text-right"><strong>{{ total.rds }}</strong></p></td>  
+                        <td><p class="text-right"><strong>{{ total.currentUsage.toFixed(2) }}</strong></p></td> 
+                        <td><p class="text-right"><strong>{{ total.quota250 }}</strong></p></td>  
+                        <td><p class="text-right"><strong>${{ formatNumber(total.per5dollar) }}.00</strong></p></td>  
                     </tr>                     
                 </table> 
                 

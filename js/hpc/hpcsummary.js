@@ -325,7 +325,7 @@ define(["app", "lodash", "../util", "properties", '../crm'], function(app, _, ut
                     }  
                 } 
             }  
-            
+            $scope.costSum = $scope.costSum.toFixed(2);
             $scope.jobSummary = _.values(organisations); 
         };
          

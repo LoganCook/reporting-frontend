@@ -72,14 +72,14 @@
             <div class="col-md-12">
                 <table class="table table-striped">
                     <tr> 
-                        <th ng-show="loggedInAsErsaUser">Organisation</th>
-                        <th width="20%">School</th>
-                        <th ng-show="userChecked">User ID</th>
-                        <th ng-show="userChecked">User Name</th> 
-                        <th ng-show="userChecked">Email</th> 
-                        <th>Job Count</th>
-                        <th>Total Core Hours</th> 
-                        <th>$</th> 
+                        <th width="40%" ng-show="loggedInAsErsaUser">Organisation</th>
+                        <th width="40%"> School</th>
+                        <th width="10%" ng-show="userChecked">User ID</th>
+                        <th width="10%" ng-show="userChecked">User Name</th> 
+                        <th width="10%" ng-show="userChecked">Email</th> 
+                        <th width="10%"><p class="text-right">Job Count</p></th>
+                        <th width="10%"><p class="text-right">Total Core Hours</p></th> 
+                        <th width="10%"><p class="text-right">$</p></th> 
                     </tr>
                     <tr ng-repeat="sum in jobSummary | orderBy: 'organisation'">
                         <td ng-show="loggedInAsErsaUser">{{ sum.billingName }}</td>
@@ -87,9 +87,9 @@
                         <td ng-show="userChecked">{{ sum.username }}</td> 
                         <td ng-show="userChecked">{{ sum.fullname }}</td>  
                         <td ng-show="userChecked">{{ sum.email }}</td>                        
-                        <td>{{ formatNumber(sum.jobCount) }}</td>
-                        <td>{{ formatNumber(sum.cpuSeconds / 3600) }}</td>
-                        <td>${{ sum.cost }}</td> 
+                        <td><p class="text-right">{{ formatNumber(sum.jobCount) }}</p></td>
+                        <td><p class="text-right">{{ formatNumber(sum.cpuSeconds / 3600) }}</p></td>
+                        <td><p class="text-right">${{ sum.cost }}</p></td> 
                     </tr>
                     <tr ng-show="jobSummary.length">
                         <td><strong>Grand Total</strong></td>
@@ -97,9 +97,9 @@
                         <td ng-show="userChecked"> - </td> 
                         <td ng-show="userChecked"> - </td> 
                         <td ng-show="userChecked"> - </td>  
-                        <td><strong>{{ formatNumber(jobCountSum) }}</strong></td>
-                        <td><strong>{{ formatNumber(cpuSecondsSum / 3600) }}</strong></td> 
-                        <td><strong>${{ costSum }}</td> 
+                        <td><p class="text-right"><strong>{{ formatNumber(jobCountSum) }}</strong></p></td>
+                        <td><p class="text-right"><strong>{{ formatNumber(cpuSecondsSum / 3600) }}</strong></p></td> 
+                        <td><p class="text-right"><strong>${{ costSum }}</strong></p></td> 
                     </tr>                    
                 </table>
             </div>

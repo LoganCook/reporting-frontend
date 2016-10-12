@@ -68,14 +68,14 @@
                 <div class="col-md-12">
                     <table class="table table-striped">
                         <tr>
-                            <th ng-show="loggedInAsErsaUser">Organisation</th>
-                            <th width="20%"> School </th> 
+                            <th ng-show="loggedInAsErsaUser">Organisation                   </th>
+                            <th >School                         </th> 
                             <th ng-show="userChecked || filesystemChecked">User ID</th>
-                            <th ng-show="userChecked || filesystemChecked">User Name</th> 
-                            <th ng-show="userChecked || filesystemChecked">Email</th> 
-                            <th>Total GB Used</th>
-                            <th>250GB Quota Allocated</th> 
-                            <th>Cost per Quota</th>
+                            <th ng-show="userChecked || filesystemChecked">User Name  </th> 
+                            <th ng-show="userChecked || filesystemChecked">Email      </th> 
+                            <th><p class="text-right">Total GB Used        </p></th>
+                            <th><p class="text-right">250GB Quota Allocated</p></th> 
+                            <th><p class="text-right">Cost per Quota       </p></th>
                         </tr>
                         <tr ng-repeat="entry in output.summed | orderBy: ['school','username']">
                             <td ng-show="loggedInAsErsaUser">{{ entry.organisation }}</td>
@@ -83,19 +83,19 @@
                             <td ng-show="userChecked || filesystemChecked">{{ entry.username }}</td> 
                             <td ng-show="userChecked || filesystemChecked">{{ entry.fullname }}</td>  
                             <td ng-show="userChecked || filesystemChecked">{{ entry.email }}</td>
-                            <td>{{ entry.usage }}</td>
-                            <td>{{ entry.quota250 }}</td>
-                            <td>${{ formatNumber(entry.per5dollar) }}.00</td>
+                            <td><p class="text-right">{{ entry.usage }}</p></td>
+                            <td><p class="text-right">{{ entry.quota250 }}</p></td>
+                            <td><p class="text-right">${{ formatNumber(entry.per5dollar) }}.00</p></td>
                         </tr>
                         <tr ng-show="output.summed.length">
-                            <td><strong>Grand Total</strong></td>  
+                            <td><strong>Grand Total                             </strong></td>  
                             <td ng-show="loggedInAsErsaUser"> - </td>
                             <td ng-show="userChecked || filesystemChecked"> - </td> 
                             <td ng-show="userChecked || filesystemChecked"> - </td> 
                             <td ng-show="userChecked || filesystemChecked"> - </td>  
-                            <td><strong>{{ total.currentUsage.toFixed(2) }}</strong></td>
-                            <td><strong>{{ total.quota250 }}</strong> </td> 
-                            <td><strong>${{ formatNumber(total.per5dollar) }}.00</strong></td>  
+                            <td><p class="text-right"><strong>{{ total.currentUsage.toFixed(2) }}</strong></p></td>
+                            <td><p class="text-right"><strong>{{ total.quota250 }}</strong> </p></td> 
+                            <td><p class="text-right"><strong>${{ formatNumber(total.per5dollar) }}.00</strong></p></td>  
                         </tr                          
                     </table>
                 </div>
