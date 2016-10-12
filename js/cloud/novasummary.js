@@ -190,9 +190,7 @@ define(['app', 'options', '../util2', '../util', './services', '../crm', './acco
             cachedInstancesState = [];
             
             var summaryUrl = 'NovaUsage_'  + startTime + '_' + endTime + '.json';
-            //var summaryUrl = 'NovaUsage_'  + 1451568600 + '_' + 1454246999 + '.json';
-            
-            console.log(summaryUrl);
+            //var summaryUrl = 'NovaUsage_'  + 1451568600 + '_' + 1454246999 + '.json'; 
             
             spinner.start();
             var args = { 
