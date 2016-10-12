@@ -189,9 +189,11 @@ define(['app', 'options', '../util2', '../util', './services', '../crm', './acco
             // initialize variables when fetching
             cachedInstancesState = [];
             
-            //var summaryUrl = 'NovaUsage_'  + startTime + '_' + endTime + '.json';
-            var summaryUrl = 'NovaUsage_'  + 1451568600 + '_' + 1454246999 + '.json';
-             
+            var summaryUrl = 'NovaUsage_'  + startTime + '_' + endTime + '.json';
+            //var summaryUrl = 'NovaUsage_'  + 1451568600 + '_' + 1454246999 + '.json';
+            
+            console.log(summaryUrl);
+            
             spinner.start();
             var args = { 
                 object: summaryUrl, 
