@@ -1,12 +1,11 @@
 define(["app", "menu-data"], function (app, menuData) {
-    app.controller("MenuController", ["$rootScope", "$scope",
-         function ($rootScope, $scope) {  
+    app.controller("MenuController", ["$rootScope", "$scope", "AuthService",
+         function ($rootScope, $scope, AuthService) {  
             
             $scope.isArray = angular.isArray;
             
-            sessionStorage['ersaUser'] = 'false'; 
-            
-            if (sessionStorage['ersaUser'] === 'true') { 
+            // FIXME: menu and route both use menuData, can it be mananged together?
+            if (AuthService.isAdmin()) { 
                 $scope.menus = menuData.ersa;
             } else {
                 $scope.menus = menuData.portal;   

@@ -15,8 +15,8 @@ define(['app', '../util'], function(app, util) {
         nq.query({object: 'flavor'}, function(data) {
           flavors = util.keyArray(data, 'openstack_id');
           deferred.resolve(flavors);
-        }, function(rsp) { 
-            alert("Request failed"); 
+        }, function(rsp) {
+            alert("Data could not be retrieved. Please try it later.");
             console.log(rsp);
             deferred.reject({});
         });
@@ -41,8 +41,8 @@ define(['app', '../util'], function(app, util) {
           delete data[0]['openstack_id'];
           tenants[openstack_id] = data[0];
           deferred.resolve(tenants[openstack_id]);
-        }, function(rsp) { 
-            alert("Request failed"); 
+        }, function(rsp) {
+            alert("Data could not be retrieved. Please try it later.");
             console.log(rsp);
             deferred.reject({});
         });

@@ -1,0 +1,58 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>eRSA</title>
+
+  <link href="http://144.6.236.232/de/fonts/fontello/css/fontello.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,600,600i,700,700i|Raleway:400,400i,600,600i" rel="stylesheet">
+
+  <link rel="stylesheet" href="http://144.6.236.232/de/css/main.css" />
+</head>
+
+<body>
+  <div class="row column">
+    <h2>All services in groups (bundles)</h2>
+
+    <ul class="tabs" data-tabs="mx1m4l-tabs" id="example-tabs">
+      <li class="tabs-title is-active" role="presentation"><a href="#tpanel1" aria-selected="true" role="tab" aria-controls="tpanel1" id="tpanel1-label">Computing</a></li>
+      <li class="tabs-title" role="presentation"><a href="#tpanel2" role="tab" aria-controls="tpanel2" aria-selected="false" id="tpanel2-label">Storage</a></li>
+    </ul>
+    <div class="tabs-content" data-tabs-content="example-tabs">
+      <div class="tabs-panel is-active" id="tpanel1" role="tabpanel" aria-hidden="false" aria-labelledby="tpanel1-label">
+          <ul>
+            <li>High performance computing</li>
+            <li>Cloud computing</li>
+          </ul>
+      </div>
+      <div class="tabs-panel" id="tpanel2" role="tabpanel" aria-hidden="true" aria-labelledby="tpanel2-label">
+          <ul>
+            <li>XFS</li>
+            <li>HCP (Object store)</li>
+            <li>HNAS/File system</li>
+            <li>HNAS/Virtual volume</li>
+          </ul>
+      </div>
+    </div>
+  </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="http://144.6.236.232/de/js/vendor.bundle.js"></script>
+    <script src="http://144.6.236.232/de/js/app.bundle.js"></script>
+
+    <script type="text/javascript">
+      /* Simple browser detection for IE - Avoid using if possible */
+      var msie = parseInt((/msie (\d+)/.exec(navigator.userAgent.toLowerCase()) || [])[1]);
+      if (isNaN(msie)) {
+        msie = parseInt((/trident\/.*; rv:(\d+)/.exec(navigator.userAgent.toLowerCase()) || [])[1]);
+      }
+      if(msie) {
+        $('body').addClass('IE IE'+msie);
+      }
+    </script>
+</body>
+</html>

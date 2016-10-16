@@ -6,6 +6,16 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="col-md-4">
+                        <p>Organisation</p>
+                        <div class="form-group">
+                            <select name="domainSelect" id="domainSelect" ng-change="selectDomain()" ng-model="selectedDomain" class="form-control" disabled="disabled">
+                                <option value="0">All</option>
+                                <option ng-repeat="domain in domains" value="{{domain}}">{{domain}}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
                         <p>Select Usage Month</p>
                         <p class="input-group">
                             <input type="text" class="form-control" uib-datepicker-popup="MMM/yyyy" ng-model="rangeEnd" is-open="rangeEndOpen" showWeeks="false" datepicker-options="{minMode: 'month'}" datepicker-mode="'month'" ng-required="true" onkeydown="return false"/>
@@ -14,11 +24,15 @@
                             </span>
                         </p>
                     </div>
+
                     <div class="col-md-4">
                         <p>&nbsp;</p>
                         <div class="btn-group btn-group-justified" role="group">
                             <div class="btn-group" role="group">
                                 <button type="button" class="btn btn-default btn-search" ng-click="load()">View Usage</button>
+                            </div>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-default btn-search" ng-csv="export()" filename="nectar.usage.csv">Export as CSV</button>
                             </div>
                         </div>
                     </div>
@@ -41,6 +55,7 @@
             <div class="col-sm-12">
                 <table class="table table-striped" style="width: 100%;" ng-show="viewDetails">
                     <tr>
+                        <th>Organisation</th>
                         <th>School</th>
                         <th>Project</th>
                         <th>User Name</th>
@@ -49,7 +64,8 @@
                         <th class="text-right">Cores Used</th>
                         <th class="text-right">Fee</th>
                     </tr>
-                    <tr ng-repeat="instance in usages | orderBy: ['organisation', 'tenant']">
+                    <tr ng-repeat="instance in usages | orderBy: ['billing', 'organisation', 'tenant']">
+                        <td>{{ instance.billing }}</td>
                         <td ng-bind-html="instance.organisation"></td>
                         <td>{{ instance.tenant }}</td>
                         <td>{{ instance.contractor }}</td>
@@ -61,17 +77,20 @@
                 </table>
                 <table class="table table-striped" style="width: 100%;" ng-hide="viewDetails">
                     <tr>
+                        <th>Organisation</th>
                         <th>School</th>
                         <th class="text-right">Cores Used</th>
                         <th class="text-right">Fee</th>
                     </tr>
-                    <tr ng-repeat="instance in subTotals | orderBy: 'organisation'">
+                    <tr ng-repeat="instance in subTotals | orderBy: ['billing', 'organisation']">
+                        <td>{{ instance.billing }}</td>
                         <td ng-bind-html="instance.organisation"></td>
                         <td class="text-right"> {{ instance.core }}</td>
                         <td class="text-right"> ${{ instance.cost }}</td>
                     </tr>
                     <tr ng-show="subTotals.length">
                         <td><strong>Grand Total</strong></td>
+                        <td></td>
                         <td class="text-right"><strong>{{ grandTotal.core }}</strong></td>
                         <td class="text-right"><strong>${{ grandTotal.cost }}</strong></td>
                     </tr>

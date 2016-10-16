@@ -2,11 +2,6 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
     app.controller("HPCController", ["$rootScope", "$scope", "$timeout", "reporting", "org", "queryResource", "spinner",
     function($rootScope, $scope, $timeout, reporting, org, queryResource, spinner) {
 
-      //var nq = queryResource.build('https://hnas.reporting.ersa.edu.au');
-      //console.log("checking nq");
-      // console.log(typeof nq.get);
-      //nq.query({"object": "input"}, function(data) { console.log("resource call of nq"); console.log(data);});
-
         $scope.values = _.values;
 
         /**
@@ -41,15 +36,15 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
         };
 
         clear();
- 
+
         /**
          * Service names that should be requested before feching HPC data
          * This is for displaying status of current processing on the page.
          * Refer to service.hpcBase in client.js.
-         */      
+         */
         var serviceTypes = ["host", "queue", "owner"];
-        
-        var initHPC = function() { 
+
+        var initHPC = function() {
             reporting.hpcBase(function(svc, type, data) {
 
                 if (type == "queue") {
@@ -71,19 +66,19 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
                 /**
                  * Find and remove item from serviceTypes array
                  * to display status of current processing.
-                 */ 
+                 */
                 if (serviceTypes.indexOf(type) != -1) {
-                    serviceTypes.splice(serviceTypes.indexOf(type), 1); 
+                    serviceTypes.splice(serviceTypes.indexOf(type), 1);
                 }
                 /**
                  * If not remained in serviceTypes array, it display "Initial data loaded."
-                 */ 
+                 */
                 if (!serviceTypes.length) {
                     spinner.stop();
-                }            
+                }
             });
-        }; 
- 
+        };
+
         function mapUser(attachTo) {
             var found = false;
             if (angular.isDefined($scope.details)) {
@@ -193,10 +188,10 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
 
                 reporting.hpcQuery("job", next, processJobs);
             } else {
-                
+
                 spinner.stop();
                 $scope.status = "Jobs: " + $scope.jobCount;
-            } 
+            }
         };
 
 
@@ -247,15 +242,15 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             $scope.status = "Loading ...";
 
             reporting.hpcQuery("job", query, processJobs);
-        }; 
- 
+        };
+
         spinner.start();
         org.getOrganisations().then(function(data) {
             $scope.topOrgs = data;
             org.getAllUsers().then(function(users) {
                 $scope.details = users;
                 initHPC();
-            }); 
+            });
         });
 
         $scope.orgChanged = function() {
@@ -267,11 +262,10 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
         // Alert Util
         $scope.closeAlert = function(index) {
             $scope.alerts.splice(index, 1);
-        }; 
+        };
 
         $scope.$on('$viewContentLoaded', function() {
             $scope.allQueusSelected = true;
-            //console.log('viewContentLoaded ...');
         });
 
         $scope.selectAllQueues = function () {
@@ -280,10 +274,10 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             }
         };
 
-        $scope.onChangeQueu = function (_qID) { 
+        $scope.onChangeQueu = function (_qID) {
             var allQueusSelected = true;
             for (var _qID in $scope.selectedQueues) {
-                if ($scope.selectedQueues[_qID]) { 
+                if ($scope.selectedQueues[_qID]) {
                 } else {
                     allQueusSelected = false;
                 }

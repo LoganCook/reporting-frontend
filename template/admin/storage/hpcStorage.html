@@ -7,6 +7,30 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="{{values(xfs.host).length > 1 ? 'col-md-3' : 'col-md-4'}}">
+                        <p>Organisation</p>
+                        <div class="form-group">
+                            <select name="orgSelect" id="orgSelect" ng-model="selectedBillingOrg" ng-change="orgChanged()" class="form-control">
+                                <option value="0">All</option>
+                                <option ng-repeat="org in billingOrgs" value="{{ org.billing }}">{{ org.fields.name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div ng-show="values(xfs.host).length > 1" class="col-md-3">
+                        <p>Host</p>
+                        <div class="form-group">
+                            <div>
+                                <select class="form-control" ng-model="select.host">
+                                    <option value="">Name</option>
+                                    <option ng-repeat="host in values(xfs.host) | orderBy: 'name'" value="{{ host.id }}">
+                                        {{ host.name }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="{{values(xfs.host).length > 1 ? 'col-md-3' : 'col-md-4'}}">
                         <p>Select Usage Month</p>
                         <p class="input-group">
                             <input type="text" class="form-control" uib-datepicker-popup="MMM/yyyy" ng-model="rangeEnd" is-open="rangeEndOpen" showWeeks="false" datepicker-options="{minMode: 'month'}" datepicker-mode="'month'" ng-required="true" onkeydown="return false"/>
@@ -22,25 +46,28 @@
                             <div class="btn-group" role="group">
                                 <button type="button" class="btn btn-default btn-search" ng-click="load()">View Usage</button>
                             </div>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-default btn-search" ng-csv="export()" filename="hpc.storage.csv">Export as CSV</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group text-center">
                         <label class="checkbox-inline">
-                            <input type="checkbox" ng-model="viewDetails">View User Detail
+                            <input type="checkbox" ng-model="viewDetails"> View User Detail
                         </label>
                     </div>
                 </div>
             </div>
-            <div class="row" style="padding-top: 25px;">
+            <div class="row" style="padding-top: 25px;" ng-show="viewDetails">
                 <div class="col-md-12">
-                    <table class="table table-striped" ng-show="viewDetails">
+                    <table class="table table-striped">
                         <tr>
-                            <th>School</th>
+                            <th >Organisation </th>
+                            <th >School</th>
                             <th>User ID</th>
                             <th>User Name</th>
                             <th>Email</th>
@@ -48,7 +75,8 @@
                             <th class="text-right">Usage / 250GB</th>
                             <th class="text-right">Fee</th>
                         </tr>
-                        <tr ng-repeat="entry in usages | orderBy: ['organisation', 'owner']">
+                        <tr ng-repeat="entry in output.summed">
+                            <td>{{ entry.billing }}</td>
                             <td ng-bind-html="entry.organisation"></td>
                             <td>{{ entry.owner }}</td>
                             <td>{{ entry.fullname }}</td>
@@ -57,29 +85,47 @@
                             <td class="text-right">{{ entry.blocks }}</td>
                             <td class="text-right">${{ formatNumber(entry.cost) }}</td>
                         </tr>
+                        <tr ng-show="output.summed.length">
+                            <td><strong>Grand Total</strong></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="text-right"><strong>{{ total.usage  | number }}</strong></td>
+                            <td class="text-right"><strong>{{ total.blocks }}</strong> </td>
+                            <td class="text-right"><strong>${{ formatNumber(total.cost) }}</strong></td>
+                        </tr>
                     </table>
-                    <table class="table table-striped" ng-hide="viewDetails">
+                </div>
+            </div>
+            <div class="row" style="padding-top: 25px;" ng-hide="viewDetails">
+                <div class="col-md-12">
+                    <table class="table table-striped">
                         <tr>
-                            <th>School                         </th>
+                            <th>Organisation</th>
+                            <th>School</th>
                             <th class="text-right">GB Used</th>
                             <th class="text-right">Usage / 250GB</th>
                             <th class="text-right">Fee</th>
                         </tr>
-                        <tr ng-repeat="entry in subTotals | orderBy: 'organisation'">
+                        <tr ng-repeat="entry in subTotals track by $index">
+                            <td>{{ entry.billing }}</td>
                             <td ng-bind-html="entry.organisation"></td>
                             <td class="text-right">{{ entry.usage | number }}</td>
                             <td class="text-right">{{ entry.blocks }}</td>
                             <td class="text-right">${{ formatNumber(entry.cost) }}</td>
                         </tr>
-                        <tr ng-show="subTotals.length">
+                        <tr ng-show="output.summed.length">
                             <td><strong>Grand Total</strong></td>
-                            <td class="text-right"><strong>{{ grandTotal.usage  | number }}</strong></td>
-                            <td class="text-right"><strong>{{ grandTotal.blocks }}</strong> </td>
-                            <td class="text-right"><strong>${{ formatNumber(grandTotal.cost) }}</strong></td>
+                            <td></td>
+                            <td class="text-right"><strong>{{ total.usage  | number }}</strong></td>
+                            <td class="text-right"><strong>{{ total.blocks }}</strong></td>
+                            <td class="text-right"><strong>${{ formatNumber(total.cost) }}</strong></td>
                         </tr>
                     </table>
                 </div>
             </div>
+
         </form>
     </div>
 </div>

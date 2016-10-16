@@ -28,16 +28,12 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
 
     // retrieve dates inuts from user and do a search
     ctrl.search = function(dates) {
-      //console.log(dates);
-
       // Assume we have only two, and 0 should earlier than 1:
       if (dates[0] > dates[1]) {
         alert(dates[0] + " is later than " + dates[1]);
       } else {
         startTimestamp = util.dateToTimestamp(dates[0]);
         endTimestamp = util.dateToTimestamp(dates[1], true);
-        //console.log(startTimestamp);
-        //console.log(endTimestamp);
         ctrl.instancesState = [];
         ctrl.pages = 0;
         ctrl.currentPage = 0;
@@ -97,7 +93,7 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
           });
       }, function(rsp) {
         spinner.stop();
-        alert("Request failed");
+        alert("Data could not be retrieved. Please try it later.");
         console.log(rsp);
       });
     }

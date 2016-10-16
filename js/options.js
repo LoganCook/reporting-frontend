@@ -10,6 +10,17 @@ define({
       class: 'col-md-3',
       date: new Date()
     }],
-    size: 10
+    size: 10,
+    price: 5
+  },
+  domains: {
+    'unisa.edu.au': 'University of South Australia',
+    'adelaide.edu.au': 'University of Adelaide',
+    'flinders.edu.au': 'Flinders University'
+  },
+  hpc: {
+    payees: ['University of South Australia', 'University of Adelaide', 'Flinders University'],
+    sharedAmount: 60000,
+    IncompleteMonth: 'The cost of current month is not accurate.'
   }
 });

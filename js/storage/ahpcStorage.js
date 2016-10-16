@@ -1,16 +1,9 @@
-define(["app", '../options', "lodash", "mathjs", "../util", 'services/xfs'], function (app, options, _, math, util) {
-  app.controller("HPCStorageController", ["$rootScope", "$scope", "$timeout", "$filter", "reporting", "org", "spinner", "XFSService", "AuthService",
-    function ($rootScope, $scope, $timeout, $filter, reporting, org, spinner, XFSService, AuthService) {
+define(["app", "lodash", "mathjs", "../util", 'services/xfs'], function (app, _, math, util) {
+  app.controller("AHPCStorageController", ["$rootScope", "$scope", "$timeout", "$filter", "reporting", "org", "spinner", "XFSService", "AuthService",
+    function ($rootScope, $scope, $timeout, $filter, reporting, org, spinner, XFSService) {
       'use strict';
-
       var FILESYTEM_NAME = 'hpchome';
 
-      /**
-       * Whenever user click 'Update' button, this is called
-       * to clear variable and remove stored data.
-       *
-       * @return {Void}
-       */
       function clear() {
         $scope.output.summed = [];
         $scope.status = "No data loaded.";
@@ -141,7 +134,6 @@ define(["app", '../options', "lodash", "mathjs", "../util", 'services/xfs'], fun
       };
 
 
-      // Request XFS data with qeury string.
       $scope.load = function () {
         clear();
 
@@ -156,21 +148,23 @@ define(["app", '../options', "lodash", "mathjs", "../util", 'services/xfs'], fun
           var filesysteId = XFSService.getIdOf(FILESYTEM_NAME);
           XFSService.query(filesysteId, startTs, endTs)
             .then(function() {
-              var orgName = AuthService.getUserOrgName();
-              $scope.usages = XFSService.getUsages(filesysteId, startTs, endTs, orgName);
-              var subTotals = angular.copy(XFSService.getTotals(filesysteId, startTs, endTs, orgName));
-              $scope.grandTotal = util.spliceOne(subTotals, 'organisation', 'Grand');
-              $scope.subTotals = subTotals;
+              $scope.output.summed = XFSService.getUsages(filesysteId, startTs, endTs);
+              var totals = XFSService.getTotals(filesysteId, startTs, endTs);
+              $scope.subTotals = totals;
+              $scope.total = XFSService.getGrandTotals(filesysteId, startTs, endTs);
               spinner.stop();
-            }, function(reason) {
+            });
+        }, function(reason) {
               alert('Failed: ' + reason);
               spinner.stop();
             });
-        });
       };
 
       /**
-       * Close alert message block
+       * When user click a close alert button on the page, this fucnction will be called
+       * to remove warnning message.
+       *
+       * @export
        */
       $scope.closeAlert = function (index) {
         $scope.alerts.splice(index, 1);

@@ -1,116 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="utf-8">
-    <title>eRSA Reporting</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://portal.ersa.edu.au/themes/20161007/fonts/fontello/css/fontello.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,600,600i,700,700i|Raleway:400,400i,600,600i" rel="stylesheet">    
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style-new.css">     
+  <meta charset="utf-8">
+  <title>eRSA Reporting</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://portal.ersa.edu.au/themes/20161007/fonts/fontello/css/fontello.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,600,600i,700,700i|Raleway:400,400i,600,600i" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style-new.css">
 </head>
- 
+
 <body ng-strict-di>
-
-    <header class="header desktop-menu">
-        <div class="row" data-equalizer data-options="equalize_on_stack: true">
-            <div class="column" ng-controller="MenuController">
-                <div class="menu-wrap">
-                    <div class="logo" data-equalizer-watch>
-                        <a class="logo-dark" ui-sref="home"><img src="https://portal.ersa.edu.au/themes/20161007/img/logo-dark.png"></a>
-                        <a class="logo-light" ui-sref="home"><img src="https://portal.ersa.edu.au/themes/20161007/img/logo-light.png"></a>
-                    </div>
-
-                    <div class="menu">
-                        <ul class="menu-list menu" data-equalizer-watch ng-show="configured"> 
-                            <li class="{{ items['exurl'] ? 'menu-item' : 'menu-item menu-item-has-children' }}" ng-repeat="(menu, items) in menus">
-                                <a ng-show="{{ !menu.startsWith('hide') && items['exurl'] ? true : false }}" href="{{items.exurl == null ? '' : items.exurl.replace('=', '://').replace('@', '/')}}" >{{ menu }}</a> 
-                                <a ng-show="{{ !menu.startsWith('hide') && !items['exurl'] }}" href>{{ menu }}</a> 
-                                <ul ng-show="{{ !items['exurl'] }}" class="sub-menu"> 
-                                    <li class="{{ states[0].startsWith('sub') ? 'menu-item menu-item-has-children' : 'menu-item'}}" ng-repeat="(item, states) in items" ng-if="item!='exurl'">
-                                        <a ng-show="{{ states[0].startsWith('sub') }}" href>{{ item }}</a>
-                                        <a ng-show="{{ !states[0].startsWith('sub')  && states[0].startsWith('/') }}" ui-sref="{{states[0]}}">{{ item }} </a>
-                                        <a ng-show="{{ !states[0].startsWith('sub')  && states[0].startsWith('http') }}" href="{{states[0]}}">{{ item }} </a>
-                                        <ul class="sub-menu" ng-show="{{ states[0].startsWith('sub') }}">
-                                            <li class="menu-item" ng-repeat="(url, submenu) in states">
-                                                <a ng-show="{{ url != 0 && submenu[0].startsWith('/')}}" ui-sref="{{submenu[0]}}">{{submenu[1]}}</a>
-                                                <a ng-show="{{ url != 0 && submenu[0].startsWith('http')}}" ui-sref="{{submenu[0]}}">{{submenu[1]}}</a>
-                                             </li>  
-                                        </ul>
-                                    </li> 
-                                </ul>
-                            </li> 
-                        </ul>
-                    </div> 
-                    <div class="collapse navbar-collapse  align-right">
-                        <ul class="nav navbar-nav navbar-right">
-                            <li ng-show="configured"><a href="#">{{ email }}</a></li>
-                            <li ng-show="configured"><a ng-click="reset()" href="#">Logout</a></li>
-                            <li ng-hide="configured"><a href="https://rapid.aaf.edu.au/jwt/authnrequest/research/F4OXTn_Jp5YxQ1i0brnVYg">AAF Login</a></li>
-                            <li><a href="http://www.ersa.edu.au">eRSA</a></li>
-                        </ul>
-                    </div> 
-                </div>
-            </div>
+  <header class="header desktop-menu">
+    <div class="row" data-equalizer data-options="equalize_on_stack: true">
+      <div class="column" ng-controller="MenuController">
+        <div class="menu-wrap">
+          <div class="logo" data-equalizer-watch>
+            <img src="https://portal.ersa.edu.au/themes/20161007/img/logo-dark.png">
+          </div>
+          <div class="menu">
+            <ul class="menu-list menu" data-equalizer-watch ng-show="configured">
+              <li class="menu-item menu-item-has-children" ng-repeat="(menu, items) in menus">
+                <a ng-show="{{ !menu.startsWith('hide') }}" href>{{ menu }}</a>
+                <ul class="sub-menu">
+                  <li class="{{ states[0].startsWith('sub') ? 'menu-item menu-item-has-children' : 'menu-item'}}" ng-repeat="(item, states) in items">
+                    <a ng-show="{{ states[0].startsWith('sub') }}" href>{{ item }}</a>
+                    <a ng-show="{{ !states[0].startsWith('sub')  && states[0].startsWith('/') }}" ui-sref="{{states[0]}}">{{ item }} </a>
+                    <ul class="sub-menu" ng-show="{{ states[0].startsWith('sub') }}">
+                      <li class="menu-item" ng-repeat="(url, submenu) in states">
+                        <a ng-show="{{ url != 0 && submenu[0].startsWith('/')}}" ui-sref="{{submenu[0]}}">{{submenu[1]}}</a>
+                        <a ng-show="{{ url != 0 && submenu[0].startsWith('http')}}" ui-sref="{{submenu[0]}}">{{submenu[1]}}</a>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li class="menu-item"><a href="#">Help</a></li>
+              <li class="menu-item"><a href="#">Support</a></li>
+              <li class="menu-item"><a href="#">Case Studies</a></li>
+              <li class="menu-item"></li>
+            </ul>
+          </div>
+          <div class="collapse navbar-collapse  align-right">
+            <ul class="nav navbar-nav navbar-right" style="margin-top:25px">
+              <li ng-show="configured"><a href="#">{{ email }}</a></li>
+              <li ng-show="configured"><a ng-click="reset()" href="#">Logout</a></li>
+              <li ng-hide="configured"><a href="https://rapid.aaf.edu.au/jwt/authnrequest/research/F4OXTn_Jp5YxQ1i0brnVYg">AAF Login</a></li>
+            </ul>
+          </div>
         </div>
-    </header>
-
-
-    <header class="header mobile-menu">
-        <div class="row">
-            <div class="column" ng-controller="MenuController">
-                <div class="menu-wrap">
-                    <div class="logo">
-                        <a class="logo-dark" ui-sref="home"><img src="https://portal.ersa.edu.au/themes/20161007/img/logo-dark.png"></a>
-                        <a class="logo-light" ui-sref="home"><img src="https://portal.ersa.edu.au/themes/20161007/img/logo-light.png"></a>
-                    </div>
-                    <div class="menu-buttons">
-                        <a class="menu-button" href><span class="icon-menu"></span></a>
-                    </div>                    
-                    <div class="menu">
-                        <ul class="menu-list menu" data-equalizer-watch ng-show="configured"> 
-                            <li class="{{ items['exurl'] ? 'menu-item' : 'menu-item menu-item-has-children' }}" ng-repeat="(menu, items) in menus">
-                                <a ng-show="{{ !menu.startsWith('hide') && items['exurl'] }}" href= "{{items.exurlurl}}" >{{ menu }}</a> 
-                                <a ng-show="{{ !menu.startsWith('hide') && !items['exurl'] }}" href>{{ menu }}</a> 
-                                <ul ng-show="{{ !items['exurl'] }}" class="sub-menu"> 
-                                    <li class="{{ states[0].startsWith('sub') ? 'menu-item menu-item-has-children' : 'menu-item'}}" ng-repeat="(item, states) in items" ng-if="item!='exurl'">
-                                        <a ng-show="{{ states[0].startsWith('sub') }}" href>{{ item }}</a>
-                                        <a ng-show="{{ !states[0].startsWith('sub')  && states[0].startsWith('/') }}" ui-sref="{{states[0]}}">{{ item }}</a>
-                                        <a ng-show="{{ !states[0].startsWith('sub')  && states[0].startsWith('http') }}" href="{{states[0]}}">{{ item }}</a>
-                                        <ul class="sub-menu" ng-show="{{ states[0].startsWith('sub') }}">
-                                            <li class="menu-item" ng-repeat="(url, submenu) in states">
-                                                <a ng-show="{{ url != 0 && submenu[0].startsWith('/')}}" ui-sref="{{submenu[0]}}">{{submenu[1]}}</a>
-                                                <a ng-show="{{ url != 0 && submenu[0].startsWith('http')}}" ui-sref="{{submenu[0]}}">{{submenu[1]}}</a>
-                                             </li> 
-                                        </ul>
-                                    </li> 
-                                </ul>
-                            </li> 
-                        </ul>
-                    </div> 
-                </div>
-            </div>
-        </div>
-    </header>  
-    
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-    
-    <div ui-view></div>
-
-    <!-- angular-spinner element: use service spinner.start|stop to control for showing|hiding -->
-    <span us-spinner spinner-key="main-spinner"></span>
-
-    <script src="lib/angular/angular.min.js"></script>
-    <script src="lib/angular-resource/angular-resource.min.js"></script>
-    <script src="lib/angular-bootstrap/ui-bootstrap.min.js"></script>
-    <script src="lib/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
-    <script src="lib/angular-ui-router/release/angular-ui-router.min.js"></script>
-    <script src="lib/angular-sanitize/angular-sanitize.min.js"></script>
-    <script src="lib/spin.js/spin.min.js"></script>
-    <script src="lib/angular-spinner/angular-spinner.min.js"></script>
-    <script src="lib/requirejs/require.js" data-main="js/main.js"></script>
+      </div>
+    </div>
+  </header>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <div ui-view></div>
+  <!-- angular-spinner element: use service spinner.start|stop to control for showing|hiding -->
+  <span us-spinner spinner-key="main-spinner"></span>
+  <script src="lib/angular/angular.min.js"></script>
+  <script src="lib/angular-resource/angular-resource.min.js"></script>
+  <script src="lib/angular-bootstrap/ui-bootstrap.min.js"></script>
+  <script src="lib/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+  <script src="lib/angular-ui-router/release/angular-ui-router.min.js"></script>
+  <script src="lib/angular-sanitize/angular-sanitize.min.js"></script>
+  <script src="lib/spin.js/spin.min.js"></script>
+  <script src="lib/angular-spinner/angular-spinner.min.js"></script>
+  <script src="lib/requirejs/require.js" data-main="js/main.js"></script>
 </body>
+
 </html>

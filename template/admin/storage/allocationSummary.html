@@ -8,6 +8,16 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="col-md-4">
+                        <p>Organisation</p>
+                        <div class="form-group">
+                            <select  disabled="disabled" name="orgSelect" id="orgSelect" ng-model="selectedBillingOrg" ng-change="orgChanged()" class="form-control">
+                                <option value="0">All</option>
+                                <option ng-repeat="org in topRdsOrgs" value="{{ org.id }}">{{ org.name}}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
                         <p>Select Usage Month</p>
                         <p class="input-group">
                             <input type="text" class="form-control" uib-datepicker-popup="MMM/yyyy" ng-model="rangeEnd" is-open="rangeEndOpen" showWeeks="false" datepicker-options="{minMode: 'month'}" datepicker-mode="'month'" ng-required="true" onkeydown="return false"/>
@@ -23,6 +33,9 @@
                             <div class="btn-group" role="group">
                                 <button type="button" class="btn btn-default btn-search" ng-click="load()">View Usage</button>
                             </div>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-defaul btn-search" ng-csv="export()" filename="allocation.summary.csv">Export as CSV</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -32,7 +45,7 @@
                 <div class="col-md-12">
                     <div class="form-group text-center">
                         <label class="checkbox-inline">
-                            <input type="checkbox" ng-model="viewDetails">View User Detail
+                            <input type="checkbox" ng-model="viewDetails"> View Details
                         </label>
                     </div>
                 </div>
@@ -44,6 +57,7 @@
                 <table class="table table-striped" ng-show="viewDetails">
                     <tr>
                         <th>Allocation Name</th>
+                        <th>Organisation</th>
                         <th>School</th>
                         <th>User Name</th>
                         <th>Email</th>
@@ -55,8 +69,9 @@
                     </tr>
                     <tr ng-repeat="usage in usages | orderBy: 'allocation_num'">
                         <td>{{ usage.allocation_num }}</td>
+                        <td>{{ usage.billing }}</td>
                         <td ng-bind-html="usage.organisation"></td>
-                        <td>{{ usage.contractor }}</td>
+                        <td>{{ usage.full_name }}</td>
                         <td>{{ usage.email }}</td>
                         <td>{{ usage.filesystem }}</td>
                         <td class="text-right">{{ usage.approved_size | number }}</td>
@@ -64,22 +79,38 @@
                         <td class="text-right"> {{ usage.blocks }}</td>
                         <td class="text-right">${{ formatNumber(usage.cost) }}</td>
                     </tr>
+                    <tr ng-show="usages.length">
+                        <td><strong>Grand Total</strong></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="text-right"><strong>{{ total.usage | number }}</strong></td>
+                        <td class="text-right"><strong>{{ total.blocks }}</strong></td>
+                        <td class="text-right"><strong>${{ formatNumber(total.cost) }}</strong></td>
+                    </tr>
                 </table>
+
                 <table class="table table-striped" ng-hide="viewDetails">
                     <tr>
+                        <th>Organisation</th>
                         <th>School</th>
                         <th class="text-right">GB Used</th>
                         <th class="text-right">Usage / 250GB</th>
                         <th class="text-right">Fee</th>
                     </tr>
-                    <tr ng-repeat="usage in subTotals | orderBy: 'organisation'">
+                    <tr ng-repeat="usage in subTotals | orderBy: 'billing'">
+                        <td>{{ usage.billing }}</td>
                         <td ng-bind-html="usage.organisation"></td>
                         <td class="text-right"> {{ usage.usage | number }}</td>
                         <td class="text-right"> {{ usage.blocks }}</td>
                         <td class="text-right">${{ formatNumber(usage.cost) }}</td>
                     </tr>
-                    <tr ng-show="subTotals.length">
+                    <tr ng-show="usages.length">
                         <td><strong>Grand Total</strong></td>
+                        <td></td>
                         <td class="text-right"><strong>{{ total.usage | number }}</strong></td>
                         <td class="text-right"><strong>{{ total.blocks }}</strong></td>
                         <td class="text-right"><strong>${{ formatNumber(total.cost) }}</strong></td>

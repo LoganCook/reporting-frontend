@@ -1,11 +1,20 @@
 <div class="container-fluid">
   <h3 class="text-center">HPC USAGE</h3>
   <p ng-show="error" class="alert alert-danger">{{ error }}</p>
-  <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}">{{alert.msg}}</uib-alert>
+  <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
   <div>
     <form>
       <div class="row">
         <div class="col-md-12">
+          <div class="col-md-4">
+            <p>Organisation</p>
+            <div class="form-group">
+              <select disabled="disabled" name="orgSelect" id="orgSelect" ng-model="selectedBillingOrg" ng-change="orgChanged()" class="form-control">
+                <option value="0">All</option>
+                <option ng-repeat="org in billingOrgs" value="{{ org.billing }}">{{ org.fields.name}}</option>
+              </select>
+            </div>
+          </div>
           <div class="col-md-4">
             <p>Select Usage Month</p>
             <p class="input-group">
@@ -22,6 +31,9 @@
               <div class="btn-group" role="group">
                 <button type="button" class="btn tn-default btn-search" ng-click="load()">View Usage</button>
               </div>
+              <div class="btn-group" role="group">
+                <button type="button" class="btn btn-default btn-search" ng-csv="export()" filename="hpc.usage.csv">Export as CSV</button>
+              </div>
             </div>
           </div>
         </div>
@@ -30,7 +42,7 @@
         <div class="col-md-12">
           <div class="form-group text-center">
             <label class="checkbox-inline">
-              <input type="checkbox" ng-model="viewDetails">View User Detail
+              <input type="checkbox" ng-model="viewDetails">View Details
             </label>
           </div>
         </div>
@@ -40,51 +52,60 @@
       <div class="col-md-12">
         <table class="table table-striped" ng-show="viewDetails">
           <tr>
+            <th>Organisation </th>
             <th>School</th>
             <th>User ID</th>
             <th>User Name</th>
             <th>Email</th>
             <th>Queue</th>
-            <th class="text-right">Job Count</th>
-            <th class="text-right">Core Hours</th>
-            <th class="text-right">Fee</th>
+            <th>Job Count</th>
+            <th>Core Hours</th>
+            <th>Fee</th>
           </tr>
-          <tr ng-repeat="sum in jobCounts | orderBy: ['organisation', 'fullname']">
+          <tr ng-repeat="sum in jobCounts | orderBy: 'billing'">
+            <td>{{ sum.billing }}</td>
             <td ng-bind-html="sum.organisation"></td>
             <td>{{ sum.owner }}</td>
             <td>{{ sum.fullname }}</td>
             <td>{{ sum.email }}</td>
             <td>{{ sum.queue }}</td>
-            <td class="text-right">{{ sum.job_count }}</td>
-            <td class="text-right">{{ formatNumber(sum.hours) }}</td>
-            <td class="text-right">${{ formatNumber(sum.cost) }}</td>
+            <td>{{ sum.job_count }}</td>
+            <td>{{ formatNumber(sum.hours) }}</td>
+            <td>${{ formatNumber(sum.cost) }}</td>
+          </tr>
+          <tr ng-show="jobCounts.length">
+            <td><strong>Grand Total</strong></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><strong>{{ grandTotal.job_count }}</strong></td>
+            <td><strong>{{ formatNumber(grandTotal.hours) }}</strong></td>
+            <td><strong>${{ formatNumber(grandTotal.cost) }}</strong></td>
           </tr>
         </table>
 
         <table class="table table-striped" ng-hide="viewDetails">
           <tr>
+            <th>Organisation</th>
             <th>School</th>
-            <th class="text-right">Job Count</th>
-            <th class="text-right">Core Hours</th>
-            <th class="text-right">Fee</th>
+            <th>Job Count</th>
+            <th>Core Hours</th>
+            <th>Fee</th>
           </tr>
-          <tr ng-repeat="sum in subTotals | orderBy: 'organisation'">
+          <tr ng-repeat="sum in subTotals | orderBy: 'billing'">
+            <td>{{ sum.billing }}</td>
             <td ng-bind-html="sum.organisation"></td>
-            <td class="text-right">{{ sum.job_count }}</td>
-            <td class="text-right">{{ formatNumber(sum.hours) }}</td>
-            <td class="text-right">${{ formatNumber(sum.cost) }}</td>
+            <td>{{ sum.job_count }}</td>
+            <td>{{ formatNumber(sum.hours) }}</td>
+            <td>${{ formatNumber(sum.cost) }}</td>
           </tr>
-          <tr ng-show="subTotals.length">
+          <tr ng-show="jobCounts.length">
             <td><strong>Grand Total</strong></td>
-            <td class="text-right">
-              <strong>{{ grandTotal.job_count }}</strong>
-            </td>
-            <td class="text-right">
-              <strong>{{ formatNumber(grandTotal.hours) }}</strong>
-            </td>
-            <td class="text-right">
-              <strong>${{ formatNumber(grandTotal.cost) }}</strong>
-            </td>
+            <td></td>
+            <td><strong>{{ grandTotal.job_count }}</strong></td>
+            <td><strong>{{ formatNumber(grandTotal.hours) }}</strong></td>
+            <td><strong>${{ formatNumber(grandTotal.cost) }}</strong></td>
           </tr>
         </table>
       </div>
