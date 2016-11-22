@@ -11,7 +11,7 @@ define({
       date: new Date()
     }],
     size: 10,
-    price: 5
+    price: 10
   },
   domains: {
     'unisa.edu.au': 'University of South Australia',
