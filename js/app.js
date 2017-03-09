@@ -211,5 +211,9 @@ define(["client", "ng-csv", "components/datePickers/date-pickers"], function (cl
     };
   }]);
 
+  app.constant('theConstants', {
+    grandTotal: 'Grand Total'
+  })
+
   return app;
 });

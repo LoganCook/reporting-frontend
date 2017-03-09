@@ -1,6 +1,6 @@
 define(["app", "lodash", "../util", "../util2", 'options', 'services/hpc'], function (app, _, utilOld, util, options) {
-  app.controller("HPCSummaryController", ["$scope",  "org", "spinner", "AuthService","HPCService",
-    function ($scope, $timeoutorg, spinner, AuthService, HPCService) {
+  app.controller("HPCSummaryController", ["$scope", "$filter", "theConstants", "org", "spinner", "AuthService","HPCService",
+    function ($scope, $filter, theConstants, $timeoutorg, spinner, AuthService, HPCService) {
       var orgName;
       if (!(AuthService.isAdmin())) {
         orgName = AuthService.getUserOrgName();
@@ -8,82 +8,81 @@ define(["app", "lodash", "../util", "../util2", 'options', 'services/hpc'], func
 
       $scope.values = _.values;
       $scope.formatNumber = utilOld.formatNumber;
-
+      $scope.viewDetails = false
       $scope.rangeStart = new Date();
       $scope.rangeEnd = new Date();
       $scope.rangeEndOpen = false;
       $scope.openRangeEnd = function () {
         $scope.rangeEndOpen = true;
       };
+      $scope.headersWithoutDetails = ["Organisation", "School", "Job Count", "Core Hours", "Fee"]
+      $scope.headersWithDetails = ["Organisation", "School", "User ID", "User Name", "Email", "Queue", "Job Count", "Core Hours", "Fee"]
+
+      var noDetailsStrategy = function() {
+        var result = []
+        result.push($scope.headersWithoutDetails)
+        var sorted = $filter('orderBy')($scope.subTotals, ['billing','organisation','job_count'])
+        _.forEach(sorted, function (summary) {
+          result.push([
+            summary.billing,
+            summary.organisation,
+            summary.job_count,
+            $scope.formatNumber(summary.hours),
+            $scope.formatNumber(summary.cost)
+          ])
+        })
+        result.push([
+          theConstants.grandTotal,
+          '',
+          $scope.grandTotal.job_count,
+          $scope.formatNumber($scope.grandTotal.hours),
+          $scope.formatNumber($scope.grandTotal.cost)
+        ])
+        return result
+      }
+
+      var detailsStrategy = function() {
+        var result = []
+        result.push($scope.headersWithDetails)
+        var sorted = $filter('orderBy')($scope.jobCounts, ['billing','organisation','job_count'])
+        _.forEach(sorted, function (summary) {
+          result.push([
+            summary.billing,
+            summary.organisation,
+            summary.owner,
+            summary.fullname,
+            summary.email,
+            summary.queue,
+            summary.job_count,
+            $scope.formatNumber(summary.hours),
+            $scope.formatNumber(summary.cost)
+          ]);
+        });
+        result.push([
+          theConstants.grandTotal,
+          '',
+          '',
+          '',
+          '',
+          '',
+          $scope.grandTotal.job_count,
+          $scope.formatNumber($scope.grandTotal.hours),
+          $scope.formatNumber($scope.grandTotal.cost)
+        ])
+        return result
+      }
 
       /**
-       * create TSV file data with summary data that has already fetched and stored.
+       * create CSV file data with summary data that has already fetched and stored.
        *
        * @export
-       * @return{Array} data
+       * @return{Array} an array (lines) of arrays (columns) representing a CSV file
        */
       $scope.export = function () {
-        var data = [];
-
-        if ($scope.loggedInAsErsaUser) {
-          data = [
-            ["Organisation", "School", "User ID", "User Name", "Email", "Job Count", "Total Core Hours", "$"]
-          ];
-
-          _.forEach($scope.jobSummary, function (summary) {
-            data.push([
-              summary.billingName,
-              summary.organisation,
-              summary.username,
-              summary.fullname,
-              summary.email,
-              $scope.formatNumber(summary.jobCount),
-              $scope.formatNumber(summary.cpuSeconds / 3600),
-              summary.cost
-            ]);
-          });
-
-          /** Grand total data. */
-          data.push([
-            'Grand Total',
-            ' - ',
-            ' - ',
-            ' - ',
-            ' - ',
-            $scope.formatNumber($scope.jobCountSum),
-            $scope.formatNumber($scope.cpuSecondsSum / 3600),
-            $scope.costSum
-          ]);
-        } else {
-          data = [
-            ["School", "User ID", "User Name", "Email", "Job Count", "Total Core Hours", "$"]
-          ];
-
-          _.forEach($scope.jobSummary, function (summary) {
-            data.push([
-              summary.organisation,
-              summary.username,
-              summary.fullname,
-              summary.email,
-              $scope.formatNumber(summary.jobCount),
-              $scope.formatNumber(summary.cpuSeconds / 3600),
-              summary.cost
-            ]);
-          });
-
-          /** Grand total data. */
-          data.push([
-            'Grand Total',
-            ' - ',
-            ' - ',
-            ' - ',
-            $scope.formatNumber($scope.jobCountSum),
-            $scope.formatNumber($scope.cpuSecondsSum / 3600),
-            $scope.costSum
-          ]);
+        if ($scope.viewDetails) {
+          return detailsStrategy()
         }
-
-        return data;
+        return noDetailsStrategy()
       };
 
       $scope.load = function () {

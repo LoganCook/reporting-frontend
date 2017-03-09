@@ -52,17 +52,9 @@
       <div class="col-md-12">
         <table class="table table-striped" ng-show="viewDetails">
           <tr>
-            <th>Organisation </th>
-            <th>School</th>
-            <th>User ID</th>
-            <th>User Name</th>
-            <th>Email</th>
-            <th>Queue</th>
-            <th>Job Count</th>
-            <th>Core Hours</th>
-            <th>Fee</th>
+            <th ng-repeat="currHeader in headersWithDetails">{{::currHeader}}</th>
           </tr>
-          <tr ng-repeat="sum in jobCounts | orderBy: 'billing'">
+          <tr ng-repeat="sum in jobCounts | orderBy: ['billing','organisation','job_count']">
             <td>{{ sum.billing }}</td>
             <td ng-bind-html="sum.organisation"></td>
             <td>{{ sum.owner }}</td>
@@ -79,6 +71,7 @@
             <td></td>
             <td></td>
             <td></td>
+            <td></td>
             <td><strong>{{ grandTotal.job_count }}</strong></td>
             <td><strong>{{ formatNumber(grandTotal.hours) }}</strong></td>
             <td><strong>${{ formatNumber(grandTotal.cost) }}</strong></td>
@@ -87,13 +80,9 @@
 
         <table class="table table-striped" ng-hide="viewDetails">
           <tr>
-            <th>Organisation</th>
-            <th>School</th>
-            <th>Job Count</th>
-            <th>Core Hours</th>
-            <th>Fee</th>
+            <th ng-repeat="currHeader in headersWithoutDetails">{{::currHeader}}</th>
           </tr>
-          <tr ng-repeat="sum in subTotals | orderBy: 'billing'">
+          <tr ng-repeat="sum in subTotals | orderBy: ['billing','organisation','job_count']">
             <td>{{ sum.billing }}</td>
             <td ng-bind-html="sum.organisation"></td>
             <td>{{ sum.job_count }}</td>
