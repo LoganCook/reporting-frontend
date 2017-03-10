@@ -1,5 +1,6 @@
-define(["client", "ng-csv", "components/datePickers/date-pickers"], function (clientConstructor) {
-  var app = angular.module("reportingApp", ["ngSanitize", "ui.router", "ui.bootstrap", "ngResource", "ngCsv", "angularSpinner", "pageComponents"]);
+define(["client", "ng-csv", "datePickers", "ersaTable"], function (clientConstructor) {
+  var app = angular.module("reportingApp", ["ngSanitize", "ui.router", "ui.bootstrap", "ngResource", "ngCsv",
+    "angularSpinner", "pageComponents", "ngTableToCsv"]);
   app.factory("reporting", ["$timeout", "queryResource", clientConstructor]);
   app
     // .config(['$resourceProvider', function ($resourceProvider) {
