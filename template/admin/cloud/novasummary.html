@@ -61,7 +61,8 @@
                         <th>User Name</th>
                         <th>Email</th>
                         <th>Server Name</th>
-                        <th class="text-right">Cores Used</th>
+                        <th class="text-right">Flavor</th>
+                        <th class="text-right">Span (hours)</th>
                         <th class="text-right">Fee</th>
                     </tr>
                     <tr ng-repeat="instance in usages | orderBy: ['billing', 'organisation', 'tenant']">
@@ -71,7 +72,8 @@
                         <td>{{ instance.full_name }}</td>
                         <td>{{ instance.email }}</td>
                         <td>{{ instance.server }}</td>
-                        <td class="text-right"> {{ instance.core }}</td>
+                        <td class="text-right"> {{ instance.flavorName }}</td>
+                        <td class="text-right"> {{ instance.span/3600 | number : 2 }}</td>
                         <td class="text-right"> ${{ instance.cost }}</td>
                     </tr>
                 </table>

@@ -92,8 +92,10 @@ define(['app', '../util', 'services/contract', 'options' ,'../cloud/services'], 
       delete entry['az'];
       if (entry['flavor'] in flavorMap) {
         entry['core'] = parseInt(flavorMap[entry['flavor']]['vcpus']);
+        entry['flavorName'] = flavorMap[entry['flavor']]['name'];
       } else {
         entry['core'] = 0;
+        entry['flavorName'] = 'Unknown';
       }
       entry['cost'] = PRICE * entry['core'];
       angular.extend(entry, accounts[entry['tenant']]);
