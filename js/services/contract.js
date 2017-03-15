@@ -18,13 +18,7 @@
             deferred.resolve(contracts);
           } else {
             $http.get(serviceUrl).then(function (response) {
-              // /api/rds/ returns raw django model with contractor role as ids, so we have to map them
-              var roles = org.getAllRoles();
-              var extended = response.data.map(function(entry) {
-                angular.extend(entry, roles[entry['contractor']]);
-                return entry;
-              });
-              contracts = util.keyArray(extended, keyName);
+              contracts = util.keyArray(response.data, keyName);
               deferred.resolve(contracts);
             });
           }

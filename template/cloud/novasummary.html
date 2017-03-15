@@ -52,7 +52,7 @@
                     <tr ng-repeat="instance in usages | orderBy: ['organisation', 'tenant']">
                         <td ng-bind-html="instance.organisation"></td>
                         <td>{{ instance.tenant }}</td>
-                        <td>{{ instance.contractor }}</td>
+                        <td>{{ instance.full_name }}</td>
                         <td>{{ instance.email }}</td>
                         <td>{{ instance.server }}</td>
                         <td class="text-right"> {{ instance.core }}</td>

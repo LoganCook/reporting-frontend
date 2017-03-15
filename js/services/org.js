@@ -80,16 +80,13 @@
             if (!(orgId in services)) {
               services[orgId] = {};
             }
-            // the services are in this format:
-            // {[{}]}
-            var i, j, l = response.data.length, nestedL = 0, tempArray = [];
+            // Dynamics for this query does not have billing, biller, orgName, add it for summary functions.
+            var i, l = response.data.length;
+            var orgName = organisations[orgId];
             for (i = 0; i < l; i++ ) {
-              nestedL = response.data[i].length;
-              for (j = 0; j < nestedL; j++) {
-                tempArray.push(response.data[i][j]);
-              }
+              response.data[i]['biller'] = orgName;
             }
-            services[orgId][name] = tempArray;
+            services[orgId][name] = response.data;
             deferred.resolve(services[orgId][name]);
           });
         }
@@ -145,12 +142,13 @@
             $http.get(orgUri).then(function (response) {
               // organisations = response.data;
               for (var i = 0; i < response.data.length; i++) {
-                organisations[response.data[i]['pk']] = response.data[i]['name'];
-                organisationByNames[response.data[i]['name']] = response.data[i]['pk'];
-                if (loadUsers) {
-                  _getUsersOf(response.data[i]['pk']);
-                  _getRolesOf(response.data[i]['pk']);
-                }
+                organisations[response.data[i]['id']] = response.data[i]['name'];
+                organisationByNames[response.data[i]['name']] = response.data[i]['id'];
+                // I may still need this for HPC?
+                // if (loadUsers) {
+                //   _getUsersOf(response.data[i]['pk']);
+                //   _getRolesOf(response.data[i]['pk']);
+                // }
               }
               deferred.resolve(organisations);
             });
