@@ -522,3 +522,7 @@ table.table-striped tr:hover, table.table-striped tr:nth-child(odd):hover {
 table.table-striped tr:nth-child(odd) {
     background: hsla(25, 12%, 93%, 1);
 }
+
+#main-view {
+  padding-top: 9em;
+}
