@@ -15,6 +15,12 @@ define(["app", "lodash", "../util", "../util2", 'options', 'services/hpc'], func
       $scope.openRangeEnd = function () {
         $scope.rangeEndOpen = true;
       };
+      $scope.orderByGrandLast = function(v1, v2) {
+        if (v1.organisation === 'Grand') {
+          return 1
+        }
+        return 0
+      }
 
       $scope.load = function () {
         $scope.alerts = [];

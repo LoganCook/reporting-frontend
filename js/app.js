@@ -1,4 +1,4 @@
-define(["client", "ng-csv", "datePickers", "ersaTable"], function (clientConstructor) {
+define(["client", "ng-csv", "datePickers", "ersaTable", "blankSafe"], function (clientConstructor) {
   var app = angular.module("reportingApp", ["ngSanitize", "ui.router", "ui.bootstrap", "ngResource", "ngCsv",
     "angularSpinner", "pageComponents", "ngTableToCsv"]);
   app.factory("reporting", ["$timeout", "queryResource", clientConstructor]);
@@ -213,7 +213,8 @@ define(["client", "ng-csv", "datePickers", "ersaTable"], function (clientConstru
   }]);
 
   app.constant('theConstants', {
-    grandTotal: 'Grand Total'
+    grandTotal: 'Grand Total',
+    blankValue: '_blank_value_'
   })
 
   return app;

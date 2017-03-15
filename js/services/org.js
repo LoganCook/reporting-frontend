@@ -2,7 +2,7 @@
     'use strict';
 
     // Cacheable organisation-user data for all pages, mandatory
-    app.factory('org', function ($http, $q) {
+    app.factory('org', function ($http, $q, theConstants) {
       if (sessionStorage.hasOwnProperty('secret') && !sessionStorage.hasOwnProperty('bman')) {
         throw "Wrong configuration: bman is not defined in sessionStorage.";
       }
@@ -38,7 +38,7 @@
               for (var user in users[orgId]) {
                 users[orgId][user]['billing'] = organisationName;
                 if (users[orgId][user]['billing'] == users[orgId][user]['organisation']) {
-                  users[orgId][user]['organisation'] = '&nbsp;';
+                  users[orgId][user]['organisation'] = theConstants.blankValue
                 }
               }
               // async? relatinoship with getMergedUsers?

@@ -13,7 +13,8 @@ require.config({
     'pageComponents': 'components/pageComponents',
     'datePickers': "components/datePickers/date-pickers",
     'datePickerUib': 'components/datePickerUib/date-picker-uib',
-    'ersaTable': 'directives/ersaTable/ersa-table'
+    'ersaTable': 'directives/ersaTable/ersa-table',
+    'blankSafe': 'directives/blankSafe/blank-safe'
   },
   shim: {
     "ng-csv": {

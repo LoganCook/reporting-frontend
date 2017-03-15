@@ -485,15 +485,22 @@ ul, ol, li {
 }
 
 table.table-striped {
-  color: #0a0a0a; }
-  table.table-striped th {
-    background: #f58432;
-    border-color: #f58432; }
-    table tr th {
-      color: white; }
-  table.table-striped th {
-    font-weight: normal;
-    font-family: "Raleway", sans-serif; }
+  color: #0a0a0a;
+}
+
+table.table-striped th {
+  background: #f58432;
+  border-color: #f58432;
+}
+
+table tr th {
+  color: white;
+}
+
+table.table-striped th {
+  font-weight: normal;
+  font-family: "Raleway", sans-serif;
+}
 
 a:hover, a:focus {
     text-decoration: none;
@@ -502,4 +509,16 @@ a:hover, a:focus {
 p.lead {
   font-size: 1.25rem;
   line-height: 1.5;
+}
+
+.blank-value {
+    color: red;
+}
+
+table.table-striped tr:hover, table.table-striped tr:nth-child(odd):hover {
+    background: hsla(25, 12%, 86%, 1);
+}
+
+table.table-striped tr:nth-child(odd) {
+    background: hsla(25, 12%, 93%, 1);
 }
