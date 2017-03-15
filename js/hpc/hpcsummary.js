@@ -5,17 +5,12 @@ define(["app", "lodash", "../util", "../util2", 'options', 'services/hpc'], func
       if (!(AuthService.isAdmin())) {
         orgName = AuthService.getUserOrgName();
       }
-      var lastMonth = (function() {
-        var result = new Date()
-        result.setMonth(result.getMonth()-1)
-        return result
-      })()
       $scope.values = _.values;
       $scope.formatNumber = utilOld.formatNumber;
       $scope.viewDetails = false
       $scope.datepickerOptions = {minMode: 'month'}
       $scope.rangeStart = new Date();
-      $scope.rangeEnd = lastMonth
+      $scope.rangeEnd = new Date()
       $scope.rangeEndOpen = false;
       $scope.openRangeEnd = function () {
         $scope.rangeEndOpen = true;
