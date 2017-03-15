@@ -27,7 +27,7 @@ define(["app", "lodash", "../util", "../util2", 'options', 'services/hpc'], func
 
         var startTs = utilOld.dayStart($scope.rangeStart);
         var endTs = utilOld.dayEnd($scope.rangeEnd);
-
+        spinner.start()
         HPCService.query(startTs, endTs).then(function() {
           $scope.jobCounts = HPCService.getJobCounts(startTs, endTs, orgName);
           if (orgName) {
@@ -38,6 +38,7 @@ define(["app", "lodash", "../util", "../util2", 'options', 'services/hpc'], func
             $scope.subTotals = HPCService.getSubTotals(startTs, endTs);
             $scope.grandTotal = HPCService.getGrandTotal(startTs, endTs);
           }
+          spinner.stop()
         });
       };
     }
