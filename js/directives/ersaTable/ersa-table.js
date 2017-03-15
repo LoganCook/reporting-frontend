@@ -28,7 +28,7 @@ define(['pageComponents'], function (pageComponents) {
               'ng-click="' + csvExporterVarName + '.generate()" ' +
               'ng-href="{{ ' + csvExporterVarName + '.link() }}" ' +
               'download="' + tableName + '.' + getDateString() + '.csv">' +
-            '<i class="glyphicon glyphicon-new-window"></i> &#160;Export ' + attrs[directiveName] + ' view as CSV' +
+            '<i class="glyphicon glyphicon-new-window"></i> &#160;Export as CSV' +
           '</a>')
         $compile(anchor)(scope)
         var caption = angular.element('<caption class="text-right"></caption>')

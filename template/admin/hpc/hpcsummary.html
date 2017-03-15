@@ -45,9 +45,9 @@
         </div>
       </div>
     </form>
-    <div class="row" style="padding-top: 25px;">
+    <div class="row">
       <div class="col-md-12">
-        <table ng-show="viewDetails" ersa-table="detailed">
+        <table ng-show="viewDetails" ersa-table="hpc-summary.detailed">
           <thead>
             <tr>
               <th>Organisation </th>
@@ -62,16 +62,16 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="sum in jobCounts | orderBy: ['billing','organisation','owner']">
+            <tr ng-repeat="sum in ::jobCounts | orderBy: ['billing','organisation','owner']">
               <td blank-safe="sum.billing"></td>
               <td blank-safe="sum.organisation"></td>
-              <td>{{ sum.owner }}</td>
+              <td>{{ ::sum.owner }}</td>
               <td blank-safe="sum.fullname"></td>
               <td blank-safe="sum.email"></td>
-              <td>{{ sum.queue }}</td>
-              <td>{{ sum.job_count }}</td>
-              <td>{{ formatNumber(sum.hours) }}</td>
-              <td>${{ formatNumber(sum.cost) }}</td>
+              <td>{{ ::sum.queue }}</td>
+              <td>{{ ::sum.job_count }}</td>
+              <td>{{ ::formatNumber(sum.hours) }}</td>
+              <td>${{ ::formatNumber(sum.cost) }}</td>
             </tr>
             <tr ng-show="jobCounts.length">
               <td><strong>Grand Total</strong></td>
@@ -80,13 +80,13 @@
               <td></td>
               <td></td>
               <td></td>
-              <td><strong>{{ grandTotal.job_count }}</strong></td>
-              <td><strong>{{ formatNumber(grandTotal.hours) }}</strong></td>
-              <td><strong>${{ formatNumber(grandTotal.cost) }}</strong></td>
+              <td><strong>{{ ::grandTotal.job_count }}</strong></td>
+              <td><strong>{{ ::formatNumber(grandTotal.hours) }}</strong></td>
+              <td><strong>${{ ::formatNumber(grandTotal.cost) }}</strong></td>
             </tr>
           </tbody>
         </table>
-        <table ng-hide="viewDetails" ersa-table="simple">
+        <table ng-hide="viewDetails" ersa-table="hpc-summary.simple">
           <thead>
             <tr>
               <th>Organisation</th>
@@ -97,19 +97,19 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="sum in subTotals | orderBy: ['billing',orderByGrandLast,'organisation','job_count']">
+            <tr ng-repeat="sum in ::subTotals | orderBy: ['billing',orderByGrandLast,'organisation','job_count']">
               <td blank-safe="sum.billing"></td>
               <td blank-safe="sum.organisation"></td>
-              <td>{{ sum.job_count }}</td>
-              <td>{{ formatNumber(sum.hours) }}</td>
-              <td>${{ formatNumber(sum.cost) }}</td>
+              <td>{{ ::sum.job_count }}</td>
+              <td>{{ ::formatNumber(sum.hours) }}</td>
+              <td>${{ ::formatNumber(sum.cost) }}</td>
             </tr>
             <tr ng-show="jobCounts.length">
               <td><strong>Grand Total</strong></td>
               <td></td>
-              <td><strong>{{ grandTotal.job_count }}</strong></td>
-              <td><strong>{{ formatNumber(grandTotal.hours) }}</strong></td>
-              <td><strong>${{ formatNumber(grandTotal.cost) }}</strong></td>
+              <td><strong>{{ ::grandTotal.job_count }}</strong></td>
+              <td><strong>{{ ::formatNumber(grandTotal.hours) }}</strong></td>
+              <td><strong>${{ ::formatNumber(grandTotal.cost) }}</strong></td>
             </tr>
           </tbody>
         </table>

@@ -16,6 +16,14 @@ define(['app', 'options', '../util2', '../util', './services', '../crm', './acco
       $scope.selectedDomain = '0';
       $scope.instancesState = [];
       $scope.serverChecked = false;
+      $scope.datepickerOptions = {minMode: 'month'}
+
+      $scope.orderByGrandLast = function(v1, v2) {
+        if (v1.organisation === 'Grand') {
+          return 1
+        }
+        return 0
+      }
 
       /**
        * summary variables
@@ -37,30 +45,7 @@ define(['app', 'options', '../util2', '../util', './services', '../crm', './acco
       };
 
       /**
-       * For creating table and exporting csv
-       */
-      $scope.colTitles = [];
-      $scope.fieldNames = [];
-      var fieldNames = [];
-      if (AuthService.isAdmin()) {
-        $scope.colTitles.push(['Organisation', 'Project', 'User Name', 'Email', 'School', 'Total Cores Used', 'Core Quota Allocated', 'Cost per Core Used', 'Server Name']);
-        $scope.colTitles.push(['Organisation', 'Project', 'Total Cores Used', 'Core Quota Allocated', 'Cost per Core Used']);
-
-        fieldNames.push(['organisation', 'tenantName', 'fullname', 'email', 'school', 'core', 'allocatedCore', 'cost', 'server']);
-        fieldNames.push(['organisation', 'tenantName', 'core', 'allocatedCore', 'cost']);
-      } else {
-        $scope.colTitles.push(['Project', 'User Name', 'Email', 'School', 'Total Cores Used', 'Core Quota Allocated', 'Cost per Core Used', 'Server Name']);
-        $scope.colTitles.push(['Project', 'Total Cores Used', 'Core Quota Allocated', 'Cost per Core Used']);
-
-        fieldNames.push(['tenantName', 'fullname', 'email', 'school', 'core', 'allocatedCore', 'cost', 'server']);
-        fieldNames.push(['tenantName', 'core', 'allocatedCore', 'cost']);
-      }
-
-      $scope.fieldNames = fieldNames[1];
-
-
-      /**
-       * retrieve data with qeury string.
+       * retrieve data with query string.
        */
       $scope.load = function () {
         $scope.rangeStart = oldUtil.firstDayOfYearAndMonth($scope.rangeEnd);
@@ -73,8 +58,7 @@ define(['app', 'options', '../util2', '../util', './services', '../crm', './acco
         $scope.serverChecked = false;
         $scope.instancesState = [];
 
-        console.log(startTs, endTs);
-
+        spinner.start()
         NectarService.query(startTs, endTs).then(function () {
           console.log("Query of Nectar is done");
           $scope.usages = NectarService.getUsages(startTs, endTs, orgName);
@@ -86,84 +70,8 @@ define(['app', 'options', '../util2', '../util', './services', '../crm', './acco
             $scope.subTotals = NectarService.getSubTotals(startTs, endTs);
             $scope.grandTotal = NectarService.getGrandTotal(startTs, endTs);
           }
+          spinner.stop()
         });
-      };
-
-
-      /**
-       * create TSV file data with summary data that has already fetched and stored.
-       *
-       * @export
-       * @return{Array} data
-       */
-      $scope.export = function () {
-        var rowCount = $scope.instancesState.length;
-        var csvData = Array(rowCount + 1);
-
-        var fieldCount = $scope.fieldNames.length,
-          i, j;
-        for (i = 0; i < rowCount; i++) {
-          csvData[i + 1] = Array(fieldCount);
-          for (j = 0; j < fieldCount; j++) {
-            csvData[i + 1][j] = $scope.instancesState[i][$scope.fieldNames[j]];
-          }
-        }
-
-        csvData.sort(function (a, b) {
-          if (a[0] >= b[0]) {
-            return 1;
-          }
-          return -1;
-        });
-
-        csvData[0] = $scope.colTitles[$scope.serverChecked ? 0 : 1];
-
-        /** Grand total data. */
-        if ($scope.loggedInAsErsaUser) {
-
-          if ($scope.serverChecked) {
-            csvData.push([
-              'Grand Total',
-              ' - ',
-              ' - ',
-              ' - ',
-              ' - ',
-              $scope.sum.coreAllocation,
-              ' - ',
-              '$' + $scope.sum.cost.toFixed(2),
-              ' - '
-            ]);
-          } else {
-            csvData.push([
-              'Grand Total',
-              ' - ',
-              $scope.sum.coreAllocation,
-              ' - ',
-              '$' + $scope.sum.cost.toFixed(2)
-            ]);
-          }
-        } else {
-          if ($scope.serverChecked) {
-            csvData.push([
-              'Grand Total',
-              ' - ',
-              ' - ',
-              ' - ',
-              $scope.sum.coreAllocation,
-              ' - ',
-              '$' + $scope.sum.cost.toFixed(2),
-              ' - '
-            ]);
-          } else {
-            csvData.push([
-              'Grand Total',
-              $scope.sum.coreAllocation,
-              ' - ',
-              '$' + $scope.sum.cost.toFixed(2)
-            ]);
-          }
-        }
-        return csvData;
       };
 
       /**

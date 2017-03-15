@@ -3,7 +3,6 @@
     <p ng-show="error" class="alert alert-danger">{{ error }}</p>
     <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
     <div>
-
         <form>
             <div class="row">
                 <div class="col-md-3">
@@ -15,14 +14,10 @@
                         </select>
                     </div>
                 </div> 
-
                 <ersa-search class="col-md-9"
                     start-date-class="col-md-4" end-date-class="col-md-4" 
-                    button-class="col-md-4" 
-                    export-file-name="hpc.csv"/>
-                
+                    button-class="col-md-4" />
             </div>
-
             <div class="row">
                 <div class="col-md-12">
                     <p class="text-center">
@@ -39,37 +34,35 @@
             </div>
         </form>
 
-        <div class="row" style="padding-top: 25px;">
+        <div class="row">
             <div class="col-md-12">
-                <table class="table table-striped">
-                    <tr>
-                        <th>Full Name</th>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>School</th>
-                        <th>Job Count</th>
-                        <th>Total Core Hours</th>
-                        <th>Total Core Duration</th>
-                        <th>Mean Core Duration</th>
-                    </tr>
-                    <tr ng-repeat="sum in jobSummary | orderBy: 'username'">
-                        <td>{{ sum.fullname }}</td>
-                        <td>{{ sum.username }}</td>
-                        <td>{{ sum.email }}</td>
-                        <td>{{ sum.organisation }}</td>
-                        <td>{{ formatNumber(sum.jobCount) }}</td>
-                        <td>{{ formatNumber(sum.cpuSeconds / 3600) }}</td>
-                        <td>{{ formatDuration(sum.cpuSeconds, "seconds") }}</td>
-                        <td>{{ formatDuration(sum.cpuSeconds / sum.jobCount, "seconds") }}</td>
-                    </tr>
+                <table ersa-table="hpc">
+                    <thead>
+                        <tr>
+                            <th>Full Name</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>School</th>
+                            <th>Job Count</th>
+                            <th>Total Core Hours</th>
+                            <th>Total Core Duration</th>
+                            <th>Mean Core Duration</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="sum in ::jobSummary | orderBy: 'username'">
+                            <td>{{ ::sum.fullname }}</td>
+                            <td>{{ ::sum.username }}</td>
+                            <td>{{ ::sum.email }}</td>
+                            <td>{{ ::sum.organisation }}</td>
+                            <td>{{ ::formatNumber(sum.jobCount) }}</td>
+                            <td>{{ ::formatNumber(sum.cpuSeconds / 3600) }}</td>
+                            <td>{{ ::formatDuration(sum.cpuSeconds, "seconds") }}</td>
+                            <td>{{ ::formatDuration(sum.cpuSeconds / sum.jobCount, "seconds") }}</td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>
-        <!-- 
-            http://jsfiddle.net/alexsuch/RLQhh/ 
-            https://angular-ui.github.io/bootstrap/
-        -->
-        <!-- button type="button" class="btn btn-default" ng-click="openJobMessage('lg')">Open me!</button -->
-    </div> 
-       
+    </div>
 </div>

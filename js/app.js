@@ -37,9 +37,6 @@ define(["client", "ng-csv", "datePickers", "ersaTable", "blankSafe"], function (
         if (!angular.isDefined($scope.load)) {
           alert('load function is not defined ..');
         }
-        if (!angular.isDefined($scope.export)) {
-          alert('export function is not defined ..');
-        }
 
         if (!angular.isDefined($scope.rangeStart)) {
           var startDate = new Date();
@@ -63,17 +60,6 @@ define(["client", "ng-csv", "datePickers", "ersaTable", "blankSafe"], function (
           $scope.openRangeEnd = function () {
             $scope.rangeEndOpen = true;
           };
-        }
-
-
-        /**
-         * If each class is defined , assigne to
-         */
-
-        if (!angular.isDefined($attrs.exportFileName)) {
-          alert('Export File Name is not defined ..');
-        } else {
-          $scope.exportFileName = $attrs.exportFileName;
         }
 
         if (angular.isDefined($attrs.startDateClass)) {
@@ -149,10 +135,6 @@ define(["client", "ng-csv", "datePickers", "ersaTable", "blankSafe"], function (
 
           // FIXME: nova.js load has its own rangeEpochFilter
           $scope.load(rangeEpochFilter);
-        };
-
-        $scope._export = function () {
-          return $scope.export();
         };
       },
       replace: true,

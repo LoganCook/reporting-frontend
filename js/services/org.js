@@ -129,7 +129,7 @@
           simpleRole[roleModel['id']] = roleModel;
           simpleRole[roleModel['id']]['billing'] = billing;
           if (simpleRole[roleModel['id']]['billing'] == simpleRole[roleModel['id']]['organisation']) {
-            simpleRole[roleModel['id']]['organisation'] = '&nbsp;';
+            simpleRole[roleModel['id']]['organisation'] = theConstants.blankValue;
           }
           return simpleRole;
         });

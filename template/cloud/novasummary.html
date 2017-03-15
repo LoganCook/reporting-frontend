@@ -1,6 +1,5 @@
 <div class="container-fluid">
     <h3 class="text-center">NECTAR USAGE</h3>
-
     <div>
         <form>
             <div class="row">
@@ -8,7 +7,8 @@
                     <div class="col-md-4">
                         <p>Select Usage Month</p>
                         <p class="input-group">
-                            <input type="text" class="form-control" uib-datepicker-popup="MMM/yyyy" ng-model="rangeEnd" is-open="rangeEndOpen" showWeeks="false" datepicker-options="{minMode: 'month'}" datepicker-mode="'month'" ng-required="true" onkeydown="return false"/>
+                            <input type="text" class="form-control" uib-datepicker-popup="MMM/yyyy" ng-model="rangeEnd" is-open="rangeEndOpen"
+                                datepicker-options="datepickerOptions" ng-required="true" onkeydown="return false"/>
                             <span class="input-group-btn">
                                 <button type="button" class="btn btn-default btn-search" ng-click="openRangeEnd()"><i class="glyphicon glyphicon-calendar"></i></button>
                             </span>
@@ -34,47 +34,53 @@
                     </div>
                 </div>
             </div>
-
         </form>
-
-        <div class="row" style="padding-top: 25px;">
+        <div class="row">
             <div class="col-sm-12">
-                <table class="table table-striped" style="width: 100%;" ng-show="viewDetails">
-                    <tr>
-                        <th>School</th>
-                        <th>Project</th>
-                        <th>User Name</th>
-                        <th>Email</th>
-                        <th>Server Name</th>
-                        <th class="text-right">Cores Used</th>
-                        <th class="text-right">Fee</th>
-                    </tr>
-                    <tr ng-repeat="instance in usages | orderBy: ['organisation', 'tenant']">
-                        <td ng-bind-html="instance.organisation"></td>
-                        <td>{{ instance.tenant }}</td>
-                        <td>{{ instance.contractor }}</td>
-                        <td>{{ instance.email }}</td>
-                        <td>{{ instance.server }}</td>
-                        <td class="text-right"> {{ instance.core }}</td>
-                        <td class="text-right"> ${{ instance.cost }}</td>
-                    </tr>
+                <table ng-show="viewDetails" ersa-table="nova-summary.detailed">
+                    <thead>
+                        <tr>
+                            <th>School</th>
+                            <th>Project</th>
+                            <th>User Name</th>
+                            <th>Email</th>
+                            <th>Server Name</th>
+                            <th class="text-right">Cores Used</th>
+                            <th class="text-right">Fee</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="instance in ::usages | orderBy: ['organisation', 'tenant']">
+                            <td>{{ ::instance.organisation }}</td>
+                            <td>{{ ::instance.tenant }}</td>
+                            <td>{{ ::instance.contractor }}</td>
+                            <td>{{ ::instance.email }}</td>
+                            <td>{{ ::instance.server }}</td>
+                            <td class="text-right"> {{ ::instance.core }}</td>
+                            <td class="text-right"> ${{ ::instance.cost }}</td>
+                        </tr>
+                    </tbody>
                 </table>
-                <table class="table table-striped" style="width: 100%;" ng-hide="viewDetails">
-                    <tr>
-                        <th>School</th>
-                        <th class="text-right">Cores Used</th>
-                        <th class="text-right">Fee</th>
-                    </tr>
-                    <tr ng-repeat="instance in subTotals | orderBy: 'organisation'">
-                        <td ng-bind-html="instance.organisation"></td>
-                        <td class="text-right"> {{ instance.core }}</td>
-                        <td class="text-right"> ${{ instance.cost }}</td>
-                    </tr>
-                    <tr ng-show="subTotals.length">
-                        <td><strong>Grand Total</strong></td>
-                        <td class="text-right"><strong>{{ grandTotal.core }}</strong></td>
-                        <td class="text-right"><strong>${{ grandTotal.cost }}</strong></td>
-                    </tr>
+                <table ng-hide="viewDetails" ersa-table="nova-summary.simple">
+                    <thead>
+                        <tr>
+                            <th>School</th>
+                            <th class="text-right">Cores Used</th>
+                            <th class="text-right">Fee</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="instance in ::subTotals | orderBy: 'organisation'">
+                            <td>{{ ::instance.organisation }}</td>
+                            <td class="text-right"> {{ ::instance.core }}</td>
+                            <td class="text-right"> ${{ ::instance.cost }}</td>
+                        </tr>
+                        <tr ng-show="subTotals.length">
+                            <td><strong>Grand Total</strong></td>
+                            <td class="text-right"><strong>{{ ::grandTotal.core }}</strong></td>
+                            <td class="text-right"><strong>${{ ::grandTotal.cost }}</strong></td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>
