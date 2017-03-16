@@ -9,7 +9,8 @@
                     <div class="{{values(xfs.host).length > 1 ? 'col-md-3' : 'col-md-4'}}">
                         <p>Select Usage Month</p>
                         <p class="input-group">
-                            <input type="text" class="form-control" uib-datepicker-popup="MMM/yyyy" ng-model="rangeEnd" is-open="rangeEndOpen" showWeeks="false" datepicker-options="{minMode: 'month'}" datepicker-mode="'month'" ng-required="true" onkeydown="return false"/>
+                            <input type="text" class="form-control" uib-datepicker-popup="MMM/yyyy" ng-model="rangeEnd" is-open="rangeEndOpen"
+                                datepicker-options="datepickerOptions" ng-required="true" onkeydown="return false"/>
                             <span class="input-group-btn">
                                 <button type="button" class="btn btn-default btn-search" ng-click="openRangeEnd()"><i class="glyphicon glyphicon-calendar"></i></button>
                             </span>
@@ -36,47 +37,55 @@
                     </div>
                 </div>
             </div>
-            <div class="row" style="padding-top: 25px;">
+            <div class="row">
                 <div class="col-md-12">
-                    <table class="table table-striped" ng-show="viewDetails">
-                        <tr>
-                            <th>School</th>
-                            <th>User ID</th>
-                            <th>User Name</th>
-                            <th>Email</th>
-                            <th class="text-right">GB Used</th>
-                            <th class="text-right">Usage / 250GB</th>
-                            <th class="text-right">Fee</th>
-                        </tr>
-                        <tr ng-repeat="entry in usages | orderBy: ['organisation', 'owner']">
-                            <td ng-bind-html="entry.organisation"></td>
-                            <td>{{ entry.owner }}</td>
-                            <td>{{ entry.fullname }}</td>
-                            <td>{{ entry.email }}</td>
-                            <td class="text-right">{{ entry.usage | number }}</td>
-                            <td class="text-right">{{ entry.blocks }}</td>
-                            <td class="text-right">${{ formatNumber(entry.cost) }}</td>
-                        </tr>
+                    <table ng-show="viewDetails" ersa-table="hpc-storage.detailed">
+                        <thead>
+                            <tr>
+                                <th>School</th>
+                                <th>User ID</th>
+                                <th>User Name</th>
+                                <th>Email</th>
+                                <th class="text-right">GB Used</th>
+                                <th class="text-right">Usage / 250GB</th>
+                                <th class="text-right">Fee</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="entry in ::usages | orderBy: ['organisation', 'owner']">
+                                <td blank-safe="entry.organisation"></td>
+                                <td>{{ ::entry.owner }}</td>
+                                <td>{{ ::entry.fullname }}</td>
+                                <td>{{ ::entry.email }}</td>
+                                <td class="text-right">{{ ::entry.usage | number }}</td>
+                                <td class="text-right">{{ ::entry.blocks }}</td>
+                                <td class="text-right">${{ ::formatNumber(entry.cost) }}</td>
+                            </tr>
+                        </tbody>
                     </table>
-                    <table class="table table-striped" ng-hide="viewDetails">
-                        <tr>
-                            <th>School                         </th>
-                            <th class="text-right">GB Used</th>
-                            <th class="text-right">Usage / 250GB</th>
-                            <th class="text-right">Fee</th>
-                        </tr>
-                        <tr ng-repeat="entry in subTotals | orderBy: 'organisation'">
-                            <td ng-bind-html="entry.organisation"></td>
-                            <td class="text-right">{{ entry.usage | number }}</td>
-                            <td class="text-right">{{ entry.blocks }}</td>
-                            <td class="text-right">${{ formatNumber(entry.cost) }}</td>
-                        </tr>
-                        <tr ng-show="subTotals.length">
-                            <td><strong>Grand Total</strong></td>
-                            <td class="text-right"><strong>{{ grandTotal.usage  | number }}</strong></td>
-                            <td class="text-right"><strong>{{ grandTotal.blocks }}</strong> </td>
-                            <td class="text-right"><strong>${{ formatNumber(grandTotal.cost) }}</strong></td>
-                        </tr>
+                    <table ng-hide="viewDetails" ersa-table="hpc-storage.simple">
+                        <thead>
+                            <tr>
+                                <th>School</th>
+                                <th class="text-right">GB Used</th>
+                                <th class="text-right">Usage / 250GB</th>
+                                <th class="text-right">Fee</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="entry in ::subTotals | orderBy: 'organisation'">
+                                <td blank-safe="entry.organisation"></td>
+                                <td class="text-right">{{ ::entry.usage | number }}</td>
+                                <td class="text-right">{{ ::entry.blocks }}</td>
+                                <td class="text-right">${{ ::formatNumber(entry.cost) }}</td>
+                            </tr>
+                            <tr ng-show="subTotals.length">
+                                <td><strong>Grand Total</strong></td>
+                                <td class="text-right"><strong>{{ ::grandTotal.usage  | number }}</strong></td>
+                                <td class="text-right"><strong>{{ ::grandTotal.blocks }}</strong> </td>
+                                <td class="text-right"><strong>${{ ::formatNumber(grandTotal.cost) }}</strong></td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
