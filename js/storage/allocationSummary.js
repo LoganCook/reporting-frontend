@@ -17,6 +17,7 @@ define(["app", "../util", "services/xfs.usage", "services/hnas.vv", "services/hn
       $scope.openRangeEnd = function () {
         $scope.rangeEndOpen = true;
       };
+      $scope.datepickerOptions = {minMode: 'month'}
 
       function addServiceTotal(serviceTotal, subTotals) {
         var k1 = 'billing', k2 = 'organisation';
