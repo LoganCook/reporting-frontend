@@ -90,35 +90,6 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
         initHnas();     
 
         /**
-         * This function is called from _export() in ersa-search directive
-         */
-        $scope.export = function() {
-            var dataWithTitle = [
-                ["Volume", "File system", "Owner", "Quota", "Files(avg)", "Usage(avg)"]
-            ];
-            var data = [];
-
-            _.forEach(usageSummary, function(usage) {
-                data.push([
-                    usage.virtualVolumeName,
-                    usage.filesystemName,
-                    usage.owner,
-                    $scope.formatNumber(usage.quota) + ' MB',
-                    $scope.formatNumber(usage.files / usage.usageCount),
-                    $scope.formatNumber(usage.usage / usage.usageCount) + ' MB' 
-                ]);
-            });
-            
-            data.sort(function(a, b) {
-                if (a[0].toLowerCase() >= b[0].toLowerCase()) {return 1;}
-                return -1; 
-            });
-                        
-            Array.prototype.push.apply(dataWithTitle, data); 
-            return dataWithTitle;
-        };        
-    
-        /**
          * This function is called from _load() in ersa-search directive
          * arg : rangeEpochFilter - filter:["end.ge.1459953000", "end.lt.1460039400"]
          */        
@@ -250,7 +221,6 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
             return swap;
         }; 
          
-        
         $scope.$on('$viewContentLoaded', function() { 
 
             $scope.startDateTitle = "Snapshot Start Date";
@@ -259,9 +229,6 @@ define(["app", "lodash", "mathjs","../../util"], function(app, _, math, util) {
             var startDate = new Date(); 
             startDate.setDate(startDate.getDate() - 1);  
         });
-                     
-                
-                            
     }]);   
 });
 

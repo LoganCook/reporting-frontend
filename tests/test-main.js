@@ -15,7 +15,6 @@ require.config({
   baseUrl: '/base/js',
 
   paths: {
-      'ng-csv' : '../lib/ng-csv/build/ng-csv.min',
       'axios' : '../lib/axios/dist/axios.min',
       'lodash': '../lib/lodash/lodash.min',
       'filesize': '../lib/filesize/lib/filesize.min',
@@ -29,7 +28,6 @@ require.config({
       'spin': '../lib/spin.js/spin.min'
   },
   shim: {
-      "ng-csv": { exports: "ng-csv" },
       "angular": { exports: "angular" },
   },
 

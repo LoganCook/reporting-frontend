@@ -13,8 +13,6 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
     ctrl.pages = 0;
     ctrl.currentPage = 0;
 
-    ctrl.csvFileName = 'nova.csv';
-
     // For creating table and exporting csv
     ctrl.colTitles = ['Tenant', 'Server ID', 'Server Name', 'Hypervisorname',
       'Inventory Code', 'Hours', 'VCPUs', 'Usage', 'RAM', 'Disk', 'Ephemeral'];
@@ -45,22 +43,6 @@ define(['app', 'options', '../util2', '../util', './services'], function(app, op
       if (ctrl.currentPage < ctrl.pages) {
         getInstances(startTimestamp, endTimestamp, ctrl.currentPage + 1);
       }
-    };
-
-    // prepare data for ng-csv
-    ctrl.getCsvData = function () {
-      var rowCount = ctrl.instancesState.length;
-      var csvData = Array(rowCount + 1);
-      csvData[0] = ctrl.colTitles;
-
-      var fieldCount = ctrl.fieldNames.length, i, j;
-      for (i = 0; i < rowCount; i++) {
-        csvData[i + 1] = Array(fieldCount);;
-        for (j = 0; j < fieldCount; j++) {
-          csvData[i + 1][j] = ctrl.instancesState[i][ctrl.fieldNames[j]];
-        }
-      }
-      return csvData;
     };
 
     // Internal functions

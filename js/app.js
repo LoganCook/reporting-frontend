@@ -1,5 +1,8 @@
-define(["client", "ng-csv", "datePickers", "ersaTable", "blankSafe"], function (clientConstructor) {
-  var app = angular.module("reportingApp", ["ngSanitize", "ui.router", "ui.bootstrap", "ngResource", "ngCsv",
+define(
+  ["client", "datePickers", "ersaTable", "blankSafe"],
+  function (clientConstructor) {
+
+  var app = angular.module("reportingApp", ["ngSanitize", "ui.router", "ui.bootstrap", "ngResource",
     "angularSpinner", "pageComponents", "ngTableToCsv"]);
   app.factory("reporting", ["$timeout", "queryResource", clientConstructor]);
   app

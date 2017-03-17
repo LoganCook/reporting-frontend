@@ -146,33 +146,6 @@ define(["app", "lodash", "../util", "properties"], function(app, _, util, props)
             $scope.jobSummary = _.values(_jobSummary);
         };
 
-        /**
-         * This function is called from _export() in ersa-search directive
-         */
-        $scope.export = function() {
-            var data = [
-                ["Full Name", "Organisation", "Username", "Email", "Job Count", "Core Hours"]
-            ];
-
-            _.forEach(jobSummary, function(summary) {
-                data.push([
-                    summary.fullname,
-                    summary.organisation,
-                    summary.username,
-                    summary.email,
-                    summary.jobCount,
-                    (summary.cpuSeconds / 3600).toFixed(1)
-                ]);
-            });
-
-            data.sort(function(a, b) {
-                if (a[2] >= b[2]) {return 1;}
-                return -1;
-            });
-
-            return data;
-        };
-
         var processJobs = function(svc, type, query, data) {
 
             if (data && data.length > 0) {

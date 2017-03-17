@@ -214,24 +214,6 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
             reporting.xfsQuery("usage", query, processUsageRange);
         };
  
-        $scope.export = function() {
-            var data = [
-                ["Full Name", "Organisation", "Username", "Usage (Weighted Mean, GB)", "Usage (Peak, GB)"]
-            ];
-
-            _.forEach($scope.output.summed, function(entry) {
-                data.push([
-                    entry.fullname,
-                    entry.organisation,
-                    entry.username,
-                    entry.usage / (1024 * 1024 * 1024),
-                    entry.peak / (1024 * 1024 * 1024)
-                ]);
-            });
-
-            return data;
-        };
-         
         // Alert Util
         $scope.closeAlert = function(index) {
             $scope.alerts.splice(index, 1);

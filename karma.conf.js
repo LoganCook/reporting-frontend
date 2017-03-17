@@ -29,7 +29,6 @@ module.exports = function(config) {
       {pattern: 'lib/moment/min/moment.min.js', included: false},
       {pattern: 'lib/numeral/min/numeral.min.js', included: false},
       {pattern: 'lib/lodash/lodash.min.js', included: false},
-      {pattern: 'lib/ng-csv/build/ng-csv.min.js', included: false},
       {pattern: 'node_modules/qs/dist/qs.js', included: false},
       {pattern: 'lib/axios/dist/axios.min.js', included: false},
       {pattern: 'js/components/**/*.js', included: false},

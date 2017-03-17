@@ -3,16 +3,13 @@
     <p ng-show="error" class="alert alert-danger">{{ error }}</p>
     <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
     <div>
-
         <form>
             <div class="row"> 
                 <ersa-search 
                     start-date-class="col-md-4" end-date-class="col-md-4" 
-                    button-class="col-md-4" 
-                    export-file-name="hcp.csv"/> 
+                    button-class="col-md-4" /> 
             </div> 
         </form>
-
         <div class="row" style="padding-top: 25px;">
             <div class="col-md-12"> 
                 <table class="table table-striped">
@@ -47,7 +44,6 @@
                         <td>{{ formatSize(usage.tiered_bytes) }}</td --> 
                     </tr>
                 </table> 
-                
             </div>
         </div>
      </div>  

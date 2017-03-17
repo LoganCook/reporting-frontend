@@ -109,38 +109,6 @@ define(["app", "lodash", "mathjs","../util"], function(app, _, math, util) {
         initHcp();     
 
         /**
-         * This function is called from _export() in ersa-search directive
-         */
-        $scope.export = function() {
-            var dataWithTitle = [
-                ["Name", "Ingested(avg)", "Raw bytes(avg)", "Reads(avg)", "Writes(avg)", "Deletes(avg)", "Objects(avg)", "Bytes in(avg)", "Bytes out(avg)"]
-            ];
-            var data = [];
-
-            _.forEach(usageSummary, function(usage) {
-                data.push([
-                    usage.namespaceName,
-                    $scope.formatSize(usage.ingestedBytes),
-                    $scope.formatSize(usage.rawBytes / usage.usageCount),
-                    $scope.formatSize(usage.reads / usage.usageCount),
-                    $scope.formatSize(usage.writes / usage.usageCount),
-                    $scope.formatNumber(usage.deletes / usage.usageCount),
-                    $scope.formatNumber(usage.objects / usage.usageCount),
-                    $scope.formatSize(usage.bytesIn / usage.usageCount),
-                    $scope.formatSize(usage.bytesOut / usage.usageCount) 
-                ]);
-            });
-            
-            data.sort(function(a, b) {
-                if (a[0].toLowerCase() >= b[0].toLowerCase()) {return 1;}
-                return -1; 
-            });
-            
-            Array.prototype.push.apply(dataWithTitle, data); 
-            return dataWithTitle;
-        };        
-
-        /**
          * This function is called from _load() in ersa-search directive
          * arg : rangeEpochFilter - filter:["end.ge.1459953000", "end.lt.1460039400"]
          */        

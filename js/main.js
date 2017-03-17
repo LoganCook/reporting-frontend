@@ -1,7 +1,6 @@
 require.config({
   //enforceDefine: true, //This is for IE error handling: http://requirejs.org/docs/api.html#ieloadfail. use define instead of a normal js file
   paths: {
-    'ng-csv': '../lib/ng-csv/build/ng-csv.min',
     'ng-table-to-csv': '../lib/ng-table-to-csv/dist/ng-table-to-csv.min',
     'axios': '../lib/axios/dist/axios.min',
     'lodash': '../lib/lodash/lodash.min',
@@ -15,11 +14,6 @@ require.config({
     'datePickerUib': 'components/datePickerUib/date-picker-uib',
     'ersaTable': 'directives/ersaTable/ersa-table',
     'blankSafe': 'directives/blankSafe/blank-safe'
-  },
-  shim: {
-    "ng-csv": {
-      exports: "ng-csv"
-    }
   },
   baseUrl: 'js'
 });
