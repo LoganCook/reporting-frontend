@@ -1,4 +1,7 @@
-define(["app", "lodash", "mathjs", "../util", 'services/xfs'], function (app, _, math, util) {
+define(
+  ["app", "lodash", "mathjs", "../util", "../order-by-grand-last", "services/xfs"],
+  function (app, _, math, util, orderByGrandLast) {
+
   app.controller("AHPCStorageController", ["$rootScope", "$scope", "$timeout", "$filter", "reporting", "org", "spinner", "XFSService", "AuthService",
     function ($rootScope, $scope, $timeout, $filter, reporting, org, spinner, XFSService) {
       'use strict';
@@ -50,89 +53,8 @@ define(["app", "lodash", "mathjs", "../util", 'services/xfs'], function (app, _,
       $scope.openRangeEnd = function () {
         $scope.rangeEndOpen = true;
       };
-
-
-
-
-      /**
-       * create TSV file data with summary data that has already fetched and stored.
-       *
-       * @export
-       * @return{Array} data
-       */
-      $scope.export = function () {
-        var records = [];
-        var data = [];
-
-        if ($scope.loggedInAsErsaUser) {
-          _.forEach($scope.output.summed, function (entry) {
-            records.push([
-              entry.organisation,
-              entry.school,
-              entry.username,
-              entry.fullname,
-              entry.email,
-              entry['usage'],
-              entry.blocks,
-              '$' + $scope.formatNumber(entry.cost) + '.00'
-            ]);
-          });
-
-          records = $filter('orderBy')(records, [0, 1]);
-
-          data = [
-            ["Organisation", "School", "User ID", "User Name", "Email", "Total GB Used", "250GB blocks Allocated", "Cost per blocks"]
-          ];
-
-          Array.prototype.push.apply(data, records);
-
-          /** Grand total data. */
-          data.push([
-            'Grand Total',
-            ' - ',
-            ' - ',
-            ' - ',
-            ' - ',
-            $scope.total.currentUsage.toFixed(2),
-            $scope.total.blocks,
-            '$' + $scope.formatNumber($scope.total.cost) + '.00'
-          ]);
-
-        } else {
-          _.forEach($scope.output.summed, function (entry) {
-            records.push([
-              entry.school,
-              entry.username,
-              entry.fullname,
-              entry.email,
-              entry['usage'],
-              entry.blocks,
-              '$' + $scope.formatNumber(entry.cost) + '.00'
-            ]);
-          });
-
-          records = $filter('orderBy')(records, [0, 1]);
-
-          data = [
-            ["School", "User ID", "User Name", "Email", "Total GB Used", "250GB blocks Allocated", "Cost per blocks"]
-          ];
-
-          Array.prototype.push.apply(data, records);
-
-          /** Grand total data. */
-          data.push([
-            'Grand Total',
-            ' - ',
-            ' - ',
-            ' - ',
-            $scope.total.currentUsage.toFixed(2),
-            $scope.total.blocks,
-            '$' + $scope.formatNumber($scope.total.cost) + '.00'
-          ]);
-        }
-        return data;
-      };
-
+      $scope.datepickerOptions = {minMode: 'month'}
+      $scope.orderByGrandLast = orderByGrandLast
 
       $scope.load = function () {
         clear();

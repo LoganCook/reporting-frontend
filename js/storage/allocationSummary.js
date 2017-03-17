@@ -1,4 +1,4 @@
-define(["app", "../util", "services/xfs.usage", "services/hnas.vv", "services/hnas.fs"], function (app, util) {
+define(["app", "../util", "../countdown-latch", "services/xfs.usage", "services/hnas.vv", "services/hnas.fs"], function (app, util, countdownLatch) {
   app.controller("AllocationSummaryController", ["$rootScope", "$scope", "$timeout", "$q", "$filter", "reporting", "org", "spinner", "AuthService", "RDService", "XFSUsageService", "HNASVVService", "HNASFSService",
     function ($rootScope, $scope, $timeout, $q, $filter, reporting, org, spinner, AuthService, RDService, XFSUsageService, HNASVVService, HNASFSService) {
       // AllocationSummary for instituational users
@@ -53,46 +53,44 @@ define(["app", "../util", "services/xfs.usage", "services/hnas.vv", "services/hn
           orgName = AuthService.getUserOrgName();
         }
         $scope.usages = [];
-
+        var numberOfServiceCalls = 3
+        var latch = new countdownLatch(numberOfServiceCalls)
+        latch.await(function() {
+          spinner.stop()
+        })
         XFSUsageService.query(startTs, endTs).then(function() {
-          spinner.start();
           $scope.usages = $scope.usages.concat(XFSUsageService.getUsages(startTs, endTs, orgName));
           subTotals = addServiceTotal(XFSUsageService.getTotals(startTs, endTs, orgName), subTotals);
           tmpSubTotals = angular.copy(subTotals);
           $scope.total = util.spliceOne(tmpSubTotals, 'organisation', 'Grand');
           $scope.subTotals = tmpSubTotals;
-          spinner.stop();
+          latch.countDown()
         }, function(reason) {
-          spinner.stop();
-          console.log("Failed request, ", reason);
+          latch.countDown()
+          console.error("Failed request, ", reason);
         });
         HNASVVService.query(startTs, endTs).then(function() {
-          spinner.start();
           $scope.usages = $scope.usages.concat(HNASVVService.getUsages(startTs, endTs, orgName));
           subTotals = addServiceTotal(HNASVVService.getTotals(startTs, endTs, orgName), subTotals);
           tmpSubTotals = angular.copy(subTotals);
           $scope.total = util.spliceOne(tmpSubTotals, 'organisation', 'Grand');
           $scope.subTotals = tmpSubTotals;
-          spinner.stop();
+          latch.countDown()
         }, function(reason) {
-          spinner.stop();
-          console.log("Failed request, ", reason);
+          latch.countDown()
+          console.error("Failed request, ", reason);
         });
         HNASFSService.query(startTs, endTs).then(function() {
-          spinner.start();
           $scope.usages = $scope.usages.concat(HNASFSService.getUsages(startTs, endTs, orgName));
-
           subTotals = addServiceTotal(HNASFSService.getTotals(startTs, endTs, orgName), subTotals);
           tmpSubTotals = angular.copy(subTotals);
           $scope.total = util.spliceOne(tmpSubTotals, 'organisation', 'Grand');
           $scope.subTotals = tmpSubTotals;
-          spinner.stop();
+          latch.countDown()
         }, function(reason) {
-          spinner.stop();
-          console.log("Failed request, ", reason);
+          latch.countDown()
+          console.error("Failed request, ", reason);
         });
-
-        spinner.stop();
       };
     }
   ]);

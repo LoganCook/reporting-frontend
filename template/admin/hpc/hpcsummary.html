@@ -73,6 +73,8 @@
               <td>{{ ::formatNumber(sum.hours) }}</td>
               <td>${{ ::formatNumber(sum.cost) }}</td>
             </tr>
+          </tbody>
+          <tfoot>
             <tr ng-show="jobCounts.length">
               <td><strong>Grand Total</strong></td>
               <td></td>
@@ -84,7 +86,7 @@
               <td><strong>{{ ::formatNumber(grandTotal.hours) }}</strong></td>
               <td><strong>${{ ::formatNumber(grandTotal.cost) }}</strong></td>
             </tr>
-          </tbody>
+          </tfoot>
         </table>
         <table ng-hide="viewDetails" ersa-table="hpc-summary.simple">
           <thead>
@@ -104,6 +106,8 @@
               <td>{{ ::formatNumber(sum.hours) }}</td>
               <td>${{ ::formatNumber(sum.cost) }}</td>
             </tr>
+          </tbody>
+          <tfoot>
             <tr ng-show="jobCounts.length">
               <td><strong>Grand Total</strong></td>
               <td></td>
@@ -111,7 +115,7 @@
               <td><strong>{{ ::formatNumber(grandTotal.hours) }}</strong></td>
               <td><strong>${{ ::formatNumber(grandTotal.cost) }}</strong></td>
             </tr>
-          </tbody>
+          </tfoot>
         </table>
       </div>
     </div>

@@ -1,4 +1,4 @@
-define(["app", "lodash", "../util", "services/xfs.usage", "services/hnas.vv", "services/hnas.fs"], function (app, _, util) {
+define(["app", "lodash", "../util", "../countdown-latch", "services/xfs.usage", "services/hnas.vv", "services/hnas.fs"], function (app, _, util, countdownLatch) {
   app.controller("AAllocationSummaryController", ["$rootScope", "$scope", "$timeout", "$q", "$filter", "reporting", "org", "spinner", "AuthService", "RDService", "XFSUsageService", "HNASVVService", "HNASFSService",
     function ($rootScope, $scope, $timeout, $q, $filter, reporting, org, spinner, AuthService, RDService, XFSUsageService, HNASVVService, HNASFSService) {
 
@@ -17,52 +17,7 @@ define(["app", "lodash", "../util", "services/xfs.usage", "services/hnas.vv", "s
       $scope.openRangeEnd = function () {
         $scope.rangeEndOpen = true;
       };
-
-      /**
-       * create TSV file data with summary data that has already fetched and stored.
-       *
-       * @export
-       * @return{Array} data
-       */
-      $scope.export = function () {
-        var records = [];
-
-        _.forEach($scope.usages, function (_usage) {
-          records.push([
-            _usage.rds,
-            _usage.school,
-            _usage.username,
-            _usage.email,
-            _usage.filesystem,
-            _usage.approved_size,
-            _usage.usage,
-            _usage.quota250,
-            $scope.formatNumber(_usage.per5dollar) + '.00'
-          ]);
-        });
-
-        records = $filter('orderBy')(records, [0, 1]);
-
-        var data = [
-          ["Allocation Name", "School", "User Name", "Email", "File system", "RDS GB Allocated", "Total GB Usage", "250GB Quota Allocated", "Cost per Quota"]
-        ];
-        Array.prototype.push.apply(data, records);
-
-        /** Grand total data. */
-        data.push([
-          'Grand Total',
-          ' - ',
-          ' - ',
-          ' - ',
-          ' - ',
-          $scope.total.rds,
-          $scope.total.currentUsage,
-          $scope.total.quota250,
-          '$' + $scope.formatNumber($scope.total.per5dollar) + '.00'
-        ]);
-
-        return data;
-      };
+      $scope.datepickerOptions = {minMode: 'month'}
 
       function addServiceTotal(serviceTotal, subTotals) {
         var k1 = 'billing', k2 = 'organisation';
@@ -112,42 +67,43 @@ define(["app", "lodash", "../util", "services/xfs.usage", "services/hnas.vv", "s
           'cost': 0
         };
 
+        var numberOfServiceCalls = 3
+        var latch = new countdownLatch(numberOfServiceCalls)
+        latch.await(function() {
+          spinner.stop()
+        })
         XFSUsageService.query(startTs, endTs).then(function() {
-          spinner.start();
           $scope.usages = $scope.usages.concat(XFSUsageService.getUsages(startTs, endTs, orgName));
           $scope.subTotals1 = XFSUsageService.getTotals(startTs, endTs, orgName);
           $scope.subTotals = addServiceTotal(XFSUsageService.getTotals(startTs, endTs, orgName), $scope.subTotals);
           updateGrandTotal(XFSUsageService.getGrandTotals(startTs, endTs), $scope.total);
-          spinner.stop();
+          latch.countDown()
         }, function(reason) {
-          spinner.stop();
-          console.log("Failed request, ", reason);
+          latch.countDown()
+          console.error("Failed request, ", reason);
         });
         HNASVVService.query(startTs, endTs).then(function() {
-          spinner.start();
           // $scope.test2 = HNASVVService.getUsages(startTs, endTs, orgName);
           $scope.usages = $scope.usages.concat(HNASVVService.getUsages(startTs, endTs, orgName));
           // $scope.subTotals2 = HNASVVService.getTotals(startTs, endTs, orgName);
           $scope.subTotals = addServiceTotal(HNASVVService.getTotals(startTs, endTs, orgName), $scope.subTotals);
           updateGrandTotal(HNASVVService.getGrandTotals(startTs, endTs), $scope.total);
-          spinner.stop();
+          latch.countDown()
         }, function(reason) {
-          spinner.stop();
-          console.log("Failed request, ", reason);
+          latch.countDown()
+          console.error("Failed request, ", reason);
         });
         HNASFSService.query(startTs, endTs).then(function() {
-          spinner.start();
           // $scope.test3 = HNASFSService.getUsages(startTs, endTs, orgName);
           // $scope.subTotals3 = HNASFSService.getTotals(startTs, endTs, orgName);
           $scope.usages = $scope.usages.concat(HNASFSService.getUsages(startTs, endTs, orgName));
           $scope.subTotals = addServiceTotal(HNASFSService.getTotals(startTs, endTs, orgName), $scope.subTotals);
           updateGrandTotal(HNASFSService.getGrandTotals(startTs, endTs), $scope.total);
-          spinner.stop();
+          latch.countDown()
         }, function(reason) {
-          spinner.stop();
-          console.log("Failed request, ", reason);
+          latch.countDown()
+          console.error("Failed request, ", reason);
         });
-        spinner.stop();
       };
     }
   ]);

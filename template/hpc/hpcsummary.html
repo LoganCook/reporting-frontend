@@ -80,19 +80,15 @@
               <td class="text-right">{{ ::formatNumber(sum.hours) }}</td>
               <td class="text-right">${{ ::formatNumber(sum.cost) }}</td>
             </tr>
+          </tbody>
+          <tfoot>
             <tr ng-show="subTotals.length">
               <td><strong>Grand Total</strong></td>
-              <td class="text-right">
-                <strong>{{ ::grandTotal.job_count }}</strong>
-              </td>
-              <td class="text-right">
-                <strong>{{ ::formatNumber(grandTotal.hours) }}</strong>
-              </td>
-              <td class="text-right">
-                <strong>${{ ::formatNumber(grandTotal.cost) }}</strong>
-              </td>
+              <td class="text-right"><strong>{{ ::grandTotal.job_count }}</strong></td>
+              <td class="text-right"><strong>{{ ::formatNumber(grandTotal.hours) }}</strong></td>
+              <td class="text-right"><strong>${{ ::formatNumber(grandTotal.cost) }}</strong></td>
             </tr>
-          </tbody>
+          </tfoot>
         </table>
       </div>
     </div>

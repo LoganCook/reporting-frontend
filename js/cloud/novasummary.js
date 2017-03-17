@@ -1,4 +1,6 @@
-define(['app', 'options', '../util2', '../util', './services', '../crm', './account', '../services/nectar'], function (app, options, util, oldUtil) {
+define(
+  ['app', 'options', '../util2', '../util', '../order-by-grand-last', './services', '../crm', './account', '../services/nectar'],
+  function (app, options, util, oldUtil, orderByGrandLast) {
   'use strict';
 
   app.controller("NovasummaryController", ["$rootScope", "$scope", "$timeout", "$filter", "reporting", "org", "queryResource", "$q", "flavor", "tenant", "crm", "account", "spinner", "NectarService", "AuthService",
@@ -17,13 +19,7 @@ define(['app', 'options', '../util2', '../util', './services', '../crm', './acco
       $scope.instancesState = [];
       $scope.serverChecked = false;
       $scope.datepickerOptions = {minMode: 'month'}
-
-      $scope.orderByGrandLast = function(v1, v2) {
-        if (v1.organisation === 'Grand') {
-          return 1
-        }
-        return 0
-      }
+      $scope.orderByGrandLast = orderByGrandLast
 
       /**
        * summary variables
@@ -71,6 +67,9 @@ define(['app', 'options', '../util2', '../util', './services', '../crm', './acco
             $scope.grandTotal = NectarService.getGrandTotal(startTs, endTs);
           }
           spinner.stop()
+        }, function(reason) {
+          spinner.stop()
+          console.error("Failed request, ", reason);
         });
       };
 

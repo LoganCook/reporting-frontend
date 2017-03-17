@@ -82,16 +82,17 @@
                             <td class="text-right"> {{ ::usage.blocks }}</td>
                             <td class="text-right">${{ ::formatNumber(usage.cost) }}</td>
                         </tr>
+                    </tbody>
+                    <tfoot>
                         <tr ng-show="subTotals.length">
                             <td><strong>Grand Total</strong></td>
                             <td class="text-right"><strong>{{ ::total.usage | number }}</strong></td>
                             <td class="text-right"><strong>{{ ::total.blocks }}</strong></td>
                             <td class="text-right"><strong>${{ ::formatNumber(total.cost) }}</strong></td>
                         </tr>
-                    </tbody>
+                    </tfoot>
                 </table>
             </div>
         </div>
     </div>
-
 </div>

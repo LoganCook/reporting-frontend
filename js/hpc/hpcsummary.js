@@ -1,4 +1,7 @@
-define(["app", "lodash", "../util", "../util2", 'options', 'services/hpc'], function (app, _, utilOld, util, options) {
+define(
+  ["app", "lodash", "../util", "../util2", "options", "../order-by-grand-last", "services/hpc"],
+  function (app, _, utilOld, util, options, orderByGrandLast) {
+
   app.controller("HPCSummaryController", ["$scope", "$filter", "theConstants", "org", "spinner", "AuthService","HPCService",
     function ($scope, $filter, theConstants, $timeoutorg, spinner, AuthService, HPCService) {
       var orgName;
@@ -15,12 +18,7 @@ define(["app", "lodash", "../util", "../util2", 'options', 'services/hpc'], func
       $scope.openRangeEnd = function () {
         $scope.rangeEndOpen = true;
       };
-      $scope.orderByGrandLast = function(v1, v2) {
-        if (v1.organisation === 'Grand') {
-          return 1
-        }
-        return 0
-      }
+      $scope.orderByGrandLast = orderByGrandLast
 
       $scope.load = function () {
         $scope.alerts = [];
