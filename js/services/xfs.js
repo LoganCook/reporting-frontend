@@ -99,11 +99,19 @@ define(['app', '../util'], function (app, util) {
       }
     }
 
+    function computeBlocks(gbUsed) {
+      var isUnderChargableThreshold = gbUsed < 1 && Math.round(gbUsed) === 0
+      if (isUnderChargableThreshold) {
+        return 0
+      }
+      return Math.ceil(gbUsed / BlockSize)
+    }
+
     // convert KiB into GiB
     function processEntry(entry, accounts) {
       entry['raw'] = entry['usage'] * 1024;
       entry['usage'] = util.toGB(entry['raw']);
-      entry['blocks'] = Math.ceil(entry['usage'] / BlockSize);
+      entry['blocks'] = computeBlocks(entry['usage'])
       entry['cost'] = BlockPrice * entry['blocks'];
       angular.extend(entry, accounts[entry['owner']]);
     }

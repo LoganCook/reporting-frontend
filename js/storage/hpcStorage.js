@@ -44,7 +44,7 @@ define(["app", '../options', "lodash", "mathjs", "../util", 'services/xfs'], fun
 
       $scope.xfs = {};
 
-      $scope.output = {
+      $scope.output = { // FIXME is this used?
         usage: [],
         summed: []
       };
@@ -86,6 +86,7 @@ define(["app", '../options', "lodash", "mathjs", "../util", 'services/xfs'], fun
             });
         }, function(reason) {
           console.error("Failed to retrieve XFS data: " + reason)
+          spinner.stop()
         });
       };
 

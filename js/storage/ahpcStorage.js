@@ -75,11 +75,14 @@ define(
               $scope.subTotals = totals;
               $scope.total = XFSService.getGrandTotals(filesysteId, startTs, endTs);
               spinner.stop();
-            });
+            }, function(reason) {
+              console.error('Failed to retrieve XFS data: ' + reason)
+              spinner.stop()
+            })
         }, function(reason) {
-              alert('Failed: ' + reason);
-              spinner.stop();
-            });
+          console.error('Failed to retrieve XFS data: ' + reason)
+          spinner.stop()
+        });
       };
 
       /**
