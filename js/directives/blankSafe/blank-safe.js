@@ -8,7 +8,8 @@ define(['pageComponents'], function (pageComponents) {
       },
       link: function (scope, element, attrs) {
         var theValue = scope.blankSafe
-        if (typeof theValue === 'undefined') {
+        var isValueBlank = typeof theValue === 'undefined' || theValue.trim().length === 0
+        if (isValueBlank) {
           theValue = theConstants.blankValue
         }
         var content;

@@ -36,7 +36,7 @@
 
         <div class="row">
             <div class="col-md-12">
-                <table ersa-table="hpc">
+                <table class="table table-striped">
                     <thead>
                         <tr>
                             <th>Full Name</th>
@@ -51,10 +51,10 @@
                     </thead>
                     <tbody>
                         <tr ng-repeat="sum in ::jobSummary | orderBy: 'username'">
-                            <td>{{ ::sum.fullname }}</td>
+                            <td blank-safe="sum.fullname"></td>
                             <td>{{ ::sum.username }}</td>
-                            <td>{{ ::sum.email }}</td>
-                            <td>{{ ::sum.organisation }}</td>
+                            <td blank-safe="sum.email"></td>
+                            <td blank-safe="sum.organisation"></td>
                             <td>{{ ::formatNumber(sum.jobCount) }}</td>
                             <td>{{ ::formatNumber(sum.cpuSeconds / 3600) }}</td>
                             <td>{{ ::formatDuration(sum.cpuSeconds, "seconds") }}</td>
