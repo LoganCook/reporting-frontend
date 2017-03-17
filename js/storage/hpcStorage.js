@@ -84,6 +84,8 @@ define(["app", '../options', "lodash", "mathjs", "../util", 'services/xfs'], fun
               alert('Failed: ' + reason);
               spinner.stop();
             });
+        }, function(reason) {
+          console.error("Failed to retrieve XFS data: " + reason)
         });
       };
 

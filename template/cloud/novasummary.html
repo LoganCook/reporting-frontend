@@ -50,7 +50,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="instance in ::usages | orderBy: ['organisation', 'tenant']">
+                        <tr ng-repeat="instance in usages | orderBy: ['organisation', 'tenant']">
                             <td>{{ ::instance.organisation }}</td>
                             <td>{{ ::instance.tenant }}</td>
                             <td>{{ ::instance.contractor }}</td>
@@ -70,7 +70,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="instance in ::subTotals | orderBy: 'organisation'">
+                        <tr ng-repeat="instance in subTotals | orderBy: 'organisation'">
                             <td>{{ ::instance.organisation }}</td>
                             <td class="text-right"> {{ ::instance.core }}</td>
                             <td class="text-right"> ${{ ::instance.cost }}</td>

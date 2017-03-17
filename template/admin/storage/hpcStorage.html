@@ -75,7 +75,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="entry in ::output.summed | orderBy: ['billing','organisation','owner']">
+                            <tr ng-repeat="entry in output.summed | orderBy: ['billing','organisation','owner']">
                                 <td blank-safe="entry.billing"></td>
                                 <td blank-safe="entry.organisation"></td>
                                 <td>{{ ::entry.owner }}</td>
@@ -110,7 +110,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="entry in ::subTotals | orderBy: ['billing',orderByGrandLast,'organisation']">
+                            <tr ng-repeat="entry in subTotals | orderBy: ['billing',orderByGrandLast,'organisation']">
                                 <td blank-safe="entry.billing"></td>
                                 <td blank-safe="entry.organisation"></td>
                                 <td class="text-right">{{ ::entry.usage | number }}</td>

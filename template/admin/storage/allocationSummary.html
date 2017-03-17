@@ -66,7 +66,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="usage in ::usages | orderBy: 'allocation_num'">
+                        <tr ng-repeat="usage in usages | orderBy: 'allocation_num'">
                             <td blank-safe="usage.allocation_num"></td>
                             <td blank-safe="usage.billing"></td>
                             <td blank-safe="usage.organisation"></td>
@@ -105,7 +105,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="usage in ::subTotals | orderBy: ['billing',orderByGrandLast,'organisation']">
+                        <tr ng-repeat="usage in subTotals | orderBy: ['billing',orderByGrandLast,'organisation']">
                             <td blank-safe="usage.billing"></td>
                             <td blank-safe="usage.organisation"></td>
                             <td class="text-right"> {{ ::usage.usage | number }}</td>

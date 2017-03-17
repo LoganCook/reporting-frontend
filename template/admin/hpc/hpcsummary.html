@@ -62,7 +62,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="sum in ::jobCounts | orderBy: ['billing','organisation','owner']">
+            <tr ng-repeat="sum in jobCounts | orderBy: ['billing','organisation','owner']">
               <td blank-safe="sum.billing"></td>
               <td blank-safe="sum.organisation"></td>
               <td>{{ ::sum.owner }}</td>
@@ -99,7 +99,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="sum in ::subTotals | orderBy: ['billing',orderByGrandLast,'organisation','job_count']">
+            <tr ng-repeat="sum in subTotals | orderBy: ['billing',orderByGrandLast,'organisation','job_count']">
               <td blank-safe="sum.billing"></td>
               <td blank-safe="sum.organisation"></td>
               <td>{{ ::sum.job_count }}</td>

@@ -50,7 +50,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="sum in ::jobSummary | orderBy: 'username'">
+                        <tr ng-repeat="sum in jobSummary | orderBy: 'username'">
                             <td blank-safe="sum.fullname"></td>
                             <td>{{ ::sum.username }}</td>
                             <td blank-safe="sum.email"></td>

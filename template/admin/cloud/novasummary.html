@@ -64,7 +64,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="instance in ::usages | orderBy: ['billing', 'organisation', 'tenant']">
+                        <tr ng-repeat="instance in usages | orderBy: ['billing', 'organisation', 'tenant']">
                             <td blank-safe="instance.billing"></td>
                             <td blank-safe="instance.organisation"></td>
                             <td>{{ ::instance.tenant }}</td>
@@ -87,7 +87,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="instance in ::subTotals | orderBy: ['billing', orderByGrandLast, 'organisation']">
+                        <tr ng-repeat="instance in subTotals | orderBy: ['billing', orderByGrandLast, 'organisation']">
                             <td blank-safe="instance.billing"></td>
                             <td blank-safe="instance.organisation"></td>
                             <td class="text-right"> {{ ::instance.core }}</td>
