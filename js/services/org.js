@@ -7,11 +7,11 @@
         throw "Wrong configuration: bman is not defined in sessionStorage.";
       }
       var requestUri = sessionStorage['bman'];
-      var userUri = requestUri + '/api/Organisation/#id/get_extended_accounts/';
+      var userUri = requestUri + '/api/Organisation/#id/get_access/';
       var orgUri = requestUri + '/api/Organisation/?method=get_tops';
       var orgServiceUri = requestUri + '/api/organisation/#id/get_service/?name=#serviceName';
       var rdsUri = requestUri + '/api/RDS/';
-      var roleUri = requestUri + '/api/Role/';
+      var roleUri = requestUri + '/api/Role/'; // TODO: to be retired
       var organisations = {}, // pk -> name
         organisationByNames = {}, // name -> pk
         users = {},
@@ -37,8 +37,11 @@
               var organisationName = organisations[orgId];
               for (var user in users[orgId]) {
                 users[orgId][user]['billing'] = organisationName;
-                if (users[orgId][user]['billing'] == users[orgId][user]['organisation']) {
+                // temporary mapping
+                if (users[orgId][user]['billing'] == users[orgId][user]['unit']) {
                   users[orgId][user]['organisation'] = '&nbsp;';
+                } else {
+                  users[orgId][user]['organisation'] = users[orgId][user]['unit'];
                 }
               }
               // async? relatinoship with getMergedUsers?
@@ -84,7 +87,11 @@
             var i, l = response.data.length;
             var orgName = organisations[orgId];
             for (i = 0; i < l; i++ ) {
+              response.data[i]['billing'] = orgName;
+              // below is temporary mapping of biller to billing for minising templates changes
               response.data[i]['biller'] = orgName;
+              response.data[i]['organisation'] = response.data[i]['unit'];
+              response.data[i]['contractor'] = response.data[i]['manager'];
             }
             services[orgId][name] = response.data;
             deferred.resolve(services[orgId][name]);
@@ -93,6 +100,7 @@
         return deferred.promise;
       }
 
+      // TODO: to be retired
       function getMergedRoles() {
         for (var orgId in rolesOf) {
           rolesOf[orgId].forEach(function (role) {
@@ -101,6 +109,7 @@
         }
       }
 
+      // TODO: to be retired
       function _getRolesOf(orgId) {
         var deferred = $q.defer();
         if (orgId in rolesOf) {
@@ -115,6 +124,7 @@
         return deferred.promise;
       }
 
+      // TODO: to be retired
       /**
        * Extract some fields from Bman's role model
        *
@@ -144,11 +154,10 @@
               for (var i = 0; i < response.data.length; i++) {
                 organisations[response.data[i]['id']] = response.data[i]['name'];
                 organisationByNames[response.data[i]['name']] = response.data[i]['id'];
-                // I may still need this for HPC?
-                // if (loadUsers) {
-                //   _getUsersOf(response.data[i]['pk']);
+                if (loadUsers) {
+                  _getUsersOf(response.data[i]['id']);
                 //   _getRolesOf(response.data[i]['pk']);
-                // }
+                }
               }
               deferred.resolve(organisations);
             });
@@ -160,9 +169,10 @@
         },
         getUsersOf: function (orgId) {
           // will load all user accounts (AccessService) and Roles
-          return _getUsersOf(orgId).then(function () {
-            return _getRolesOf(orgId);
-          });
+          return _getUsersOf(orgId);
+          // return _getUsersOf(orgId).then(function () {
+          //   return _getRolesOf(orgId);
+          // });
         },
         getUsersOfSync: function (orgName) {
           var orgId = organisationByNames[orgName];
@@ -191,6 +201,7 @@
           return deferred.promise;
         },
         getRDS: function () {
+          // TODO: is it still in use?
           var deferred = $q.defer();
           if (rdses.length) {
             deferred.resolve(rdses);

@@ -1,8 +1,21 @@
   define(['app', 'util'], function (app, util) {
     'use strict';
 
+    function tempMap(data) {
+      // Hope this is a tempory solution
+      data.forEach(function(entry) {
+        entry['billing'] = entry['biller'];
+        entry['organisation'] = entry['unit'];
+        entry['full_name'] = entry['manager'];
+        entry['contractor'] = entry['manager'];
+        entry['allocation_num'] = entry['orderId'];
+        entry['approved_size'] = entry['allocated'];
+      });
+    }
+
     // RDS related
     // returned a map with filesystem as key, contractor and attributes as content
+    // TODO: can this be a warper of Contract, they look identical but called in different ways
     app.factory('RDService', function ($http, $q, org) {
       if (!sessionStorage.hasOwnProperty('bman')) {
         throw "Wrong configuration: bman is not defined in sessionStorage.";
@@ -18,13 +31,8 @@
             deferred.resolve(rdses);
           } else {
             $http.get(rdsUri).then(function (response) {
-              // /api/rds/ returns raw django model with contractor role as ids, so we have to map them
-              var roles = org.getAllRoles();
-              var extended = response.data.map(function(entry) {
-                angular.extend(entry, roles[entry['contractor']]);
-                return entry;
-              });
-              rdses = util.keyArray(extended, 'filesystem');
+              tempMap(response.data);
+              rdses = util.keyArray(response.data, 'FileSystemName');
               deferred.resolve(rdses);
             });
           }
@@ -33,7 +41,8 @@
         getServiceOf: function (orgId) {
           var deferred = $q.defer();
           org.getServiceOf(orgId, 'rds').then(function(data) {
-            deferred.resolve(util.keyArray(data, 'filesystem'));
+            tempMap(data);
+            deferred.resolve(util.keyArray(data, 'FileSystemName'));
           });
           return deferred.promise;
         }
