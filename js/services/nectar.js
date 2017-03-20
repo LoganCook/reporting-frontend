@@ -5,7 +5,7 @@ define(['app', '../util', 'services/contract', 'options' ,'../cloud/services'], 
    * All nectar usage related data services
    */
   app.factory('NectarService', function (queryResource, $q, AuthService, org, $http, flavor) {
-    var contractService = contract($http, $q, org, 'nectar', 'openstack_id');
+    var contractService = contract($http, $q, org, 'nectar', 'OpenstackID');
     var PRICE = 5;
     if ('nova' in options && 'price' in options['nova']) {
       PRICE = options['nova']['price'];
@@ -38,6 +38,8 @@ define(['app', '../util', 'services/contract', 'options' ,'../cloud/services'], 
         return flavors.then(function (flavorMap) {
           return linkUsages(usages, contracts, flavorMap);
         });
+      }, function(reason) {
+        console.log("Failed to get Nectar usage data. Details: " +  reason);
       });
     };
 
@@ -75,7 +77,7 @@ define(['app', '../util', 'services/contract', 'options' ,'../cloud/services'], 
 
     // implement local version of data entries
     // {
-    //   "tenant": "52f03cef4a324674b1797e7e842fb898",
+    //   "tenant": "52f03cef4a327e7e842fb898",
     //   "az": "sa",
     //   "image": "d8a5813c-8dd0-49ac-a57f-2fa90b73e0e9",
     //   "span": 385851,
@@ -83,12 +85,29 @@ define(['app', '../util', 'services/contract', 'options' ,'../cloud/services'], 
     //   "server": "test-hbase",
     //   "flavor": "885227de-b7ee-42af-a209-2f1ff59bc330",
     //   "server_id": "03f0e40b-106e-4375-bbe2-766102e3201e",
-    //   "hypervisor": "cw-compute-05a.sa.nectar.org.au",
+    //   "hypervisor": "some.ersa.org.au",
     //   "manager": [],
-    //   "account": "96512e9119914b11aaf4a0dbdc54023c"
+    //   "account": "96512e91191aaf4a0dbdc54023c"
     // }
+
+    // New contract/accounts data to be merged with usage data above
+    // {
+      // "OpenstackID": "6b3dbb8xxxxxxxx5e89cdcebd5865bd17",
+      // "unitPrice@OData.Community.Display.V1.FormattedValue": "$0.00",
+      // "unit": "School of Civil, Environmental & Mining Engineering",
+      // "manager": "Some manager",
+      // "biller": "University of Adelaide",
+      // "managerid": "e5df8269-xxxx-e611-80e8-c4346bc4beac",
+      // "allocated": 4,
+      // "name": "CM2 Cloud Services",
+      // "salesorderid": "364cfb44-xxxx-e611-80e7-70106fa39b51",
+      // "unitPrice": 0,
+      // "allocated@OData.Community.Display.V1.FormattedValue": "4",
+      // "salesorderdetail2_x002e_transactioncurrencyid": "744fd97c-18fb-e511-80d8-c4346bc5b718",
+      // "@odata.etag": "W/\"3233960\""
+    // },
+
     function processEntry(entry, accounts, flavorMap) {
-      delete entry['manager'];  // this is not needed here
       delete entry['az'];
       if (entry['flavor'] in flavorMap) {
         entry['core'] = parseInt(flavorMap[entry['flavor']]['vcpus']);
@@ -99,6 +118,18 @@ define(['app', '../util', 'services/contract', 'options' ,'../cloud/services'], 
       }
       entry['cost'] = PRICE * entry['core'];
       angular.extend(entry, accounts[entry['tenant']]);
+      // temporary mapping to avoid change templates
+      if ('biller' in entry) {
+        entry['billing'] = entry['biller'];
+      }
+      if ('unit' in entry) {
+        entry['organisation'] = entry['unit'];
+      }
+      if ('unit' in entry) {
+        entry['tenant'] = entry['name'];
+      }
+      entry['full_name'] = entry['manager'];
+      delete entry['manager'];  // this is not needed here
     };
 
     // local
