@@ -92,7 +92,7 @@ define(['app', '../util'], function (app, util) {
     }
 
     function getAccounts() {
-      if (AuthService.isAdmin) {
+      if (AuthService.isAdmin()) {
         return org.getAllAccounts();
       } else {
         return org.getUsersOfSync(AuthService.getUserOrgName());

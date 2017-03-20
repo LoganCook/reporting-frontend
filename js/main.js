@@ -52,7 +52,9 @@ require(["app", "services/auth", "services/org", "menu",
           // load all organisations and their accounts
           org.getOrganisations(true);
         } else {
-          org.getOrganisations(false);
+          org.getOrganisations(false).then(function () {
+            org.getUsersOf(org.getOrganisationId(AuthService.getUserOrgName()));
+          });
         }
       });
       angular.bootstrap(document, ["reportingApp"]);

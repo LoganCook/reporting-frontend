@@ -32,12 +32,13 @@
             if (Object.keys(response.data).length == 0) {
               deferred.resolve({});
             } else {
-              users[orgId] = response.data;
+              users[orgId] = util.keyArray(response.data, 'username');
 
               var organisationName = organisations[orgId];
               for (var user in users[orgId]) {
                 users[orgId][user]['billing'] = organisationName;
                 // temporary mapping
+                users[orgId][user]['fullname'] = users[orgId][user]['manager'];
                 if (users[orgId][user]['billing'] == users[orgId][user]['unit']) {
                   users[orgId][user]['organisation'] = '&nbsp;';
                 } else {
