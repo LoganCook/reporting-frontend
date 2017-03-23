@@ -199,13 +199,26 @@ define(
 
   function buildTheConstants() {
     var subTotal = 'Grand'
+    /**
+     * A comparator for ensuring that the sub-total row comes last.
+     * @param {{organisation: string}} v1 - first object
+     * @param {{organisation: string}} v2 - second object
+     * @return {int} sort order the ensures sub-total row comes last but is indifferent to everything else
+     */
+    function orderBySubTotalLast(v1, v2) {
+      if (v1.organisation === subTotal) {
+        return 1
+      }
+      return 0
+    }
     return {
       grandTotal: 'Grand Total',
       subTotal: subTotal,
       blankValue: '_blank_value_',
       isSubTotalRow: function(entry) {
         return entry.organisation && entry.organisation === subTotal
-      }
+      },
+      orderBySubTotalLast: orderBySubTotalLast
     }
   }
 

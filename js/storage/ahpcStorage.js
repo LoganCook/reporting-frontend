@@ -1,6 +1,6 @@
 define(
-  ["app", "lodash", "mathjs", "../util", "../order-by-grand-last", "services/xfs"],
-  function (app, _, math, util, orderByGrandLast) {
+  ["app", "lodash", "mathjs", "../util", "services/xfs"],
+  function (app, _, math, util) {
 
   app.controller("AHPCStorageController", 
     ["$rootScope", "$scope", "$timeout", "$filter", "reporting", "org", "spinner", "XFSService", "theConstants", "AuthService",
@@ -55,7 +55,7 @@ define(
         $scope.rangeEndOpen = true;
       };
       $scope.datepickerOptions = {minMode: 'month'}
-      $scope.orderByGrandLast = orderByGrandLast
+      $scope.orderBySubTotalLast = theConstants.orderBySubTotalLast
       $scope.isSubTotalRow = theConstants.isSubTotalRow
 
       $scope.load = function () {

@@ -1,6 +1,6 @@
 define(
-  ['app', 'options', '../util2', '../util', '../order-by-grand-last', './services', '../crm', './account', '../services/nectar'],
-  function (app, options, util, oldUtil, orderByGrandLast) {
+  ['app', 'options', '../util2', '../util', './services', '../crm', './account', '../services/nectar'],
+  function (app, options, util, oldUtil) {
   'use strict';
 
   app.controller("NovasummaryController",
@@ -22,7 +22,7 @@ define(
       $scope.instancesState = [];
       $scope.serverChecked = false;
       $scope.datepickerOptions = {minMode: 'month'}
-      $scope.orderByGrandLast = orderByGrandLast
+      $scope.orderBySubTotalLast = theConstants.orderBySubTotalLast
       $scope.isSubTotalRow = theConstants.isSubTotalRow
 
       /**

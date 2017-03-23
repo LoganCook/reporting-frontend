@@ -105,7 +105,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="usage in subTotals | orderBy: ['billing',orderByGrandLast,'organisation']" ng-class="{'subtotal-row': isSubTotalRow(usage)}">
+                        <tr ng-repeat="usage in subTotals | orderBy: ['billing',orderBySubTotalLast,'organisation']" ng-class="{'subtotal-row': isSubTotalRow(usage)}">
                             <td blank-safe="usage.billing"></td>
                             <td blank-safe="usage.organisation"></td>
                             <td class="text-right"> {{ ::usage.usage | number }}</td>

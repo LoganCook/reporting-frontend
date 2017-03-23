@@ -1,6 +1,6 @@
 define(
-  ["app", "lodash", "../util", "../util2", "options", "../order-by-grand-last", "services/hpc"],
-  function (app, _, utilOld, util, options, orderByGrandLast) {
+  ["app", "lodash", "../util", "../util2", "options", "services/hpc"],
+  function (app, _, utilOld, util, options) {
 
   app.controller("HPCSummaryController", ["$scope", "$filter", "theConstants", "org", "spinner", "AuthService","HPCService",
     function ($scope, $filter, theConstants, $timeoutorg, spinner, AuthService, HPCService) {
@@ -18,7 +18,7 @@ define(
       $scope.openRangeEnd = function () {
         $scope.rangeEndOpen = true;
       };
-      $scope.orderByGrandLast = orderByGrandLast
+      $scope.orderBySubTotalLast = theConstants.orderBySubTotalLast
       $scope.isSubTotalRow = theConstants.isSubTotalRow
 
       $scope.load = function () {
