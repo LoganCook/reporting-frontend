@@ -99,7 +99,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="sum in subTotals | orderBy: ['billing',orderByGrandLast,'organisation','job_count']">
+            <tr ng-repeat="sum in subTotals | orderBy: ['billing',orderByGrandLast,'organisation','job_count']" ng-class="{'subtotal-row': isSubTotalRow(sum)}">
               <td blank-safe="sum.billing"></td>
               <td blank-safe="sum.organisation"></td>
               <td>{{ ::sum.job_count }}</td>

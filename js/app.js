@@ -197,10 +197,19 @@ define(
     };
   }]);
 
-  app.constant('theConstants', {
-    grandTotal: 'Grand Total',
-    blankValue: '_blank_value_'
-  })
+  function buildTheConstants() {
+    var subTotal = 'Grand'
+    return {
+      grandTotal: 'Grand Total',
+      subTotal: subTotal,
+      blankValue: '_blank_value_',
+      isSubTotalRow: function(entry) {
+        return entry.organisation && entry.organisation === subTotal
+      }
+    }
+  }
+
+  app.constant('theConstants', buildTheConstants())
 
   return app;
 });

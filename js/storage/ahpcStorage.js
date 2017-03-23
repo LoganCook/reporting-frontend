@@ -2,8 +2,9 @@ define(
   ["app", "lodash", "mathjs", "../util", "../order-by-grand-last", "services/xfs"],
   function (app, _, math, util, orderByGrandLast) {
 
-  app.controller("AHPCStorageController", ["$rootScope", "$scope", "$timeout", "$filter", "reporting", "org", "spinner", "XFSService", "AuthService",
-    function ($rootScope, $scope, $timeout, $filter, reporting, org, spinner, XFSService) {
+  app.controller("AHPCStorageController", 
+    ["$rootScope", "$scope", "$timeout", "$filter", "reporting", "org", "spinner", "XFSService", "theConstants", "AuthService",
+    function ($rootScope, $scope, $timeout, $filter, reporting, org, spinner, XFSService, theConstants) {
       'use strict';
       var FILESYTEM_NAME = 'hpchome';
 
@@ -55,6 +56,7 @@ define(
       };
       $scope.datepickerOptions = {minMode: 'month'}
       $scope.orderByGrandLast = orderByGrandLast
+      $scope.isSubTotalRow = theConstants.isSubTotalRow
 
       $scope.load = function () {
         clear();
@@ -76,11 +78,11 @@ define(
               $scope.total = XFSService.getGrandTotals(filesysteId, startTs, endTs);
               spinner.stop();
             }, function(reason) {
-              console.error('Failed to retrieve XFS data: ' + reason)
+              alert('Failed to retrieve XFS data: ' + reason)
               spinner.stop()
             })
         }, function(reason) {
-          console.error('Failed to retrieve XFS data: ' + reason)
+          alert('Failed to retrieve XFS data: ' + reason)
           spinner.stop()
         });
       };

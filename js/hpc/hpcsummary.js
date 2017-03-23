@@ -19,6 +19,7 @@ define(
         $scope.rangeEndOpen = true;
       };
       $scope.orderByGrandLast = orderByGrandLast
+      $scope.isSubTotalRow = theConstants.isSubTotalRow
 
       $scope.load = function () {
         $scope.alerts = [];

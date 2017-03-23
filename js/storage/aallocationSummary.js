@@ -2,8 +2,11 @@ define(
   ["app", "lodash", "../util", "../countdown-latch", "../order-by-grand-last", "services/xfs.usage", "services/hnas.vv", "services/hnas.fs"],
   function (app, _, util, countdownLatch, orderByGrandLast) {
 
-  app.controller("AAllocationSummaryController", ["$rootScope", "$scope", "$timeout", "$q", "$filter", "reporting", "org", "spinner", "AuthService", "RDService", "XFSUsageService", "HNASVVService", "HNASFSService",
-    function ($rootScope, $scope, $timeout, $q, $filter, reporting, org, spinner, AuthService, RDService, XFSUsageService, HNASVVService, HNASFSService) {
+  app.controller("AAllocationSummaryController",
+    ["$rootScope", "$scope", "$timeout", "$q", "$filter", "reporting", "org", "spinner", "AuthService", "RDService", "XFSUsageService", "HNASVVService",
+      "HNASFSService", "theConstants",
+    function ($rootScope, $scope, $timeout, $q, $filter, reporting, org, spinner, AuthService, RDService, XFSUsageService, HNASVVService,
+      HNASFSService, theConstants) {
 
       $scope.formatSize = util.formatSize;
       $scope.formatTimestamp = util.formatTimeSecStamp;
@@ -22,6 +25,7 @@ define(
       };
       $scope.datepickerOptions = {minMode: 'month'}
       $scope.orderByGrandLast = orderByGrandLast
+      $scope.isSubTotalRow = theConstants.isSubTotalRow
 
       function addServiceTotal(serviceTotal, subTotals) {
         var k1 = 'billing', k2 = 'organisation';

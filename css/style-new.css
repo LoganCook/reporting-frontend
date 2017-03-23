@@ -526,3 +526,11 @@ table.table-striped tr:nth-child(odd) {
 #main-view {
   padding-top: 9em;
 }
+
+.table.table-striped tfoot tr {
+  font-size: 1.1em;
+}
+
+.table.table-striped tbody tr.subtotal-row {
+  font-weight: bold;
+}

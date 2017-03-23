@@ -3,8 +3,11 @@ define(
   function (app, options, util, oldUtil, orderByGrandLast) {
   'use strict';
 
-  app.controller("NovasummaryController", ["$rootScope", "$scope", "$timeout", "$filter", "reporting", "org", "queryResource", "$q", "flavor", "tenant", "crm", "account", "spinner", "NectarService", "AuthService",
-    function ($rootScope, $scope, $filter, timeout, reporting, org, queryResource, $q, flavor, tenant, crm, account, spinner, NectarService, AuthService) {
+  app.controller("NovasummaryController",
+    ["$rootScope", "$scope", "$timeout", "$filter", "reporting", "org", "queryResource", "$q", "flavor", "tenant", "crm", "account", "spinner",
+      "NectarService", "AuthService", "theConstants",
+    function ($rootScope, $scope, $filter, timeout, reporting, org, queryResource, $q, flavor, tenant, crm, account, spinner,
+      NectarService, AuthService, theConstants) {
 
       var orgName;
       if (!(AuthService.isAdmin())) {
@@ -20,6 +23,7 @@ define(
       $scope.serverChecked = false;
       $scope.datepickerOptions = {minMode: 'month'}
       $scope.orderByGrandLast = orderByGrandLast
+      $scope.isSubTotalRow = theConstants.isSubTotalRow
 
       /**
        * summary variables
