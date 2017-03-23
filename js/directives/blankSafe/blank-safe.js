@@ -8,7 +8,7 @@ define(['pageComponents'], function (pageComponents) {
       },
       link: function (scope, element, attrs) {
         var theValue = scope.blankSafe
-        var isValueBlank = typeof theValue === 'undefined' || theValue.trim().length === 0
+        var isValueBlank = typeof theValue === 'undefined' || typeof theValue.trim !== 'function' || theValue.trim().length === 0
         if (isValueBlank) {
           theValue = theConstants.blankValue
         }
