@@ -1,6 +1,6 @@
 define(
-  ['app', '../util', 'services/storage'],
-  function (app, util) {
+  ['app', '../util', 'properties', 'services/storage'],
+  function (app, util, props) {
   'use strict'
 
   /**
@@ -35,7 +35,20 @@ define(
         start: startTs,
         end: endTs
       }
-      return usageService.nq.query(args).$promise
+      var deferred = $q.defer()
+      usageService.nq.query(args).$promise.then(function(usages) {
+        var whitelist = props["hcp.namespace.whitelist"]
+        for (var i = usages.length-1; i >= 0; i--) {
+          var curr = usages[i]
+          var isWhitelisted = whitelist.indexOf(curr.namespace) !== -1
+          if (isWhitelisted) {
+            continue
+          }
+          delete usages[i]
+        }
+        deferred.resolve(usages)
+      })
+      return deferred.promise
     }
 
     return {
