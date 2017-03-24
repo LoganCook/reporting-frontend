@@ -27,7 +27,6 @@ define(
       $scope.orderBySubTotalLast = theConstants.orderBySubTotalLast
       $scope.isSubTotalRow = theConstants.isSubTotalRow
       $scope.showBlacklist = function() {
-        var parentElem = undefined
         var modalInstance = $uibModal.open({
           ariaLabelledBy: 'modal-title',
           ariaDescribedBy: 'modal-body',
