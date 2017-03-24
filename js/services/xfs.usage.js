@@ -15,7 +15,7 @@ define(['app', '../util', 'services/storage'], function (app, util) {
     var usageService = new Storage(sessionStorage['xfs']);
 
     // implement local version of data entries
-    usageService.processEntry = function processEntry(entry, accounts) {
+    usageService.processEntry = function(entry, accounts) {
       entry['raw'] = entry['usage'] * 1024;
       entry['usage'] = util.toGB(entry['raw']);
       entry['blocks'] = Math.ceil(entry['usage'] / usageService.BlockSize);

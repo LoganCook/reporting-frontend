@@ -1,6 +1,11 @@
-define(["app", "../util", "../countdown-latch", "services/xfs.usage", "services/hnas.vv", "services/hnas.fs"], function (app, util, countdownLatch) {
-  app.controller("AllocationSummaryController", ["$rootScope", "$scope", "$timeout", "$q", "$filter", "reporting", "org", "spinner", "AuthService", "RDService", "XFSUsageService", "HNASVVService", "HNASFSService",
-    function ($rootScope, $scope, $timeout, $q, $filter, reporting, org, spinner, AuthService, RDService, XFSUsageService, HNASVVService, HNASFSService) {
+define(
+  ["app", "../util", "../countdown-latch", "services/xfs.usage", "services/hnas.vv", "services/hnas.fs", "services/hcp"],
+  function (app, util, countdownLatch) {
+  
+  app.controller("AllocationSummaryController", ["$rootScope", "$scope", "$timeout", "$q", "$filter", "reporting", "org", "spinner", "AuthService", "RDService", "XFSUsageService",
+      "HNASVVService", "HNASFSService", "HCPService",
+    function ($rootScope, $scope, $timeout, $q, $filter, reporting, org, spinner, AuthService, RDService, XFSUsageService,
+      HNASVVService, HNASFSService, HCPService) {
       // AllocationSummary for instituational users
       $scope.formatSize = util.formatSize;
       $scope.formatTimestamp = util.formatTimeSecStamp;
@@ -53,7 +58,7 @@ define(["app", "../util", "../countdown-latch", "services/xfs.usage", "services/
           orgName = AuthService.getUserOrgName();
         }
         $scope.usages = [];
-        var numberOfServiceCalls = 3
+        var numberOfServiceCalls = 4
         var latch = new countdownLatch(numberOfServiceCalls)
         latch.await(function() {
           spinner.stop()
@@ -83,6 +88,17 @@ define(["app", "../util", "../countdown-latch", "services/xfs.usage", "services/
         HNASFSService.query(startTs, endTs).then(function() {
           $scope.usages = $scope.usages.concat(HNASFSService.getUsages(startTs, endTs, orgName));
           subTotals = addServiceTotal(HNASFSService.getTotals(startTs, endTs, orgName), subTotals);
+          tmpSubTotals = angular.copy(subTotals);
+          $scope.total = util.spliceOne(tmpSubTotals, 'organisation', 'Grand');
+          $scope.subTotals = tmpSubTotals;
+          latch.countDown()
+        }, function(reason) {
+          latch.countDown()
+          console.error("Failed request, ", reason);
+        });
+        HCPService.query(startTs, endTs).then(function() {
+          $scope.usages = $scope.usages.concat(HCPService.getUsages(startTs, endTs, orgName));
+          subTotals = addServiceTotal(HCPService.getTotals(startTs, endTs, orgName), subTotals);
           tmpSubTotals = angular.copy(subTotals);
           $scope.total = util.spliceOne(tmpSubTotals, 'organisation', 'Grand');
           $scope.subTotals = tmpSubTotals;

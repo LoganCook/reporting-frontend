@@ -1,12 +1,12 @@
 define(
-  ["app", "lodash", "../util", "../countdown-latch", "properties", "services/xfs.usage", "services/hnas.vv", "services/hnas.fs"],
+  ["app", "lodash", "../util", "../countdown-latch", "properties", "services/xfs.usage", "services/hnas.vv", "services/hnas.fs", "services/hcp"],
   function (app, _, util, countdownLatch, props) {
 
   app.controller("AAllocationSummaryController",
     ["$rootScope", "$scope", "$timeout", "$q", "$filter", "reporting", "org", "spinner", "AuthService", "RDService", "XFSUsageService", "HNASVVService",
-      "HNASFSService", "theConstants", "$uibModal",
+      "HNASFSService", "HCPService", "theConstants", "$uibModal",
     function ($rootScope, $scope, $timeout, $q, $filter, reporting, org, spinner, AuthService, RDService, XFSUsageService, HNASVVService,
-      HNASFSService, theConstants, $uibModal) {
+      HNASFSService, HCPService, theConstants, $uibModal) {
 
       $scope.formatSize = util.formatSize;
       $scope.formatTimestamp = util.formatTimeSecStamp;
@@ -95,7 +95,7 @@ define(
           'cost': 0
         };
 
-        var numberOfServiceCalls = 3
+        var numberOfServiceCalls = 4
         var latch = new countdownLatch(numberOfServiceCalls)
         latch.await(function() {
           spinner.stop()
@@ -131,7 +131,16 @@ define(
         }, function(reason) {
           latch.countDown()
           console.error("Failed request, ", reason);
-        });
+        })
+        HCPService.query(startTs, endTs, isDisableBlacklist).then(function() {
+          $scope.usages = $scope.usages.concat(HCPService.getUsages(startTs, endTs, orgName, isDisableBlacklist))
+          $scope.subTotals = addServiceTotal(HCPService.getTotals(startTs, endTs, orgName, isDisableBlacklist), $scope.subTotals)
+          updateGrandTotal(HCPService.getGrandTotals(startTs, endTs, isDisableBlacklist), $scope.total)
+          latch.countDown()
+        }, function(reason) {
+          latch.countDown()
+          console.error("Failed request, ", reason)
+        })
       };
     }
   ]);

@@ -15,7 +15,7 @@ define(['app', '../util', 'services/storage'], function (app, util) {
     var usageService = new Storage(sessionStorage['hnas']);
 
     // implement local version of data entries
-    usageService.processEntry = function processEntry(entry, allocations) {
+    usageService.processEntry = function(entry, allocations) {
       // Attribute filesystem of virtual volume is not used.
       // Replace it by 'virtual_volume' as used in xfs and hnas.fs for easy display
       entry['filesystem'] = entry['virtual_volume'];

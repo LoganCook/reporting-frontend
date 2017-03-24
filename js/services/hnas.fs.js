@@ -15,7 +15,7 @@ define(['app', '../util', 'services/storage'], function (app, util) {
     var usageService = new Storage(sessionStorage['hnas']);
 
     // implement local version of data entries
-    usageService.processEntry = function processEntry(entry, allocations) {
+    usageService.processEntry = function(entry, allocations) {
       entry['raw'] = entry['live_usage'];
       delete entry['live_usage'];
       entry['usage'] = entry['raw'] / 1000;  // MB to GB
