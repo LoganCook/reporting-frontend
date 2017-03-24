@@ -1,4 +1,4 @@
-define(['app', "services/rds"], function (app) {
+define(['app', 'properties', 'services/rds'], function (app, props) {
   'use strict';
 
   // default values of a usage object
@@ -78,7 +78,12 @@ define(['app', "services/rds"], function (app) {
     this.prepareData = function(queryPromise) {
       var self = this;
       return queryPromise.then(function (usages) {
-        return self.processUsages(usages);
+        var blacklist = props["filesystem.blacklist"]
+        var filteredUsages = usages.filter(function(element) {
+          var isFilesystemBlacklisted = 'filesystem' in element && blacklist.indexOf(element.filesystem) !== -1
+          return !isFilesystemBlacklisted
+        })
+        return self.processUsages(filteredUsages);
       });
     };
 
