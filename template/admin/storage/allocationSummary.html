@@ -44,6 +44,10 @@
                         <label class="checkbox-inline">
                             <input type="checkbox" ng-model="viewDetails"> View Details
                         </label>
+                        <label class="checkbox-inline">
+                            <input type="checkbox" ng-model="isDisableBlacklist" ng-change="disableBlacklistChangeHandler()"> Disable Blacklist
+                        </label>
+                        <a class="checkbox-inline not-actually-checkbox" ng-click="showBlacklist()">View Blacklist Configuration</a>
                     </div>
                 </div>
             </div>
@@ -126,5 +130,22 @@
             </div>
         </div>
     </div>
-
 </div>
+
+<script type="text/ng-template" id="blacklistModal.html">
+    <div class="modal-header">
+        <h3 class="modal-title" id="modal-title">Blacklisted 'filesystem' values</h3>
+    </div>
+    <div class="modal-body" id="modal-body" >
+        <p>Entries listed here are removed from all calculations and the view. You can include them again by checking
+            the 'disable blacklist' checkbox.</p>
+        <p>You need a programmer to edit the list for you. It's also important to note that blacklisting also affects
+            the institutional(non-admin) version of this page so be careful.</p>
+        <ul class="blacklist-list">
+            <li ng-repeat="item in items">{{::item}}</li>
+        </ul>
+    </div>
+    <div class="modal-footer">
+        <button ng-click="$close()">Close</button>
+    </div>
+</script>

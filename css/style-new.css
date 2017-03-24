@@ -534,3 +534,12 @@ table.table-striped tr:nth-child(odd) {
 .table.table-striped tbody tr.subtotal-row {
   font-weight: bold;
 }
+
+.checkbox-inline.not-actually-checkbox {
+  margin-left: 0;
+  padding-left: 15px;
+}
+
+.modal-body .blacklist-list {
+  padding-left: 4em;
+}

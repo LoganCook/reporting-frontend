@@ -75,9 +75,12 @@ define(['app', 'properties', 'services/rds'], function (app, props) {
       });
     };
 
-    this.prepareData = function(queryPromise) {
+    this.prepareData = function(queryPromise, isDisableBlacklist) {
       var self = this;
       return queryPromise.then(function (usages) {
+        if (isDisableBlacklist) {
+          return self.processUsages(usages);
+        }
         var blacklist = props["filesystem.blacklist"]
         var filteredUsages = usages.filter(function(element) {
           var isFilesystemBlacklisted = 'filesystem' in element && blacklist.indexOf(element.filesystem) !== -1

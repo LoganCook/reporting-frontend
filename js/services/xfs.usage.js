@@ -36,13 +36,13 @@ define(['app', '../util', 'services/storage'], function (app, util) {
     }
 
     return {
-      query: function query(startTs, endTs) {
+      query: function query(startTs, endTs, isDisableBlacklist) {
         var deferred = $q.defer(),
-          searchHash = util.hashSearch([startTs, endTs]);
+          searchHash = util.hashSearch([startTs, endTs, isDisableBlacklist]);
         if (Object.keys(totals).length > 0 && searchHash in summaries  && searchHash in totals) {
           deferred.resolve(true);
         } else {
-          usageService.prepareData(summary(startTs, endTs)).then(function(result) {
+          usageService.prepareData(summary(startTs, endTs), isDisableBlacklist).then(function(result) {
             summaries[searchHash] = result['summaries'];
             totals[searchHash] = result['totals'];
             grandTotals[searchHash] = result['grandTotals'];
@@ -54,8 +54,8 @@ define(['app', '../util', 'services/storage'], function (app, util) {
         }
         return deferred.promise;
       },
-      getUsages: function getUsages(startTs, endTs, orgName) {
-        var tmpSummaries = summaries[util.hashSearch([startTs, endTs])];
+      getUsages: function getUsages(startTs, endTs, orgName, isDisableBlacklist) {
+        var tmpSummaries = summaries[util.hashSearch([startTs, endTs, isDisableBlacklist])];
         if (orgName) {
           var result = [];
           for (var i = 0; i < tmpSummaries.length; i++) {
@@ -68,12 +68,12 @@ define(['app', '../util', 'services/storage'], function (app, util) {
           return tmpSummaries;
         }
       },
-      getTotals: function getTotals(startTs, endTs, orgName) {
-        return util.rearrange(util.getCached(totals, [startTs, endTs], orgName));
+      getTotals: function getTotals(startTs, endTs, orgName, isDisableBlacklist) {
+        return util.rearrange(util.getCached(totals, [startTs, endTs, isDisableBlacklist], orgName));
       },
-      getGrandTotals: function getTotals(startTs, endTs) {
+      getGrandTotals: function getTotals(startTs, endTs, isDisableBlacklist) {
         // only for admin view
-        return grandTotals[util.hashSearch([startTs, endTs])];
+        return grandTotals[util.hashSearch([startTs, endTs, isDisableBlacklist])];
       }
     };
   });

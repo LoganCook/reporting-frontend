@@ -1,12 +1,12 @@
 define(
-  ["app", "lodash", "../util", "../countdown-latch", "services/xfs.usage", "services/hnas.vv", "services/hnas.fs"],
-  function (app, _, util, countdownLatch) {
+  ["app", "lodash", "../util", "../countdown-latch", "properties", "services/xfs.usage", "services/hnas.vv", "services/hnas.fs"],
+  function (app, _, util, countdownLatch, props) {
 
   app.controller("AAllocationSummaryController",
     ["$rootScope", "$scope", "$timeout", "$q", "$filter", "reporting", "org", "spinner", "AuthService", "RDService", "XFSUsageService", "HNASVVService",
-      "HNASFSService", "theConstants",
+      "HNASFSService", "theConstants", "$uibModal",
     function ($rootScope, $scope, $timeout, $q, $filter, reporting, org, spinner, AuthService, RDService, XFSUsageService, HNASVVService,
-      HNASFSService, theConstants) {
+      HNASFSService, theConstants, $uibModal) {
 
       $scope.formatSize = util.formatSize;
       $scope.formatTimestamp = util.formatTimeSecStamp;
@@ -26,6 +26,18 @@ define(
       $scope.datepickerOptions = {minMode: 'month'}
       $scope.orderBySubTotalLast = theConstants.orderBySubTotalLast
       $scope.isSubTotalRow = theConstants.isSubTotalRow
+      $scope.showBlacklist = function() {
+        var parentElem = undefined
+        var modalInstance = $uibModal.open({
+          ariaLabelledBy: 'modal-title',
+          ariaDescribedBy: 'modal-body',
+          templateUrl: 'blacklistModal.html',
+          controller: function($scope) {
+            $scope.items = props["filesystem.blacklist"]
+          },
+          size: 'md'
+      })}
+      $scope.isLoadTriggeredAtLeastOnce = false
 
       function addServiceTotal(serviceTotal, subTotals) {
         var k1 = 'billing', k2 = 'organisation';
@@ -56,13 +68,22 @@ define(
         }
       }
 
+      $scope.disableBlacklistChangeHandler = function () {
+        if ($scope.isLoadTriggeredAtLeastOnce === false) {
+          return
+        }
+        $scope.load()
+      }
+
       $scope.load = function () {
         spinner.start();
+        $scope.isLoadTriggeredAtLeastOnce = true
         $scope.rangeStart = util.firstDayOfYearAndMonth($scope.rangeEnd);
         $scope.rangeEnd = util.lastDayOfYearAndMonth($scope.rangeEnd);
 
         var startTs = util.dayStart($scope.rangeStart);
         var endTs = util.dayEnd($scope.rangeEnd);
+        var isDisableBlacklist = typeof $scope.isDisableBlacklist === 'undefined' ? false : $scope.isDisableBlacklist
         var orgName;
         if (!(AuthService.isAdmin())) {
           orgName = AuthService.getUserOrgName();
@@ -80,33 +101,33 @@ define(
         latch.await(function() {
           spinner.stop()
         })
-        XFSUsageService.query(startTs, endTs).then(function() {
-          $scope.usages = $scope.usages.concat(XFSUsageService.getUsages(startTs, endTs, orgName));
-          $scope.subTotals1 = XFSUsageService.getTotals(startTs, endTs, orgName);
-          $scope.subTotals = addServiceTotal(XFSUsageService.getTotals(startTs, endTs, orgName), $scope.subTotals);
-          updateGrandTotal(XFSUsageService.getGrandTotals(startTs, endTs), $scope.total);
+        XFSUsageService.query(startTs, endTs, isDisableBlacklist).then(function() {
+          $scope.usages = $scope.usages.concat(XFSUsageService.getUsages(startTs, endTs, orgName, isDisableBlacklist));
+          // $scope.subTotals1 = XFSUsageService.getTotals(startTs, endTs, orgName, isDisableBlacklist);
+          $scope.subTotals = addServiceTotal(XFSUsageService.getTotals(startTs, endTs, orgName, isDisableBlacklist), $scope.subTotals);
+          updateGrandTotal(XFSUsageService.getGrandTotals(startTs, endTs, isDisableBlacklist), $scope.total);
           latch.countDown()
         }, function(reason) {
           latch.countDown()
           console.error("Failed request, ", reason);
         });
-        HNASVVService.query(startTs, endTs).then(function() {
+        HNASVVService.query(startTs, endTs, isDisableBlacklist).then(function() {
           // $scope.test2 = HNASVVService.getUsages(startTs, endTs, orgName);
-          $scope.usages = $scope.usages.concat(HNASVVService.getUsages(startTs, endTs, orgName));
+          $scope.usages = $scope.usages.concat(HNASVVService.getUsages(startTs, endTs, orgName, isDisableBlacklist));
           // $scope.subTotals2 = HNASVVService.getTotals(startTs, endTs, orgName);
-          $scope.subTotals = addServiceTotal(HNASVVService.getTotals(startTs, endTs, orgName), $scope.subTotals);
-          updateGrandTotal(HNASVVService.getGrandTotals(startTs, endTs), $scope.total);
+          $scope.subTotals = addServiceTotal(HNASVVService.getTotals(startTs, endTs, orgName, isDisableBlacklist), $scope.subTotals);
+          updateGrandTotal(HNASVVService.getGrandTotals(startTs, endTs, isDisableBlacklist), $scope.total);
           latch.countDown()
         }, function(reason) {
           latch.countDown()
           console.error("Failed request, ", reason);
         });
-        HNASFSService.query(startTs, endTs).then(function() {
+        HNASFSService.query(startTs, endTs, isDisableBlacklist).then(function() {
           // $scope.test3 = HNASFSService.getUsages(startTs, endTs, orgName);
           // $scope.subTotals3 = HNASFSService.getTotals(startTs, endTs, orgName);
-          $scope.usages = $scope.usages.concat(HNASFSService.getUsages(startTs, endTs, orgName));
-          $scope.subTotals = addServiceTotal(HNASFSService.getTotals(startTs, endTs, orgName), $scope.subTotals);
-          updateGrandTotal(HNASFSService.getGrandTotals(startTs, endTs), $scope.total);
+          $scope.usages = $scope.usages.concat(HNASFSService.getUsages(startTs, endTs, orgName, isDisableBlacklist));
+          $scope.subTotals = addServiceTotal(HNASFSService.getTotals(startTs, endTs, orgName, isDisableBlacklist), $scope.subTotals);
+          updateGrandTotal(HNASFSService.getGrandTotals(startTs, endTs, isDisableBlacklist), $scope.total);
           latch.countDown()
         }, function(reason) {
           latch.countDown()
