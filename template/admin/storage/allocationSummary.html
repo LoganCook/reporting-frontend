@@ -47,7 +47,8 @@
                         <label class="checkbox-inline">
                             <input type="checkbox" ng-model="isDisableBlacklist" ng-change="disableBlacklistChangeHandler()"> Disable Blacklist
                         </label>
-                        <a class="checkbox-inline not-actually-checkbox" ng-click="showBlacklist()">View Blacklist Configuration</a>
+                        <a class="checkbox-inline not-actually-checkbox" ng-click="showBlacklist()">View "Filesystem" Blacklist</a>
+                        <a class="checkbox-inline not-actually-checkbox" ng-click="showWhitelist()">View "HCP Namespace" Whitelist</a>
                     </div>
                 </div>
             </div>
@@ -144,6 +145,26 @@
         <ul class="blacklist-list">
             <li ng-repeat="item in items">{{::item}}</li>
         </ul>
+        <p>Total: {{::items.length}} entries</p>
+    </div>
+    <div class="modal-footer">
+        <button ng-click="$close()">Close</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="whitelistModal.html">
+    <div class="modal-header">
+        <h3 class="modal-title" id="modal-title">Whitelisted 'HCP Namespace' values</h3>
+    </div>
+    <div class="modal-body" id="modal-body" >
+        <p>Entries listed here are the only HCP Namespaces included for all calculations and the view. The whitelist cannot be disabled,
+            it's permanently enabled.</p>
+        <p>You need a programmer to edit the list for you. It's also important to note that whitelisting also affects
+            the institutional(non-admin) version of this page so be careful.</p>
+        <ul class="blacklist-list">
+            <li ng-repeat="item in items">{{::item}}</li>
+        </ul>
+        <p>Total: {{::items.length}} entries</p>
     </div>
     <div class="modal-footer">
         <button ng-click="$close()">Close</button>

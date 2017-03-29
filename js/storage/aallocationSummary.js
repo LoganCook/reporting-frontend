@@ -36,6 +36,16 @@ define(
           },
           size: 'md'
       })}
+      $scope.showWhitelist = function() {
+        var modalInstance = $uibModal.open({
+          ariaLabelledBy: 'modal-title',
+          ariaDescribedBy: 'modal-body',
+          templateUrl: 'whitelistModal.html',
+          controller: function($scope) {
+            $scope.items = props["hcp.namespace.whitelist"]
+          },
+          size: 'md'
+      })}
       $scope.isLoadTriggeredAtLeastOnce = false
 
       function addServiceTotal(serviceTotal, subTotals) {
