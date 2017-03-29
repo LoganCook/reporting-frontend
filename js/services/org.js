@@ -56,6 +56,8 @@
 
             //   Below line works?
             // deferred.resolve(organisations);
+          }, function(reason) {
+            deferred.reject()
           });
         }
         return deferred.promise;
@@ -100,6 +102,8 @@
             }
             services[orgId][name] = response.data;
             deferred.resolve(services[orgId][name]);
+          }, function(reason) {
+            deferred.reject()
           });
         }
         return deferred.promise;
@@ -124,6 +128,8 @@
           $http.get(url).then(function (response) {
             rolesOf[orgId] = _getSimpleRoles(response.data, organisations[orgId]);
             deferred.resolve(rolesOf[orgId]);
+          }, function(reason) {
+            deferred.reject()
           });
         }
         return deferred.promise;
@@ -164,7 +170,7 @@
                 organisations[response.data[i]['id']] = response.data[i]['name'];
                 organisationByNames[response.data[i]['name']] = response.data[i]['id'];
                 if (loadUsers) {
-                  _getUsersOf(response.data[i]['id']).then(function () {
+                  _getUsersOf(response.data[i]['id']).finally(function () {
                     latch.countDown()
                   })
                 }
@@ -172,7 +178,9 @@
               if (!loadUsers) {
                 deferred.resolve(organisations)
               }
-            });
+            }, function(reason) {
+            deferred.reject()
+          });
           }
           return deferred.promise;
         },
