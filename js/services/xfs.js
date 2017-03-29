@@ -207,7 +207,7 @@ define(['app', '../util'], function (app, util) {
       },
       getGrandTotals: function getTotals(fileSystemId, startTs, endTs) {
         // only for admin view
-        return grandTotals[util.hashSearch[fileSystemId, startTs, endTs]];
+        return grandTotals[util.hashSearch([fileSystemId, startTs, endTs])];
       }
     };
   });
