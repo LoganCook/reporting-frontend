@@ -82,9 +82,9 @@
               <td></td>
               <td></td>
               <td></td>
-              <td><strong>{{ ::grandTotal.job_count }}</strong></td>
-              <td><strong>{{ ::formatNumber(grandTotal.hours) }}</strong></td>
-              <td><strong>${{ ::formatNumber(grandTotal.cost) }}</strong></td>
+              <td><strong>{{ grandTotal.job_count }}</strong></td>
+              <td><strong>{{ formatNumber(grandTotal.hours) }}</strong></td>
+              <td><strong>${{ formatNumber(grandTotal.cost) }}</strong></td>
             </tr>
           </tfoot>
         </table>
@@ -111,9 +111,9 @@
             <tr ng-show="jobCounts.length">
               <td><strong>Grand Total</strong></td>
               <td></td>
-              <td><strong>{{ ::grandTotal.job_count }}</strong></td>
-              <td><strong>{{ ::formatNumber(grandTotal.hours) }}</strong></td>
-              <td><strong>${{ ::formatNumber(grandTotal.cost) }}</strong></td>
+              <td><strong>{{ grandTotal.job_count }}</strong></td>
+              <td><strong>{{ formatNumber(grandTotal.hours) }}</strong></td>
+              <td><strong>${{ formatNumber(grandTotal.cost) }}</strong></td>
             </tr>
           </tfoot>
         </table>

@@ -86,9 +86,9 @@
                     <tfoot>
                         <tr ng-show="subTotals.length">
                             <td><strong>Grand Total</strong></td>
-                            <td class="text-right"><strong>{{ ::total.usage | number }}</strong></td>
-                            <td class="text-right"><strong>{{ ::total.blocks }}</strong></td>
-                            <td class="text-right"><strong>${{ ::formatNumber(total.cost) }}</strong></td>
+                            <td class="text-right"><strong>{{ total.usage | number }}</strong></td>
+                            <td class="text-right"><strong>{{ total.blocks }}</strong></td>
+                            <td class="text-right"><strong>${{ formatNumber(total.cost) }}</strong></td>
                         </tr>
                     </tfoot>
                 </table>
