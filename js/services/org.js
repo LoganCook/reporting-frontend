@@ -1,4 +1,6 @@
-  define(['app', 'util'], function (app, util) {
+  define(
+    ['app', 'util', "../countdown-latch"],
+    function (app, util, countdownLatch) {
     'use strict';
 
     // Cacheable organisation-user data for all pages, mandatory
@@ -153,16 +155,23 @@
             deferred.resolve(organisations);
           } else {
             $http.get(orgUri).then(function (response) {
-              // organisations = response.data;
+              var numberOfServiceCalls = response.data.length
+              var latch = new countdownLatch(numberOfServiceCalls)
+              latch.await(function() {
+                deferred.resolve(organisations)
+              })
               for (var i = 0; i < response.data.length; i++) {
                 organisations[response.data[i]['id']] = response.data[i]['name'];
                 organisationByNames[response.data[i]['name']] = response.data[i]['id'];
                 if (loadUsers) {
-                  _getUsersOf(response.data[i]['id']);
-                //   _getRolesOf(response.data[i]['pk']);
+                  _getUsersOf(response.data[i]['id']).then(function () {
+                    latch.countDown()
+                  })
                 }
               }
-              deferred.resolve(organisations);
+              if (!loadUsers) {
+                deferred.resolve(organisations)
+              }
             });
           }
           return deferred.promise;

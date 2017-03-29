@@ -42,16 +42,7 @@ require(["app", "services/auth", "services/org", "menu",
       AuthServiceProvider.setUp(sessionStorage['email']);
     });
     require(["route"], function (route) {
-      app.config(["$stateProvider", "$urlRouterProvider", "AuthServiceProvider", route]).run(function (org, AuthService) {
-        if (AuthService.isAdmin()) {
-          // load all organisations and their accounts
-          org.getOrganisations(true);
-        } else {
-          org.getOrganisations(false).then(function () {
-            org.getUsersOf(org.getOrganisationId(AuthService.getUserOrgName()));
-          });
-        }
-      });
+      app.config(["$stateProvider", "$urlRouterProvider", "AuthServiceProvider", route])
       angular.bootstrap(document, ["reportingApp"]);
     });
   }

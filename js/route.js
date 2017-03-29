@@ -2,9 +2,30 @@ define(["menu-data"], function (menuAllData) {
   return function ($stateProvider, $urlRouterProvider, AuthServiceProvider) {
     $urlRouterProvider.otherwise("/");
 
+    function resolveOrgs($q, org, AuthService, spinner) {
+      spinner.start()
+      var deferred = $q.defer()
+      var finished = function() {
+        spinner.stop()
+        deferred.resolve()
+      }
+      var isLoadAllOrgsAndAccounts = AuthService.isAdmin()
+      if (isLoadAllOrgsAndAccounts) {
+        org.getOrganisations(true).then(finished)
+        return deferred.promise
+      }
+      org.getOrganisations(false).then(function () {
+        org.getUsersOf(org.getOrganisationId(AuthService.getUserOrgName())).then(finished)
+      })
+      return deferred.promise
+    }
+
     $stateProvider.state("home", {
       url: "/",
-      templateUrl: "template/home.html"
+      templateUrl: "template/home.html",
+      resolve: {
+        orgData: resolveOrgs
+      }
     });
 
     var menuData = {};
@@ -44,7 +65,10 @@ define(["menu-data"], function (menuAllData) {
               url: url,
               templateUrl: template,
               controller: controller,
-              admined: locked
+              admined: locked,
+              resolve: { // could use an abstract root view that does the resolve for all children but this way doesn't involve hacking state names
+                orgData: resolveOrgs
+              }
             });
           }
         }
