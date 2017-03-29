@@ -21,9 +21,10 @@
           </div>
           <div class="menu">
             <ul class="menu-list menu" data-equalizer-watch ng-show="configured">
-              <li class="menu-item menu-item-has-children" ng-repeat="(menu, items) in menus">
-                <a ng-show="{{ !menu.startsWith('hide') }}" href>{{ menu }}</a>
-                <ul class="sub-menu">
+              <li uib-dropdown class="menu-item" ng-mouseover="isHovered = true" ng-mouseleave="isHovered = false"
+                  ng-repeat="(menu, items) in menus" ng-class="{open: isHovered}">
+                <a uib-dropdown-toggle ng-show="{{ !menu.startsWith('hide') }}" href>{{ menu }} <span class="caret"></span></a>
+                <ul uib-dropdown-menu class="sub-menu">
                   <li class="{{ states[0].startsWith('sub') ? 'menu-item menu-item-has-children' : 'menu-item'}}" ng-repeat="(item, states) in items">
                     <a ng-show="{{ states[0].startsWith('sub') }}" href>{{ item }}</a>
                     <a ng-show="{{ !states[0].startsWith('sub')  && states[0].startsWith('/') }}" ui-sref="{{states[0]}}">{{ item }} </a>

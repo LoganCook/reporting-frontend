@@ -176,7 +176,7 @@ ul, ol, li {
           z-index: 8;
           content: '';
           width: 100%;
-          border-top: 2px solid #f58432;
+          border-top: 0px;
           left: 0; }
         .desktop-menu .menu-wrap > .menu .sub-menu .menu-item {
           background: #444;
@@ -542,4 +542,8 @@ table.table-striped tr:nth-child(odd) {
 
 .modal-body .blacklist-list {
   padding-left: 4em;
+}
+
+.desktop-menu .menu-wrap > .menu .sub-menu .menu-item > a:hover {
+  color: #262626;
 }
