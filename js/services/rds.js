@@ -22,6 +22,7 @@
       }
       var requestUri = sessionStorage['bman'],
         rdsUri = requestUri + '/api/rds/',
+        rdsBackupUri = requestUri + '/api/rdsbackup/',
         rdses = null;
 
       return {
@@ -31,18 +32,24 @@
             deferred.resolve(rdses);
           } else {
             $http.get(rdsUri).then(function (response) {
-              tempMap(response.data);
-              rdses = util.keyArray(response.data, 'FileSystemName');
-              deferred.resolve(rdses);
+              $http.get(rdsBackupUri).then(function(rdsBackUpResponse) {
+                var combined = response.data.concat(rdsBackUpResponse.data);
+                tempMap(combined);
+                rdses = util.keyArray(combined, 'FileSystemName');
+                deferred.resolve(rdses);
+              });
             });
           }
           return deferred.promise;
         },
         getServiceOf: function (orgId) {
           var deferred = $q.defer();
-          org.getServiceOf(orgId, 'rds').then(function(data) {
-            tempMap(data);
-            deferred.resolve(util.keyArray(data, 'FileSystemName'));
+          org.getServiceOf(orgId, 'rds').then(function(rdsData) {
+            org.getServiceOf(orgId, 'rdsbackup').then(function(rdsBackupdata) {
+              var combined = rdsData.concat(rdsBackupdata);
+              tempMap(combined);
+              deferred.resolve(util.keyArray(combined, 'FileSystemName'));
+            });
           });
           return deferred.promise;
         }
