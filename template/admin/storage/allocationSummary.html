@@ -58,6 +58,7 @@
                 <table ng-show="viewDetails" ersa-table="national-storage.detailed">
                     <thead>
                         <tr>
+                            <th>Source</th>
                             <th>Allocation Name</th>
                             <th>Organisation</th>
                             <th>School</th>
@@ -72,6 +73,7 @@
                     </thead>
                     <tbody>
                         <tr ng-repeat="usage in usages | orderBy: 'allocation_num'">
+                            <td>{{::usage.source}}</td>
                             <td blank-safe="usage.allocation_num"></td>
                             <td blank-safe="usage.billing"></td>
                             <td blank-safe="usage.organisation"></td>
@@ -86,8 +88,7 @@
                     </tbody>
                     <tfoot>
                         <tr ng-show="usages.length">
-                            <td><strong>Grand Total</strong></td>
-                            <td></td>
+                            <td colspan="3"><strong>Grand Total</strong></td>
                             <td></td>
                             <td></td>
                             <td></td>

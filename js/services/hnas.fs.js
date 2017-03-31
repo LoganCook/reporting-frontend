@@ -44,6 +44,9 @@ define(['app', '../util', 'services/storage'], function (app, util) {
           deferred.resolve(true);
         } else {
           usageService.prepareData(summary(startTs, endTs), isDisableBlacklist).then(function(result) {
+            angular.forEach(result['summaries'], function(value, key) {
+              value.source = 'HNAS FS'
+            })
             summaries[searchHash] = result['summaries'];
             totals[searchHash] = result['totals'];
             grandTotals[searchHash] = result['grandTotals'];
