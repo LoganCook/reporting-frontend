@@ -179,8 +179,8 @@
                 deferred.resolve(organisations)
               }
             }, function(reason) {
-            deferred.reject()
-          });
+              deferred.reject()
+            });
           }
           return deferred.promise;
         },

@@ -5,17 +5,25 @@ define(["menu-data"], function (menuAllData) {
     function resolveOrgs($q, org, AuthService, spinner) {
       spinner.start()
       var deferred = $q.defer()
-      var finished = function() {
+      var finishedSuccess = function() {
         spinner.stop()
         deferred.resolve()
       }
+      var finishedFailure = function() {
+        spinner.stop()
+        deferred.reject()
+        var message = 'ERROR: Failed to load organisation data, cannot continue without it.\n'
+          + 'You can try to reload the page but if it fails again, the problem is with the other server.'
+        throw message
+        alert(message)
+      }
       var isLoadAllOrgsAndAccounts = AuthService.isAdmin()
       if (isLoadAllOrgsAndAccounts) {
-        org.getOrganisations(true).then(finished)
+        org.getOrganisations(isLoadAllOrgsAndAccounts).then(finishedSuccess, finishedFailure)
         return deferred.promise
       }
-      org.getOrganisations(false).then(function () {
-        org.getUsersOf(org.getOrganisationId(AuthService.getUserOrgName())).then(finished)
+      org.getOrganisations(isLoadAllOrgsAndAccounts).then(function () {
+        org.getUsersOf(org.getOrganisationId(AuthService.getUserOrgName())).then(finishedSuccess, finishedFailure)
       })
       return deferred.promise
     }
