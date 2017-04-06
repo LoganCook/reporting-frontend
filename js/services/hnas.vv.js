@@ -5,6 +5,7 @@ define(['app', '../util', 'services/storage'], function (app, util) {
    * All hnas virtual volume usage related data services?
    */
   app.factory('HNASVVService', function (Storage, $q) {
+    var filesystemFieldName = 'virtual_volume'
     // should come from options.
     var BlockPrice = 5;
 
@@ -12,18 +13,18 @@ define(['app', '../util', 'services/storage'], function (app, util) {
     // summaries: usage data with extended user information
     var summaries = {}, totals = {}, grandTotals = {};
 
-    var usageService = new Storage(sessionStorage['hnas']);
+    var usageService = new Storage(sessionStorage['hnas'], filesystemFieldName);
 
     // implement local version of data entries
     usageService.processEntry = function(entry, allocations) {
       // Attribute filesystem of virtual volume is not used.
       // Replace it by 'virtual_volume' as used in xfs and hnas.fs for easy display
-      entry['filesystem'] = entry['virtual_volume'];
+      entry['filesystem'] = entry[filesystemFieldName];
       entry['raw'] = entry['usage'];  // save for later use?
       entry['usage'] = entry['raw'] / 1000;  // MB to GB
       entry['blocks'] = Math.ceil(entry['usage'] / usageService.BlockSize);
       entry['cost'] = BlockPrice * entry['blocks'];
-      angular.extend(entry, allocations[entry['virtual_volume']]); // hnas.vv owner has no real use here
+      angular.extend(entry, allocations[entry[filesystemFieldName]]); // hnas.vv owner has no real use here
     };
 
     // get a summary of a filesystem between startTs and endTs from endpoint

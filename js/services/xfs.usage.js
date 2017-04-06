@@ -5,6 +5,7 @@ define(['app', '../util', 'services/storage'], function (app, util) {
    * All xfs.usage related data services?
    */
   app.factory('XFSUsageService', function (Storage, $q) {
+    var filesystemFieldName = 'filesystem'
     // should come from options.
     var BlockPrice = 5;
 
@@ -12,7 +13,7 @@ define(['app', '../util', 'services/storage'], function (app, util) {
     // summaries: usage data with extended user information
     var summaries = {}, totals = {}, grandTotals = {};
 
-    var usageService = new Storage(sessionStorage['xfs']);
+    var usageService = new Storage(sessionStorage['xfs'], filesystemFieldName);
 
     // implement local version of data entries
     usageService.processEntry = function(entry, accounts) {
@@ -20,7 +21,7 @@ define(['app', '../util', 'services/storage'], function (app, util) {
       entry['usage'] = util.toGB(entry['raw']);
       entry['blocks'] = Math.ceil(entry['usage'] / usageService.BlockSize);
       entry['cost'] = BlockPrice * entry['blocks'];
-      angular.extend(entry, accounts[entry['filesystem']]);
+      angular.extend(entry, accounts[entry[filesystemFieldName]]);
     };
 
     // get a summary of a filesystem between startTs and endTs from endpoint

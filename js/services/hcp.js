@@ -7,6 +7,7 @@ define(
    * All HCP related data services?
    */
   app.factory('HCPService', function (Storage, $q) {
+    var filesystemFieldName = 'namespace'
     // should come from options.
     var BlockPrice = 5
 
@@ -14,11 +15,11 @@ define(
     // summaries: usage data with extended user information
     var summaries = {}, totals = {}, grandTotals = {}
 
-    var usageService = new Storage(sessionStorage['hcp'])
+    var usageService = new Storage(sessionStorage['hcp'], filesystemFieldName)
 
     // implement local version of data entries
     usageService.processEntry = function(entry, accounts) {
-      entry['filesystem'] = entry['namespace']
+      entry['filesystem'] = entry[filesystemFieldName]
       entry['raw'] = entry['raw_bytes']
       entry['usage'] = util.toGB(entry['raw'])
       entry['blocks'] = Math.ceil(entry['usage'] / usageService.BlockSize)

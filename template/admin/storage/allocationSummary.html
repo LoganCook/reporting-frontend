@@ -72,7 +72,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="usage in usages | orderBy: 'allocation_num'">
+                        <tr ng-repeat="usage in usages | orderBy: 'allocation_num'" class="animated fadeIn">
                             <td>{{::usage.source}}</td>
                             <td blank-safe="usage.allocation_num"></td>
                             <td blank-safe="usage.billing"></td>
@@ -158,7 +158,7 @@
         <h3 class="modal-title" id="modal-title">Whitelisted 'HCP Namespace' values</h3>
     </div>
     <div class="modal-body" id="modal-body" >
-        <p>Entries listed here are the only HCP Namespaces included for all calculations and the view. The whitelist cannot be disabled,
+        <p>Entries listed here are the <b>only</b> HCP Namespaces included for all calculations and the view. The whitelist cannot be disabled,
             it's permanently enabled.</p>
         <p>You need a programmer to edit the list for you. It's also important to note that whitelisting also affects
             the institutional(non-admin) version of this page so be careful.</p>

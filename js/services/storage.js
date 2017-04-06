@@ -12,13 +12,12 @@ define(['app', 'properties', 'services/rds'], function (app, props) {
    * With RDS allocation, no matter vv or fs, query RDS with either virtual-volume or filesystem
    * With XFS, probably owner -> accounts
    */
-  function Storage (endpoint, queryResource, AuthService, org, RDService) {
+  function Storage (endpoint, filesystemFieldName, queryResource, AuthService, org, RDService) {
     /**
      * @type {number} BlockPrice
      * @type {number} BlockSize
      */
     this.BlockSize = 250;
-
     this.nq = queryResource.build(endpoint);
 
     // every derived class should have these functions of their own
@@ -83,7 +82,7 @@ define(['app', 'properties', 'services/rds'], function (app, props) {
         }
         var blacklist = props["filesystem.blacklist"]
         var filteredUsages = usages.filter(function(element) {
-          var isFilesystemBlacklisted = 'filesystem' in element && blacklist.indexOf(element.filesystem) !== -1
+          var isFilesystemBlacklisted = filesystemFieldName in element && blacklist.indexOf(element[filesystemFieldName]) !== -1
           return !isFilesystemBlacklisted
         })
         return self.processUsages(filteredUsages);
@@ -130,8 +129,11 @@ define(['app', 'properties', 'services/rds'], function (app, props) {
   }
 
   app.factory('Storage', function(queryResource, AuthService, org, RDService) {
-    return function constructor(endpoint) {
-      return new Storage(endpoint, queryResource, AuthService, org, RDService);
+    return function constructor(endpoint, filesystemFieldName) {
+      if (typeof filesystemFieldName === 'undefined') {
+        throw 'Config problem: no filesystem field name is defined'
+      }
+      return new Storage(endpoint, filesystemFieldName, queryResource, AuthService, org, RDService);
     };
   });
 });
