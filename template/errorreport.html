@@ -1,0 +1,20 @@
+<div class="row">
+  <div class="col-xs-6 col-xs-offset-3 alert alert-danger">
+    <h1 class="text-center">Error</h1>
+    <p>Something has gone wrong. Here's what we know:</p>
+    <blockquote>
+      <p>{{errorMessage}}</p>
+    </blockquote>
+  </div>
+  <div class="col-xs-6 col-xs-offset-3">
+    <p class="text-right">
+      <a href ng-click="showDetails = !(!!showDetails)">
+        <span ng-hide="showDetails">Show</span><span ng-show="showDetails">Hide</span> technical details
+      </a>
+    </p>
+    <p ng-show="showDetails">
+      <!-- TODO consider using https://github.com/darul75/ng-prettyjson here -->
+      {{allDetails}}
+    </p>
+  </div>
+</div>

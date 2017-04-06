@@ -23,23 +23,47 @@
       var requestUri = sessionStorage['bman'],
         rdsUri = requestUri + '/api/rds/',
         rdsBackupUri = requestUri + '/api/rdsbackup/',
-        rdses = null;
+        rdses = null,
+        getAllPromise = null;
+
+      function doGetAll() {
+        if (getAllPromise) {
+          // ensures when multiple calls are triggered at once that they all wait for one HTTP call to resolve
+          return getAllPromise
+        }
+        var deferred = $q.defer()
+        if (rdses) {
+          deferred.resolve(rdses)
+        } else {
+          $http.get(rdsUri).then(function (response) {
+            $http.get(rdsBackupUri).then(function(rdsBackUpResponse) {
+              var combined = response.data.concat(rdsBackUpResponse.data)
+              tempMap(combined)
+              rdses = util.keyArray(combined, 'FileSystemName')
+              deferred.resolve(rdses)
+            }, function(reason) {
+              var message = 'Failed during call to RDS backup URL'
+              console.error(message)
+              deferred.reject(message)
+            })
+          }, function(reason) {
+            var message = 'Failed during call to RDS primary URL'
+            console.error(message)
+            deferred.reject(message)
+          })
+        }
+        getAllPromise = deferred.promise
+        return getAllPromise
+      }
 
       return {
         getAll: function () {
           var deferred = $q.defer();
-          if (rdses) {
-            deferred.resolve(rdses);
-          } else {
-            $http.get(rdsUri).then(function (response) {
-              $http.get(rdsBackupUri).then(function(rdsBackUpResponse) {
-                var combined = response.data.concat(rdsBackUpResponse.data);
-                tempMap(combined);
-                rdses = util.keyArray(combined, 'FileSystemName');
-                deferred.resolve(rdses);
-              });
-            });
-          }
+          doGetAll().then(function(response) {
+            deferred.resolve(response)
+          }, function(reason) {
+            deferred.reject()
+          })
           return deferred.promise;
         },
         getServiceOf: function (orgId) {
@@ -49,7 +73,11 @@
               var combined = rdsData.concat(rdsBackupdata);
               tempMap(combined);
               deferred.resolve(util.keyArray(combined, 'FileSystemName'));
+            }, function(reason) {
+              deferred.reject(reason)
             });
+          }, function(reason) {
+            deferred.reject(reason)
           });
           return deferred.promise;
         }

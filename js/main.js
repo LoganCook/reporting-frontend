@@ -41,6 +41,14 @@ require(["app", "services/auth", "services/org", "menu",
     app.config(function (AuthServiceProvider) {
       AuthServiceProvider.setUp(sessionStorage['email']);
     });
+    app.run(['$rootScope', '$state', function($rootScope, $state) {
+      $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error) {
+        var errorStateName = 'errorreport'
+        event.preventDefault()
+        $state.get('errorreport').runtimeErrorDetails = error
+        $state.go(errorStateName)
+      })
+    }])
     require(["route"], function (route) {
       app.config(["$stateProvider", "$urlRouterProvider", "AuthServiceProvider", route])
       angular.bootstrap(document, ["reportingApp"]);

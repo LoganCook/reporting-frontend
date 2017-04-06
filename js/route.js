@@ -9,13 +9,14 @@ define(["menu-data"], function (menuAllData) {
         spinner.stop()
         deferred.resolve()
       }
-      var finishedFailure = function() {
+      var finishedFailure = function(reason) {
         spinner.stop()
-        deferred.reject()
-        var message = 'ERROR: Failed to load organisation data, cannot continue without it.\n'
+        var message = 'Failed to load organisation data, cannot continue without it. '
           + 'You can try to reload the page but if it fails again, the problem is with the other server.'
-        throw message
-        alert(message)
+        deferred.reject({
+          msgForUi: message,
+          reason: reason
+        })
       }
       var isLoadAllOrgsAndAccounts = AuthService.isAdmin()
       if (isLoadAllOrgsAndAccounts) {
@@ -34,7 +35,22 @@ define(["menu-data"], function (menuAllData) {
       resolve: {
         orgData: resolveOrgs
       }
-    });
+    }).state("errorreport", {
+      templateUrl: "template/errorreport.html",
+      resolve: {
+        errorDetails: function() {
+          return this.self.runtimeErrorDetails
+        }
+      },
+      controller: function($scope, errorDetails) {
+        if (errorDetails && errorDetails.msgForUi) {
+          $scope.errorMessage = errorDetails.msgForUi
+        } else {
+          $scope.errorMessage = '(No details provided)'
+        }
+        $scope.allDetails = JSON.stringify(errorDetails)
+      }
+    })
 
     var menuData = {};
     // angular.config only inject providers, so we have to get the instance ourselves

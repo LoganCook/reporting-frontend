@@ -179,7 +179,7 @@
                 deferred.resolve(organisations)
               }
             }, function(reason) {
-              deferred.reject()
+              deferred.reject(reason)
             });
           }
           return deferred.promise;
@@ -229,6 +229,8 @@
             $http.get(rdsUri).then(function (response) {
               rdses = util.keyArray(response.data, 'filesystem');
               deferred.resolve(rdses);
+            }, function(reason) {
+              deferred.reject(reason)
             });
           }
           return deferred.promise;
@@ -241,6 +243,8 @@
             $http.get(roleUri).then(function (response) {
               roles = response.data;
               deferred.resolve(roles);
+            }, function(reason) {
+              deferred.reject(reason)
             });
           }
           return deferred.promise;
@@ -253,6 +257,8 @@
             $http.get(roleUri + roleId + '/').then(function (response) {
               roleDict[roleId] = response.data;
               deferred.resolve(roleDict[roleId]);
+            }, function(reason) {
+              deferred.reject(reason)
             });
           }
           return deferred.promise;
