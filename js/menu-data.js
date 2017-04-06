@@ -35,6 +35,7 @@ define({
       ],
       "STORAGE": ["sub2", ["/storage/hpcStorage", "HOME ACCOUNT"],
         ["/storage/allocationSummary", "NATIONAL"],
+        ["/storage/allocationANDSReport", "ANDS REPORT"],
       ],
     },
     "hideFor3rdMenu": { // this data will be registered in 'state'
@@ -42,6 +43,7 @@ define({
       "HPC Storage": ["/storage/hpcStorage", "HPCStorage"],
       "Allocation Summary": ["/storage/allocationSummary", "AllocationSummary"],
       "Cloud Summary": ["/cloud/novasummary", "Novasummary"],
+      "ANDS Report": ["/storage/allocationANDSReport", "AllocationANDSReport"],
     }
   }
 });

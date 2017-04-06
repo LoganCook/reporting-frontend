@@ -52,6 +52,15 @@
             });
           });
           return deferred.promise;
+        },
+        getServiceMetaOf: function (orgId, reportName) {
+          // Certain reports need extra meta data other than normal basic Order info,
+          // deal with them here
+          var deferred = $q.defer();
+          org.getServiceOf(orgId, reportName).then(function(metaData) {
+              deferred.resolve(util.keyArray(metaData, 'FileSystemName'));
+          });
+          return deferred.promise;
         }
       };
     });
