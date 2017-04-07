@@ -23,7 +23,9 @@
       var requestUri = sessionStorage['bman'],
         rdsUri = requestUri + '/api/rds/',
         rdsBackupUri = requestUri + '/api/rdsbackup/',
-        rdses = null;
+        rdsReportUri = requestUri + '/api/rdsreport/',
+        rdses = null,
+        reportMeta = null;
 
       return {
         getAll: function () {
@@ -38,6 +40,20 @@
                 rdses = util.keyArray(combined, 'FileSystemName');
                 deferred.resolve(rdses);
               });
+            });
+          }
+          return deferred.promise;
+        },
+        getServiceMeta: function () {
+          // Certain reports need extra meta data other than normal basic Order info,
+          // deal with them here
+          var deferred = $q.defer();
+          if (reportMeta) {
+            deferred.resolve(reportMeta);
+          } else {
+            $http.get(rdsReportUri).then(function (response) {
+              reportMeta = util.keyArray(response, 'FileSystemName');
+              deferred.resolve(reportMeta);
             });
           }
           return deferred.promise;

@@ -17,6 +17,7 @@ define({
       //"HNAS/VirtualVolume": ["/storage/hnas/virtualVolume", "VirtualVolume"],
       "HCP": ["/storage/hcp", "HCP"],
       "National": ["/admin/storage/allocationSummary", "AAllocationSummary"],
+      "RDS Report": ["/admin/storage/allocationRDSReport", "AAllocationRDSReport"],
     },
     "Cloud": {
       "Identity (Keystone)": ["/cloud/keystone", "Keystone"],

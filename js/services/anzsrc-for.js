@@ -18,7 +18,7 @@
             deferred.resolve(anzsrcFORs);
           } else {
             $http.get(forUri).then(function (response) {
-              anzsrcFORs = response;
+              anzsrcFORs = response.data;
               deferred.resolve(anzsrcFORs);
             });
           }
