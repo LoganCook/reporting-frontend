@@ -36,7 +36,7 @@ define({
       ],
       "STORAGE": ["sub2", ["/storage/hpcStorage", "HOME ACCOUNT"],
         ["/storage/allocationSummary", "NATIONAL"],
-        ["/storage/allocationANDSReport", "ANDS REPORT"],
+        ["/storage/allocationANDSReport", "STORED COLLECTION"],
       ],
     },
     "hideFor3rdMenu": { // this data will be registered in 'state'

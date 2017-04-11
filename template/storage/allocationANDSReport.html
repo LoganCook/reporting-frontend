@@ -1,5 +1,5 @@
 <div class="container-fluid">
-    <h3 class="text-center">ANDS NodeConnect Report</h3>
+    <h3 class="text-center">Stored Collection Report</h3>
     <p ng-show="error" class="alert alert-danger">{{ error }}</p>
     <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
     <div>
@@ -45,9 +45,6 @@
                             <th>Grant ID</th>
                             <th>FOR</th>
                             <th>File System</th>
-                            <th class="text-right">GB Allocated</th>
-                            <th class="text-right">GB Used</th>
-                            <th class="text-right">Fee</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -64,9 +61,6 @@
                             <td>{{ usage.GrantID }}</td>
                             <td>{{ usage.fors }}</td>
                             <td>{{ usage.filesystem }}</td>
-                            <td class="text-right">{{ usage.approved_size | number }}</td>
-                            <td class="text-right"> {{ usage.usage | number }}</td>
-                            <td class="text-right">${{ formatNumber(usage.cost) }}</td>
                         </tr>
                     </tbody>
                 </table>
