@@ -105,6 +105,16 @@
               deferred.resolve(util.keyArray(metaData, 'FileSystemName'));
           });
           return deferred.promise;
+        },
+        // FIXME: verify if this or the above is needed, or can be merged
+        getServiceMetaArrayOf: function (orgId, reportName) {
+          // Certain reports need extra meta data other than normal basic Order info,
+          // deal with them here
+          var deferred = $q.defer();
+          org.getServiceOf(orgId, reportName).then(function(metaData) {
+              deferred.resolve(metaData);
+          });
+          return deferred.promise;
         }
       };
     });
