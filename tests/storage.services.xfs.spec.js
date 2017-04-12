@@ -1,3 +1,4 @@
+'use strict'
 define(['../lib/angular-spinner/angular-spinner.min.js', 'services/org','services/auth' ,'services/xfs'], function () {
   describe('XFSService', function () {
     var $httpBackend
@@ -9,7 +10,7 @@ define(['../lib/angular-spinner/angular-spinner.min.js', 'services/org','service
     beforeEach(inject(function ($injector, $rootScope) {
       $httpBackend = $injector.get('$httpBackend');
       rootScope = $rootScope
-      org = $injector.get('org');
+      var org = $injector.get('org');
       objectUnderTest = $injector.get('XFSService');
       spyOn(org, 'getUsersOfSync').and.returnValue({
         "utest":{
