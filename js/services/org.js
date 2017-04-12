@@ -12,6 +12,7 @@
       var userUri = requestUri + '/api/Organisation/#id/get_access/';
       var orgUri = requestUri + '/api/Organisation/?method=get_tops';
       var orgServiceUri = requestUri + '/api/organisation/#id/get_service/?name=#serviceName';
+      var orgFORUri = requestUri + '/api/organisation/#id/get_for/?product=#productName';
       var rdsUri = requestUri + '/api/RDS/';
       var roleUri = requestUri + '/api/Role/'; // TODO: to be retired
       var organisations = {}, // pk -> name
@@ -23,7 +24,8 @@
         roles = [],
         rolesOf = {},  // to replace roles which does not well target different logged in users, security concern
         mergedRoles = {},
-        services = {};
+        services = {},
+        anzsrcFORs = {};
 
       function _getUsersOf(orgId) {
         var deferred = $q.defer();
@@ -74,8 +76,8 @@
       /**
        * @description Get information of a type of service of an organisation
        *
-       * @param {number} orgId, bman's pk
-       * @param {string} name, name of a service: accessservice, nectar, rds
+       * @param {number} orgId, internal id - primary key
+       * @param {string} name, name of a product: nectar, rds, rdsbackup, hpc (hpc home storage), ersaaccount, ersastorage, ersastoragebackup
        * @returns promise
        */
       function _getServiceOf(orgId, name) {
@@ -102,6 +104,33 @@
             }
             services[orgId][name] = response.data;
             deferred.resolve(services[orgId][name]);
+          }, function(reason) {
+            deferred.reject()
+          });
+        }
+        return deferred.promise;
+      }
+
+      /**
+       * @description Get FOR codes of orders of a product of an organisation
+       *
+       * @param {number} orgId, internal id - primary key
+       * @param {string} name, name of a product, mainly rds and rdsbackup
+       * @returns promise
+       */
+      function _getFORsOf(orgId, name) {
+        var deferred = $q.defer();
+        if (orgId in anzsrcFORs && name in anzsrcFORs[orgId]) {
+          deferred.resolve(anzsrcFORs[orgId][name]);
+        } else {
+          // FIXME: need to use native resource url and its replacement
+          var interpolatedUrl = orgFORUri.replace("#id", orgId).replace("#productName", name);
+          $http.get(interpolatedUrl).then(function (response) {
+            if (!(orgId in anzsrcFORs)) {
+              anzsrcFORs[orgId] = {};
+            }
+            anzsrcFORs[orgId][name] = response.data;
+            deferred.resolve(anzsrcFORs[orgId][name]);
           }, function(reason) {
             deferred.reject()
           });
@@ -265,6 +294,9 @@
         },
         getServiceOf: function (orgId, name) {
           return _getServiceOf(orgId, name);
+        },
+        getFORsOf: function (orgId, name) {
+          return _getFORsOf(orgId, name);
         },
         getRolesOfSync: function (orgName) {
           var orgId = organisationByNames[orgName];
