@@ -1,4 +1,4 @@
-define(['components/datePickers/date-pickers'], function() {
+define(['datePickers'], function() {
   describe('pageComponent: datePickers', function() {
     var $componentController;
 

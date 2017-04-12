@@ -15,13 +15,14 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'lib/angular/angular.js',
+      'lib/angular/angular.min.js',
       'lib/angular-resource/angular-resource.min.js',
       'lib/angular-bootstrap/ui-bootstrap-tpls.min.js',
       'lib/angular-bootstrap/ui-bootstrap.min.js',
       'lib/angular-ui-router/release/angular-ui-router.min.js',
       'lib/angular-mocks/angular-mocks.js',
       'lib/angular-sanitize/angular-sanitize.min.js',
+      'lib/ng-table-to-csv/dist/ng-table-to-csv.min.js',
       {pattern: 'lib/spin.js/spin.min.js', included: false},
       {pattern: 'lib/angular-spinner/angular-spinner.min.js', included: false},
       {pattern: 'lib/filesize/lib/filesize.min.js', included: false},
@@ -31,7 +32,6 @@ module.exports = function(config) {
       {pattern: 'lib/lodash/lodash.min.js', included: false},
       {pattern: 'node_modules/qs/dist/qs.js', included: false},
       {pattern: 'lib/axios/dist/axios.min.js', included: false},
-      {pattern: 'js/components/**/*.js', included: false},
       {pattern: 'js/**/*.js', included: false},
       {pattern: 'js/*.js', included: false},
       {pattern: 'tests/*.js', included: false},
@@ -41,6 +41,7 @@ module.exports = function(config) {
 
     // list of files to exclude
     exclude: [
+      'js/main.js'
     ],
 
 

@@ -15,20 +15,23 @@ require.config({
   baseUrl: '/base/js',
 
   paths: {
-      'axios' : '../lib/axios/dist/axios.min',
-      'lodash': '../lib/lodash/lodash.min',
-      'filesize': '../lib/filesize/lib/filesize.min',
-      "mathjs": '../lib/mathjs/dist/math.min',
-      "moment": '../lib/moment/min/moment.min',
-      "numeral": '../lib/numeral/min/numeral.min',
-      'qs': '../node_modules/qs/dist/qs',
-      'pageComponents': 'components/pageComponents',
-      'datePickerUib': 'components/datePickerUib/date-picker-uib',
-      'angular': '../lib/angular/angular',
-      'spin': '../lib/spin.js/spin.min'
+    'axios': '../lib/axios/dist/axios.min',
+    'lodash': '../lib/lodash/lodash.min',
+    'filesize': '../lib/filesize/lib/filesize.min',
+    "mathjs": '../lib/mathjs/dist/math.min',
+    "moment": '../lib/moment/min/moment.min',
+    "numeral": '../lib/numeral/min/numeral.min',
+    'qs': '../node_modules/qs/dist/qs',
+    'angular': '../lib/angular/angular.min',
+    'spin': '../lib/spin.js/spin.min',
+    'pageComponents': '../js/components/pageComponents',
+    'datePickers': "../js/components/datePickers/date-pickers",
+    'datePickerUib': '../js/components/datePickerUib/date-picker-uib',
+    'ersaTable': '../js/directives/ersaTable/ersa-table',
+    'blankSafe': '../js/directives/blankSafe/blank-safe'
   },
   shim: {
-      "angular": { exports: "angular" },
+    "angular": { exports: "angular" },
   },
 
   // dynamically load all test files

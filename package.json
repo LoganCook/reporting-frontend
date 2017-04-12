@@ -26,6 +26,7 @@
   "scripts": {
     "lint": "eslint js tests",
     "test": "karma start karma.conf.js --single-run",
+    "testwatch": "karma start karma.conf.js --no-single-run --auto-watch",
     "dev": "browser-sync start --server --port 8080 --no-open --no-ui",
     "postinstall": "bower install"
   }
