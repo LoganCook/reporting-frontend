@@ -274,13 +274,13 @@ define(['../js/services/hpc'], function() {
         expect(result).toBe(33)
       })
 
-      it('should handle the second param as undefined', function() {
-        var result = objectUnderTest._test_only.doSum(undefined, 22)
+      it('should handle the second param as null', function() {
+        var result = objectUnderTest._test_only.doSum(null, 22)
         expect(result).toBe(22)
       })
 
-      it('should handle the second param as undefined', function() {
-        var result = objectUnderTest._test_only.doSum(11, undefined)
+      it('should handle the second param as null', function() {
+        var result = objectUnderTest._test_only.doSum(11, null)
         expect(result).toBe(11)
       })
     })
