@@ -35,15 +35,18 @@ define(
         spinner.start()
         HPCService.query(startTs, endTs).then(function() {
           $scope.jobCounts = HPCService.getJobCounts(startTs, endTs, orgName);
+          $scope.userRollup = HPCService.getUserRollup(startTs, endTs)
           if (orgName) {
             var subTotals = angular.copy(HPCService.getSubTotals(startTs, endTs, orgName));
             $scope.grandTotal = utilOld.spliceOne(subTotals, 'organisation', 'Grand');
             $scope.subTotals = subTotals;
           } else {
-            $scope.subTotals = HPCService.getSubTotals(startTs, endTs);
-            $scope.grandTotal = HPCService.getGrandTotal(startTs, endTs);
+            $scope.subTotals = HPCService.getSubTotals(startTs, endTs)
+            $scope.grandTotal = HPCService.getGrandTotal(startTs, endTs)
           }
           spinner.stop()
+        }, function (reason) {
+          throw 'Problem getting HPC information: ' + reason
         });
       };
     }

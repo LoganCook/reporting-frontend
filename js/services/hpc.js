@@ -1,5 +1,42 @@
-define(['app', '../util', '../options'], function(app, util, options) {
+define(['app', '../util', '../options', 'lodash'], function(app, util, options, _) {
   'use strict';
+
+  function createUserRollup (detailRows) {
+    var fieldsToSum = ['hours', 'cost', 'job_count', 'cores', 'cpu_seconds']
+    var fieldsToIgnore = ['queue']
+    var groupedAndSummed = _.reduce(detailRows, function (res, currRow) {
+      var username = currRow['username']
+      if (!res[username]) {
+        var copy = angular.copy(currRow)
+        delete copy.queue
+        res[username] = copy
+        return res
+      }
+      var existing = res[username]
+      fieldsToSum.forEach(function (currField) {
+        existing[currField] = doSum(existing[currField], currRow[currField])
+      })
+      var fieldsToNotAssertEquality = _.union(fieldsToSum, fieldsToIgnore)
+      var fieldsToAssertEquality = _.difference(Object.keys(currRow), fieldsToNotAssertEquality)
+      fieldsToAssertEquality.forEach(function (currField) {
+        assertEqual(existing[currField], currRow[currField])
+      })
+      res[username] = existing
+      return res
+    }, {})
+    return _.values(groupedAndSummed)
+  }
+
+  function assertEqual (val1, val2) {
+    if (val1 === val2) {
+      return
+    }
+    throw 'Data problem: expected "' + val1 + '" and "' + val2 + '" to be equal'
+  }
+
+  function doSum (val1, val2) {
+    return (val1 || 0) + (val2 || 0)
+  }
 
   /**
    * All High performance computing (HPC) related data services.
@@ -28,18 +65,21 @@ define(['app', '../util', '../options'], function(app, util, options) {
   }
 
   app.factory('HPCService', function (queryResource, $q, org) {
-    var BASE_URL = sessionStorage['hpc'],
-      nq = queryResource.build(BASE_URL),
-      USAGE_DEFAULT = {
-        cores: 0,
-        "cpu_seconds": 0,
-        "hours": 0,
-        "job_count": 0
-      };
+    var BASE_URL = sessionStorage['hpc']
+    var nq = queryResource.build(BASE_URL)
+    var USAGE_DEFAULT = {
+      cores: 0,
+      "cpu_seconds": 0,
+      "hours": 0,
+      "job_count": 0
+    }
 
-    // both summaries and totals has searchHash as the first key
+    // summaries, totals and userRollupCache have searchHash as the first key
     // summaries: usage data with extended user information
-    var summaries = {}, totals = {}, grandTotal = {};
+    var summaries = {}
+    var totals = {}
+    var grandTotal = {}
+    var userRollupCache = {}
 
     // get a summary of HPC jobs between startTs and endTs grouped by owner and queue
     // return a promise
@@ -92,7 +132,7 @@ define(['app', '../util', '../options'], function(app, util, options) {
     }
 
     return {
-      query: function query(startTs, endTs) {
+      query: function (startTs, endTs) {
         var deferred = $q.defer(),
           searchHash = util.hashSearch([startTs, endTs]);
         if (Object.keys(totals).length > 0 && searchHash in summaries  && searchHash in totals) {
@@ -117,15 +157,16 @@ define(['app', '../util', '../options'], function(app, util, options) {
             var usageArray = util.rearrange(totals[searchHash]);
             calculateCost(usageArray, price, 'cpu_seconds');
             totals[searchHash] = util.inflate(usageArray, 'billing', 'organisation');
+            userRollupCache[searchHash] = createUserRollup(summaries[searchHash])
             deferred.resolve(true);
           }, function(reason) {
-              console.log(reason);
-              deferred.reject(false);
+            console.log(reason);
+            deferred.reject(false);
           });
         }
         return deferred.promise;
       },
-      getJobCounts: function getJobCounts(startTs, endTs, orgName) {
+      getJobCounts: function (startTs, endTs, orgName) {
         var tmpSummaries = util.getCached(summaries, [startTs, endTs]);
         if (orgName) {
           var result = [];
@@ -139,12 +180,20 @@ define(['app', '../util', '../options'], function(app, util, options) {
           return tmpSummaries;
         }
       },
-      getSubTotals: function getSubTotals(startTs, endTs, orgName) {
+      getSubTotals: function (startTs, endTs, orgName) {
         return util.rearrange(util.getCached(totals, [startTs, endTs], orgName));
       },
-      getGrandTotal: function getGrandTotal(startTs, endTs) {
+      getGrandTotal: function (startTs, endTs) {
         // only for admin view
         return util.getCached(grandTotal, [startTs, endTs]);
+      },
+      getUserRollup: function (startTs, endTs) {
+        return util.getCached(userRollupCache, [startTs, endTs]);
+      },
+      _test_only: {
+        createUserRollup: createUserRollup,
+        assertEqual: assertEqual,
+        doSum: doSum
       }
     };
   });

@@ -547,3 +547,13 @@ table.table-striped tr:nth-child(odd) {
 .desktop-menu .menu-wrap > .menu .sub-menu .menu-item > a:hover {
   color: #262626;
 }
+
+.btn-primary.ersa-theme {
+  background-color: #faa333;
+  border-color: #f99b1f;
+}
+
+.btn-primary.active.ersa-theme, .btn-primary:active.ersa-theme, .open>.dropdown-toggle.btn-primary.ersa-theme {
+  background-color: #f48d06;
+  border-color: #d17905;
+}

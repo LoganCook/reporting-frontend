@@ -38,16 +38,20 @@
       <div class="row">
         <div class="col-md-12">
           <div class="form-group text-center">
-            <label class="checkbox-inline">
-              <input type="checkbox" ng-model="viewDetails">View Details
-            </label>
+            <span>Detail level:
+              <div class="btn-group" ng-init="detailLevel = 'simple'">
+                <label class="btn btn-primary ersa-theme" ng-model="detailLevel" uib-btn-radio="'simple'">Simple</label>
+                <label class="btn btn-primary ersa-theme" ng-model="detailLevel" uib-btn-radio="'rollup'">User rollup</label>
+                <label class="btn btn-primary ersa-theme" ng-model="detailLevel" uib-btn-radio="'detailed'">Detailed</label>
+              </div>
+            </span>
           </div>
         </div>
       </div>
     </form>
     <div class="row">
       <div class="col-md-12">
-        <table ng-show="viewDetails" ersa-table="hpc-summary.detailed">
+        <table ng-show="detailLevel === 'detailed'" ersa-table="hpc-summary.detailed">
           <thead>
             <tr>
               <th>Organisation </th>
@@ -88,7 +92,47 @@
             </tr>
           </tfoot>
         </table>
-        <table ng-hide="viewDetails" ersa-table="hpc-summary.simple">
+
+        <table ng-show="detailLevel === 'rollup'" ersa-table="hpc-summary.user-rollup">
+          <thead>
+            <tr>
+              <th>Organisation </th>
+              <th>School</th>
+              <th>User ID</th>
+              <th>User Name</th>
+              <th>Email</th>
+              <th>Job Count</th>
+              <th>Core Hours</th>
+              <th>Fee</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="sum in userRollup | orderBy: ['billing','organisation','owner']">
+              <td blank-safe="sum.billing"></td>
+              <td blank-safe="sum.organisation"></td>
+              <td>{{ ::sum.owner }}</td>
+              <td blank-safe="sum.fullname"></td>
+              <td blank-safe="sum.email"></td>
+              <td>{{ ::sum.job_count }}</td>
+              <td>{{ ::formatNumber(sum.hours) }}</td>
+              <td>${{ ::formatNumber(sum.cost) }}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr ng-show="jobCounts.length">
+              <td><strong>Grand Total</strong></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td><strong>{{ grandTotal.job_count }}</strong></td>
+              <td><strong>{{ formatNumber(grandTotal.hours) }}</strong></td>
+              <td><strong>${{ formatNumber(grandTotal.cost) }}</strong></td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <table ng-show="detailLevel === 'simple'" ersa-table="hpc-summary.simple">
           <thead>
             <tr>
               <th>Organisation</th>
