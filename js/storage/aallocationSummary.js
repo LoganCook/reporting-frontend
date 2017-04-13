@@ -110,48 +110,22 @@ define(
         latch.await(function() {
           spinner.stop()
         })
-        XFSUsageService.query(startTs, endTs, isDisableBlacklist).then(function() {
-          $scope.usages = $scope.usages.concat(XFSUsageService.getUsages(startTs, endTs, orgName, isDisableBlacklist));
-          // $scope.subTotals1 = XFSUsageService.getTotals(startTs, endTs, orgName, isDisableBlacklist);
-          $scope.subTotals = addServiceTotal(XFSUsageService.getTotals(startTs, endTs, orgName, isDisableBlacklist), $scope.subTotals);
-          updateGrandTotal(XFSUsageService.getGrandTotals(startTs, endTs, isDisableBlacklist), $scope.total);
-          latch.countDown()
-        }, function(reason) {
-          latch.countDown()
-          console.error("Failed request, ", reason);
-        });
-        HNASVVService.query(startTs, endTs, isDisableBlacklist).then(function() {
-          // $scope.test2 = HNASVVService.getUsages(startTs, endTs, orgName);
-          $scope.usages = $scope.usages.concat(HNASVVService.getUsages(startTs, endTs, orgName, isDisableBlacklist));
-          // $scope.subTotals2 = HNASVVService.getTotals(startTs, endTs, orgName);
-          $scope.subTotals = addServiceTotal(HNASVVService.getTotals(startTs, endTs, orgName, isDisableBlacklist), $scope.subTotals);
-          updateGrandTotal(HNASVVService.getGrandTotals(startTs, endTs, isDisableBlacklist), $scope.total);
-          latch.countDown()
-        }, function(reason) {
-          latch.countDown()
-          console.error("Failed request, ", reason);
-        });
-        HNASFSService.query(startTs, endTs, isDisableBlacklist).then(function() {
-          // $scope.test3 = HNASFSService.getUsages(startTs, endTs, orgName);
-          // $scope.subTotals3 = HNASFSService.getTotals(startTs, endTs, orgName);
-          $scope.usages = $scope.usages.concat(HNASFSService.getUsages(startTs, endTs, orgName, isDisableBlacklist));
-          $scope.subTotals = addServiceTotal(HNASFSService.getTotals(startTs, endTs, orgName, isDisableBlacklist), $scope.subTotals);
-          updateGrandTotal(HNASFSService.getGrandTotals(startTs, endTs, isDisableBlacklist), $scope.total);
-          latch.countDown()
-        }, function(reason) {
-          latch.countDown()
-          console.error("Failed request, ", reason);
-        })
-        HCPService.query(startTs, endTs, isDisableBlacklist).then(function() {
-          $scope.usages = $scope.usages.concat(HCPService.getUsages(startTs, endTs, orgName, isDisableBlacklist))
-          $scope.subTotals = addServiceTotal(HCPService.getTotals(startTs, endTs, orgName, isDisableBlacklist), $scope.subTotals)
-          updateGrandTotal(HCPService.getGrandTotals(startTs, endTs, isDisableBlacklist), $scope.total)
-          latch.countDown()
-        }, function(reason) {
-          latch.countDown()
-          console.error("Failed request, ", reason)
-        })
-      };
+        function doCall (service) {
+          service.query(startTs, endTs, isDisableBlacklist).then(function() {
+            $scope.usages = $scope.usages.concat(service.getUsages(startTs, endTs, orgName, isDisableBlacklist))
+            $scope.subTotals = addServiceTotal(service.getTotals(startTs, endTs, orgName, isDisableBlacklist), $scope.subTotals)
+            updateGrandTotal(service.getGrandTotals(startTs, endTs, isDisableBlacklist), $scope.total)
+            latch.countDown()
+          }, function(reason) {
+            latch.countDown()
+            console.error("Failed request, ", reason)
+          })
+        }
+        doCall(XFSUsageService)
+        doCall(HNASVVService)
+        doCall(HNASFSService)
+        doCall(HCPService)
+      }
     }
   ]);
 });
