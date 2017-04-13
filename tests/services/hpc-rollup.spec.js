@@ -1,14 +1,6 @@
 'use strict'
-define(['../../js/services/hpc'], function() {
-  describe('HPC Service', function() {
-
-    var objectUnderTest
-
-    beforeEach(module('reportingApp'));
-
-    beforeEach(inject(function ($injector) {
-      objectUnderTest = $injector.get('HPCService');
-    }))
+define(['../../js/services/hpc-rollup'], function(objectUnderTest) {
+  describe('HPC rollup', function() {
 
     it('should sum up the grouped fields when there are more than one record for a user', function() {
       var detailRows = [
@@ -18,7 +10,7 @@ define(['../../js/services/hpc'], function() {
           "job_count": 32,
           "owner": "tuser",
           "queue": "tizard",
-          "contactid": "02be71c5-5b63-e611-80e3-c4346bc43f98",
+          "contactid": "02be71c5-vvvv-e611-80e3-c4346bc43f98",
           "username": "tuser",
           "email": "test.user@test.com",
           "unit": "Test Sciences",
@@ -35,7 +27,7 @@ define(['../../js/services/hpc'], function() {
           "job_count": 12,
           "owner": "tuser",
           "queue": "bigmem",
-          "contactid": "02be71c5-5b63-e611-80e3-c4346bc43f98",
+          "contactid": "02be71c5-vvvv-e611-80e3-c4346bc43f98",
           "username": "tuser",
           "email": "test.user@test.com",
           "unit": "Test Sciences",
@@ -52,7 +44,7 @@ define(['../../js/services/hpc'], function() {
           "job_count": 3,
           "owner": "tuser",
           "queue": "short",
-          "contactid": "02be71c5-5b63-e611-80e3-c4346bc43f98",
+          "contactid": "02be71c5-vvvv-e611-80e3-c4346bc43f98",
           "username": "tuser",
           "email": "test.user@test.com",
           "unit": "Test Sciences",
@@ -64,7 +56,7 @@ define(['../../js/services/hpc'], function() {
           "cost": 12.210943057064
         }
       ]
-      var result = objectUnderTest._test_only.createUserRollup(detailRows)
+      var result = objectUnderTest.createUserRollup(detailRows)
       expect(result.length).toBe(1)
       expect(result[0].billing).toBe('Test University')
       expect(result[0].organisation).toBe('Test Sciences')
@@ -86,7 +78,7 @@ define(['../../js/services/hpc'], function() {
           "job_count": 32,
           "owner": "tuser",
           "queue": "tizard",
-          "contactid": "02be71c5-5b63-e611-80e3-c4346bc43f98",
+          "contactid": "02be71c5-vvvv-e611-80e3-c4346bc43f98",
           "username": "tuser",
           "email": "test.user@test.com",
           "unit": "Test Sciences",
@@ -103,7 +95,7 @@ define(['../../js/services/hpc'], function() {
           "job_count": 12,
           "owner": "tuser",
           "queue": "bigmem",
-          "contactid": "02be71c5-5b63-e611-80e3-c4346bc43f98",
+          "contactid": "02be71c5-vvvv-e611-80e3-c4346bc43f98",
           "username": "tuser",
           "email": "test.user@test.com",
           "unit": "Test Sciences",
@@ -115,7 +107,7 @@ define(['../../js/services/hpc'], function() {
           // no 'cost' field
         }
       ]
-      var result = objectUnderTest._test_only.createUserRollup(detailRows)
+      var result = objectUnderTest.createUserRollup(detailRows)
       expect(result.length).toBe(1)
       expect(result[0].billing).toBe('Test University')
       expect(result[0].organisation).toBe('Test Sciences')
@@ -153,7 +145,7 @@ define(['../../js/services/hpc'], function() {
         }
       ]
       try {
-        objectUnderTest._test_only.createUserRollup(cutDownRows)
+        objectUnderTest.createUserRollup(cutDownRows)
         fail('Should have caught different organisations')
       } catch (error) {
         // success
@@ -162,7 +154,7 @@ define(['../../js/services/hpc'], function() {
 
     it('should survive an empty input array', function() {
       var emptyArray = []
-      var result = objectUnderTest._test_only.createUserRollup(emptyArray)
+      var result = objectUnderTest.createUserRollup(emptyArray)
       expect(result.length).toBe(0)
     })
 
@@ -174,7 +166,7 @@ define(['../../js/services/hpc'], function() {
           "job_count": 32,
           "owner": "tuser",
           "queue": "tizard",
-          "contactid": "bbbe71c5-5b63-e611-80e3-c4346bc43f98",
+          "contactid": "bbbe71c5-vvvv-e611-80e3-c4346bc43f98",
           "username": "tuser",
           "email": "test.user@test.com",
           "unit": "Test Sciences",
@@ -191,7 +183,7 @@ define(['../../js/services/hpc'], function() {
           "job_count": 12,
           "owner": "tuser",
           "queue": "bigmem",
-          "contactid": "bbbe71c5-5b63-e611-80e3-c4346bc43f98",
+          "contactid": "bbbe71c5-vvvv-e611-80e3-c4346bc43f98",
           "username": "tuser",
           "email": "test.user@test.com",
           "unit": "Test Sciences",
@@ -208,7 +200,7 @@ define(['../../js/services/hpc'], function() {
           "job_count": 1,
           "owner": "awombat",
           "queue": "bigmem",
-          "contactid": "aaae71c5-5b63-e611-80e3-c4346bc43f98",
+          "contactid": "aaae71c5-vvvv-e611-80e3-c4346bc43f98",
           "username": "awombat",
           "email": "a.wombat@test.com",
           "unit": "Test Sciences",
@@ -220,7 +212,7 @@ define(['../../js/services/hpc'], function() {
           "cost": 44.834
         }
       ]
-      var result = objectUnderTest._test_only.createUserRollup(detailRows)
+      var result = objectUnderTest.createUserRollup(detailRows)
       expect(result.length).toBe(2)
       var firstRecord = result[0]
       expect(firstRecord.username).toBe('tuser')
@@ -236,53 +228,6 @@ define(['../../js/services/hpc'], function() {
       expect(secondRecord.cost).toBe(44.834)
       expect(secondRecord.cores).toBe(1)
       expect(secondRecord.cpu_seconds).toBe(600)
-    })
-
-    describe('.assertEqual', function() {
-      it('should assert that equal strings are in fact equal', function() {
-        objectUnderTest._test_only.assertEqual('foo', 'foo')
-        // expect nothing to be thrown
-      })
-
-      it('should assert that unequal strings are not equal', function() {
-        try {
-          objectUnderTest._test_only.assertEqual('foo', 'bar')
-          fail('Expected error to be thrown')
-        } catch (error) {
-          // success
-        }
-      })
-
-      it('should assert that equal integers are in fact equal', function() {
-        objectUnderTest._test_only.assertEqual(1337, 1337)
-        // expect nothing to be thrown
-      })
-
-      it('should assert that unequal integers are not equal', function() {
-        try {
-          objectUnderTest._test_only.assertEqual(666, 667)
-          fail('Expected error to be thrown')
-        } catch (error) {
-          // success
-        }
-      })
-    })
-
-    describe('.doSum', function() {
-      it('should sum two integers', function() {
-        var result = objectUnderTest._test_only.doSum(11, 22)
-        expect(result).toBe(33)
-      })
-
-      it('should handle the second param as null', function() {
-        var result = objectUnderTest._test_only.doSum(null, 22)
-        expect(result).toBe(22)
-      })
-
-      it('should handle the second param as null', function() {
-        var result = objectUnderTest._test_only.doSum(11, null)
-        expect(result).toBe(11)
-      })
     })
   })
 })

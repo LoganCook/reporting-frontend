@@ -1,42 +1,5 @@
-define(['app', '../util', '../options', 'lodash'], function(app, util, options, _) {
+define(['app', '../util', '../options', 'lodash', './hpc-rollup'], function(app, util, options, _, rollup) {
   'use strict';
-
-  function createUserRollup (detailRows) {
-    var fieldsToSum = ['hours', 'cost', 'job_count', 'cores', 'cpu_seconds']
-    var fieldsToIgnore = ['queue']
-    var groupedAndSummed = _.reduce(detailRows, function (res, currRow) {
-      var username = currRow['username']
-      if (!res[username]) {
-        var copy = angular.copy(currRow)
-        delete copy.queue
-        res[username] = copy
-        return res
-      }
-      var existing = res[username]
-      fieldsToSum.forEach(function (currField) {
-        existing[currField] = doSum(existing[currField], currRow[currField])
-      })
-      var fieldsToNotAssertEquality = _.union(fieldsToSum, fieldsToIgnore)
-      var fieldsToAssertEquality = _.difference(Object.keys(currRow), fieldsToNotAssertEquality)
-      fieldsToAssertEquality.forEach(function (currField) {
-        assertEqual(existing[currField], currRow[currField])
-      })
-      res[username] = existing
-      return res
-    }, {})
-    return _.values(groupedAndSummed)
-  }
-
-  function assertEqual (val1, val2) {
-    if (val1 === val2) {
-      return
-    }
-    throw 'Data problem: expected "' + val1 + '" and "' + val2 + '" to be equal'
-  }
-
-  function doSum (val1, val2) {
-    return (val1 || 0) + (val2 || 0)
-  }
 
   /**
    * All High performance computing (HPC) related data services.
@@ -157,7 +120,7 @@ define(['app', '../util', '../options', 'lodash'], function(app, util, options, 
             var usageArray = util.rearrange(totals[searchHash]);
             calculateCost(usageArray, price, 'cpu_seconds');
             totals[searchHash] = util.inflate(usageArray, 'billing', 'organisation');
-            userRollupCache[searchHash] = createUserRollup(summaries[searchHash])
+            userRollupCache[searchHash] = rollup.createUserRollup(summaries[searchHash])
             deferred.resolve(true);
           }, function(reason) {
             console.log(reason);
@@ -189,11 +152,6 @@ define(['app', '../util', '../options', 'lodash'], function(app, util, options, 
       },
       getUserRollup: function (startTs, endTs) {
         return util.getCached(userRollupCache, [startTs, endTs]);
-      },
-      _test_only: {
-        createUserRollup: createUserRollup,
-        assertEqual: assertEqual,
-        doSum: doSum
       }
     };
   });

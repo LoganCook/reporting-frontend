@@ -1,6 +1,6 @@
 define(
-  ["app", "lodash", "../util", "../countdown-latch", "properties", "services/xfs.usage", "services/hnas.vv", "services/hnas.fs", "services/hcp"],
-  function (app, _, util, countdownLatch, props) {
+  ["app", "lodash", "../util", "../countdown-latch", "properties", "../services/allocationSummary-rollup", "services/xfs.usage", "services/hnas.vv", "services/hnas.fs", "services/hcp"],
+  function (app, _, util, countdownLatch, props, rollup) {
 
   app.controller("AAllocationSummaryController",
     ["$rootScope", "$scope", "$timeout", "$q", "$filter", "reporting", "org", "spinner", "AuthService", "RDService", "XFSUsageService", "HNASVVService",
@@ -97,17 +97,19 @@ define(
         if (!(AuthService.isAdmin())) {
           orgName = AuthService.getUserOrgName();
         }
-        $scope.usages = [];
-        $scope.subTotals = [];
+        $scope.usages = []
+        $scope.subTotals = []
+        $scope.rollup = []
         $scope.total = {
           'usage': 0,
           'blocks': 0,
           'cost': 0
-        };
+        }
 
         var numberOfServiceCalls = 4
         var latch = new countdownLatch(numberOfServiceCalls)
         latch.await(function() {
+          $scope.rollup = rollup.createUserRollup($scope.usages)
           spinner.stop()
         })
         function doCall (service) {

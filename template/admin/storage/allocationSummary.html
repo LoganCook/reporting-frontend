@@ -41,9 +41,13 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group text-center">
-                        <label class="checkbox-inline">
-                            <input type="checkbox" ng-model="viewDetails"> View Details
-                        </label>
+                        <span>Detail level:
+                            <div class="btn-group" ng-init="detailLevel = 'simple'">
+                                <label class="btn btn-primary ersa-theme" ng-model="detailLevel" uib-btn-radio="'simple'">Simple</label>
+                                <label class="btn btn-primary ersa-theme" ng-model="detailLevel" uib-btn-radio="'rollup'">User rollup</label>
+                                <label class="btn btn-primary ersa-theme" ng-model="detailLevel" uib-btn-radio="'detailed'">Detailed</label>
+                            </div>
+                        </span>
                         <label class="checkbox-inline">
                             <input type="checkbox" ng-model="isDisableBlacklist" ng-change="disableBlacklistChangeHandler()"> Disable Blacklist
                         </label>
@@ -55,7 +59,7 @@
         </form>
         <div class="row">
             <div class="col-md-12">
-                <table ng-show="viewDetails" ersa-table="national-storage.detailed">
+                <table ng-show="detailLevel === 'detailed'" ersa-table="national-storage.detailed">
                     <thead>
                         <tr>
                             <th>Source</th>
@@ -100,7 +104,51 @@
                         </tr>
                     </tfoot>
                 </table>
-                <table ng-hide="viewDetails" ersa-table="national-storage.simple">
+
+                <table ng-show="detailLevel === 'rollup'" ersa-table="national-storage.rollup">
+                    <thead>
+                        <tr>
+                            <th>Allocation Name</th>
+                            <th>Organisation</th>
+                            <th>School</th>
+                            <th>User Name</th>
+                            <th>Email</th>
+                            <th>File System</th>
+                            <th class="text-right">GB Allocated</th>
+                            <th class="text-right">GB Used</th>
+                            <th class="text-right">Usage / 250GB</th>
+                            <th class="text-right">Fee</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="usage in rollup | orderBy: 'orderID'" class="animated fadeIn">
+                            <td blank-safe="usage.orderID"></td>
+                            <td blank-safe="usage.billing"></td>
+                            <td blank-safe="usage.managerunit"></td>
+                            <td blank-safe="usage.full_name"></td>
+                            <td blank-safe="usage.manageremail"></td>
+                            <td>{{ ::usage.filesystem }}</td>
+                            <td class="text-right">{{ ::usage.approved_size | number }}</td>
+                            <td class="text-right"> {{ ::usage.usage | number }}</td>
+                            <td class="text-right"> {{ ::usage.blocks }}</td>
+                            <td class="text-right">${{ ::formatNumber(usage.cost) }}</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr ng-show="usages.length">
+                            <td colspan="3"><strong>Grand Total</strong></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="text-right"><strong>{{ total.usage | number }}</strong></td>
+                            <td class="text-right"><strong>{{ total.blocks }}</strong></td>
+                            <td class="text-right"><strong>${{ formatNumber(total.cost) }}</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <table ng-show="detailLevel === 'simple'" ersa-table="national-storage.simple">
                     <thead>
                         <tr>
                             <th>Organisation</th>
@@ -111,7 +159,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="usage in subTotals | orderBy: ['billing',orderBySubTotalLast,'organisation']" ng-class="{'subtotal-row': isSubTotalRow(usage)}">
+                        <tr ng-repeat="usage in subTotals | orderBy: ['billing',orderBySubTotalLast,'organisation']" ng-class="{'subtotal-row': isSubTotalRow(usage)}" class="animated fadeIn">
                             <td blank-safe="usage.billing"></td>
                             <td blank-safe="usage.organisation"></td>
                             <td class="text-right"> {{ ::usage.usage | number }}</td>
@@ -120,7 +168,7 @@
                         </tr>
                     </tbody>
                     <tfoot>
-                        <tr ng-show="usages.length">
+                        <tr ng-show="usages.length" class="animated fadeIn">
                             <td><strong>Grand Total</strong></td>
                             <td></td>
                             <td class="text-right"><strong>{{ total.usage | number }}</strong></td>
