@@ -34,6 +34,7 @@ module.exports = function(config) {
       {pattern: 'lib/axios/dist/axios.min.js', included: false},
       {pattern: 'js/**/*.js', included: false},
       {pattern: 'js/*.js', included: false},
+      {pattern: 'tests/**/*.js', included: false},
       {pattern: 'tests/*.js', included: false},
       'tests/test-main.js'
     ],

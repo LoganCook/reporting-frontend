@@ -1,5 +1,5 @@
 'use strict'
-define(['../js/services/hpc'], function() {
+define(['../../js/services/hpc'], function() {
   describe('HPC Service', function() {
 
     var objectUnderTest

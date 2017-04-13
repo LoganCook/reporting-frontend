@@ -1,11 +1,9 @@
 var allTestFiles = [];
-var TEST_REGEXP = /tests\/.+\.spec\.js$/i;
-// var TEST_REGEXP = /tests\/.+\-spec\.js$/i
+var TEST_REGEXP = /(spec|test)\.js$/i;
 
 // Get a list of all the test files to include
 // https://karma-runner.github.io/1.0/plus/requirejs.html
 Object.keys(window.__karma__.files).forEach(function (file) {
-  // console.log(file);
   if (TEST_REGEXP.test(file)) {
     allTestFiles.push(file);
   }

@@ -1,5 +1,5 @@
 'use strict'
-define(['../lib/angular-spinner/angular-spinner.min.js', 'services/org','services/auth' ,'services/xfs'], function () {
+define(['../../lib/angular-spinner/angular-spinner.min.js', 'services/org','services/auth' ,'services/xfs'], function () {
   describe('XFSService', function () {
     var $httpBackend
     var rootScope

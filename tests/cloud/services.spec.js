@@ -1,5 +1,5 @@
 // angular-spinner has amd format which is different to app define
-define(['../lib/angular-spinner/angular-spinner.min.js', 'cloud/services'], function() {
+define(['../../lib/angular-spinner/angular-spinner.min.js', 'cloud/services'], function() {
   describe('Cloud.service.flavor', function() {
     var $httpBackend, flavorFactory;
     var url = '/nova';
