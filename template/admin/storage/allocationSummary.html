@@ -72,13 +72,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="usage in usages | orderBy: 'allocation_num'" class="animated fadeIn">
+                        <tr ng-repeat="usage in usages | orderBy: 'orderID'" class="animated fadeIn">
                             <td>{{::usage.source}}</td>
-                            <td blank-safe="usage.allocation_num"></td>
+                            <td blank-safe="usage.orderID"></td>
                             <td blank-safe="usage.billing"></td>
-                            <td blank-safe="usage.organisation"></td>
+                            <td blank-safe="usage.managerunit"></td>
                             <td blank-safe="usage.full_name"></td>
-                            <td blank-safe="usage.email"></td>
+                            <td blank-safe="usage.manageremail"></td>
                             <td>{{ ::usage.filesystem }}</td>
                             <td class="text-right">{{ ::usage.approved_size | number }}</td>
                             <td class="text-right"> {{ ::usage.usage | number }}</td>
