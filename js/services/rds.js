@@ -103,6 +103,8 @@
           var deferred = $q.defer();
           org.getServiceOf(orgId, reportName).then(function(metaData) {
               deferred.resolve(util.keyArray(metaData, 'FileSystemName'));
+          }, function(reason) {
+            deferred.reject(reason);
           });
           return deferred.promise;
         },
@@ -113,6 +115,8 @@
           var deferred = $q.defer();
           org.getServiceOf(orgId, reportName).then(function(metaData) {
               deferred.resolve(metaData);
+          }, function(reason) {
+            deferred.reject(reason);
           });
           return deferred.promise;
         }
