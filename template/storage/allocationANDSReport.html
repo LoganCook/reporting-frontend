@@ -1,35 +1,10 @@
 <div class="container-fluid">
-    <h3 class="text-center">ANDS NodeConnect Report</h3>
+    <h3 class="text-center">Stored Collection Report</h3>
     <p ng-show="error" class="alert alert-danger">{{ error }}</p>
     <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
     <div>
-        <form>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="col-md-4">
-                        <p>Select Usage Month</p>
-                        <p class="input-group">
-                            <input type="text" class="form-control" uib-datepicker-popup="MMM/yyyy" ng-model="rangeEnd" is-open="rangeEndOpen"
-                                datepicker-options="datepickerOptions" ng-required="true" onkeydown="return false"/>
-                            <span class="input-group-btn">
-                                <button type="button" class="btn btn-default btn-search" ng-click="openRangeEnd()"><i class="glyphicon glyphicon-calendar"></i></button>
-                            </span>
-                        </p>
-                    </div>
-                    <div class="col-md-4">
-                        <p>&nbsp;</p>
-                        <div class="btn-group btn-group-justified" role="group">
-                            <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-default btn-search" ng-click="load()">View Report</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
         <div class="row">
             <div class="col-md-12">
-                <!--leader = manger but leader comes from ands_report, manager from normal rds order query with mapping-->
                 <table ersa-table="national-storage-usage.detailed">
                     <thead>
                         <tr>
@@ -45,9 +20,6 @@
                             <th>Grant ID</th>
                             <th>FOR</th>
                             <th>File System</th>
-                            <th class="text-right">GB Allocated</th>
-                            <th class="text-right">GB Used</th>
-                            <th class="text-right">Fee</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -56,17 +28,14 @@
                             <td>{{ usage.name }}</td>
                             <td>{{ usage.leader }}</td>
                             <td>{{ usage.leadertitle }}</td>
-                            <td blank-safe="usage.managerunit"></td>
+                            <td blank-safe="usage.leaderunit"></td>
                             <td>{{ usage.leaderemail }}</td>
                             <td>{{ usage.admin }}</td>
                             <td>{{ usage.adminemail }}</td>
                             <td>{{ usage.description }}</td>
                             <td>{{ usage.GrantID }}</td>
                             <td>{{ usage.fors }}</td>
-                            <td>{{ usage.filesystem }}</td>
-                            <td class="text-right">{{ usage.approved_size | number }}</td>
-                            <td class="text-right"> {{ usage.usage | number }}</td>
-                            <td class="text-right">${{ formatNumber(usage.cost) }}</td>
+                            <td>{{ usage.FileSystemName }}</td>
                         </tr>
                     </tbody>
                 </table>
