@@ -42,6 +42,10 @@ define(['lodash'], function(_) {
   }
 
   function assertEqual (fieldName, val1, val2) {
+    if (typeof val1[fieldName] === 'undefined' ||
+        typeof val2[fieldName] === 'undefined') {
+      return
+    }
     if (val1[fieldName] === val2[fieldName]) {
       return
     }

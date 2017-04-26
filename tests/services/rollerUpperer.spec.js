@@ -233,6 +233,16 @@ define(['../../js/services/rollerUpperer'], function(objectUnderTest) {
           // success
         }
       })
+
+      it('should always pass when the first value is undefined', function() {
+        objectUnderTest._test_only.assertEqual('field1', {/*don't defined field1*/}, {field1: 'foo'})
+        // expect nothing to be thrown
+      })
+
+      it('should always pass when the second value is undefined', function() {
+        objectUnderTest._test_only.assertEqual('field1', {field1: 'foo'}, {/*don't defined field1*/})
+        // expect nothing to be thrown
+      })
     })
 
     describe('.doSum', function() {
