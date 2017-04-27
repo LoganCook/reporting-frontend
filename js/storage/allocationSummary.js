@@ -53,7 +53,7 @@ define(
 
         var startTs = util.dayStart($scope.rangeStart);
         var endTs = util.dayEnd($scope.rangeEnd);
-        var orgName, subTotals = [], tmpSubTotals;
+        var orgName, subTotals = []
         if (!(AuthService.isAdmin())) {
           orgName = AuthService.getUserOrgName();
         }
@@ -63,50 +63,23 @@ define(
         latch.await(function() {
           spinner.stop()
         })
-        XFSUsageService.query(startTs, endTs).then(function() {
-          $scope.usages = $scope.usages.concat(XFSUsageService.getUsages(startTs, endTs, orgName));
-          subTotals = addServiceTotal(XFSUsageService.getTotals(startTs, endTs, orgName), subTotals);
-          tmpSubTotals = angular.copy(subTotals);
-          $scope.total = util.spliceOne(tmpSubTotals, 'organisation', 'Grand');
-          $scope.subTotals = tmpSubTotals;
-          latch.countDown()
-        }, function(reason) {
-          latch.countDown()
-          console.error("Failed request, ", reason);
-        });
-        HNASVVService.query(startTs, endTs).then(function() {
-          $scope.usages = $scope.usages.concat(HNASVVService.getUsages(startTs, endTs, orgName));
-          subTotals = addServiceTotal(HNASVVService.getTotals(startTs, endTs, orgName), subTotals);
-          tmpSubTotals = angular.copy(subTotals);
-          $scope.total = util.spliceOne(tmpSubTotals, 'organisation', 'Grand');
-          $scope.subTotals = tmpSubTotals;
-          latch.countDown()
-        }, function(reason) {
-          latch.countDown()
-          console.error("Failed request, ", reason);
-        });
-        HNASFSService.query(startTs, endTs).then(function() {
-          $scope.usages = $scope.usages.concat(HNASFSService.getUsages(startTs, endTs, orgName));
-          subTotals = addServiceTotal(HNASFSService.getTotals(startTs, endTs, orgName), subTotals);
-          tmpSubTotals = angular.copy(subTotals);
-          $scope.total = util.spliceOne(tmpSubTotals, 'organisation', 'Grand');
-          $scope.subTotals = tmpSubTotals;
-          latch.countDown()
-        }, function(reason) {
-          latch.countDown()
-          console.error("Failed request, ", reason);
-        });
-        HCPService.query(startTs, endTs).then(function() {
-          $scope.usages = $scope.usages.concat(HCPService.getUsages(startTs, endTs, orgName));
-          subTotals = addServiceTotal(HCPService.getTotals(startTs, endTs, orgName), subTotals);
-          tmpSubTotals = angular.copy(subTotals);
-          $scope.total = util.spliceOne(tmpSubTotals, 'organisation', 'Grand');
-          $scope.subTotals = tmpSubTotals;
-          latch.countDown()
-        }, function(reason) {
-          latch.countDown()
-          console.error("Failed request, ", reason);
-        });
+        function doCall (service) {
+          service.query(startTs, endTs).then(function() {
+            $scope.usages = $scope.usages.concat(service.getUsages(startTs, endTs, orgName))
+            subTotals = addServiceTotal(service.getTotals(startTs, endTs, orgName), subTotals)
+            var tmpSubTotals = angular.copy(subTotals)
+            $scope.total = util.spliceOne(tmpSubTotals, 'organisation', 'Grand')
+            $scope.subTotals = tmpSubTotals
+            latch.countDown()
+          }, function(reason) {
+            latch.countDown()
+            console.error("Failed request, ", reason)
+          })
+        }
+        doCall(XFSUsageService)
+        doCall(HNASVVService)
+        doCall(HNASFSService)
+        doCall(HCPService)
       };
     }
   ]);
