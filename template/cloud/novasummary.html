@@ -51,10 +51,10 @@
                     </thead>
                     <tbody>
                         <tr ng-repeat="instance in usages | orderBy: ['organisation', 'tenant']">
-                            <td>{{ ::instance.organisation }}</td>
+                            <td blank-safe="instance.organisation"></td>
                             <td>{{ ::instance.tenant }}</td>
                             <td>{{ ::instance.full_name }}</td>
-                            <td>{{ ::instance.email }}</td>
+                            <td blank-safe="instance.manageremail"></td>
                             <td>{{ ::instance.server }}</td>
                             <td class="text-right"> {{ ::instance.core }}</td>
                             <td class="text-right"> ${{ ::instance.cost }}</td>

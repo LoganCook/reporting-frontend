@@ -122,8 +122,8 @@ define(['app', '../util', 'services/contract', 'options' ,'../cloud/services'], 
       if ('biller' in entry) {
         entry['billing'] = entry['biller'];
       }
-      if ('unit' in entry) {
-        entry['organisation'] = entry['unit'];
+      if ('managerunit' in entry) {
+        entry['organisation'] = entry['managerunit'];
       }
       if ('unit' in entry) {
         entry['tenant'] = entry['name'];
