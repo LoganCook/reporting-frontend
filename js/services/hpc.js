@@ -27,7 +27,7 @@ define(['app', '../util', '../options', 'lodash', './hpc-rollup'], function(app,
     });
   }
 
-  app.factory('HPCService', function (queryResource, $q, org) {
+  app.factory('HPCService', function (queryResource, $q, org, AuthService) {
     var BASE_URL = sessionStorage['hpc']
     var nq = queryResource.build(BASE_URL)
     var USAGE_DEFAULT = {
@@ -105,7 +105,14 @@ define(['app', '../util', '../options', 'lodash', './hpc-rollup'], function(app,
             totals[searchHash] = {Grand: angular.copy(USAGE_DEFAULT)};
             var accounts = getAccounts();
             result.forEach(function(entry) {
-              angular.extend(entry, accounts[entry['owner']]);
+              var username = entry['owner']
+              var accountInfoForUser = accounts[username]
+              if (!accountInfoForUser) {
+                console.warn('Data problem: could not find account information for user "' + username +
+                  '". Either the source system needs updating to add information for this user or ' +
+                  'the user is assigned to another organisation.')
+              }
+              angular.extend(entry, accountInfoForUser);
               entry['hours'] = entry['cpu_seconds'] / 3600;
               subtotal(entry, totals[searchHash]);
             });
@@ -120,11 +127,13 @@ define(['app', '../util', '../options', 'lodash', './hpc-rollup'], function(app,
             var usageArray = util.rearrange(totals[searchHash]);
             calculateCost(usageArray, price, 'cpu_seconds');
             totals[searchHash] = util.inflate(usageArray, 'billing', 'organisation');
-            try {
-              userRollupCache[searchHash] = rollup.createUserRollup(summaries[searchHash])
-            } catch (e) {
-              deferred.reject(false)
-              throw e
+            if (AuthService.isAdmin()) {
+              try {
+                userRollupCache[searchHash] = rollup.createUserRollup(summaries[searchHash])
+              } catch (e) {
+                deferred.reject(false)
+                throw e
+              }
             }
             deferred.resolve(true);
           }, function(reason) {
