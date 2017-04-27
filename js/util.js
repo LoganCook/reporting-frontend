@@ -169,6 +169,9 @@ define(["filesize", "mathjs", "moment", "numeral", "lodash"], function (filesize
           } else {
             nested[level1] = amap;
           }
+        } else {
+          console.warn('Data problem: just skipped a row because it did ' +
+            'not have a "' + k1 + '" field')
         }
       });
       return nested;

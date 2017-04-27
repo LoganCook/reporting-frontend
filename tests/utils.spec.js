@@ -43,19 +43,61 @@ define(['util2', 'util'], function (util, utilOld) {
         ];
     });
 
-    it('deflate should get an array from a map', function () {
-      var k1 = 'billing',
-        k2 = 'organisation';
-      var newArray = utilOld.deflate(aMap, k1, k2);
-      expect(newArray).toEqual(fArray);
-    });
+    describe('deflate', function () {
+      it('should get an array from a map', function () {
+        var k1 = 'billing',
+          k2 = 'organisation';
+        var newArray = utilOld.deflate(aMap, k1, k2);
+        expect(newArray).toEqual(fArray);
+      });
+    })
 
-    it('inflate should get a map from an array', function () {
-      var k1 = 'billing',
-        k2 = 'organisation';
-      var newMap = utilOld.inflate(fArray, k1, k2);
-      expect(newMap).toEqual(aMap);
-    });
+    describe('inflate', function () {
+      it('should get a map from an array', function () {
+        var k1 = 'billing',
+          k2 = 'organisation';
+        var newMap = utilOld.inflate(fArray, k1, k2);
+        expect(newMap).toEqual(aMap);
+      });
+
+      it('should drop rows that do not have the k1 value', function () {
+        var rows = [
+          {type: 'warm', colour: 'yellow'},
+          {/*no 'type'*/ colour: 'red'},
+          {type: 'cold', colour: 'blue'}
+        ]
+        var k1 = 'type'
+        var result = utilOld.inflate(rows, k1)
+        expect(result).toEqual({
+          warm: {colour: 'yellow'},
+          cold: {colour: 'blue'}
+        })
+      })
+
+      // We probably don't want this but the test confirms that it happens
+      it('should do some weird steamrolling behaviour when the k2 value is not consistently populated', function () {
+        var rows = [
+          {type: 'warm', luminosity: 'high', colour: 'yellow'},
+          {type: 'warm', /* no luminosity*/ colour: 'red'},
+          {type: 'cold', luminosity: 'low', colour: 'blue'}
+        ]
+        var k1 = 'type'
+        var k2 = 'luminosity'
+        var result = utilOld.inflate(rows, k1, k2)
+        expect(result).toEqual({
+          warm: {
+            high: {
+              colour: 'red' // this value streamrolls the yellow because the 'level2' var is outside the loop
+            }
+          },
+          cold: {
+            low: {
+              colour: 'blue'
+            }
+          }
+        })
+      })
+    })
 
     it('spliceOne should return an object only and change the source array if found', function() {
       var target = {
