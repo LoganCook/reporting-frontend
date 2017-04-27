@@ -120,7 +120,12 @@ define(['app', '../util', '../options', 'lodash', './hpc-rollup'], function(app,
             var usageArray = util.rearrange(totals[searchHash]);
             calculateCost(usageArray, price, 'cpu_seconds');
             totals[searchHash] = util.inflate(usageArray, 'billing', 'organisation');
-            userRollupCache[searchHash] = rollup.createUserRollup(summaries[searchHash])
+            try {
+              userRollupCache[searchHash] = rollup.createUserRollup(summaries[searchHash])
+            } catch (e) {
+              deferred.reject(false)
+              throw e
+            }
             deferred.resolve(true);
           }, function(reason) {
             console.log(reason);

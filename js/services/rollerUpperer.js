@@ -31,12 +31,16 @@ define(['lodash'], function(_) {
   function createKey (fieldNames, obj) {
     var result = ''
     fieldNames.forEach(function (curr) {
+      if (!obj[curr]) {
+        throw new Error('Data problem: could not find required field "' + curr + '"'
+          + ' on object "' + JSON.stringify(obj) + '" in order to create a key')
+      }
       result += obj[curr]
     })
     if (result === '') {
-      throw 'No join key was produced using the fields "'
+      throw new Error('No join key was produced using the fields "'
         + JSON.stringify(fieldNames) + '" and the object "'
-        + JSON.stringify(obj) + '". Refusing to continue.'
+        + JSON.stringify(obj) + '". Refusing to continue.')
     }
     return result
   }
@@ -49,8 +53,8 @@ define(['lodash'], function(_) {
     if (val1[fieldName] === val2[fieldName]) {
       return
     }
-    throw 'Data problem: expected field "' + fieldName + '" values to be equal but were "'
-        + val1[fieldName] + '" and "' + val2[fieldName] + '"'
+    throw new Error('Data problem: expected field "' + fieldName + '" values to be equal but were "'
+        + val1[fieldName] + '" and "' + val2[fieldName] + '"')
   }
 
   function doSum (val1, val2) {
@@ -102,7 +106,8 @@ define(['lodash'], function(_) {
       },
       _test_only: {
         assertEqual: assertEqual,
-        doSum: doSum
+        doSum: doSum,
+        createKey: createKey
       }
   }
 })

@@ -46,7 +46,8 @@ define(
           }
           spinner.stop()
         }, function (reason) {
-          throw 'Problem getting HPC information: ' + reason
+          spinner.stop()
+          throw new Error('Problem getting HPC information: ' + reason)
         });
       };
     }

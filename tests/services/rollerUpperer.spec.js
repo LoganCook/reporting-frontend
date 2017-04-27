@@ -261,5 +261,37 @@ define(['../../js/services/rollerUpperer'], function(objectUnderTest) {
         expect(result).toBe(11)
       })
     })
+
+    describe('.createKey', function() {
+      it('should create a key when all fields are found', function() {
+        var result = objectUnderTest._test_only.createKey(
+          ['f1', 'f2'],
+          {f1: 'foo', f2: 'bar'})
+        expect(result).toBe('foobar')
+      })
+
+      it('should throw an error when no key is generated', function() {
+        try {
+          objectUnderTest._test_only.createKey(
+            [],
+            {f1: 'foo', f2: 'bar'})
+          fail('error should have been thrown')
+        } catch (e) {
+          // success
+        }
+      })
+
+      it('should throw an error when any of the fields are not found', function() {
+        try {
+          var fieldThatDoesntExist = 'f2'
+          objectUnderTest._test_only.createKey(
+            ['f1', fieldThatDoesntExist],
+            {f1: 'foo'})
+          fail('error should have been thrown')
+        } catch (e) {
+          // success
+        }
+      })
+    })
   })
 })
