@@ -128,12 +128,12 @@ define(['app', 'properties', 'services/rds'], function (app, props) {
 
   }
 
-  app.factory('Storage', function(queryResource, AuthService, org, RDService) {
+  app.factory('Storage', ['queryResource', 'AuthService', 'org', 'RDService', function(queryResource, AuthService, org, RDService) {
     return function constructor(endpoint, filesystemFieldName) {
       if (typeof filesystemFieldName === 'undefined') {
         throw 'Config problem: no filesystem field name is defined'
       }
       return new Storage(endpoint, filesystemFieldName, queryResource, AuthService, org, RDService);
     };
-  });
+  }]);
 });
