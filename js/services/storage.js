@@ -101,7 +101,7 @@ define(['app', 'properties', 'services/rds'], function (app, props) {
      */
     this.subtotal = function(entry, saveTo) {
       var level1 = 'billing' in entry ? entry['billing'] : '?',
-        level2 = 'organisation' in entry ? entry['organisation'] : '?';
+        level2 = 'managerunit' in entry ? entry['managerunit'] : '?';
       if (!(level1 in saveTo)) {
         saveTo[level1] = {};
         saveTo[level1]['Grand'] = angular.copy(USAGE_DEFAULT);

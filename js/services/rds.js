@@ -4,13 +4,21 @@
     function tempMap(data) {
       // Hope this is a tempory solution
       data.forEach(function(entry) {
-        entry['billing'] = entry['biller'];
-        entry['organisation'] = entry['unit'];
-        entry['full_name'] = entry['manager'];
-        entry['contractor'] = entry['manager'];
-        entry['allocation_num'] = entry['orderId'];
-        entry['approved_size'] = entry['allocated'];
+        mapField(entry, 'billing', 'biller')
+        mapField(entry, 'organisation', 'managerunit')
+        mapField(entry, 'full_name', 'manager')
+        mapField(entry, 'contractor', 'manager')
+        mapField(entry, 'allocation_num', 'orderID')
+        mapField(entry, 'approved_size', 'allocated')
       });
+    }
+
+    function mapField (object, fieldNameTo, fieldNameFrom) {
+      if (!object[fieldNameFrom]) {
+        console.warn('Data problem: About to set field "' + fieldNameTo + '" to undefined because field "' + fieldNameFrom + '" is not present')
+      }
+      // TODO could check if we're overwriting a field with a different value
+      object[fieldNameTo] = object[fieldNameFrom]
     }
 
     // RDS related
