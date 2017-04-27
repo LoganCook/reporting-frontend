@@ -1,6 +1,17 @@
 define(['lodash'], function(_) {
   'use strict'
 
+  /**
+   * Iterates over the supplied rows and rolls up (sums) the specified fields. The join
+   * is done by building a (composite)key using the supplied field name(s) and as we process
+   * each row, we check that all the non-key, non-summed and non-ignored fields are equal
+   * so we don't lose any information.
+   * @param {object[]} detailRows rows to perform rollup on
+   * @param {string[]} fieldsToSum names of fields that will be rolled(summed) up
+   * @param {string[]} fieldsToIgnore names of fields that we won't check for equality
+   * @param {string[]} joinFields names of fields that we'll create a (composite)key to perform the join
+   * @returns {object[]} rolled up rows. One row per key with the fieldsToSum as the totals
+   */
   function createUserRollup (detailRows, fieldsToSum, fieldsToIgnore, joinFields) {
     var groupedAndSummed = _.reduce(detailRows, function (res, currRow) {
       var joinFieldValue = createKey(joinFields, currRow)
@@ -69,7 +80,7 @@ define(['lodash'], function(_) {
 
     self.fieldsToSum = function (fields) {
       if (!_.isArray(fields)) {
-        throw '"fields" parameter must be an array'
+        throw new Error('"fields" parameter must be an array')
       }
       _fieldsToSum = fields
       return self
@@ -77,7 +88,7 @@ define(['lodash'], function(_) {
 
     self.fieldsToIgnore = function (fields) {
       if (!_.isArray(fields)) {
-        throw '"fields" parameter must be an array'
+        throw new Error('"fields" parameter must be an array')
       }
       _fieldsToIgnore = fields
       return self
@@ -85,7 +96,7 @@ define(['lodash'], function(_) {
 
     self.joinFields = function (fields) {
       if (!_.isArray(fields)) {
-        throw '"fields" parameter must be an array'
+        throw new Error('"fields" parameter must be an array')
       }
       _joinFields = fields
       return self
