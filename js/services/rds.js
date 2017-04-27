@@ -26,7 +26,8 @@
         rdsReportUri = requestUri + '/api/rdsreport/',
         rdses = null,
         reportMeta = null,
-        getAllPromise = null;
+        getAllPromise = null,
+        getServiceOfPromise = null;
 
       function doGetAll() {
         if (getAllPromise) {
@@ -58,6 +59,27 @@
         return getAllPromise
       }
 
+      function doGetServiceOf(orgId) {
+        if (getServiceOfPromise) {
+          // ensures when multiple calls are triggered at once that they all wait for one HTTP call to resolve
+          return getServiceOfPromise
+        }
+        var deferred = $q.defer();
+        org.getServiceOf(orgId, 'rds').then(function(rdsData) {
+          org.getServiceOf(orgId, 'rdsbackup').then(function(rdsBackupdata) {
+            var combined = rdsData.concat(rdsBackupdata);
+            tempMap(combined);
+            deferred.resolve(util.keyArray(combined, 'FileSystemName'));
+          }, function(reason) {
+            deferred.reject(reason)
+          });
+        }, function(reason) {
+          deferred.reject(reason)
+        })
+        getServiceOfPromise = deferred.promise
+        return getServiceOfPromise
+      }
+
       return {
         getAll: function () {
           var deferred = $q.defer();
@@ -84,14 +106,8 @@
         },
         getServiceOf: function (orgId) {
           var deferred = $q.defer();
-          org.getServiceOf(orgId, 'rds').then(function(rdsData) {
-            org.getServiceOf(orgId, 'rdsbackup').then(function(rdsBackupdata) {
-              var combined = rdsData.concat(rdsBackupdata);
-              tempMap(combined);
-              deferred.resolve(util.keyArray(combined, 'FileSystemName'));
-            }, function(reason) {
-              deferred.reject(reason)
-            });
+          doGetServiceOf(orgId).then(function (response) {
+            deferred.resolve(response)
           }, function(reason) {
             deferred.reject(reason)
           });
