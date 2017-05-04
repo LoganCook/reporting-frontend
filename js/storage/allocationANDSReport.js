@@ -6,6 +6,26 @@ define(
         $scope.alerts = [];
         $scope.usages = [];
 
+        function mergeRecords(dataArray, key, mergeField) {
+          var dict = {},
+            result = [];
+          dataArray.forEach(function (item) {
+            if (key in item) {
+              if (item[key] in dict) {
+                if (mergeField in item) {
+                  dict[item[key]][mergeField] += '; ' + item[mergeField];
+                }
+              } else {
+                dict[item[key]] = item;
+              }
+            }
+          });
+          Object.keys(dict).forEach(function (item) {
+            result.push(dict[item]);
+          });
+          return result;
+        }
+
         var numberOfServiceCalls = 2;
         spinner.start();
         var orgName;
@@ -19,7 +39,7 @@ define(
 
         RDService.getServiceMetaArrayOf(org.getOrganisationId(orgName), 'ands_report')
           .then(function (data) {
-            $scope.usages = data;
+            $scope.usages = mergeRecords(data, 'orderID', 'FileSystemName');
             latch.countDown();
           }, function(reason) {
           latch.countDown();

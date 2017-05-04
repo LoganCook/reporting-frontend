@@ -53,12 +53,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="usage in usages | orderBy: 'allocation_num'">
-                            <td>{{ usage.allocation_num }}</td>
+                        <tr ng-repeat="usage in usages | orderBy: 'orderID'">
+                            <td>{{ usage.orderID }}</td>
                             <td blank-safe="usage.organisation"></td>
-                            <td>{{ ::usage.contractor }}</td>
-                            <td>{{ ::usage.email }}</td>
-                            <td>{{ ::usage.filesystem }}</td>
+                            <td>{{ ::usage.manager }}</td>
+                            <td>{{ ::usage.manageremail }}</td>
+                            <td>{{ ::usage.FileSystemName }} ({{ usage.source }})</td>
                             <td class="text-right">{{ ::usage.approved_size | number }}</td>
                             <td class="text-right"> {{ ::usage.usage | number }}</td>
                             <td class="text-right"> {{ ::usage.blocks }}</td>
