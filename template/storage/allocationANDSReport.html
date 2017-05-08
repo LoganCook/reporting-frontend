@@ -1,5 +1,5 @@
 <div class="container-fluid">
-    <h3 class="text-center">Stored Collection Report</h3>
+    <h3 class="text-center">Stored Collections Report</h3>
     <p ng-show="error" class="alert alert-danger">{{ error }}</p>
     <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
     <div>
