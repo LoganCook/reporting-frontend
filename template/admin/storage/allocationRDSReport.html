@@ -37,7 +37,6 @@
                             <th>FOR</th>
                             <th class="text-right">GB Allocated</th>
                             <th class="text-right">GB Used</th>
-                            <th class="text-right">Fee</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -47,7 +46,6 @@
                             <td>{{ usage.fors }}</td>
                             <td class="text-right">{{ usage.approved_size | number }}</td>
                             <td class="text-right"> {{ usage.usage | number }}</td>
-                            <td class="text-right">${{ formatNumber(usage.cost) }}</td>
                         </tr>
                     </tbody>
                 </table>
