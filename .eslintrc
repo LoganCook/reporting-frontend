@@ -7,7 +7,10 @@
   "globals": {
     "angular": true,
     "module": true,
-    "inject": true,
+    "inject": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 6
   },
   "rules": {
     "no-undefined": 2,
@@ -23,6 +26,6 @@
     "space-unary-ops": 1,
     "keyword-spacing": 1,
     "space-before-blocks": 1,
-    "semi": 1,
+    "semi": 1
   }
 }
