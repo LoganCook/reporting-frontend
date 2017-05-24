@@ -52,11 +52,11 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="entry in usages | orderBy: ['organisation', 'owner']">
-                                <td blank-safe="entry.organisation"></td>
+                            <tr ng-repeat="entry in usages | orderBy: ['managerunit', 'owner']">
+                                <td blank-safe="entry.managerunit"></td>
                                 <td>{{ ::entry.owner }}</td>
-                                <td>{{ ::entry.fullname }}</td>
-                                <td>{{ ::entry.email }}</td>
+                                <td>{{ ::entry.manager }}</td>
+                                <td>{{ ::entry.manageremail }}</td>
                                 <td class="text-right">{{ ::entry.usage | number }}</td>
                                 <td class="text-right">{{ ::entry.blocks }}</td>
                                 <td class="text-right">${{ ::formatNumber(entry.cost) }}</td>

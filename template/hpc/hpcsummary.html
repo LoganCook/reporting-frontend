@@ -52,11 +52,11 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="sum in jobCounts | orderBy: ['organisation', 'fullname']">
-              <td blank-safe="sum.organisation"></td>
+            <tr ng-repeat="sum in jobCounts | orderBy: ['managerunit', 'owner']">
+              <td blank-safe="sum.managerunit"></td>
               <td>{{ ::sum.owner }}</td>
-              <td>{{ ::sum.fullname }}</td>
-              <td>{{ ::sum.email }}</td>
+              <td>{{ ::sum.manager }}</td>
+              <td>{{ ::sum.manageremail }}</td>
               <td>{{ ::sum.queue }}</td>
               <td class="text-right">{{ ::sum.job_count }}</td>
               <td class="text-right">{{ ::formatNumber(sum.hours) }}</td>

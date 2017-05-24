@@ -59,7 +59,7 @@
             //   Below line works?
             // deferred.resolve(organisations);
           }, function(reason) {
-            deferred.reject()
+            deferred.reject(reason);
           });
         }
         return deferred.promise;
@@ -105,7 +105,7 @@
             services[orgId][name] = response.data;
             deferred.resolve(services[orgId][name]);
           }, function(reason) {
-            deferred.reject()
+            deferred.reject(reason);
           });
         }
         return deferred.promise;
@@ -132,7 +132,7 @@
             anzsrcFORs[orgId][name] = response.data;
             deferred.resolve(anzsrcFORs[orgId][name]);
           }, function(reason) {
-            deferred.reject()
+            deferred.reject(reason);
           });
         }
         return deferred.promise;
@@ -147,42 +147,6 @@
         }
       }
 
-      // TODO: to be retired
-      function _getRolesOf(orgId) {
-        var deferred = $q.defer();
-        if (orgId in rolesOf) {
-          deferred.resolve(rolesOf[orgId]);
-        } else {
-          var url = requestUri + '/api/organisation/' + orgId + '/get_all_roles/';
-          $http.get(url).then(function (response) {
-            rolesOf[orgId] = _getSimpleRoles(response.data, organisations[orgId]);
-            deferred.resolve(rolesOf[orgId]);
-          }, function(reason) {
-            deferred.reject()
-          });
-        }
-        return deferred.promise;
-      }
-
-      // TODO: to be retired
-      /**
-       * Extract some fields from Bman's role model
-       *
-       * @param {Array} roles: role id as key and the rest of fields in object
-       */
-      function _getSimpleRoles(roleModels, billing) {
-        return roleModels.map(function (roleModel) {
-          var simpleRole = {};
-          simpleRole[roleModel['id']] = roleModel;
-          simpleRole[roleModel['id']]['billing'] = billing;
-          if (simpleRole[roleModel['id']]['billing'] == simpleRole[roleModel['id']]['organisation']) {
-            simpleRole[roleModel['id']]['organisation'] = theConstants.blankValue;
-          }
-          return simpleRole;
-        });
-      }
-
-
       return {
         getOrganisations: function (loadUsers) {
           var deferred = $q.defer();
@@ -190,25 +154,25 @@
             deferred.resolve(organisations);
           } else {
             $http.get(orgUri).then(function (response) {
-              var numberOfServiceCalls = response.data.length
-              var latch = new countdownLatch(numberOfServiceCalls)
+              var numberOfServiceCalls = response.data.length;
+              var latch = new countdownLatch(numberOfServiceCalls);
               latch.await(function() {
-                deferred.resolve(organisations)
-              })
+                deferred.resolve(organisations);
+              });
               for (var i = 0; i < response.data.length; i++) {
                 organisations[response.data[i]['id']] = response.data[i]['name'];
                 organisationByNames[response.data[i]['name']] = response.data[i]['id'];
                 if (loadUsers) {
                   _getUsersOf(response.data[i]['id']).finally(function () {
-                    latch.countDown()
-                  })
+                    latch.countDown();
+                  });
                 }
               }
               if (!loadUsers) {
-                deferred.resolve(organisations)
+                deferred.resolve(organisations);
               }
             }, function(reason) {
-              deferred.reject(reason)
+              deferred.reject(reason);
             });
           }
           return deferred.promise;
@@ -219,16 +183,13 @@
         getUsersOf: function (orgId) {
           // will load all user accounts (AccessService) and Roles
           return _getUsersOf(orgId);
-          // return _getUsersOf(orgId).then(function () {
-          //   return _getRolesOf(orgId);
-          // });
         },
         getUsersOfSync: function (orgName) {
           var orgId = organisationByNames[orgName];
           if (orgId in users) {
             return users[orgId];
           } else {
-            throw "You have to modify code to ensure users are availabe when called.";
+            throw new Error("You have to modify code to ensure users are availabe when called.");
           }
         },
         getAllAccounts: function () {
@@ -259,7 +220,7 @@
               rdses = util.keyArray(response.data, 'filesystem');
               deferred.resolve(rdses);
             }, function(reason) {
-              deferred.reject(reason)
+              deferred.reject(reason);
             });
           }
           return deferred.promise;
@@ -273,7 +234,7 @@
               roles = response.data;
               deferred.resolve(roles);
             }, function(reason) {
-              deferred.reject(reason)
+              deferred.reject(reason);
             });
           }
           return deferred.promise;
@@ -287,7 +248,7 @@
               roleDict[roleId] = response.data;
               deferred.resolve(roleDict[roleId]);
             }, function(reason) {
-              deferred.reject(reason)
+              deferred.reject(reason);
             });
           }
           return deferred.promise;
@@ -303,7 +264,7 @@
           if (orgId in rolesOf) {
             return rolesOf[orgId];
           } else {
-            throw "You have to modify code to ensure users are availabe when called.";
+            throw new Error("You have to modify code to ensure users are availabe when called.");
           }
         },
         getAllRoles: function () {

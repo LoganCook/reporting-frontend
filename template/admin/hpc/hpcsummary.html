@@ -66,12 +66,12 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="sum in jobCounts | orderBy: ['billing','organisation','owner']">
-              <td blank-safe="sum.billing"></td>
-              <td blank-safe="sum.organisation"></td>
+            <tr ng-repeat="sum in jobCounts | orderBy: ['biller','managerunit','owner']">
+              <td blank-safe="sum.biller"></td>
+              <td blank-safe="sum.managerunit"></td>
               <td>{{ ::sum.owner }}</td>
-              <td blank-safe="sum.fullname"></td>
-              <td blank-safe="sum.email"></td>
+              <td blank-safe="sum.manager"></td>
+              <td blank-safe="sum.manageremail"></td>
               <td>{{ ::sum.queue }}</td>
               <td>{{ ::sum.job_count }}</td>
               <td>{{ ::formatNumber(sum.hours) }}</td>
@@ -107,12 +107,12 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="sum in userRollup | orderBy: ['billing','organisation','owner']">
-              <td blank-safe="sum.billing"></td>
-              <td blank-safe="sum.organisation"></td>
+            <tr ng-repeat="sum in userRollup | orderBy: ['biller','managerunit','owner']">
+              <td blank-safe="sum.biller"></td>
+              <td blank-safe="sum.managerunit"></td>
               <td>{{ ::sum.owner }}</td>
-              <td blank-safe="sum.fullname"></td>
-              <td blank-safe="sum.email"></td>
+              <td blank-safe="sum.manager"></td>
+              <td blank-safe="sum.manageremail"></td>
               <td>{{ ::sum.job_count }}</td>
               <td>{{ ::formatNumber(sum.hours) }}</td>
               <td>${{ ::formatNumber(sum.cost) }}</td>

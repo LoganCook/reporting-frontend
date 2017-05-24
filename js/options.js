@@ -19,8 +19,6 @@ define({
     'flinders.edu.au': 'Flinders University'
   },
   hpc: {
-    payees: ['University of South Australia', 'University of Adelaide', 'Flinders University'],
-    sharedAmount: 60000,
     IncompleteMonth: 'The cost of current month is not accurate.'
   }
 });

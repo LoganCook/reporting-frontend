@@ -1,48 +1,24 @@
-define(['app', '../util', '../options', 'lodash', './hpc-rollup'], function(app, util, options, _, rollup) {
+define(['app', '../util', 'services/contract', '../options', 'lodash', './hpc-rollup'], function(app, util, contract, options, _, rollup) {
   'use strict';
 
   /**
    * All High performance computing (HPC) related data services.
    */
-  var PAYEES = options['hpc']['payees'], SHARED_AMOUNT = options['hpc']['sharedAmount'];
-
-  /* Split sharedAmount amount payees
-   * @param item String key of the value used for calculation
-   */
-  function calculateUnitPrice(totalUsages, sharedAmount, item) {
-    var sum = 0;
-    PAYEES.forEach(function(payee) {
-      if (payee in totalUsages) {
-        sum += totalUsages[payee]['Grand'][item];
-      }
-    });
-    return sharedAmount / sum;
-  }
-
-  function calculateCost(usages, price, item) {
-    usages.forEach(function (usage) {
-      if (PAYEES.indexOf(usage['billing']) > -1) {
-        usage['cost'] = usage[item] * price;
-      }
-    });
-  }
-
-  app.factory('HPCService', function (queryResource, $q, org, AuthService) {
-    var BASE_URL = sessionStorage['hpc']
-    var nq = queryResource.build(BASE_URL)
+  app.factory('HPCService', function (queryResource, $q, $http, org, AuthService) {
+    var contractService = contract($http, $q, org, 'ersaaccount', 'managerusername', AuthService);
+    var BASE_URL = sessionStorage['hpc'];
+    var nq = queryResource.build(BASE_URL);
     var USAGE_DEFAULT = {
-      cores: 0,
+      "cores": 0,
       "cpu_seconds": 0,
       "hours": 0,
-      "job_count": 0
-    }
+      "job_count": 0,
+      "cost": 0
+    };
 
     // summaries, totals and userRollupCache have searchHash as the first key
     // summaries: usage data with extended user information
-    var summaries = {}
-    var totals = {}
-    var grandTotal = {}
-    var userRollupCache = {}
+    var summaries = {}, totals = {}, grandTotal = {}, userRollupCache = {};
 
     // get a summary of HPC jobs between startTs and endTs grouped by owner and queue
     // return a promise
@@ -56,14 +32,6 @@ define(['app', '../util', '../options', 'lodash', './hpc-rollup'], function(app,
       return nq.query(args).$promise;
     }
 
-    // FIXME: here we have a security risk: even institutional user need to download all user accounts
-    PAYEES.forEach(function(payee) {
-      org.getUsersOf(org.getOrganisationId(payee));
-    });
-    function getAccounts() {
-      return org.getAllAccounts();
-    }
-
     // {
     //     "cores": 15,
     //     "cpu_seconds": 301008,
@@ -72,8 +40,8 @@ define(['app', '../util', '../options', 'lodash', './hpc-rollup'], function(app,
     //     "queue": "tizard"
     // },
     function subtotal(entry, saveTo) {
-      var level1 = 'billing' in entry ? entry['billing'] : '?',
-        level2 = 'organisation' in entry ? entry['organisation'] : '?';
+      var level1 = 'biller' in entry ? entry['biller'] : '?',
+        level2 = 'managerunit' in entry ? entry['managerunit'] : '?';
       if (!(level1 in saveTo)) {
         saveTo[level1] = {};
         saveTo[level1]['Grand'] = angular.copy(USAGE_DEFAULT);
@@ -86,9 +54,9 @@ define(['app', '../util', '../options', 'lodash', './hpc-rollup'], function(app,
       add(entry, saveTo['Grand']);
     }
 
-    // FIXME: can it move to util to be shared?
+    // TODO: can it be moved to util to be shared?
     function add(source, target) {
-      var fields = ['cores', 'cpu_seconds', 'job_count', 'hours'], l = fields.length, i;
+      var fields = ['cores', 'cpu_seconds', 'job_count', 'hours', 'cost'], l = fields.length, i;
       for (i = 0; i < l; i++) {
         target[fields[i]] += source[fields[i]];
       }
@@ -103,39 +71,36 @@ define(['app', '../util', '../options', 'lodash', './hpc-rollup'], function(app,
         } else {
           summary(startTs, endTs).then(function(result) {
             totals[searchHash] = {Grand: angular.copy(USAGE_DEFAULT)};
-            var accounts = getAccounts();
-            result.forEach(function(entry) {
-              var username = entry['owner']
-              var accountInfoForUser = accounts[username]
-              if (!accountInfoForUser) {
-                console.warn('Data problem: could not find account information for user "' + username +
-                  '". Either the source system needs updating to add information for this user or ' +
-                  'the user is assigned to another organisation.')
+            contractService.getContracts().then(function(contracts) {
+              result.forEach(function(entry) {
+                var username = entry['owner'];
+                if (username in contracts) {
+                  const accountInfoForUser = contracts[username];
+                  angular.extend(entry, accountInfoForUser);
+                  entry['hours'] = entry['cpu_seconds'] / 3600;
+                  entry['cost'] = entry['hours'] * entry['unitPrice'];
+                  subtotal(entry, totals[searchHash]);
+                }
+              });
+              summaries[searchHash] = result;
+
+              grandTotal[searchHash] = totals[searchHash]['Grand'];
+              delete totals[searchHash]['Grand'];
+
+              if (AuthService.isAdmin()) {
+                try {
+                  userRollupCache[searchHash] = rollup.createUserRollup(summaries[searchHash]);
+                } catch (e) {
+                  console.error(e);
+                  deferred.reject(false);
+                  throw e;
+                }
               }
-              angular.extend(entry, accountInfoForUser);
-              entry['hours'] = entry['cpu_seconds'] / 3600;
-              subtotal(entry, totals[searchHash]);
+              deferred.resolve(true);
+            }, function(reason) {
+              console.error("Retrieve contracts failed, ", reason);
+              deferred.reject(false);
             });
-            var price = calculateUnitPrice(totals[searchHash], SHARED_AMOUNT, 'cpu_seconds');
-            summaries[searchHash] = result;
-            calculateCost(summaries[searchHash], price, 'cpu_seconds');
-
-            grandTotal[searchHash] = totals[searchHash]['Grand'];
-            grandTotal[searchHash]['cost'] = SHARED_AMOUNT;
-            delete totals[searchHash]['Grand'];
-
-            var usageArray = util.rearrange(totals[searchHash]);
-            calculateCost(usageArray, price, 'cpu_seconds');
-            totals[searchHash] = util.inflate(usageArray, 'billing', 'organisation');
-            if (AuthService.isAdmin()) {
-              try {
-                userRollupCache[searchHash] = rollup.createUserRollup(summaries[searchHash])
-              } catch (e) {
-                deferred.reject(false)
-                throw e
-              }
-            }
-            deferred.resolve(true);
           }, function(reason) {
             console.log(reason);
             deferred.reject(false);
@@ -148,7 +113,7 @@ define(['app', '../util', '../options', 'lodash', './hpc-rollup'], function(app,
         if (orgName) {
           var result = [];
           for (var i = 0; i < tmpSummaries.length; i++) {
-            if (tmpSummaries[i]['billing'] == orgName) {
+            if (tmpSummaries[i]['biller'] == orgName) {
               result.push(tmpSummaries[i]);
             }
           }
@@ -158,6 +123,7 @@ define(['app', '../util', '../options', 'lodash', './hpc-rollup'], function(app,
         }
       },
       getSubTotals: function (startTs, endTs, orgName) {
+        // FIXME: util.rearrange - hard coded to billing and organisation
         return util.rearrange(util.getCached(totals, [startTs, endTs], orgName));
       },
       getGrandTotal: function (startTs, endTs) {

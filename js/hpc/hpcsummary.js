@@ -4,22 +4,22 @@ define(
 
   app.controller("HPCSummaryController", ["$scope", "$filter", "theConstants", "org", "spinner", "AuthService","HPCService",
     function ($scope, $filter, theConstants, $timeoutorg, spinner, AuthService, HPCService) {
-      var orgName;
+      var orgName = null;
       if (!(AuthService.isAdmin())) {
         orgName = AuthService.getUserOrgName();
       }
       $scope.values = _.values;
       $scope.formatNumber = utilOld.formatNumber;
       $scope.viewDetails = false
-      $scope.datepickerOptions = {minMode: 'month'}
+      $scope.datepickerOptions = {minMode: 'month'};
       $scope.rangeStart = new Date();
-      $scope.rangeEnd = new Date()
+      $scope.rangeEnd = new Date();
       $scope.rangeEndOpen = false;
       $scope.openRangeEnd = function () {
         $scope.rangeEndOpen = true;
       };
-      $scope.orderBySubTotalLast = theConstants.orderBySubTotalLast
-      $scope.isSubTotalRow = theConstants.isSubTotalRow
+      $scope.orderBySubTotalLast = theConstants.orderBySubTotalLast;
+      $scope.isSubTotalRow = theConstants.isSubTotalRow;
 
       $scope.load = function () {
         $scope.alerts = [];
@@ -32,22 +32,22 @@ define(
 
         var startTs = utilOld.dayStart($scope.rangeStart);
         var endTs = utilOld.dayEnd($scope.rangeEnd);
-        spinner.start()
+        spinner.start();
         HPCService.query(startTs, endTs).then(function() {
           $scope.jobCounts = HPCService.getJobCounts(startTs, endTs, orgName);
-          $scope.userRollup = HPCService.getUserRollup(startTs, endTs)
+          $scope.userRollup = HPCService.getUserRollup(startTs, endTs);
           if (orgName) {
             var subTotals = angular.copy(HPCService.getSubTotals(startTs, endTs, orgName));
             $scope.grandTotal = utilOld.spliceOne(subTotals, 'organisation', 'Grand');
             $scope.subTotals = subTotals;
           } else {
-            $scope.subTotals = HPCService.getSubTotals(startTs, endTs)
-            $scope.grandTotal = HPCService.getGrandTotal(startTs, endTs)
+            $scope.subTotals = HPCService.getSubTotals(startTs, endTs);
+            $scope.grandTotal = HPCService.getGrandTotal(startTs, endTs);
           }
-          spinner.stop()
+          spinner.stop();
         }, function (reason) {
-          spinner.stop()
-          throw new Error('Problem getting HPC information: ' + reason)
+          spinner.stop();
+          throw new Error('Problem getting HPC information: ' + reason);
         });
       };
     }

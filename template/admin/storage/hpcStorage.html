@@ -75,12 +75,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="entry in output.summed | orderBy: ['billing','organisation','owner']">
-                                <td blank-safe="entry.billing"></td>
-                                <td blank-safe="entry.organisation"></td>
+                            <tr ng-repeat="entry in output.summed | orderBy: ['biller','managerunit','owner']">
+                                <td blank-safe="entry.biller"></td>
+                                <td blank-safe="entry.managerunit"></td>
                                 <td>{{ ::entry.owner }}</td>
-                                <td blank-safe="entry.fullname"></td>
-                                <td blank-safe="entry.email"></td>
+                                <td blank-safe="entry.manager"></td>
+                                <td blank-safe="entry.manageremail"></td>
                                 <td class="text-right">{{ ::entry.usage | number }}</td>
                                 <td class="text-right">{{ ::entry.blocks }}</td>
                                 <td class="text-right">${{ ::formatNumber(entry.cost) }}</td>

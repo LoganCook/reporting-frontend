@@ -1,5 +1,5 @@
-define(['./rollerUpperer', 'lodash'], function(rollerUpperer, _) {
-  'use strict'
+define(['./rollerUpperer'], function(rollerUpperer) {
+  'use strict';
 
   var hpcRollerUpperer = rollerUpperer
     .builder()
@@ -14,13 +14,13 @@ define(['./rollerUpperer', 'lodash'], function(rollerUpperer, _) {
       'queue'
     ])
     .joinFields([
-      'username'
+      'owner'
     ])
     .build()
 
   return {
     createUserRollup: function (rows) {
-      return hpcRollerUpperer.doRollup(rows)
+      return hpcRollerUpperer.doRollup(rows);
     }
   }
 })

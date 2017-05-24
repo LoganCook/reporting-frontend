@@ -1,10 +1,11 @@
-define(['app', '../util'], function (app, util) {
+define(['app', '../util', 'services/contract'], function (app, util, contract) {
   'use strict';
 
   /**
    * All xfs.filesystem related data services.
    */
-  app.factory('XFSService', function (queryResource, $q, org, AuthService) {
+  app.factory('XFSService', function (queryResource, $http, $q, org, AuthService) {
+    var contractService = contract($http, $q, org, 'ersaaccount', 'managerusername', AuthService);
     var BASE_URL = sessionStorage['xfs'];
 
     /**
@@ -91,27 +92,19 @@ define(['app', '../util'], function (app, util) {
       return id;
     }
 
-    function getAccounts() {
-      if (AuthService.isAdmin()) {
-        return org.getAllAccounts();
-      } else {
-        return org.getUsersOfSync(AuthService.getUserOrgName());
-      }
-    }
-
     function computeBlocks(gbUsed) {
-      var isUnderChargableThreshold = gbUsed < 1 && Math.round(gbUsed) === 0
+      var isUnderChargableThreshold = gbUsed < 1 && Math.round(gbUsed) === 0;
       if (isUnderChargableThreshold) {
-        return 0
+        return 0;
       }
-      return Math.ceil(gbUsed / BlockSize)
+      return Math.ceil(gbUsed / BlockSize);
     }
 
     // convert KiB into GiB
     function processEntry(entry, accounts) {
       entry['raw'] = entry['usage'] * 1024;
       entry['usage'] = util.toGB(entry['raw']);
-      entry['blocks'] = computeBlocks(entry['usage'])
+      entry['blocks'] = computeBlocks(entry['usage']);
       entry['cost'] = BlockPrice * entry['blocks'];
       angular.extend(entry, accounts[entry['owner']]);
     }
@@ -120,15 +113,15 @@ define(['app', '../util'], function (app, util) {
      * @typedef {object} Entry
      * @property {number} usage
      * @property {string} owner   Username, onwer of a home directory
-     * @property {string} billing   User's billing organisation
-     * @property {number} organisation   User's most detailed organisation
+     * @property {string} biller   User's billing organisation
+     * @property {number} managerunit   User's most detailed organisation, used to be organisation
      * @property {number} blocks  Usage devided by BlockSize.
      * @property {number} cost    BlockPrice * BlockSize
      * @param {entry} Entry
      */
     function subtotal(entry, saveTo) {
-      var level1 = 'billing' in entry ? entry['billing'] : '?',
-        level2 = 'organisation' in entry ? entry['organisation'] : '?';
+      var level1 = 'biller' in entry ? entry['biller'] : '?',
+        level2 = 'managerunit' in entry ? entry['managerunit'] : '?';
       if (!(level1 in saveTo)) {
         saveTo[level1] = {};
         saveTo[level1]['Grand'] = angular.copy(USAGE_DEFAULT);
@@ -179,10 +172,12 @@ define(['app', '../util'], function (app, util) {
         } else {
           summary(fileSystemId, startTs, endTs)
             .then(function(usages) {
-              processUsages(usages, getAccounts(), searchHash);
-              deferred.resolve(true);
+              contractService.getContracts().then(function(contracts) {
+                processUsages(usages, contracts, searchHash);
+                deferred.resolve(true);
+              });
             }, function(reason) {
-              console.log(reason);
+              console.error(reason);
               deferred.reject(false);
             });
         }
@@ -193,7 +188,7 @@ define(['app', '../util'], function (app, util) {
         if (orgName) {
           var result = [];
           for (var i = 0; i < tmpSummaries.length; i++) {
-            if (tmpSummaries[i]['billing'] == orgName) {
+            if (tmpSummaries[i]['biller'] == orgName) {
               result.push(tmpSummaries[i]);
             }
           }
