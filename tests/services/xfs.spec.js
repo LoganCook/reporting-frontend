@@ -8,6 +8,7 @@ define(['../../lib/angular-spinner/angular-spinner.min.js', 'services/org','serv
     beforeEach(module('reportingApp'));
 
     beforeEach(inject(function ($injector, $rootScope) {
+      sessionStorage.bman = 'some-mock-value'
       $httpBackend = $injector.get('$httpBackend');
       rootScope = $rootScope
       var org = $injector.get('org');
@@ -33,6 +34,8 @@ define(['../../lib/angular-spinner/angular-spinner.min.js', 'services/org','serv
           .respond([{
             username: 'test'
           }]);
+        $httpBackend.expectGET(sessionStorage.bman + '/api/organisation/undefined/get_service/?name=ersaaccount')
+          .respond([{/* don't need any content just to see if promise is resolved */}])
 
         var result = objectUnderTest.query('aae613c6-e687-4127-8b14-65aa6ff77d68', 1475245800, 1477920600);
         result.then(function(isSuccess) {
