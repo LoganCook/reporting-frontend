@@ -1,3 +1,69 @@
+<!--[if !IE]><!-->
+<style>
+    /* Thanks to https://css-tricks.com/examples/ResponsiveTables/responsive.php 
+        and https://github.com/tomsaleeba/horizontal-and-vertical-html-table for this solution */
+    /* Force td to not be like a table cell anymore */
+    .table>tbody>tr>td.vert-cell {
+        display: block;
+    }
+
+    /* Hide table headers (but not display: none;, for accessibility) */
+    th.vert-cell, .hide {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    .table>tbody>tr>td.vert-cell {
+        /* Behave  like a "row" */
+        border: none;
+        border-top: 1px solid #ccc;
+        border-right: 1px solid #ccc;
+        position: relative;
+        padding-left: 20%;
+    }
+
+    td.vert-cell:before {
+        /* Now like a table header */
+        position: absolute;
+        /* Top/left values mimic padding */
+        top: 6px;
+        left: 6px;
+        width: 15%;
+        padding-right: 10px;
+        white-space: nowrap;
+    }
+
+    th.swapped-header {
+        width: 60%;
+    }
+    th.swapped-header:before {
+        content: "More stuff";
+    }
+
+    /* Label the data */
+    td.vert-cell:nth-of-type(6):before { content: "Project Leader Email"; }
+    td.vert-cell:nth-of-type(7):before { content: "Project Admin"; }
+    td.vert-cell:nth-of-type(8):before { content: "Project Admin Email"; }
+    td.vert-cell:nth-of-type(9):before { content: "Collection Description"; }
+    td.vert-cell:nth-of-type(10):before { content: "Grant ID"; }
+    td.vert-cell:nth-of-type(11):before { content: "FOR"; }
+    td.vert-cell:nth-of-type(12):before { content: "File System"; }
+
+    .the-table {
+        min-width: 960px;
+    }
+
+    @media only screen and (min-width: 1125px) and (max-width: 1400px) {
+      .table>tbody>tr>td.vert-cell { padding-left: 30%; }
+      .table>tbody>tr>td.vert-cell:before { width: 25%; }
+    }
+    @media only screen and (max-width: 1124px) {
+      .table>tbody>tr>td.vert-cell { padding-left: 40%; }
+      .table>tbody>tr>td.vert-cell:before { width: 35%; }
+    }
+</style>
+<!--<![endif]-->
 <div class="container-fluid">
     <h3 class="text-center">Stored Collections Report</h3>
     <p ng-show="error" class="alert alert-danger">{{ error }}</p>
@@ -5,7 +71,7 @@
     <div>
         <div class="row">
             <div class="col-md-12">
-                <table ersa-table="national-storage-usage.detailed">
+                <table ersa-table="national-storage-usage.detailed" class="the-table">
                     <thead>
                         <tr>
                             <th>Project Number</th>
@@ -13,29 +79,29 @@
                             <th>Project Leader</th>
                             <th>Job Title</th>
                             <th>School</th>
-                            <th>Project Leader Email</th>
-                            <th>Project Admin</th>
-                            <th>Project Admin Email</th>
-                            <th>Collection Description</th>
-                            <th>Grant ID</th>
-                            <th>FOR</th>
-                            <th>File System</th>
+                            <th class="swapped-header"><span class="hide">Project Leader Email</span></th>
+                            <th class="vert-cell">Project Admin</th>
+                            <th class="vert-cell">Project Admin Email</th>
+                            <th class="vert-cell">Collection Description</th>
+                            <th class="vert-cell">Grant ID</th>
+                            <th class="vert-cell">FOR</th>
+                            <th class="vert-cell">File System</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr ng-repeat="usage in usages | orderBy: 'orderID'">
                             <td>{{ usage.orderID }}</td>
                             <td>{{ usage.name }}</td>
-                            <td>{{ usage.leader }}</td>
-                            <td>{{ usage.leadertitle }}</td>
+                            <td blank-safe="usage.leader"></td>
+                            <td blank-safe="usage.leadertitle"></td>
                             <td blank-safe="usage.leaderunit"></td>
-                            <td>{{ usage.leaderemail }}</td>
-                            <td>{{ usage.admin }}</td>
-                            <td>{{ usage.adminemail }}</td>
-                            <td>{{ usage.description }}</td>
-                            <td>{{ usage.GrantID }}</td>
-                            <td>{{ usage.fors }}</td>
-                            <td>{{ usage.FileSystemName }}</td>
+                            <td class="vert-cell" blank-safe="usage.leaderemail"></td>
+                            <td class="vert-cell" blank-safe="usage.admin"></td>
+                            <td class="vert-cell" blank-safe="usage.adminemail"></td>
+                            <td class="vert-cell" blank-safe="usage.description"></td>
+                            <td class="vert-cell" blank-safe="usage.GrantID"></td>
+                            <td class="vert-cell" blank-safe="usage.fors"></td>
+                            <td class="vert-cell" blank-safe="usage.FileSystemName"></td>
                         </tr>
                     </tbody>
                 </table>
