@@ -5,7 +5,7 @@
     // returned a map with keyName as key, contractor and attributes as content
     return function Contract($http, $q, org, service, keyName, AuthService) {
       if (!sessionStorage.hasOwnProperty('bman')) {
-        throw "Wrong configuration: bman is not defined in sessionStorage.";
+        throw new Error("Wrong configuration: bman is not defined in sessionStorage.");
       }
       var requestUrl = sessionStorage['bman'],
         serviceUrl = requestUrl + '/api/' + service + '/',

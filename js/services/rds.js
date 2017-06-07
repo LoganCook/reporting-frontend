@@ -26,7 +26,7 @@
     // TODO: can this be a warper of Contract, they look identical but called in different ways
     app.factory('RDService', function ($http, $q, org) {
       if (!sessionStorage.hasOwnProperty('bman')) {
-        throw "Wrong configuration: bman is not defined in sessionStorage.";
+        throw new Error("Wrong configuration: bman is not defined in sessionStorage.");
       }
       var requestUri = sessionStorage['bman'],
         rdsUri = requestUri + '/api/rds/',

@@ -6,7 +6,7 @@
     // Cacheable organisation-user data for all pages, mandatory
     app.factory('org', function ($http, $q, theConstants) {
       if (sessionStorage.hasOwnProperty('secret') && !sessionStorage.hasOwnProperty('bman')) {
-        throw "Wrong configuration: bman is not defined in sessionStorage.";
+        throw new Error("Wrong configuration: bman is not defined in sessionStorage.");
       }
       var requestUri = sessionStorage['bman'];
       var userUri = requestUri + '/api/Organisation/#id/get_access/';

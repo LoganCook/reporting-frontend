@@ -5,7 +5,7 @@
     // returned a map with salesorderid as key, ANZSRC-FOR codes in an array as value
     app.factory('FORService', function ($http, $q, org) {
       if (!sessionStorage.hasOwnProperty('bman')) {
-        throw "Wrong configuration: bman is not defined in sessionStorage.";
+        throw new Error("Wrong configuration: bman is not defined in sessionStorage.");
       }
       var requestUri = sessionStorage['bman'],
         forUri = requestUri + '/api/anzsrc-for/',
