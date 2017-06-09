@@ -96,7 +96,7 @@ define(['app', '../util', 'services/contract', '../options', 'lodash', './hpc-ro
                   var rollupResponse = rollup.createUserRollup(summaries[searchHash])
                   userRollupErrorCache[searchHash] = {
                     isAllSuccess: rollupResponse.isAllSuccess,
-                    errorCount: rollupResponse.errorCount
+                    errors: rollupResponse.errors
                   }
                   userRollupCache[searchHash] = rollupResponse.rollupResult
                 } catch (e) {

@@ -10,13 +10,19 @@ define(['pageComponents'], function (module) {
         }
         return !ctrl.isAllSuccess
       }
+      $scope.rollupErrors = function () {
+        if (ctrl.errors && ctrl.errors.constructor === Array) {
+          return ctrl.errors
+        }
+        return []
+      }
       $scope.rollupErrorsCount = function () {
-        return ctrl.errorCount
+        return $scope.rollupErrors().length
       }
     }],
     bindings: {
-      isAllSuccess: '=',
-      errorCount: '='
+      isAllSuccess: '=', // boolean
+      errors: '=' // string[]
     }
   })
 })

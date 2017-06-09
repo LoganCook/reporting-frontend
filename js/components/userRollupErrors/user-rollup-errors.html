@@ -1,4 +1,5 @@
-<p ng-show="isRollupError()" class="alert alert-danger">
-    Data problems: encountered <strong>{{ rollupErrorsCount() }}</strong> errors while performing rollup.
-    Data with errors have been skipped therefore this report is <strong>NOT ACCURATE</strong>!
-</p>
+<div ng-show="isRollupError()" class="alert alert-danger">
+  Data problems: encountered <strong>{{ rollupErrorsCount() }}</strong> errors while performing rollup. Data with errors
+  have been skipped therefore this report is <strong>NOT ACCURATE</strong>!
+  <pre><span ng-repeat="curr in rollupErrors()">{{curr}}<br /></span></pre>
+</div>

@@ -113,7 +113,7 @@ define(
             var rollupResponse = rollup.createUserRollup($scope.usages)
             $scope.rollup = rollupResponse.rollupResult
             $scope.isAllRollupSuccess = rollupResponse.isAllSuccess
-            $scope.rollupErrorCount = rollupResponse.errorCount
+            $scope.rollupErrors = rollupResponse.errors
           } finally {
             spinner.stop()
           }

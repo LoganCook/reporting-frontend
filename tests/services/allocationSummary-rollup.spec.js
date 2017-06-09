@@ -82,7 +82,7 @@ define(['../../js/services/allocationSummary-rollup', '../console-switcher'], fu
         ]
         var result = objectUnderTest.createUserRollup(detailRows)
         expect(result.isAllSuccess).toBeTruthy()
-        expect(result.errorCount).toBe(0)
+        expect(result.errors.length).toBe(0)
         var rollupResult = result.rollupResult
         expect(rollupResult.length).toBe(1)
         expect(rollupResult[0].approved_size).toBe(2000 + 2000)
@@ -161,7 +161,7 @@ define(['../../js/services/allocationSummary-rollup', '../console-switcher'], fu
         var result = objectUnderTest.createUserRollup(detailRows)
         cs.consoleOn()
         expect(result.isAllSuccess).toBeFalsy()
-        expect(result.errorCount).toBe(1)
+        expect(result.errors.length).toBe(1)
         var rollupResult = result.rollupResult
         expect(rollupResult.length).toBe(1)
       })

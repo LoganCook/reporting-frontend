@@ -58,7 +58,7 @@ define(['../../js/services/hpc-rollup', '../console-switcher'], function(objectU
         ]
         var result = objectUnderTest.createUserRollup(detailRows)
         expect(result.isAllSuccess).toBeTruthy()
-        expect(result.errorCount).toBe(0)
+        expect(result.errors.length).toBe(0)
         var rollupResult = result.rollupResult
         expect(rollupResult.length).toBe(1)
         expect(rollupResult[0].billing).toBe('Test University')
@@ -112,7 +112,7 @@ define(['../../js/services/hpc-rollup', '../console-switcher'], function(objectU
         ]
         var result = objectUnderTest.createUserRollup(detailRows)
         expect(result.isAllSuccess).toBeTruthy()
-        expect(result.errorCount).toBe(0)
+        expect(result.errors.length).toBe(0)
         var rollupResult = result.rollupResult
         expect(rollupResult.length).toBe(1)
         expect(rollupResult[0].billing).toBe('Test University')
@@ -156,7 +156,7 @@ define(['../../js/services/hpc-rollup', '../console-switcher'], function(objectU
         var result = objectUnderTest.createUserRollup(cutDownRows)
         cs.consoleOn()
         expect(result.isAllSuccess).toBeFalsy()
-        expect(result.errorCount).toBe(1)
+        expect(result.errors.length).toBe(1)
         var rollupResult = result.rollupResult
         expect(rollupResult.length).toBe(1)
       })
@@ -165,7 +165,7 @@ define(['../../js/services/hpc-rollup', '../console-switcher'], function(objectU
         var emptyArray = []
         var result = objectUnderTest.createUserRollup(emptyArray)
         expect(result.isAllSuccess).toBeTruthy()
-        expect(result.errorCount).toBe(0)
+        expect(result.errors.length).toBe(0)
         var rollupResult = result.rollupResult
         expect(rollupResult.length).toBe(0)
       })
@@ -226,7 +226,7 @@ define(['../../js/services/hpc-rollup', '../console-switcher'], function(objectU
         ]
         var result = objectUnderTest.createUserRollup(detailRows)
         expect(result.isAllSuccess).toBeTruthy()
-        expect(result.errorCount).toBe(0)
+        expect(result.errors.length).toBe(0)
         var rollupResult = result.rollupResult
         expect(rollupResult.length).toBe(2)
         var firstRecord = rollupResult[0]

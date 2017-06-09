@@ -14,7 +14,7 @@ define(['lodash'], function(_) {
    */
   function createUserRollup (detailRows, fieldsToSum, fieldsToIgnore, joinFields) {
     var isAllSuccess = true
-    var errorCount = 0
+    var errors = []
     var groupedAndSummed = _.reduce(detailRows, function (res, currRow) {
       try {
         var joinFieldValue = createKey(joinFields, currRow)
@@ -40,7 +40,11 @@ define(['lodash'], function(_) {
       } catch (e) {
         console.error('Data error: failed while rolling up a row', e)
         isAllSuccess = false
-        errorCount++
+        if (e.message) {
+          errors.push(e.message)
+        } else {
+          errors.push(JSON.stringify(e))
+        }
       } finally {
         return res
       }
@@ -48,7 +52,7 @@ define(['lodash'], function(_) {
     return {
       rollupResult: _.values(groupedAndSummed),
       isAllSuccess: isAllSuccess,
-      errorCount: errorCount
+      errors: errors
     }
   }
 

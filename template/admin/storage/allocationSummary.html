@@ -1,7 +1,7 @@
 <div class="container-fluid">
     <h3 class="text-center">NATIONAL STORAGE USAGE</h3>
     <p ng-show="error" class="alert alert-danger">{{ error }}</p>
-    <user-rollup-errors is-all-success="isAllRollupSuccess" error-count="rollupErrorCount"></user-rollup-errors>
+    <user-rollup-errors is-all-success="isAllRollupSuccess" errors="rollupErrors"></user-rollup-errors>
     <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
     <div>
         <form>

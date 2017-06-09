@@ -55,7 +55,7 @@ define(['../../js/services/rollerUpperer', '../console-switcher'], function(obje
             .build()
         var result = instance.doRollup(rows)
         expect(result.isAllSuccess).toBeTruthy()
-        expect(result.errorCount).toBe(0)
+        expect(result.errors.length).toBe(0)
         var rollupResult = result.rollupResult
         expect(rollupResult.length).toBe(1)
         expect(rollupResult[0].source).toBeUndefined()
@@ -94,7 +94,7 @@ define(['../../js/services/rollerUpperer', '../console-switcher'], function(obje
             .build()
         var result = instance.doRollup(rows)
         expect(result.isAllSuccess).toBeTruthy()
-        expect(result.errorCount).toBe(0)
+        expect(result.errors.length).toBe(0)
         var rollupResult = result.rollupResult
         expect(rollupResult.length).toBe(3)
         var firstElement = rollupResult[0]
@@ -130,7 +130,7 @@ define(['../../js/services/rollerUpperer', '../console-switcher'], function(obje
         var result = instance.doRollup(rows)
         cs.consoleOn()
         expect(result.isAllSuccess).toBeFalsy()
-        expect(result.errorCount).toBe(1)
+        expect(result.errors.length).toBe(1)
         var rollupResult = result.rollupResult
         expect(rollupResult.length).toBe(1)
       })
@@ -166,7 +166,7 @@ define(['../../js/services/rollerUpperer', '../console-switcher'], function(obje
             .build()
         var result = instance.doRollup(rows)
         expect(result.isAllSuccess).toBeTruthy()
-        expect(result.errorCount).toBe(0)
+        expect(result.errors.length).toBe(0)
         var rollupResult = result.rollupResult
         expect(rollupResult.length).toBe(2)
         var firstElement = rollupResult[0]
@@ -203,7 +203,7 @@ define(['../../js/services/rollerUpperer', '../console-switcher'], function(obje
         var result = instance.doRollup(rows)
         cs.consoleOn()
         expect(result.isAllSuccess).toBeFalsy()
-        expect(result.errorCount).toBe(2)
+        expect(result.errors.length).toBe(2)
         var rollupResult = result.rollupResult
       })
     })
