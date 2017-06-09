@@ -109,8 +109,14 @@ define(
         var numberOfServiceCalls = 4
         var latch = new countdownLatch(numberOfServiceCalls)
         latch.await(function() {
-          $scope.rollup = rollup.createUserRollup($scope.usages)
-          spinner.stop()
+          try {
+            var rollupResponse = rollup.createUserRollup($scope.usages)
+            $scope.rollup = rollupResponse.rollupResult
+            $scope.isAllRollupSuccess = rollupResponse.isAllSuccess
+            $scope.rollupErrorCount = rollupResponse.errorCount
+          } finally {
+            spinner.stop()
+          }
         })
         function doCall (service) {
           service.query(startTs, endTs, isDisableBlacklist).then(function() {

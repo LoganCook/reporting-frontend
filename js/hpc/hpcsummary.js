@@ -36,6 +36,7 @@ define(
         HPCService.query(startTs, endTs).then(function() {
           $scope.jobCounts = HPCService.getJobCounts(startTs, endTs, orgName);
           $scope.userRollup = HPCService.getUserRollup(startTs, endTs);
+          $scope.userRollupErrorData = HPCService.getUserRollupErrorData(startTs, endTs)
           if (orgName) {
             var subTotals = angular.copy(HPCService.getSubTotals(startTs, endTs, orgName));
             $scope.grandTotal = utilOld.spliceOne(subTotals, 'organisation', 'Grand');

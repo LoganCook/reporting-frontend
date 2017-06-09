@@ -13,30 +13,43 @@ define(['lodash'], function(_) {
    * @returns {object[]} rolled up rows. One row per key with the fieldsToSum as the totals
    */
   function createUserRollup (detailRows, fieldsToSum, fieldsToIgnore, joinFields) {
+    var isAllSuccess = true
+    var errorCount = 0
     var groupedAndSummed = _.reduce(detailRows, function (res, currRow) {
-      var joinFieldValue = createKey(joinFields, currRow)
-      if (!res[joinFieldValue]) {
-        var copy = angular.copy(currRow)
-        fieldsToIgnore.forEach(function (curr) {
-          delete copy[curr]
+      try {
+        var joinFieldValue = createKey(joinFields, currRow)
+        if (!res[joinFieldValue]) {
+          var copy = angular.copy(currRow)
+          fieldsToIgnore.forEach(function (curr) {
+            delete copy[curr]
+          })
+          res[joinFieldValue] = copy
+          return res
+        }
+        var existing = res[joinFieldValue]
+        fieldsToSum.forEach(function (currField) {
+          // TODO add configuration to allow supplying a multiplier for the values
+          existing[currField] = doSum(existing[currField], currRow[currField])
         })
-        res[joinFieldValue] = copy
+        var fieldsToNotAssertEquality = _.union(fieldsToSum, fieldsToIgnore)
+        var fieldsToAssertEquality = _.difference(Object.keys(currRow), fieldsToNotAssertEquality)
+        fieldsToAssertEquality.forEach(function (currField) {
+          assertEqual(currField, existing, currRow)
+        })
+        res[joinFieldValue] = existing
+      } catch (e) {
+        console.error('Data error: failed while rolling up a row', e)
+        isAllSuccess = false
+        errorCount++
+      } finally {
         return res
       }
-      var existing = res[joinFieldValue]
-      fieldsToSum.forEach(function (currField) {
-        // TODO add configuration to allow supplying a multiplier for the values
-        existing[currField] = doSum(existing[currField], currRow[currField])
-      })
-      var fieldsToNotAssertEquality = _.union(fieldsToSum, fieldsToIgnore)
-      var fieldsToAssertEquality = _.difference(Object.keys(currRow), fieldsToNotAssertEquality)
-      fieldsToAssertEquality.forEach(function (currField) {
-        assertEqual(currField, existing, currRow)
-      })
-      res[joinFieldValue] = existing
-      return res
     }, {})
-    return _.values(groupedAndSummed)
+    return {
+      rollupResult: _.values(groupedAndSummed),
+      isAllSuccess: isAllSuccess,
+      errorCount: errorCount
+    }
   }
 
   function createKey (fieldNames, obj) {

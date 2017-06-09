@@ -9,10 +9,11 @@ require.config({
     "numeral": '../lib/numeral/min/numeral.min',
     'qs': '../node_modules/qs/dist/qs',
     'pageComponents': 'components/pageComponents',
-    'datePickers': "components/datePickers/date-pickers",
+    'datePickers': 'components/datePickers/date-pickers',
     'datePickerUib': 'components/datePickerUib/date-picker-uib',
     'ersaTable': 'directives/ersaTable/ersa-table',
-    'blankSafe': 'directives/blankSafe/blank-safe'
+    'blankSafe': 'directives/blankSafe/blank-safe',
+    'userRollupErrors': 'components/userRollupErrors/user-rollup-errors'
   },
   baseUrl: 'js'
 });

@@ -18,7 +18,11 @@ define(['app', '../util', 'services/contract', '../options', 'lodash', './hpc-ro
 
     // summaries, totals and userRollupCache have searchHash as the first key
     // summaries: usage data with extended user information
-    var summaries = {}, totals = {}, grandTotal = {}, userRollupCache = {};
+    var summaries = {}
+    var totals = {}
+    var grandTotal = {}
+    var userRollupCache = {}
+    var userRollupErrorCache = {}
 
     // get a summary of HPC jobs between startTs and endTs grouped by owner and queue
     // return a promise
@@ -89,7 +93,12 @@ define(['app', '../util', 'services/contract', '../options', 'lodash', './hpc-ro
 
               if (AuthService.isAdmin()) {
                 try {
-                  userRollupCache[searchHash] = rollup.createUserRollup(summaries[searchHash]);
+                  var rollupResponse = rollup.createUserRollup(summaries[searchHash])
+                  userRollupErrorCache[searchHash] = {
+                    isAllSuccess: rollupResponse.isAllSuccess,
+                    errorCount: rollupResponse.errorCount
+                  }
+                  userRollupCache[searchHash] = rollupResponse.rollupResult
                 } catch (e) {
                   console.error(e);
                   deferred.reject(false);
@@ -132,6 +141,9 @@ define(['app', '../util', 'services/contract', '../options', 'lodash', './hpc-ro
       },
       getUserRollup: function (startTs, endTs) {
         return util.getCached(userRollupCache, [startTs, endTs]);
+      },
+      getUserRollupErrorData: function (startTs, endTs) {
+        return util.getCached(userRollupErrorCache, [startTs, endTs])
       }
     };
   });

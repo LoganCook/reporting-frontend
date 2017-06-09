@@ -26,7 +26,8 @@ require.config({
     'datePickers': "../js/components/datePickers/date-pickers",
     'datePickerUib': '../js/components/datePickerUib/date-picker-uib',
     'ersaTable': '../js/directives/ersaTable/ersa-table',
-    'blankSafe': '../js/directives/blankSafe/blank-safe'
+    'blankSafe': '../js/directives/blankSafe/blank-safe',
+    'userRollupErrors': '../js/components/userRollupErrors/user-rollup-errors'
   },
   shim: {
     "angular": { exports: "angular" },

@@ -1,5 +1,5 @@
 'use strict'
-define(['../../js/services/rollerUpperer'], function(objectUnderTest) {
+define(['../../js/services/rollerUpperer', '../console-switcher'], function(objectUnderTest, cs) {
   describe('Roller Upperer', function() {
 
     describe('builder', function () {
@@ -54,10 +54,13 @@ define(['../../js/services/rollerUpperer'], function(objectUnderTest) {
             .joinFields(['username'])
             .build()
         var result = instance.doRollup(rows)
-        expect(result.length).toBe(1)
-        expect(result[0].source).toBeUndefined()
-        expect(result[0].username).toBe('testuser')
-        expect(result[0].cost).toBe(111 + 222)
+        expect(result.isAllSuccess).toBeTruthy()
+        expect(result.errorCount).toBe(0)
+        var rollupResult = result.rollupResult
+        expect(rollupResult.length).toBe(1)
+        expect(rollupResult[0].source).toBeUndefined()
+        expect(rollupResult[0].username).toBe('testuser')
+        expect(rollupResult[0].cost).toBe(111 + 222)
       })
 
       it('should be able to rollup with multiple final rows', function() {
@@ -90,13 +93,16 @@ define(['../../js/services/rollerUpperer'], function(objectUnderTest) {
             .joinFields(['username'])
             .build()
         var result = instance.doRollup(rows)
-        expect(result.length).toBe(3)
-        var firstElement = result[0]
+        expect(result.isAllSuccess).toBeTruthy()
+        expect(result.errorCount).toBe(0)
+        var rollupResult = result.rollupResult
+        expect(rollupResult.length).toBe(3)
+        var firstElement = rollupResult[0]
         expect(firstElement.source).toBeUndefined()
         expect(firstElement.username).toBe('testuser')
         expect(firstElement.cost).toBe(111 + 333)
-        expect(result[1].username).toBe('user2')
-        expect(result[2].username).toBe('user3')
+        expect(rollupResult[1].username).toBe('user2')
+        expect(rollupResult[2].username).toBe('user3')
       })
 
       it('should be able to catch when a non-ignored field does not match', function() {
@@ -120,9 +126,13 @@ define(['../../js/services/rollerUpperer'], function(objectUnderTest) {
             .fieldsToIgnore(['source'])
             .joinFields(['username'])
             .build()
-        expect(function () {
-          instance.doRollup(rows)
-        }).toThrow()
+        cs.consoleOff()
+        var result = instance.doRollup(rows)
+        cs.consoleOn()
+        expect(result.isAllSuccess).toBeFalsy()
+        expect(result.errorCount).toBe(1)
+        var rollupResult = result.rollupResult
+        expect(rollupResult.length).toBe(1)
       })
 
       it('should be able to rollup with a composite key', function() {
@@ -155,12 +165,15 @@ define(['../../js/services/rollerUpperer'], function(objectUnderTest) {
             .joinFields(['username', 'filesystem'])
             .build()
         var result = instance.doRollup(rows)
-        expect(result.length).toBe(2)
-        var firstElement = result[0]
+        expect(result.isAllSuccess).toBeTruthy()
+        expect(result.errorCount).toBe(0)
+        var rollupResult = result.rollupResult
+        expect(rollupResult.length).toBe(2)
+        var firstElement = rollupResult[0]
         expect(firstElement.username).toBe('testuser')
         expect(firstElement.filesystem).toBe('/fs1')
         expect(firstElement.cost).toBe(111 + 333)
-        var secondElement = result[1]
+        var secondElement = rollupResult[1]
         expect(secondElement.username).toBe('testuser')
         expect(secondElement.filesystem).toBe('/fs2')
         expect(secondElement.cost).toBe(222 + 444)
@@ -186,9 +199,12 @@ define(['../../js/services/rollerUpperer'], function(objectUnderTest) {
             .fieldsToIgnore([])
             .joinFields(noJoinFields)
             .build()
-        expect(function () {
-          instance.doRollup(rows)
-        }).toThrow()
+        cs.consoleOff()
+        var result = instance.doRollup(rows)
+        cs.consoleOn()
+        expect(result.isAllSuccess).toBeFalsy()
+        expect(result.errorCount).toBe(2)
+        var rollupResult = result.rollupResult
       })
     })
 
@@ -269,4 +285,6 @@ define(['../../js/services/rollerUpperer'], function(objectUnderTest) {
       })
     })
   })
+
+  
 })
