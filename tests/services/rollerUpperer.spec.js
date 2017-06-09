@@ -15,194 +15,181 @@ define(['../../js/services/rollerUpperer'], function(objectUnderTest) {
       })
 
       it('should throw an error when fieldsToSum is not an array', function () {
-        try {
+        expect(function () {
           objectUnderTest.builder().fieldsToSum('cost')
-          fail('Error should have been thrown due to not supplying an array')
-        } catch (error) {
-          // success
-        }
+        }).toThrow()
       })
 
       it('should throw an error when fieldsToIgnore is not an array', function () {
-        try {
+        expect(function () {
           objectUnderTest.builder().fieldsToIgnore('source')
-          fail('Error should have been thrown due to not supplying an array')
-        } catch (error) {
-          // success
-        }
+        }).toThrow()
       })
 
       it('should throw an error when joinFields is not an array', function () {
-        try {
+        expect(function () {
           objectUnderTest.builder().joinFields('username')
-          fail('Error should have been thrown due to not supplying an array')
-        } catch (error) {
-          // success
-        }
+        }).toThrow()
       })
     })
 
-    it('should be able to rollup a simple case', function() {
-      var rows = [
-        {
-            cost: 111,
-            username: 'testuser',
-            source: 'system1'
-        },
-        {
-            cost: 222,
-            username: 'testuser',
-            source: 'system2'
-        }
-      ]
-      var instance = objectUnderTest
-          .builder()
-          .fieldsToSum(['cost'])
-          .fieldsToIgnore(['source'])
-          .joinFields(['username'])
-          .build()
-      var result = instance.doRollup(rows)
-      expect(result.length).toBe(1)
-      expect(result[0].source).toBeUndefined()
-      expect(result[0].username).toBe('testuser')
-      expect(result[0].cost).toBe(111 + 222)
-    })
+    describe('doRollup', function () {
+      it('should be able to rollup a simple case', function() {
+        var rows = [
+          {
+              cost: 111,
+              username: 'testuser',
+              source: 'system1'
+          },
+          {
+              cost: 222,
+              username: 'testuser',
+              source: 'system2'
+          }
+        ]
+        var instance = objectUnderTest
+            .builder()
+            .fieldsToSum(['cost'])
+            .fieldsToIgnore(['source'])
+            .joinFields(['username'])
+            .build()
+        var result = instance.doRollup(rows)
+        expect(result.length).toBe(1)
+        expect(result[0].source).toBeUndefined()
+        expect(result[0].username).toBe('testuser')
+        expect(result[0].cost).toBe(111 + 222)
+      })
 
-    it('should be able to rollup with multiple final rows', function() {
-      var rows = [
-        {
-            cost: 111,
-            username: 'testuser',
-            source: 'system1'
-        },
-        {
-            cost: 222,
-            username: 'user2',
-            source: 'system1'
-        },
-        {
-            cost: 333,
-            username: 'testuser',
-            source: 'system2'
-        },
-        {
-            cost: 444,
-            username: 'user3',
-            source: 'system2'
-        }
-      ]
-      var instance = objectUnderTest
-          .builder()
-          .fieldsToSum(['cost'])
-          .fieldsToIgnore(['source'])
-          .joinFields(['username'])
-          .build()
-      var result = instance.doRollup(rows)
-      expect(result.length).toBe(3)
-      var firstElement = result[0]
-      expect(firstElement.source).toBeUndefined()
-      expect(firstElement.username).toBe('testuser')
-      expect(firstElement.cost).toBe(111 + 333)
-      expect(result[1].username).toBe('user2')
-      expect(result[2].username).toBe('user3')
-    })
+      it('should be able to rollup with multiple final rows', function() {
+        var rows = [
+          {
+              cost: 111,
+              username: 'testuser',
+              source: 'system1'
+          },
+          {
+              cost: 222,
+              username: 'user2',
+              source: 'system1'
+          },
+          {
+              cost: 333,
+              username: 'testuser',
+              source: 'system2'
+          },
+          {
+              cost: 444,
+              username: 'user3',
+              source: 'system2'
+          }
+        ]
+        var instance = objectUnderTest
+            .builder()
+            .fieldsToSum(['cost'])
+            .fieldsToIgnore(['source'])
+            .joinFields(['username'])
+            .build()
+        var result = instance.doRollup(rows)
+        expect(result.length).toBe(3)
+        var firstElement = result[0]
+        expect(firstElement.source).toBeUndefined()
+        expect(firstElement.username).toBe('testuser')
+        expect(firstElement.cost).toBe(111 + 333)
+        expect(result[1].username).toBe('user2')
+        expect(result[2].username).toBe('user3')
+      })
 
-    it('should be able to catch when a non-ignored field does not match', function() {
-      var rows = [
-        {
-            cost: 111,
-            username: 'testuser',
-            source: 'system1',
-            notIgnored: 'foo'
-        },
-        {
-            cost: 222,
-            username: 'testuser',
-            source: 'system2',
-            notIgnored: 'bar'
-        }
-      ]
-      var instance = objectUnderTest
-          .builder()
-          .fieldsToSum(['cost'])
-          .fieldsToIgnore(['source'])
-          .joinFields(['username'])
-          .build()
-      try {
-        instance.doRollup(rows)
-        fail('should have caught the "notIgnored" field being different')
-      } catch (error) {
-        // success
-      }
-    })
+      it('should be able to catch when a non-ignored field does not match', function() {
+        var rows = [
+          {
+              cost: 111,
+              username: 'testuser',
+              source: 'system1',
+              notIgnored: 'foo'
+          },
+          {
+              cost: 222,
+              username: 'testuser',
+              source: 'system2',
+              notIgnored: 'bar'
+          }
+        ]
+        var instance = objectUnderTest
+            .builder()
+            .fieldsToSum(['cost'])
+            .fieldsToIgnore(['source'])
+            .joinFields(['username'])
+            .build()
+        expect(function () {
+          instance.doRollup(rows)
+        }).toThrow()
+      })
 
-    it('should be able to rollup with a composite key', function() {
-      var rows = [
-        {
-            cost: 111,
-            username: 'testuser',
-            filesystem: '/fs1'
-        },
-        {
-            cost: 222,
-            username: 'testuser',
-            filesystem: '/fs2'
-        },
-        {
-            cost: 333,
-            username: 'testuser',
-            filesystem: '/fs1'
-        },
-        {
-            cost: 444,
-            username: 'testuser',
-            filesystem: '/fs2'
-        }
-      ]
-      var instance = objectUnderTest
-          .builder()
-          .fieldsToSum(['cost'])
-          .fieldsToIgnore([])
-          .joinFields(['username', 'filesystem'])
-          .build()
-      var result = instance.doRollup(rows)
-      expect(result.length).toBe(2)
-      var firstElement = result[0]
-      expect(firstElement.username).toBe('testuser')
-      expect(firstElement.filesystem).toBe('/fs1')
-      expect(firstElement.cost).toBe(111 + 333)
-      var secondElement = result[1]
-      expect(secondElement.username).toBe('testuser')
-      expect(secondElement.filesystem).toBe('/fs2')
-      expect(secondElement.cost).toBe(222 + 444)
-    })
+      it('should be able to rollup with a composite key', function() {
+        var rows = [
+          {
+              cost: 111,
+              username: 'testuser',
+              filesystem: '/fs1'
+          },
+          {
+              cost: 222,
+              username: 'testuser',
+              filesystem: '/fs2'
+          },
+          {
+              cost: 333,
+              username: 'testuser',
+              filesystem: '/fs1'
+          },
+          {
+              cost: 444,
+              username: 'testuser',
+              filesystem: '/fs2'
+          }
+        ]
+        var instance = objectUnderTest
+            .builder()
+            .fieldsToSum(['cost'])
+            .fieldsToIgnore([])
+            .joinFields(['username', 'filesystem'])
+            .build()
+        var result = instance.doRollup(rows)
+        expect(result.length).toBe(2)
+        var firstElement = result[0]
+        expect(firstElement.username).toBe('testuser')
+        expect(firstElement.filesystem).toBe('/fs1')
+        expect(firstElement.cost).toBe(111 + 333)
+        var secondElement = result[1]
+        expect(secondElement.username).toBe('testuser')
+        expect(secondElement.filesystem).toBe('/fs2')
+        expect(secondElement.cost).toBe(222 + 444)
+      })
 
-    it('should be able to catch when no join fields are supplied', function() {
-      var rows = [
-        {
-            cost: 111,
-            username: 'testuser',
-            filesystem: '/fs1'
-        },
-        {
-            cost: 222,
-            username: 'testuser',
-            filesystem: '/fs2'
-        }
-      ]
-      var noJoinFields = []
-      var instance = objectUnderTest
-          .builder()
-          .fieldsToSum(['cost'])
-          .fieldsToIgnore([])
-          .joinFields(noJoinFields)
-          .build()
-      try {
-        instance.doRollup(rows)
-        fail('should have caught that there were no join fields')
-      } catch (error) {
-        // success
-      }
+      it('should be able to catch when no join fields are supplied', function() {
+        var rows = [
+          {
+              cost: 111,
+              username: 'testuser',
+              filesystem: '/fs1'
+          },
+          {
+              cost: 222,
+              username: 'testuser',
+              filesystem: '/fs2'
+          }
+        ]
+        var noJoinFields = []
+        var instance = objectUnderTest
+            .builder()
+            .fieldsToSum(['cost'])
+            .fieldsToIgnore([])
+            .joinFields(noJoinFields)
+            .build()
+        expect(function () {
+          instance.doRollup(rows)
+        }).toThrow()
+      })
     })
 
     describe('.assertEqual', function() {
@@ -212,12 +199,9 @@ define(['../../js/services/rollerUpperer'], function(objectUnderTest) {
       })
 
       it('should assert that unequal strings are not equal', function() {
-        try {
+        expect(function () {
           objectUnderTest._test_only.assertEqual('field1', {field1: 'foo'}, {field1: 'bar'})
-          fail('Expected error to be thrown')
-        } catch (error) {
-          // success
-        }
+        }).toThrow()
       })
 
       it('should assert that equal integers are in fact equal', function() {
@@ -226,12 +210,9 @@ define(['../../js/services/rollerUpperer'], function(objectUnderTest) {
       })
 
       it('should assert that unequal integers are not equal', function() {
-        try {
+        expect(function () {
           objectUnderTest._test_only.assertEqual('field1', {field1: 666}, {field1: 667})
-          fail('Expected error to be thrown')
-        } catch (error) {
-          // success
-        }
+        }).toThrow()
       })
 
       it('should always pass when the first value is undefined', function() {
@@ -271,26 +252,20 @@ define(['../../js/services/rollerUpperer'], function(objectUnderTest) {
       })
 
       it('should throw an error when no key is generated', function() {
-        try {
+        expect(function () {
           objectUnderTest._test_only.createKey(
             [],
             {f1: 'foo', f2: 'bar'})
-          fail('error should have been thrown')
-        } catch (e) {
-          // success
-        }
+        }).toThrow()
       })
 
       it('should throw an error when any of the fields are not found', function() {
-        try {
+        expect(function () {
           var fieldThatDoesntExist = 'f2'
           objectUnderTest._test_only.createKey(
             ['f1', fieldThatDoesntExist],
             {f1: 'foo'})
-          fail('error should have been thrown')
-        } catch (e) {
-          // success
-        }
+        }).toThrow()
       })
     })
   })
