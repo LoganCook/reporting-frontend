@@ -96,14 +96,16 @@ ul, ol, li {
 
 
 
+@media screen and (max-width: 990px) {
+  .top-margin {
+    margin-top: 1em;
+  }
+}
 
 .desktop-menu {
-  height: 0;
-  overflow: hidden; }
-  @media screen and (min-width: 64em) {
-    .desktop-menu {
-      height: auto;
-      overflow: visible; } }
+  height: auto;
+  overflow: visible;
+}
   .desktop-menu .menu-wrap {
     display: table;
     width: 100%; }
