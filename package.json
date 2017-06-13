@@ -7,7 +7,6 @@
     "url": "https://github.com/eresearchsa/reporting-frontend"
   },
   "devDependencies": {
-    "bower": "^1.7.9",
     "browser-sync": "^2.13.0",
     "eslint": "^2.0.0",
     "jasmine-core": "^2.4.1",
@@ -19,6 +18,7 @@
     "requirejs": "^2.2.0"
   },
   "dependencies": {
+    "bower": "^1.7.9",
     "animate.css": "^3.5.2",
     "qs": "^6.1.0"
   },

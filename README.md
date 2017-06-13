@@ -9,3 +9,20 @@
  1. cd reporting-frontend/
  1. npm i # will install all dependencies
  1. npm run dev # starts the dev server
+
+# Prepare a deployment package to a clean machine
+
+On a machine with `npm` installed, run these commands to create a tar ball:
+
+```shell
+mkdir source
+curl -sL https://github.com/eResearchSA/reporting-frontend/archive/dev.tar.gz | tar -xz --strip-components=1 -C source
+cd source
+npm install --production
+
+tar -czvf reporting-frontend-deployment.tar.gz favicon.ico img index.html template css js lib node_modules
+```
+
+After copy the package file to a new production location, say *testdir* of a web server html directory, run:
+
+`tar -xzf reporting-frontend-deployment.tar.gz -C testdir`
