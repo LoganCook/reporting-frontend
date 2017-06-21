@@ -18,6 +18,7 @@ define(['pageComponents'], function (pageComponents) {
         var tableName = attrs[directiveName]
         var csvExporterVarName = 'csvExporter' + attrs.$normalize(tableName)
         element.attr('export-csv', csvExporterVarName)
+        element.attr('export-csv-ignore', 'export-ignore')
         element.removeAttr(kebabCaseDirectiveName) // stop infinite compile recursion, thanks https://stackoverflow.com/a/19228302/1410035
         element.attr('old-' + kebabCaseDirectiveName, attrs[directiveName])
         element.addClass('table').addClass('table-striped')
