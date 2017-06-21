@@ -152,11 +152,11 @@
                 <table st-table="displayedSimpleRows" st-safe-src="subTotals" ng-show="detailLevel === 'simple'" ersa-table="national-storage.simple">
                     <thead>
                         <tr>
-                            <th st-sort="orderBy('billing')" st-sort-default="true">Organisation</th>
-                            <th st-sort="orderBy('organisation')">School</th>
-                            <th st-sort="usage" class="text-right">GB Used</th>
-                            <th st-sort="blocks" class="text-right">Usage / 250GB</th>
-                            <th st-sort="cost" class="text-right">Fee</th>
+                            <th st-sort="orderBy('billing')" st-sort-default="true" st-skip-natural="true">Organisation</th>
+                            <th st-sort="orderBy('organisation')" st-skip-natural="true">School</th>
+                            <th st-sort="usage" st-skip-natural="true" class="text-right">GB Used</th>
+                            <th st-sort="blocks" st-skip-natural="true" class="text-right">Usage / 250GB</th>
+                            <th st-sort="cost" st-skip-natural="true" class="text-right">Fee</th>
                         </tr>
                         <tr>
                             <th><input st-search="billing" placeholder="search for Organisation" class="input-sm form-control" type="search" /></th>
