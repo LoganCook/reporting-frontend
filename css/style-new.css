@@ -559,3 +559,11 @@ table.table-striped tr:nth-child(odd) {
   background-color: #f48d06;
   border-color: #d17905;
 }
+
+.st-sort-ascent:before {
+  content: '\25B2';
+}
+
+.st-sort-descent:before {
+  content: '\25BC';
+}

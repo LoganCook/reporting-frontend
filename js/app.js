@@ -3,7 +3,7 @@ define(
   function (clientConstructor) {
 
   var app = angular.module("reportingApp", ["ngSanitize", "ui.router", "ui.bootstrap", "ngResource",
-    "angularSpinner", "pageComponents", "ngTableToCsv"]);
+    "angularSpinner", "pageComponents", "ngTableToCsv", "smart-table"]);
   app.factory("reporting", ["$timeout", "queryResource", clientConstructor]);
   app
     // .config(['$resourceProvider', function ($resourceProvider) {

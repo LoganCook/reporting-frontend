@@ -149,18 +149,23 @@
                     </tfoot>
                 </table>
 
-                <table ng-show="detailLevel === 'simple'" ersa-table="national-storage.simple">
+                <table st-table="displayedSimpleRows" st-safe-src="subTotals" ng-show="detailLevel === 'simple'" ersa-table="national-storage.simple">
                     <thead>
                         <tr>
-                            <th>Organisation</th>
-                            <th>School</th>
-                            <th class="text-right">GB Used</th>
-                            <th class="text-right">Usage / 250GB</th>
-                            <th class="text-right">Fee</th>
+                            <th st-sort="orderBy('billing')" st-sort-default="true">Organisation</th>
+                            <th st-sort="orderBy('organisation')">School</th>
+                            <th st-sort="usage" class="text-right">GB Used</th>
+                            <th st-sort="blocks" class="text-right">Usage / 250GB</th>
+                            <th st-sort="cost" class="text-right">Fee</th>
+                        </tr>
+                        <tr>
+                            <th><input st-search="billing" placeholder="search for Organisation" class="input-sm form-control" type="search" /></th>
+                            <th><input st-search="organisation" placeholder="search for School" class="input-sm form-control" type="search" /></th>
+                            <th colspan="3"><input st-search placeholder="search whole table" class="input-sm form-control" type="search" /></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="usage in subTotals | orderBy: ['billing',orderBySubTotalLast,'organisation']" ng-class="{'subtotal-row': isSubTotalRow(usage)}" class="animated fadeIn">
+                        <tr ng-repeat="usage in displayedSimpleRows" ng-class="{'subtotal-row': isSubTotalRow(usage)}" class="animated fadeIn">
                             <td blank-safe="usage.billing"></td>
                             <td blank-safe="usage.organisation"></td>
                             <td class="text-right"> {{ ::usage.usage | number }}</td>
