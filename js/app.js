@@ -211,6 +211,15 @@ define(
       }
       return 0
     }
+    function orderByPredicateThenSubTotal (predicate) {
+      return (value) => {
+        var result = value[predicate]
+        if (value.organisation === subTotal) {
+          return result + '_'
+        }
+        return result
+      }
+    }
     return {
       grandTotal: 'Grand Total',
       subTotal: subTotal,
@@ -218,11 +227,21 @@ define(
       isSubTotalRow: function(entry) {
         return entry.organisation && entry.organisation === subTotal
       },
-      orderBySubTotalLast: orderBySubTotalLast
+      orderBySubTotalLast: orderBySubTotalLast,
+      orderByPredicateThenSubTotal: orderByPredicateThenSubTotal
     }
   }
 
   app.constant('theConstants', buildTheConstants())
+
+  app.directive('cellRatio', function () {
+    return {
+      link: function (scope, element, attr) {
+        var ratio = +(attr.cellRatio)
+        element.css('width', ratio + '%')
+      }
+    }
+  })
 
   return app;
 });

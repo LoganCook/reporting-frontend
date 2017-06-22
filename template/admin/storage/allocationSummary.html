@@ -1,9 +1,9 @@
-<div class="container-fluid">
-    <h3 class="text-center">NATIONAL STORAGE USAGE</h3>
-    <p ng-show="error" class="alert alert-danger">{{ error }}</p>
-    <user-rollup-errors is-all-success="isAllRollupSuccess" errors="rollupErrors"></user-rollup-errors>
-    <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
-    <div>
+<div class="container-fluid box">
+    <div class="box-header">
+        <h3 class="text-center">NATIONAL STORAGE USAGE</h3>
+        <p ng-show="error" class="alert alert-danger">{{ error }}</p>
+        <user-rollup-errors is-all-success="isAllRollupSuccess" errors="rollupErrors"></user-rollup-errors>
+        <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
         <form>
             <div class="row">
                 <div class="col-md-12">
@@ -58,134 +58,142 @@
                 </div>
             </div>
         </form>
-        <div class="row">
-            <div class="col-xs-12">
-                <table ng-show="detailLevel === 'detailed'" ersa-table="national-storage.detailed">
-                    <thead>
-                        <tr>
-                            <th>Source</th>
-                            <th>Allocation Name</th>
-                            <th>Organisation</th>
-                            <th>School</th>
-                            <th>User Name</th>
-                            <th>Email</th>
-                            <th>File System</th>
-                            <th class="text-right">GB Allocated</th>
-                            <th class="text-right">GB Used</th>
-                            <th class="text-right">Usage / 250GB</th>
-                            <th class="text-right">Fee</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="usage in usages | orderBy: 'orderID'" class="animated fadeIn">
-                            <td>{{::usage.source}}</td>
-                            <td blank-safe="usage.orderID"></td>
-                            <td blank-safe="usage.billing"></td>
-                            <td blank-safe="usage.managerunit"></td>
-                            <td blank-safe="usage.manager"></td>
-                            <td blank-safe="usage.manageremail"></td>
-                            <td>{{ ::usage.filesystem }}</td>
-                            <td class="text-right">{{ ::usage.approved_size | number }}</td>
-                            <td class="text-right"> {{ ::usage.usage | number }}</td>
-                            <td class="text-right"> {{ ::usage.blocks }}</td>
-                            <td class="text-right">${{ ::formatNumber(usage.cost) }}</td>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr ng-show="usages.length">
-                            <td colspan="3"><strong>Grand Total</strong></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td class="text-right"><strong>{{ total.usage | number }}</strong></td>
-                            <td class="text-right"><strong>{{ total.blocks }}</strong></td>
-                            <td class="text-right"><strong>${{ formatNumber(total.cost) }}</strong></td>
-                        </tr>
-                    </tfoot>
-                </table>
-
-                <table ng-show="detailLevel === 'rollup'" ersa-table="national-storage.rollup">
-                    <thead>
-                        <tr>
-                            <th>Allocation Name</th>
-                            <th>Organisation</th>
-                            <th>School</th>
-                            <th>User Name</th>
-                            <th>Email</th>
-                            <th>File System</th>
-                            <th class="text-right">GB Allocated</th>
-                            <th class="text-right">GB Used</th>
-                            <th class="text-right">Usage / 250GB</th>
-                            <th class="text-right">Fee</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="usage in rollup | orderBy: 'orderID'" class="animated fadeIn">
-                            <td blank-safe="usage.orderID"></td>
-                            <td blank-safe="usage.billing"></td>
-                            <td blank-safe="usage.managerunit"></td>
-                            <td blank-safe="usage.full_name"></td>
-                            <td blank-safe="usage.manageremail"></td>
-                            <td>{{ ::usage.filesystem }}</td>
-                            <td class="text-right">{{ ::usage.approved_size | number }}</td>
-                            <td class="text-right"> {{ ::usage.usage | number }}</td>
-                            <td class="text-right"> {{ ::usage.blocks }}</td>
-                            <td class="text-right">${{ ::formatNumber(usage.cost) }}</td>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr ng-show="usages.length">
-                            <td colspan="3"><strong>Grand Total</strong></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td class="text-right"><strong>{{ total.usage | number }}</strong></td>
-                            <td class="text-right"><strong>{{ total.blocks }}</strong></td>
-                            <td class="text-right"><strong>${{ formatNumber(total.cost) }}</strong></td>
-                        </tr>
-                    </tfoot>
-                </table>
-
-                <table st-table="displayedSimpleRows" st-safe-src="subTotals" ng-show="detailLevel === 'simple'" ersa-table="national-storage.simple">
-                    <thead>
-                        <tr>
-                            <th st-sort="orderBy('billing')" st-sort-default="true" st-skip-natural="true">Organisation</th>
-                            <th st-sort="orderBy('organisation')" st-skip-natural="true">School</th>
-                            <th st-sort="usage" st-skip-natural="true" class="text-right">GB Used</th>
-                            <th st-sort="blocks" st-skip-natural="true" class="text-right">Usage / 250GB</th>
-                            <th st-sort="cost" st-skip-natural="true" class="text-right">Fee</th>
-                        </tr>
-                        <tr class="export-ignore">
-                            <th><input st-search="billing" placeholder="search for Organisation" class="input-sm form-control" type="search" /></th>
-                            <th><input st-search="organisation" placeholder="search for School" class="input-sm form-control" type="search" /></th>
-                            <th colspan="3"><input st-search placeholder="search whole table" class="input-sm form-control" type="search" /></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="usage in displayedSimpleRows" ng-class="{'subtotal-row': isSubTotalRow(usage)}" class="animated fadeIn">
-                            <td blank-safe="usage.billing"></td>
-                            <td blank-safe="usage.organisation"></td>
-                            <td class="text-right"> {{ ::usage.usage | number }}</td>
-                            <td class="text-right"> {{ ::usage.blocks }}</td>
-                            <td class="text-right">${{ ::formatNumber(usage.cost) }}</td>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr ng-show="usages.length" class="animated fadeIn">
-                            <td><strong>Grand Total</strong></td>
-                            <td></td>
-                            <td class="text-right"><strong>{{ total.usage | number }}</strong></td>
-                            <td class="text-right"><strong>{{ total.blocks }}</strong></td>
-                            <td class="text-right"><strong>${{ formatNumber(total.cost) }}</strong></td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
     </div>
+    <table ng-show="detailLevel === 'detailed'" class="flexy-table box-content"
+        st-table="displayedUsagesRows" st-safe-src="usages" ersa-table="national-storage.detailed">
+        <thead>
+            <tr>
+                <th cell-ratio="7" st-sort="source">Source</th>
+                <th cell-ratio="7" st-sort="orderID" st-sort-default="true">Allocation Name</th>
+                <th cell-ratio="10" st-sort="billing">Organisation</th>
+                <th cell-ratio="10" st-sort="managerunit">School</th>
+                <th cell-ratio="10" st-sort="manager">User Name</th>
+                <th cell-ratio="15" st-sort="manageremail">Email</th>
+                <th cell-ratio="15" st-sort="filesystem">File System</th>
+                <th cell-ratio="8" st-sort="approved_size" class="text-right">GB Allocated</th>
+                <th cell-ratio="8" st-sort="usage" class="text-right">GB Used</th>
+                <th cell-ratio="5" st-sort="blocks" class="text-right">Usage / 250GB</th>
+                <th cell-ratio="5" st-sort="cost" class="text-right">Fee</th>
+            </tr>
+            <tr class="export-ignore">
+                <th cell-ratio="7"><input st-search="source" placeholder="search for Source" class="input-sm form-control" type="search" /></th>
+                <th cell-ratio="7"><input st-search="orderID" placeholder="search for Allocation Name" class="input-sm form-control" type="search" /></th>
+                <th cell-ratio="10"><input st-search="billing" placeholder="search for Organisation" class="input-sm form-control" type="search" /></th>
+                <th cell-ratio="10"><input st-search="managerunit" placeholder="search for School" class="input-sm form-control" type="search" /></th>
+                <th cell-ratio="10"><input st-search="manager" placeholder="search for User Name" class="input-sm form-control" type="search" /></th>
+                <th cell-ratio="15"><input st-search="manageremail" placeholder="search for Email" class="input-sm form-control" type="search" /></th>
+                <th cell-ratio="15"><input st-search="filesystem" placeholder="search for File System" class="input-sm form-control" type="search" /></th>
+                <th>
+                    <label for="searchWholeSimpleTable">Search whole table: </label>
+                    <input st-search placeholder="search whole table" class="input-sm form-control" type="search" id="searchWholeSimpleTable" />
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="usage in displayedUsagesRows" class="animated fadeIn">
+                <td cell-ratio="7">{{::usage.source}}</td>
+                <td cell-ratio="7" blank-safe="usage.orderID"></td>
+                <td cell-ratio="10" blank-safe="usage.billing"></td>
+                <td cell-ratio="10" blank-safe="usage.managerunit"></td>
+                <td cell-ratio="10" blank-safe="usage.manager"></td>
+                <td cell-ratio="15" blank-safe="usage.manageremail"></td>
+                <td cell-ratio="15">{{ ::usage.filesystem }}</td>
+                <td cell-ratio="8" class="text-right">{{ ::usage.approved_size | number }}</td>
+                <td cell-ratio="8" class="text-right"> {{ ::usage.usage | number }}</td>
+                <td cell-ratio="5" class="text-right"> {{ ::usage.blocks }}</td>
+                <td cell-ratio="5" class="text-right">${{ ::formatNumber(usage.cost) }}</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr ng-show="usages.length" ng-class="{'total-not-relevant': isFilterAppliedDetailed()}">
+                <td cell-ratio="82"><strong>Grand Total</strong></td>
+                <td cell-ratio="8" class="text-right"><strong>{{ total.usage | number }}</strong></td>
+                <td cell-ratio="5" class="text-right"><strong>{{ total.blocks }}</strong></td>
+                <td cell-ratio="5" class="text-right"><strong>${{ formatNumber(total.cost) }}</strong></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <table ng-show="detailLevel === 'rollup'" class="flexy-table box-content" ersa-table="national-storage.rollup">
+        <thead>
+            <tr>
+                <th>Allocation Name</th>
+                <th>Organisation</th>
+                <th>School</th>
+                <th>User Name</th>
+                <th>Email</th>
+                <th>File System</th>
+                <th class="text-right">GB Allocated</th>
+                <th class="text-right">GB Used</th>
+                <th class="text-right">Usage / 250GB</th>
+                <th class="text-right">Fee</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="usage in rollup | orderBy: 'orderID'" class="animated fadeIn">
+                <td blank-safe="usage.orderID"></td>
+                <td blank-safe="usage.billing"></td>
+                <td blank-safe="usage.managerunit"></td>
+                <td blank-safe="usage.full_name"></td>
+                <td blank-safe="usage.manageremail"></td>
+                <td>{{ ::usage.filesystem }}</td>
+                <td class="text-right">{{ ::usage.approved_size | number }}</td>
+                <td class="text-right"> {{ ::usage.usage | number }}</td>
+                <td class="text-right"> {{ ::usage.blocks }}</td>
+                <td class="text-right">${{ ::formatNumber(usage.cost) }}</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr ng-show="usages.length">
+                <td colspan="3"><strong>Grand Total</strong></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="text-right"><strong>{{ total.usage | number }}</strong></td>
+                <td class="text-right"><strong>{{ total.blocks }}</strong></td>
+                <td class="text-right"><strong>${{ formatNumber(total.cost) }}</strong></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <table ng-show="detailLevel === 'simple'" class="flexy-table box-content"
+        st-table="displayedSimpleRows" st-safe-src="subTotals" ersa-table="national-storage.simple">
+        <thead>
+            <tr>
+                <th cell-ratio="35" st-sort="orderBy('billing')" st-sort-default="true" st-skip-natural="true">Organisation</th>
+                <th cell-ratio="35" st-sort="orderBy('organisation')" st-skip-natural="true">School</th>
+                <th cell-ratio="10" st-sort="usage" st-skip-natural="true" class="text-right">GB Used</th>
+                <th cell-ratio="10" st-sort="blocks" st-skip-natural="true" class="text-right">Usage / 250GB</th>
+                <th cell-ratio="10" st-sort="cost" st-skip-natural="true" class="text-right">Fee</th>
+            </tr>
+            <tr class="export-ignore">
+                <th cell-ratio="35"><input st-search="billing" placeholder="search for Organisation" class="input-sm form-control" type="search" /></th>
+                <th cell-ratio="35"><input st-search="organisation" placeholder="search for School" class="input-sm form-control" type="search" /></th>
+                <th>
+                    <label for="searchWholeSimpleTable">Search whole table: </label>
+                    <input st-search placeholder="search whole table" class="input-sm form-control" type="search" id="searchWholeSimpleTable" />
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="usage in displayedSimpleRows" ng-class="{'subtotal-row': isSubTotalRow(usage)}" class="animated fadeIn">
+                <td cell-ratio="35" blank-safe="usage.billing"></td>
+                <td cell-ratio="35" blank-safe="usage.organisation"></td>
+                <td cell-ratio="10" class="text-right"> {{ ::usage.usage | number }}</td>
+                <td cell-ratio="10" class="text-right"> {{ ::usage.blocks }}</td>
+                <td cell-ratio="10" class="text-right">${{ ::formatNumber(usage.cost) }}</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr ng-show="usages.length" class="animated fadeIn" ng-class="{'total-not-relevant': isFilterAppliedSimple()}">
+                <td cell-ratio="70"><strong>Grand Total</strong></td>
+                <td cell-ratio="10" class="text-right"><strong>{{ total.usage | number }}</strong></td>
+                <td cell-ratio="10" class="text-right"><strong>{{ total.blocks }}</strong></td>
+                <td cell-ratio="10" class="text-right"><strong>${{ formatNumber(total.cost) }}</strong></td>
+            </tr>
+        </tfoot>
+    </table>
 </div>
 
 <script type="text/ng-template" id="blacklistModal.html">

@@ -24,16 +24,15 @@ define(
         $scope.rangeEndOpen = true;
       };
       $scope.datepickerOptions = {minMode: 'month'}
-      $scope.orderBy = (predicate) => {
-        return (value) => {
-          // theConstants.orderBySubTotalLast
-          var result = value[predicate]
-          if (value.organisation === 'Grand') { // FIXME use constant
-            return result + '_'
-          }
-          return result
-        }
+      $scope.isFilterAppliedSimple = () => {
+        return $scope.displayedSimpleRows && $scope.subTotals &&
+          $scope.displayedSimpleRows.length !== $scope.subTotals.length
       }
+      $scope.isFilterAppliedDetailed = () => {
+        return $scope.displayedUsagesRows && $scope.usages &&
+          $scope.displayedUsagesRows.length !== $scope.usages.length
+      }
+      $scope.orderBy = theConstants.orderByPredicateThenSubTotal
       $scope.isSubTotalRow = theConstants.isSubTotalRow
       $scope.showBlacklist = function() {
         var modalInstance = $uibModal.open({

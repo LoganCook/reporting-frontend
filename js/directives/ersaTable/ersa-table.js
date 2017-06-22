@@ -19,6 +19,7 @@ define(['pageComponents'], function (pageComponents) {
         var csvExporterVarName = 'csvExporter' + attrs.$normalize(tableName)
         element.attr('export-csv', csvExporterVarName)
         element.attr('export-csv-ignore', 'export-ignore')
+        element.attr('ng-class', '{"fullscreen-table": isFullscreenTable}')
         element.removeAttr(kebabCaseDirectiveName) // stop infinite compile recursion, thanks https://stackoverflow.com/a/19228302/1410035
         element.attr('old-' + kebabCaseDirectiveName, attrs[directiveName])
         element.addClass('table').addClass('table-striped')
@@ -32,7 +33,15 @@ define(['pageComponents'], function (pageComponents) {
             '<i class="glyphicon glyphicon-new-window"></i> &#160;Export as CSV' +
           '</a>')
         $compile(anchor)(scope)
+        var fullscreenToggle = angular.element(
+          '<button ng-init="isFullscreenTable = false" ng-click="isFullscreenTable = !isFullscreenTable" class="btn btn-default">' +
+            '<span ng-hide="isFullscreenTable">View table as full screen</span>' +
+            '<span ng-show="isFullscreenTable">View table as original size</span>' +
+          '</button>'
+        )
+        $compile(fullscreenToggle)(scope)
         var caption = angular.element('<caption class="text-right"></caption>')
+        caption.append(fullscreenToggle)
         caption.append(anchor)
         element.prepend(caption)
       }
