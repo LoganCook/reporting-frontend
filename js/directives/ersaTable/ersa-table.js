@@ -41,8 +41,8 @@ define(['pageComponents'], function (pageComponents) {
         )
         $compile(fullscreenToggle)(scope)
         var caption = angular.element('<caption class="text-right"></caption>')
-        caption.append(fullscreenToggle)
         caption.append(anchor)
+        caption.append(fullscreenToggle)
         element.prepend(caption)
       }
     }

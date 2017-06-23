@@ -653,6 +653,10 @@ table.flexy-table tfoot td {
   width: 100%;
   display: inline-block;
 }
+table.flexy-table tfoot td.filler-cell {
+  width: 0%;
+  padding: 0;
+}
 
 table.flexy-table thead tr:nth-child(2) th {
   padding: 4px;
@@ -669,12 +673,16 @@ table.flexy-table thead tr:nth-child(2) th:last-child label {
   margin-right: 1em;
 }
 
-table.flexy-table thead tr:nth-child(2) th:last-child
-/*, table.flexy-table tfoot td:first-child*/
-{
+table.flexy-table thead tr:nth-child(2) th:last-child {
   flex-grow: 1;
   display: flex;
   align-items: baseline;
+}
+
+table.flexy-table caption {
+  display: flex;
+  flex-direction: row-reverse;
+  flex-shrink: 0;
 }
 
 .ng-scope .container-fluid {

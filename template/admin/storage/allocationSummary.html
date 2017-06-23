@@ -63,17 +63,17 @@
         st-table="displayedUsagesRows" st-safe-src="usages" ersa-table="national-storage.detailed">
         <thead>
             <tr>
-                <th cell-ratio="7" st-sort="source">Source</th>
-                <th cell-ratio="7" st-sort="orderID" st-sort-default="true">Allocation Name</th>
-                <th cell-ratio="10" st-sort="billing">Organisation</th>
-                <th cell-ratio="10" st-sort="managerunit">School</th>
-                <th cell-ratio="10" st-sort="manager">User Name</th>
-                <th cell-ratio="15" st-sort="manageremail">Email</th>
-                <th cell-ratio="15" st-sort="filesystem">File System</th>
-                <th cell-ratio="8" st-sort="approved_size" class="text-right">GB Allocated</th>
-                <th cell-ratio="8" st-sort="usage" class="text-right">GB Used</th>
-                <th cell-ratio="5" st-sort="blocks" class="text-right">Usage / 250GB</th>
-                <th cell-ratio="5" st-sort="cost" class="text-right">Fee</th>
+                <th cell-ratio="7" st-sort="source" st-skip-natural="true">Source</th>
+                <th cell-ratio="7" st-sort="orderID" st-skip-natural="true">Allocation Name</th>
+                <th cell-ratio="10" st-sort="orderByTwoCols('billing','orderID')" st-sort-default="true" st-skip-natural="true">Organisation</th>
+                <th cell-ratio="10" st-sort="managerunit" st-skip-natural="true">School</th>
+                <th cell-ratio="10" st-sort="manager" st-skip-natural="true">User Name</th>
+                <th cell-ratio="15" st-sort="manageremail" st-skip-natural="true">Email</th>
+                <th cell-ratio="15" st-sort="filesystem" st-skip-natural="true">File System</th>
+                <th cell-ratio="8" st-sort="approved_size" st-skip-natural="true" class="text-right">GB Allocated</th>
+                <th cell-ratio="8" st-sort="usage" st-skip-natural="true" class="text-right">GB Used</th>
+                <th cell-ratio="5" st-sort="blocks" st-skip-natural="true" class="text-right">Usage / 250GB</th>
+                <th cell-ratio="5" st-sort="cost" st-skip-natural="true" class="text-right">Fee</th>
             </tr>
             <tr class="export-ignore">
                 <th cell-ratio="7"><input st-search="source" placeholder="search for Source" class="input-sm form-control" type="search" /></th>
@@ -84,8 +84,8 @@
                 <th cell-ratio="15"><input st-search="manageremail" placeholder="search for Email" class="input-sm form-control" type="search" /></th>
                 <th cell-ratio="15"><input st-search="filesystem" placeholder="search for File System" class="input-sm form-control" type="search" /></th>
                 <th>
-                    <label for="searchWholeSimpleTable">Search whole table: </label>
-                    <input st-search placeholder="search whole table" class="input-sm form-control" type="search" id="searchWholeSimpleTable" />
+                    <label for="searchWholeDetailedTable">Search whole table: </label>
+                    <input st-search placeholder="search whole table" class="input-sm form-control" type="search" id="searchWholeDetailedTable" />
                 </th>
             </tr>
         </thead>
@@ -107,6 +107,7 @@
         <tfoot>
             <tr ng-show="usages.length" ng-class="{'total-not-relevant': isFilterAppliedDetailed()}">
                 <td cell-ratio="82"><strong>Grand Total</strong></td>
+                <td ng-repeat="i in [1,2,3,4,5,6,7]" class="filler-cell"></td>
                 <td cell-ratio="8" class="text-right"><strong>{{ total.usage | number }}</strong></td>
                 <td cell-ratio="5" class="text-right"><strong>{{ total.blocks }}</strong></td>
                 <td cell-ratio="5" class="text-right"><strong>${{ formatNumber(total.cost) }}</strong></td>
@@ -114,45 +115,55 @@
         </tfoot>
     </table>
 
-    <table ng-show="detailLevel === 'rollup'" class="flexy-table box-content" ersa-table="national-storage.rollup">
+    <table ng-show="detailLevel === 'rollup'" class="flexy-table box-content"
+        st-table="displayedRollupRows" st-safe-src="rollup" ersa-table="national-storage.rollup">
         <thead>
             <tr>
-                <th>Allocation Name</th>
-                <th>Organisation</th>
-                <th>School</th>
-                <th>User Name</th>
-                <th>Email</th>
-                <th>File System</th>
-                <th class="text-right">GB Allocated</th>
-                <th class="text-right">GB Used</th>
-                <th class="text-right">Usage / 250GB</th>
-                <th class="text-right">Fee</th>
+                <th cell-ratio="7" st-sort="orderID" st-skip-natural="true">Allocation Name</th>
+                <th cell-ratio="13" st-sort="orderByTwoCols('billing','orderID')" st-sort-default="true" st-skip-natural="true">Organisation</th>
+                <th cell-ratio="14" st-sort="managerunit" st-skip-natural="true">School</th>
+                <th cell-ratio="10" st-sort="manager" st-skip-natural="true">User Name</th>
+                <th cell-ratio="15" st-sort="manageremail" st-skip-natural="true">Email</th>
+                <th cell-ratio="15" st-sort="filesystem" st-skip-natural="true">File System</th>
+                <th cell-ratio="8" st-sort="approved_size" st-skip-natural="true" class="text-right">GB Allocated</th>
+                <th cell-ratio="8" st-sort="usage" st-skip-natural="true" class="text-right">GB Used</th>
+                <th cell-ratio="5" st-sort="blocks" st-skip-natural="true" class="text-right">Usage / 250GB</th>
+                <th cell-ratio="5" st-sort="cost" st-skip-natural="true" class="text-right">Fee</th>
+            </tr>
+            <tr class="export-ignore">
+                <th cell-ratio="7"><input st-search="orderID" placeholder="search for Allocation Name" class="input-sm form-control" type="search" /></th>
+                <th cell-ratio="13"><input st-search="billing" placeholder="search for Organisation" class="input-sm form-control" type="search" /></th>
+                <th cell-ratio="14"><input st-search="managerunit" placeholder="search for School" class="input-sm form-control" type="search" /></th>
+                <th cell-ratio="10"><input st-search="manager" placeholder="search for User Name" class="input-sm form-control" type="search" /></th>
+                <th cell-ratio="15"><input st-search="manageremail" placeholder="search for Email" class="input-sm form-control" type="search" /></th>
+                <th cell-ratio="15"><input st-search="filesystem" placeholder="search for File System" class="input-sm form-control" type="search" /></th>
+                <th>
+                    <label for="searchWholeRollupTable">Search whole table: </label>
+                    <input st-search placeholder="search whole table" class="input-sm form-control" type="search" id="searchWholeRollupTable" />
+                </th>
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="usage in rollup | orderBy: 'orderID'" class="animated fadeIn">
-                <td blank-safe="usage.orderID"></td>
-                <td blank-safe="usage.billing"></td>
-                <td blank-safe="usage.managerunit"></td>
-                <td blank-safe="usage.full_name"></td>
-                <td blank-safe="usage.manageremail"></td>
-                <td>{{ ::usage.filesystem }}</td>
-                <td class="text-right">{{ ::usage.approved_size | number }}</td>
-                <td class="text-right"> {{ ::usage.usage | number }}</td>
-                <td class="text-right"> {{ ::usage.blocks }}</td>
-                <td class="text-right">${{ ::formatNumber(usage.cost) }}</td>
+            <tr ng-repeat="usage in displayedRollupRows" class="animated fadeIn">
+                <td cell-ratio="7" blank-safe="usage.orderID"></td>
+                <td cell-ratio="13" blank-safe="usage.billing"></td>
+                <td cell-ratio="14" blank-safe="usage.managerunit"></td>
+                <td cell-ratio="10" blank-safe="usage.full_name"></td>
+                <td cell-ratio="15" blank-safe="usage.manageremail"></td>
+                <td cell-ratio="15">{{ ::usage.filesystem }}</td>
+                <td cell-ratio="8" class="text-right">{{ ::usage.approved_size | number }}</td>
+                <td cell-ratio="8" class="text-right"> {{ ::usage.usage | number }}</td>
+                <td cell-ratio="5" class="text-right"> {{ ::usage.blocks }}</td>
+                <td cell-ratio="5" class="text-right">${{ ::formatNumber(usage.cost) }}</td>
             </tr>
         </tbody>
         <tfoot>
-            <tr ng-show="usages.length">
-                <td colspan="3"><strong>Grand Total</strong></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td class="text-right"><strong>{{ total.usage | number }}</strong></td>
-                <td class="text-right"><strong>{{ total.blocks }}</strong></td>
-                <td class="text-right"><strong>${{ formatNumber(total.cost) }}</strong></td>
+            <tr ng-show="usages.length" ng-class="{'total-not-relevant': isFilterAppliedRollup()}">
+                <td cell-ratio="82"><strong>Grand Total</strong></td>
+                <td ng-repeat="i in [1,2,3,4,5,6]" class="filler-cell"></td>
+                <td cell-ratio="8" class="text-right"><strong>{{ total.usage | number }}</strong></td>
+                <td cell-ratio="5" class="text-right"><strong>{{ total.blocks }}</strong></td>
+                <td cell-ratio="5" class="text-right"><strong>${{ formatNumber(total.cost) }}</strong></td>
             </tr>
         </tfoot>
     </table>
@@ -188,6 +199,7 @@
         <tfoot>
             <tr ng-show="usages.length" class="animated fadeIn" ng-class="{'total-not-relevant': isFilterAppliedSimple()}">
                 <td cell-ratio="70"><strong>Grand Total</strong></td>
+                <td class="filler-cell"></td>
                 <td cell-ratio="10" class="text-right"><strong>{{ total.usage | number }}</strong></td>
                 <td cell-ratio="10" class="text-right"><strong>{{ total.blocks }}</strong></td>
                 <td cell-ratio="10" class="text-right"><strong>${{ formatNumber(total.cost) }}</strong></td>

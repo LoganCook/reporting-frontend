@@ -24,15 +24,24 @@ define(
         $scope.rangeEndOpen = true;
       };
       $scope.datepickerOptions = {minMode: 'month'}
+      function isFilterApplied (displayed, raw) {
+        return displayed && raw && displayed.length !== raw.length
+      }
       $scope.isFilterAppliedSimple = () => {
-        return $scope.displayedSimpleRows && $scope.subTotals &&
-          $scope.displayedSimpleRows.length !== $scope.subTotals.length
+        return isFilterApplied($scope.displayedSimpleRows, $scope.subTotals)
+      }
+      $scope.isFilterAppliedRollup = () => {
+        return isFilterApplied($scope.displayedRollupRows, $scope.rollup)
       }
       $scope.isFilterAppliedDetailed = () => {
-        return $scope.displayedUsagesRows && $scope.usages &&
-          $scope.displayedUsagesRows.length !== $scope.usages.length
+        return isFilterApplied($scope.displayedUsagesRows, $scope.usages)
       }
       $scope.orderBy = theConstants.orderByPredicateThenSubTotal
+      $scope.orderByTwoCols = function (col1, col2) {
+        return (value) => {
+          return value[col1] + value[col2]
+        }
+      }
       $scope.isSubTotalRow = theConstants.isSubTotalRow
       $scope.showBlacklist = function() {
         var modalInstance = $uibModal.open({
