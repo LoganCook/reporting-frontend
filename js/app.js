@@ -220,6 +220,11 @@ define(
         return result
       }
     }
+    function orderByTwoCols (col1, col2) {
+        return (value) => {
+          return value[col1] + value[col2]
+        }
+      }
     return {
       grandTotal: 'Grand Total',
       subTotal: subTotal,
@@ -228,7 +233,8 @@ define(
         return entry.organisation && entry.organisation === subTotal
       },
       orderBySubTotalLast: orderBySubTotalLast,
-      orderByPredicateThenSubTotal: orderByPredicateThenSubTotal
+      orderByPredicateThenSubTotal: orderByPredicateThenSubTotal,
+      orderByTwoCols: orderByTwoCols
     }
   }
 

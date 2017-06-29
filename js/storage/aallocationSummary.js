@@ -37,11 +37,7 @@ define(
         return isFilterApplied($scope.displayedUsagesRows, $scope.usages)
       }
       $scope.orderBy = theConstants.orderByPredicateThenSubTotal
-      $scope.orderByTwoCols = function (col1, col2) {
-        return (value) => {
-          return value[col1] + value[col2]
-        }
-      }
+      $scope.orderByTwoCols = theConstants.orderByTwoCols
       $scope.isSubTotalRow = theConstants.isSubTotalRow
       $scope.showBlacklist = function() {
         var modalInstance = $uibModal.open({
