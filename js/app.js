@@ -213,18 +213,36 @@ define(
     }
     function orderByPredicateThenSubTotal (predicate) {
       return (value) => {
+        var subtotalFieldName = 'organisation'
         var result = value[predicate]
-        if (value.organisation === subTotal) {
-          return result + '_'
+        var subtotalFieldValue = value[subtotalFieldName]
+        if (subtotalFieldValue === subTotal) {
+          return result + '~'
         }
-        return result
+        return result + subtotalFieldValue
       }
     }
     function orderByTwoCols (col1, col2) {
-        return (value) => {
-          return value[col1] + value[col2]
+      return orderByNCols([col1, col2])
+    }
+    function orderByNCols (colNameArray) {
+      return (value) => {
+        var orderValue = ''
+        for (var i = 0; i < colNameArray.length; i++) {
+          var fieldName = colNameArray[i]
+          var fieldValue = value[fieldName]
+          if (typeof fieldValue === 'undefined') {
+            orderValue += '~'
+            continue
+          }
+          orderValue += fieldValue
         }
+        return orderValue
       }
+    }
+    function isFilterApplied (displayed, raw) {
+      return displayed && raw && displayed.length !== raw.length
+    }
     return {
       grandTotal: 'Grand Total',
       subTotal: subTotal,
@@ -234,7 +252,9 @@ define(
       },
       orderBySubTotalLast: orderBySubTotalLast,
       orderByPredicateThenSubTotal: orderByPredicateThenSubTotal,
-      orderByTwoCols: orderByTwoCols
+      orderByTwoCols: orderByTwoCols,
+      isFilterApplied: isFilterApplied,
+      orderByNCols: orderByNCols
     }
   }
 

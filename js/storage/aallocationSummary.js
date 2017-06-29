@@ -24,17 +24,14 @@ define(
         $scope.rangeEndOpen = true;
       };
       $scope.datepickerOptions = {minMode: 'month'}
-      function isFilterApplied (displayed, raw) {
-        return displayed && raw && displayed.length !== raw.length
-      }
       $scope.isFilterAppliedSimple = () => {
-        return isFilterApplied($scope.displayedSimpleRows, $scope.subTotals)
+        return theConstants.isFilterApplied($scope.displayedSimpleRows, $scope.subTotals)
       }
       $scope.isFilterAppliedRollup = () => {
-        return isFilterApplied($scope.displayedRollupRows, $scope.rollup)
+        return theConstants.isFilterApplied($scope.displayedRollupRows, $scope.rollup)
       }
       $scope.isFilterAppliedDetailed = () => {
-        return isFilterApplied($scope.displayedUsagesRows, $scope.usages)
+        return theConstants.isFilterApplied($scope.displayedUsagesRows, $scope.usages)
       }
       $scope.orderBy = theConstants.orderByPredicateThenSubTotal
       $scope.orderByTwoCols = theConstants.orderByTwoCols
