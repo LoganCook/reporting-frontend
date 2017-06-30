@@ -98,7 +98,7 @@
             </tr>
         </tbody>
         <tfoot>
-            <tr ng-show="subTotals.length" class="animated fadeIn" ng-class="{'total-not-relevant': isFilterAppliedSimple()}">
+            <tr ng-show="subTotals.length" class="animated fadeIn" ng-class="{'total-not-relevant': isFilterApplied(displayedSimpleRows, subTotals)}">
                 <td cell-ratio="80"><strong>Grand Total</strong></td>
                 <td class="filler-cell"></td>
                 <td cell-ratio="10" class="text-right"><strong>{{ grandTotal.core }}</strong></td>

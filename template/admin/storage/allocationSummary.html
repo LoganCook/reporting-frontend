@@ -92,7 +92,7 @@
             </tr>
         </tbody>
         <tfoot>
-            <tr ng-show="usages.length" ng-class="{'total-not-relevant': isFilterAppliedDetailed()}">
+            <tr ng-show="usages.length" ng-class="{'total-not-relevant': isFilterApplied(displayedUsagesRows, usages)}">
                 <td cell-ratio="82"><strong>Grand Total</strong></td>
                 <td ng-repeat="i in [1,2,3,4,5,6,7]" class="filler-cell"></td>
                 <td cell-ratio="8" class="text-right"><strong>{{ total.usage | number }}</strong></td>
@@ -133,7 +133,7 @@
             </tr>
         </tbody>
         <tfoot>
-            <tr ng-show="usages.length" ng-class="{'total-not-relevant': isFilterAppliedRollup()}">
+            <tr ng-show="usages.length" ng-class="{'total-not-relevant': isFilterApplied(displayedRollupRows, rollup)}">
                 <td cell-ratio="82"><strong>Grand Total</strong></td>
                 <td ng-repeat="i in [1,2,3,4,5,6]" class="filler-cell"></td>
                 <td cell-ratio="8" class="text-right"><strong>{{ total.usage | number }}</strong></td>
@@ -164,7 +164,7 @@
             </tr>
         </tbody>
         <tfoot>
-            <tr ng-show="usages.length" class="animated fadeIn" ng-class="{'total-not-relevant': isFilterAppliedSimple()}">
+            <tr ng-show="usages.length" class="animated fadeIn" ng-class="{'total-not-relevant': isFilterApplied(displayedSimpleRows, subTotals)}">
                 <td cell-ratio="70"><strong>Grand Total</strong></td>
                 <td class="filler-cell"></td>
                 <td cell-ratio="10" class="text-right"><strong>{{ total.usage | number }}</strong></td>

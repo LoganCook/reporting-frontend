@@ -88,7 +88,7 @@
             </tr>
         </tbody>
         <tfoot>
-            <tr ng-show="output.summed.length" ng-class="{'total-not-relevant': isFilterAppliedDetailed()}">
+            <tr ng-show="output.summed.length" ng-class="{'total-not-relevant': isFilterApplied(displayedOutputSummedRows, output.summed)}">
                 <td cell-ratio="70"><strong>Grand Total</strong></td>
                 <td ng-repeat="i in [1,2,3,4]" class="filler-cell"></td>
                 <td cell-ratio="10" class="text-right"><strong>{{ total.usage | number }}</strong></td>
@@ -118,7 +118,7 @@
             </tr>
         </tbody>
         <tfoot>
-            <tr ng-show="output.summed.length" class="animated fadeIn" ng-class="{'total-not-relevant': isFilterAppliedSimple()}">
+            <tr ng-show="output.summed.length" class="animated fadeIn" ng-class="{'total-not-relevant': isFilterApplied(displayedSubtotalRows, subTotals)}">
                 <td cell-ratio="70"><strong>Grand Total</strong></td>
                 <td class="filler-cell"></td>
                 <td cell-ratio="10" class="text-right"><strong>{{ total.usage | number }}</strong></td>

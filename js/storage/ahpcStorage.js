@@ -57,12 +57,7 @@ define(
       $scope.datepickerOptions = {minMode: 'month'}
       $scope.orderBySubTotalLast = theConstants.orderBySubTotalLast
       $scope.isSubTotalRow = theConstants.isSubTotalRow
-      $scope.isFilterAppliedDetailed = () => {
-        return theConstants.isFilterApplied($scope.displayedOutputSummedRows, $scope.output.summed)
-      }
-      $scope.isFilterAppliedSimple = () => {
-        return theConstants.isFilterApplied($scope.displayedSubtotalRows, $scope.subTotals)
-      }
+      $scope.isFilterApplied = theConstants.isFilterApplied
       $scope.orderByNCols = theConstants.orderByNCols
       $scope.orderBy = theConstants.orderByPredicateThenSubTotal
 

@@ -44,10 +44,7 @@ define(
       };
 
       $scope.orderBy = theConstants.orderByPredicateThenSubTotal
-      $scope.isFilterAppliedSimple = () => {
-        return theConstants.isFilterApplied($scope.displayedSimpleRows, $scope.subTotals)
-      }
-
+      $scope.isFilterApplied = theConstants.isFilterApplied
       /**
        * retrieve data with query string.
        */
