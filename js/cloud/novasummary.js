@@ -22,7 +22,6 @@ define(
       $scope.instancesState = [];
       $scope.serverChecked = false;
       $scope.datepickerOptions = {minMode: 'month'}
-      $scope.orderBySubTotalLast = theConstants.orderBySubTotalLast
       $scope.isSubTotalRow = theConstants.isSubTotalRow
 
       /**
