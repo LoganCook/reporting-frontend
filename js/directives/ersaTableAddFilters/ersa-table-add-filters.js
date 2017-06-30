@@ -47,7 +47,7 @@ define(['pageComponents'], function (pageComponents) {
           // the same id (searchWholeTable) will appear multiple times on the page, but only one is shown at a time, it seems to work
           trBuilder += 
             '<th>' +
-              '<label for="searchWholeTable">Search whole table: </label>' +
+              '<label for="searchWholeTable">Filter all: </label>' +
               '<input st-search placeholder="search whole table" class="input-sm form-control" type="search" id="searchWholeTable" />' +
             '</th>'
         }

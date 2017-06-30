@@ -1,6 +1,6 @@
-<div class="container-fluid">
-    <h3 class="text-center">NECTAR USAGE</h3>
-    <div>
+<div class="container-fluid box">
+    <div class="box-header">
+        <h3 class="text-center">NECTAR USAGE</h3>
         <form>
             <div class="row">
                 <div class="col-md-12">
@@ -46,64 +46,64 @@
                 </div>
             </div>
         </form>
-
-        <div class="row">
-            <div class="col-xs-12">
-                <table ng-show="viewDetails" ersa-table="nova-summary.detailed">
-                    <thead>
-                        <tr>
-                            <th>Organisation</th>
-                            <th>School</th>
-                            <th>Project</th>
-                            <th>User Name</th>
-                            <th>Email</th>
-                            <th>Server Name</th>
-                            <th class="text-right">Flavor</th>
-                            <th class="text-right">Span (hours)</th>
-                            <th class="text-right">Fee</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="instance in usages | orderBy: ['billing', 'organisation', 'tenant']">
-                            <td blank-safe="instance.billing"></td>
-                            <td blank-safe="instance.organisation"></td>
-                            <td>{{ ::instance.tenant }}</td>
-                            <td blank-safe="instance.full_name"></td>
-                            <td blank-safe="instance.manageremail"></td>
-                            <td>{{ ::instance.server }}</td>
-                            <td class="text-right"> {{ ::instance.flavorName }}</td>
-                            <td class="text-right"> {{ ::instance.span/3600 | number : 2 }}</td>
-                            <td class="text-right"> ${{ ::instance.cost }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <table ng-hide="viewDetails" ersa-table="nova-summary.simple">
-                    <thead>
-                        <tr>
-                            <th>Organisation</th>
-                            <th>School</th>
-                            <th class="text-right">Cores Used</th>
-                            <th class="text-right">Fee</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="instance in subTotals | orderBy: ['billing', orderBySubTotalLast, 'organisation']" ng-class="{'subtotal-row': isSubTotalRow(instance)}">
-                            <td blank-safe="instance.billing"></td>
-                            <td blank-safe="instance.organisation"></td>
-                            <td class="text-right"> {{ ::instance.core }}</td>
-                            <td class="text-right"> ${{ ::instance.cost }}</td>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr ng-show="subTotals.length">
-                            <td><strong>Grand Total</strong></td>
-                            <td></td>
-                            <td class="text-right"><strong>{{ grandTotal.core }}</strong></td>
-                            <td class="text-right"><strong>${{ grandTotal.cost }}</strong></td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
     </div>
+    <table ng-show="viewDetails" class="flexy-table box-content"
+        st-table="displayedUsagesRows" st-safe-src="usages" ersa-table="nova-summary.detailed">
+        <thead>
+            <tr ersa-table-add-filters>
+                <th cell-ratio="13" ersa-table-sort="orderBy('billing')" st-sort-default="true">Organisation</th>
+                <th cell-ratio="13" ersa-table-sort="organisation">School</th>
+                <th cell-ratio="13" ersa-table-sort="tenant">Project</th>
+                <th cell-ratio="13" ersa-table-sort="full_name">User Name</th>
+                <th cell-ratio="14" ersa-table-sort="manageremail">Email</th>
+                <th cell-ratio="13" ersa-table-sort="server">Server Name</th>
+                <th cell-ratio="7" ersa-table-sort="flavorName" class="text-right">Flavor</th><!-- note: sorting is done lexicographically, it doesn't understand the sizes -->
+                <th cell-ratio="7" ersa-table-sort="span" ersa-table-no-filter class="text-right">Span (hours)</th>
+                <th cell-ratio="7" ersa-table-sort="cost" ersa-table-no-filter class="text-right">Fee</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="instance in displayedUsagesRows" class="animated fadeIn">
+                <td cell-ratio="13" blank-safe="instance.billing"></td>
+                <td cell-ratio="13" blank-safe="instance.organisation"></td>
+                <td cell-ratio="13">{{ ::instance.tenant }}</td>
+                <td cell-ratio="13" blank-safe="instance.full_name"></td>
+                <td cell-ratio="14" blank-safe="instance.manageremail"></td>
+                <td cell-ratio="13">{{ ::instance.server }}</td>
+                <td cell-ratio="7" class="text-right"> {{ ::instance.flavorName }}</td>
+                <td cell-ratio="7" class="text-right"> {{ ::instance.span/3600 | number : 2 }}</td>
+                <td cell-ratio="7" class="text-right"> ${{ ::instance.cost }}</td>
+            </tr>
+            <tr ng-show="usages.length > 0 && displayedUsagesRows.length === 0">
+                <td>No rows match the filter</td>
+            </tr>
+        </tbody>
+    </table>
+    <table ng-hide="viewDetails" class="flexy-table box-content"
+        st-table="displayedSimpleRows" st-safe-src="subTotals" ersa-table="nova-summary.simple">
+        <thead>
+            <tr ersa-table-add-filters>
+                <th cell-ratio="40" ersa-table-sort="orderBy('billing')" st-sort-default="true">Organisation</th>
+                <th cell-ratio="40" ersa-table-sort="organisation">School</th>
+                <th cell-ratio="10" ersa-table-sort="cost" ersa-table-no-filter class="text-right">Cores Used</th>
+                <th cell-ratio="10" ersa-table-sort="cost" ersa-table-no-filter class="text-right">Fee</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="instance in displayedSimpleRows" ng-class="{'subtotal-row': isSubTotalRow(instance)}" class="animated fadeIn">
+                <td cell-ratio="40" blank-safe="instance.billing"></td>
+                <td cell-ratio="40" blank-safe="instance.organisation"></td>
+                <td cell-ratio="10" class="text-right"> {{ ::instance.core }}</td>
+                <td cell-ratio="10" class="text-right"> ${{ ::instance.cost }}</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr ng-show="subTotals.length" class="animated fadeIn" ng-class="{'total-not-relevant': isFilterAppliedSimple()}">
+                <td cell-ratio="80"><strong>Grand Total</strong></td>
+                <td class="filler-cell"></td>
+                <td cell-ratio="10" class="text-right"><strong>{{ grandTotal.core }}</strong></td>
+                <td cell-ratio="10" class="text-right"><strong>${{ grandTotal.cost }}</strong></td>
+            </tr>
+        </tfoot>
+    </table>
 </div>

@@ -44,6 +44,11 @@ define(
         $scope.rangeEndOpen = true;
       };
 
+      $scope.orderBy = theConstants.orderByPredicateThenSubTotal
+      $scope.isFilterAppliedSimple = () => {
+        return theConstants.isFilterApplied($scope.displayedSimpleRows, $scope.subTotals)
+      }
+
       /**
        * retrieve data with query string.
        */
