@@ -4,7 +4,6 @@ define(['pageComponents'], function (pageComponents) {
   var kebabCaseDirectiveName = 'ersa-table-sort'
   pageComponents.directive(directiveName, ['$compile', function ($compile) {
     return {
-      // terminal: true,
       priority: 1000,
       restrict: 'A',
       link: function (scope, element, attrs) {

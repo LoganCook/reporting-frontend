@@ -1,5 +1,5 @@
 define(
-  ["client", "datePickers", "ersaTable", "ersaTableSort", "blankSafe", "userRollupErrors"],
+  ["client", "datePickers", "ersaTable", "ersaTableSort", "ersaTableAddFilters", "blankSafe", "userRollupErrors"],
   function (clientConstructor) {
 
   var app = angular.module("reportingApp", ["ngSanitize", "ui.router", "ui.bootstrap", "ngResource",
@@ -212,7 +212,7 @@ define(
       return 0
     }
     function orderByPredicateThenSubTotal (predicate) {
-      return (value) => {
+      return function (value) {
         var subtotalFieldName = 'organisation'
         var result = value[predicate]
         var subtotalFieldValue = value[subtotalFieldName]
@@ -226,7 +226,7 @@ define(
       return orderByNCols([col1, col2])
     }
     function orderByNCols (colNameArray) {
-      return (value) => {
+      return function (value) {
         var orderValue = ''
         for (var i = 0; i < colNameArray.length; i++) {
           var fieldName = colNameArray[i]

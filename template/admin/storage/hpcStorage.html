@@ -64,26 +64,15 @@
     <table ng-show="viewDetails" class="flexy-table box-content"
         st-table="displayedOutputSummedRows" st-safe-src="output.summed" ersa-table="home-account-storage.detailed">
         <thead>
-            <tr>
+            <tr ersa-table-add-filters>
                 <th cell-ratio="10" ersa-table-sort="orderByNCols(['biller','managerunit','owner'])" st-sort-default="true">Organisation</th>
                 <th cell-ratio="20" ersa-table-sort="managerunit">School</th>
                 <th cell-ratio="10" ersa-table-sort="owner">User ID</th>
                 <th cell-ratio="10" ersa-table-sort="manager">User Name</th>
                 <th cell-ratio="20" ersa-table-sort="manageremail">Email</th>
-                <th cell-ratio="10" ersa-table-sort="usage" class="text-right">GB Used</th>
-                <th cell-ratio="10" ersa-table-sort="blocks" class="text-right">Usage / 250GB</th>
-                <th cell-ratio="10" ersa-table-sort="cost" class="text-right">Fee</th>
-            </tr>
-            <tr class="export-ignore">
-                <th cell-ratio="10"><input st-search="biller" placeholder="organisaton filter" class="input-sm form-control" type="search" /></th>
-                <th cell-ratio="20"><input st-search="managerunit" placeholder="school filter" class="input-sm form-control" type="search" /></th>
-                <th cell-ratio="10"><input st-search="owner" placeholder="user ID filter" class="input-sm form-control" type="search" /></th>
-                <th cell-ratio="10"><input st-search="manager" placeholder="user name filter" class="input-sm form-control" type="search" /></th>
-                <th cell-ratio="20"><input st-search="manageremail" placeholder="email filter" class="input-sm form-control" type="search" /></th>
-                <th>
-                    <label for="searchWholeDetailedTable">Search whole table: </label>
-                    <input st-search placeholder="search whole table" class="input-sm form-control" type="search" id="searchWholeDetailedTable" />
-                </th>
+                <th cell-ratio="10" ersa-table-sort="usage" ersa-table-no-filter class="text-right">GB Used</th>
+                <th cell-ratio="10" ersa-table-sort="blocks" ersa-table-no-filter class="text-right">Usage / 250GB</th>
+                <th cell-ratio="10" ersa-table-sort="cost" ersa-table-no-filter class="text-right">Fee</th>
             </tr>
         </thead>
         <tbody>
@@ -111,20 +100,12 @@
     <table ng-hide="viewDetails" class="flexy-table box-content"
         st-table="displayedSubtotalRows" st-safe-src="subTotals" ersa-table="home-account-storage.simple">
         <thead>
-            <tr>
+            <tr ersa-table-add-filters>
                 <th cell-ratio="35" ersa-table-sort="orderBy('billing')" st-sort-default="true">Organisation</th>
                 <th cell-ratio="35" ersa-table-sort="organisation">School</th>
-                <th cell-ratio="10" ersa-table-sort="usage" class="text-right">GB Used</th>
-                <th cell-ratio="10" ersa-table-sort="blocks" class="text-right">Usage / 250GB</th>
-                <th cell-ratio="10" ersa-table-sort="cost" class="text-right">Fee</th>
-            </tr>
-            <tr class="export-ignore">
-                <th cell-ratio="35"><input st-search="billing" placeholder="organisaton filter" class="input-sm form-control" type="search" /></th>
-                <th cell-ratio="35"><input st-search="organisation" placeholder="school filter" class="input-sm form-control" type="search" /></th>
-                <th>
-                    <label for="searchWholeSimpleTable">Search whole table: </label>
-                    <input st-search placeholder="search whole table" class="input-sm form-control" type="search" id="searchWholeSimpleTable" />
-                </th>
+                <th cell-ratio="10" ersa-table-sort="usage" ersa-table-no-filter class="text-right">GB Used</th>
+                <th cell-ratio="10" ersa-table-sort="blocks" ersa-table-no-filter class="text-right">Usage / 250GB</th>
+                <th cell-ratio="10" ersa-table-sort="cost" ersa-table-no-filter class="text-right">Fee</th>
             </tr>
         </thead>
         <tbody>
