@@ -23,6 +23,7 @@ module.exports = function(config) {
       'lib/angular-mocks/angular-mocks.js',
       'lib/angular-sanitize/angular-sanitize.min.js',
       'lib/ng-table-to-csv/dist/ng-table-to-csv.min.js',
+      'lib/angular-smart-table/dist/smart-table.min.js',
       {pattern: 'lib/spin.js/spin.min.js', included: false},
       {pattern: 'lib/angular-spinner/angular-spinner.min.js', included: false},
       {pattern: 'lib/filesize/lib/filesize.min.js', included: false},
