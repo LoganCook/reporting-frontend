@@ -63,17 +63,17 @@
         st-table="displayedUsagesRows" st-safe-src="usages" ersa-table="national-storage.detailed">
         <thead>
             <tr>
-                <th cell-ratio="7" st-sort="source" st-skip-natural="true">Source</th>
-                <th cell-ratio="7" st-sort="orderID" st-skip-natural="true">Allocation Name</th>
-                <th cell-ratio="10" st-sort="orderByTwoCols('billing','orderID')" st-sort-default="true" st-skip-natural="true">Organisation</th>
-                <th cell-ratio="10" st-sort="managerunit" st-skip-natural="true">School</th>
-                <th cell-ratio="10" st-sort="manager" st-skip-natural="true">User Name</th>
-                <th cell-ratio="15" st-sort="manageremail" st-skip-natural="true">Email</th>
-                <th cell-ratio="15" st-sort="filesystem" st-skip-natural="true">File System</th>
-                <th cell-ratio="8" st-sort="approved_size" st-skip-natural="true" class="text-right">GB Allocated</th>
-                <th cell-ratio="8" st-sort="usage" st-skip-natural="true" class="text-right">GB Used</th>
-                <th cell-ratio="5" st-sort="blocks" st-skip-natural="true" class="text-right">Usage / 250GB</th>
-                <th cell-ratio="5" st-sort="cost" st-skip-natural="true" class="text-right">Fee</th>
+                <th cell-ratio="7" ersa-table-sort="source">Source</th>
+                <th cell-ratio="7" ersa-table-sort="orderID">Allocation Name</th>
+                <th cell-ratio="10" ersa-table-sort="orderByTwoCols('billing','orderID')" st-sort-default="true">Organisation</th>
+                <th cell-ratio="10" ersa-table-sort="managerunit">School</th>
+                <th cell-ratio="10" ersa-table-sort="manager">User Name</th>
+                <th cell-ratio="15" ersa-table-sort="manageremail">Email</th>
+                <th cell-ratio="15" ersa-table-sort="filesystem">File System</th>
+                <th cell-ratio="8" ersa-table-sort="approved_size" class="text-right">GB Allocated</th>
+                <th cell-ratio="8" ersa-table-sort="usage" class="text-right">GB Used</th>
+                <th cell-ratio="5" ersa-table-sort="blocks" class="text-right">Usage / 250GB</th>
+                <th cell-ratio="5" ersa-table-sort="cost" class="text-right">Fee</th>
             </tr>
             <tr class="export-ignore">
                 <th cell-ratio="7"><input st-search="source" placeholder="source filter" class="input-sm form-control" type="search" /></th>
@@ -119,16 +119,16 @@
         st-table="displayedRollupRows" st-safe-src="rollup" ersa-table="national-storage.rollup">
         <thead>
             <tr>
-                <th cell-ratio="7" st-sort="orderID" st-skip-natural="true">Allocation Name</th>
-                <th cell-ratio="13" st-sort="orderByTwoCols('billing','orderID')" st-sort-default="true" st-skip-natural="true">Organisation</th>
-                <th cell-ratio="14" st-sort="managerunit" st-skip-natural="true">School</th>
-                <th cell-ratio="10" st-sort="manager" st-skip-natural="true">User Name</th>
-                <th cell-ratio="15" st-sort="manageremail" st-skip-natural="true">Email</th>
-                <th cell-ratio="15" st-sort="filesystem" st-skip-natural="true">File System</th>
-                <th cell-ratio="8" st-sort="approved_size" st-skip-natural="true" class="text-right">GB Allocated</th>
-                <th cell-ratio="8" st-sort="usage" st-skip-natural="true" class="text-right">GB Used</th>
-                <th cell-ratio="5" st-sort="blocks" st-skip-natural="true" class="text-right">Usage / 250GB</th>
-                <th cell-ratio="5" st-sort="cost" st-skip-natural="true" class="text-right">Fee</th>
+                <th cell-ratio="7" ersa-table-sort="orderID">Allocation Name</th>
+                <th cell-ratio="13" ersa-table-sort="orderByTwoCols('billing','orderID')" st-sort-default="true">Organisation</th>
+                <th cell-ratio="14" ersa-table-sort="managerunit">School</th>
+                <th cell-ratio="10" ersa-table-sort="manager">User Name</th>
+                <th cell-ratio="15" ersa-table-sort="manageremail">Email</th>
+                <th cell-ratio="15" ersa-table-sort="filesystem">File System</th>
+                <th cell-ratio="8" ersa-table-sort="approved_size" class="text-right">GB Allocated</th>
+                <th cell-ratio="8" ersa-table-sort="usage" class="text-right">GB Used</th>
+                <th cell-ratio="5" ersa-table-sort="blocks" class="text-right">Usage / 250GB</th>
+                <th cell-ratio="5" ersa-table-sort="cost" class="text-right">Fee</th>
             </tr>
             <tr class="export-ignore">
                 <th cell-ratio="7"><input st-search="orderID" placeholder="allocation name filter" class="input-sm form-control" type="search" /></th>
@@ -172,11 +172,11 @@
         st-table="displayedSimpleRows" st-safe-src="subTotals" ersa-table="national-storage.simple">
         <thead>
             <tr>
-                <th cell-ratio="35" st-sort="orderBy('billing')" st-sort-default="true" st-skip-natural="true">Organisation</th>
-                <th cell-ratio="35" st-sort="orderBy('organisation')" st-skip-natural="true">School</th>
-                <th cell-ratio="10" st-sort="usage" st-skip-natural="true" class="text-right">GB Used</th>
-                <th cell-ratio="10" st-sort="blocks" st-skip-natural="true" class="text-right">Usage / 250GB</th>
-                <th cell-ratio="10" st-sort="cost" st-skip-natural="true" class="text-right">Fee</th>
+                <th cell-ratio="35" ersa-table-sort="orderBy('billing')" st-sort-default="true">Organisation</th>
+                <th cell-ratio="35" ersa-table-sort="orderBy('organisation')">School</th>
+                <th cell-ratio="10" ersa-table-sort="usage" class="text-right">GB Used</th>
+                <th cell-ratio="10" ersa-table-sort="blocks" class="text-right">Usage / 250GB</th>
+                <th cell-ratio="10" ersa-table-sort="cost" class="text-right">Fee</th>
             </tr>
             <tr class="export-ignore">
                 <th cell-ratio="35"><input st-search="billing" placeholder="organisation filter" class="input-sm form-control" type="search" /></th>

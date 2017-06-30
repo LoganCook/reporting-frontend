@@ -65,14 +65,14 @@
         st-table="displayedOutputSummedRows" st-safe-src="output.summed" ersa-table="home-account-storage.detailed">
         <thead>
             <tr>
-                <th cell-ratio="10" st-sort="orderByNCols(['biller','managerunit','owner'])" st-sort-default="true" st-skip-natural="true">Organisation</th>
-                <th cell-ratio="20" st-sort="managerunit" st-skip-natural="true">School</th>
-                <th cell-ratio="10" st-sort="owner" st-skip-natural="true">User ID</th>
-                <th cell-ratio="10" st-sort="manager" st-skip-natural="true">User Name</th>
-                <th cell-ratio="20" st-sort="manageremail" st-skip-natural="true">Email</th>
-                <th cell-ratio="10" st-sort="usage" st-skip-natural="true" class="text-right">GB Used</th>
-                <th cell-ratio="10" st-sort="blocks" st-skip-natural="true" class="text-right">Usage / 250GB</th>
-                <th cell-ratio="10" st-sort="cost" st-skip-natural="true" class="text-right">Fee</th>
+                <th cell-ratio="10" ersa-table-sort="orderByNCols(['biller','managerunit','owner'])" st-sort-default="true">Organisation</th>
+                <th cell-ratio="20" ersa-table-sort="managerunit">School</th>
+                <th cell-ratio="10" ersa-table-sort="owner">User ID</th>
+                <th cell-ratio="10" ersa-table-sort="manager">User Name</th>
+                <th cell-ratio="20" ersa-table-sort="manageremail">Email</th>
+                <th cell-ratio="10" ersa-table-sort="usage" class="text-right">GB Used</th>
+                <th cell-ratio="10" ersa-table-sort="blocks" class="text-right">Usage / 250GB</th>
+                <th cell-ratio="10" ersa-table-sort="cost" class="text-right">Fee</th>
             </tr>
             <tr class="export-ignore">
                 <th cell-ratio="10"><input st-search="biller" placeholder="organisaton filter" class="input-sm form-control" type="search" /></th>
@@ -112,11 +112,11 @@
         st-table="displayedSubtotalRows" st-safe-src="subTotals" ersa-table="home-account-storage.simple">
         <thead>
             <tr>
-                <th cell-ratio="35" st-sort="orderBy('billing')" st-sort-default="true" st-skip-natural="true">Organisation</th>
-                <th cell-ratio="35" st-sort="organisation" st-skip-natural="true">School</th>
-                <th cell-ratio="10" st-sort="usage" st-skip-natural="true" class="text-right">GB Used</th>
-                <th cell-ratio="10" st-sort="blocks" st-skip-natural="true" class="text-right">Usage / 250GB</th>
-                <th cell-ratio="10" st-sort="cost" st-skip-natural="true" class="text-right">Fee</th>
+                <th cell-ratio="35" ersa-table-sort="orderBy('billing')" st-sort-default="true">Organisation</th>
+                <th cell-ratio="35" ersa-table-sort="organisation">School</th>
+                <th cell-ratio="10" ersa-table-sort="usage" class="text-right">GB Used</th>
+                <th cell-ratio="10" ersa-table-sort="blocks" class="text-right">Usage / 250GB</th>
+                <th cell-ratio="10" ersa-table-sort="cost" class="text-right">Fee</th>
             </tr>
             <tr class="export-ignore">
                 <th cell-ratio="35"><input st-search="billing" placeholder="organisaton filter" class="input-sm form-control" type="search" /></th>

@@ -1,5 +1,5 @@
 define(
-  ["client", "datePickers", "ersaTable", "blankSafe", "userRollupErrors"],
+  ["client", "datePickers", "ersaTable", "ersaTableSort", "blankSafe", "userRollupErrors"],
   function (clientConstructor) {
 
   var app = angular.module("reportingApp", ["ngSanitize", "ui.router", "ui.bootstrap", "ngResource",
