@@ -22,7 +22,6 @@ define(
       $scope.instancesState = [];
       $scope.serverChecked = false;
       $scope.datepickerOptions = {minMode: 'month'}
-      $scope.orderBySubTotalLast = theConstants.orderBySubTotalLast
       $scope.isSubTotalRow = theConstants.isSubTotalRow
 
       /**
@@ -44,6 +43,8 @@ define(
         $scope.rangeEndOpen = true;
       };
 
+      $scope.orderBy = theConstants.orderByPredicateThenSubTotal
+      $scope.isFilterApplied = theConstants.isFilterApplied
       /**
        * retrieve data with query string.
        */

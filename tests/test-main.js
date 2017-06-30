@@ -23,9 +23,11 @@ require.config({
     'angular': '../lib/angular/angular.min',
     'spin': '../lib/spin.js/spin.min',
     'pageComponents': '../js/components/pageComponents',
-    'datePickers': "../js/components/datePickers/date-pickers",
+    'datePickers': '../js/components/datePickers/date-pickers',
     'datePickerUib': '../js/components/datePickerUib/date-picker-uib',
     'ersaTable': '../js/directives/ersaTable/ersa-table',
+    'ersaTableSort': '../js/directives/ersaTableSort/ersa-table-sort',
+    'ersaTableAddFilters': '../js/directives/ersaTableAddFilters/ersa-table-add-filters',
     'blankSafe': '../js/directives/blankSafe/blank-safe',
     'userRollupErrors': '../js/components/userRollupErrors/user-rollup-errors'
   },

@@ -12,6 +12,8 @@ require.config({
     'datePickers': 'components/datePickers/date-pickers',
     'datePickerUib': 'components/datePickerUib/date-picker-uib',
     'ersaTable': 'directives/ersaTable/ersa-table',
+    'ersaTableSort': 'directives/ersaTableSort/ersa-table-sort',
+    'ersaTableAddFilters': 'directives/ersaTableAddFilters/ersa-table-add-filters',
     'blankSafe': 'directives/blankSafe/blank-safe',
     'userRollupErrors': 'components/userRollupErrors/user-rollup-errors'
   },

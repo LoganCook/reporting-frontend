@@ -1,8 +1,8 @@
-<div class="container-fluid">
-    <h3 class="text-center">HOME ACCOUNT STORAGE USAGE</h3>
-    <p ng-show="error" class="alert alert-danger">{{ error }}</p>
-    <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
-    <div>
+<div class="container-fluid box">
+    <div class="box-header">
+        <h3 class="text-center">HOME ACCOUNT STORAGE USAGE</h3>
+        <p ng-show="error" class="alert alert-danger">{{ error }}</p>
+        <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
         <form>
             <div class="row">
                 <div class="col-md-12">
@@ -59,77 +59,72 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-xs-12">
-                    <table ng-show="viewDetails" ersa-table="home-account-storage.detailed">
-                        <thead>
-                            <tr>
-                                <th>Organisation</th>
-                                <th>School</th>
-                                <th>User ID</th>
-                                <th>User Name</th>
-                                <th>Email</th>
-                                <th class="text-right">GB Used</th>
-                                <th class="text-right">Usage / 250GB</th>
-                                <th class="text-right">Fee</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat="entry in output.summed | orderBy: ['biller','managerunit','owner']">
-                                <td blank-safe="entry.biller"></td>
-                                <td blank-safe="entry.managerunit"></td>
-                                <td>{{ ::entry.owner }}</td>
-                                <td blank-safe="entry.manager"></td>
-                                <td blank-safe="entry.manageremail"></td>
-                                <td class="text-right">{{ ::entry.usage | number }}</td>
-                                <td class="text-right">{{ ::entry.blocks }}</td>
-                                <td class="text-right">${{ ::formatNumber(entry.cost) }}</td>
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                            <tr ng-show="output.summed.length">
-                                <td><strong>Grand Total</strong></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td class="text-right"><strong>{{ total.usage | number }}</strong></td>
-                                <td class="text-right"><strong>{{ total.blocks }}</strong> </td>
-                                <td class="text-right"><strong>${{ formatNumber(total.cost) }}</strong></td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                    <table ng-hide="viewDetails" ersa-table="home-account-storage.simple">
-                        <thead>
-                            <tr>
-                                <th>Organisation</th>
-                                <th>School</th>
-                                <th class="text-right">GB Used</th>
-                                <th class="text-right">Usage / 250GB</th>
-                                <th class="text-right">Fee</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat="entry in subTotals | orderBy: ['billing',orderBySubTotalLast,'organisation']" ng-class="{'subtotal-row': isSubTotalRow(entry)}">
-                                <td blank-safe="entry.billing"></td>
-                                <td blank-safe="entry.organisation"></td>
-                                <td class="text-right">{{ ::entry.usage | number }}</td>
-                                <td class="text-right">{{ ::entry.blocks }}</td>
-                                <td class="text-right">${{ ::formatNumber(entry.cost) }}</td>
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                            <tr ng-show="output.summed.length">
-                                <td><strong>Grand Total</strong></td>
-                                <td></td>
-                                <td class="text-right"><strong>{{ total.usage | number }}</strong></td>
-                                <td class="text-right"><strong>{{ total.blocks }}</strong></td>
-                                <td class="text-right"><strong>${{ formatNumber(total.cost) }}</strong></td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-            </div>
         </form>
     </div>
+    <table ng-show="viewDetails" class="flexy-table box-content"
+        st-table="displayedOutputSummedRows" st-safe-src="output.summed" ersa-table="home-account-storage.detailed">
+        <thead>
+            <tr ersa-table-add-filters>
+                <th cell-ratio="10" ersa-table-sort="orderByNCols(['biller','managerunit','owner'])" st-sort-default="true">Organisation</th>
+                <th cell-ratio="20" ersa-table-sort="managerunit">School</th>
+                <th cell-ratio="10" ersa-table-sort="owner">User ID</th>
+                <th cell-ratio="10" ersa-table-sort="manager">User Name</th>
+                <th cell-ratio="20" ersa-table-sort="manageremail">Email</th>
+                <th cell-ratio="10" ersa-table-sort="usage" ersa-table-no-filter class="text-right">GB Used</th>
+                <th cell-ratio="10" ersa-table-sort="blocks" ersa-table-no-filter class="text-right">Usage / 250GB</th>
+                <th cell-ratio="10" ersa-table-sort="cost" ersa-table-no-filter class="text-right">Fee</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="entry in displayedOutputSummedRows" class="animated fadeIn">
+                <td cell-ratio="10" blank-safe="entry.biller"></td>
+                <td cell-ratio="20" blank-safe="entry.managerunit"></td>
+                <td cell-ratio="10">{{ ::entry.owner }}</td>
+                <td cell-ratio="10" blank-safe="entry.manager"></td>
+                <td cell-ratio="20" blank-safe="entry.manageremail"></td>
+                <td cell-ratio="10" class="text-right">{{ ::entry.usage | number }}</td>
+                <td cell-ratio="10" class="text-right">{{ ::entry.blocks }}</td>
+                <td cell-ratio="10" class="text-right">${{ ::formatNumber(entry.cost) }}</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr ng-show="output.summed.length" ng-class="{'total-not-relevant': isFilterApplied(displayedOutputSummedRows, output.summed)}">
+                <td cell-ratio="70"><strong>Grand Total</strong></td>
+                <td ng-repeat="i in [1,2,3,4]" class="filler-cell"></td>
+                <td cell-ratio="10" class="text-right"><strong>{{ total.usage | number }}</strong></td>
+                <td cell-ratio="10" class="text-right"><strong>{{ total.blocks }}</strong> </td>
+                <td cell-ratio="10" class="text-right"><strong>${{ formatNumber(total.cost) }}</strong></td>
+            </tr>
+        </tfoot>
+    </table>
+    <table ng-hide="viewDetails" class="flexy-table box-content"
+        st-table="displayedSubtotalRows" st-safe-src="subTotals" ersa-table="home-account-storage.simple">
+        <thead>
+            <tr ersa-table-add-filters>
+                <th cell-ratio="35" ersa-table-sort="orderBy('billing')" st-sort-default="true">Organisation</th>
+                <th cell-ratio="35" ersa-table-sort="organisation">School</th>
+                <th cell-ratio="10" ersa-table-sort="usage" ersa-table-no-filter class="text-right">GB Used</th>
+                <th cell-ratio="10" ersa-table-sort="blocks" ersa-table-no-filter class="text-right">Usage / 250GB</th>
+                <th cell-ratio="10" ersa-table-sort="cost" ersa-table-no-filter class="text-right">Fee</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="entry in displayedSubtotalRows" class="animated fadeIn" ng-class="{'subtotal-row': isSubTotalRow(entry)}">
+                <td cell-ratio="35" blank-safe="entry.billing"></td>
+                <td cell-ratio="35" blank-safe="entry.organisation"></td>
+                <td cell-ratio="10" class="text-right">{{ ::entry.usage | number }}</td>
+                <td cell-ratio="10" class="text-right">{{ ::entry.blocks }}</td>
+                <td cell-ratio="10" class="text-right">${{ ::formatNumber(entry.cost) }}</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr ng-show="output.summed.length" class="animated fadeIn" ng-class="{'total-not-relevant': isFilterApplied(displayedSubtotalRows, subTotals)}">
+                <td cell-ratio="70"><strong>Grand Total</strong></td>
+                <td class="filler-cell"></td>
+                <td cell-ratio="10" class="text-right"><strong>{{ total.usage | number }}</strong></td>
+                <td cell-ratio="10" class="text-right"><strong>{{ total.blocks }}</strong></td>
+                <td cell-ratio="10" class="text-right"><strong>${{ formatNumber(total.cost) }}</strong></td>
+            </tr>
+        </tfoot>
+    </table>
 </div>

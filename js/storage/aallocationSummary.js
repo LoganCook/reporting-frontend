@@ -24,7 +24,9 @@ define(
         $scope.rangeEndOpen = true;
       };
       $scope.datepickerOptions = {minMode: 'month'}
-      $scope.orderBySubTotalLast = theConstants.orderBySubTotalLast
+      $scope.isFilterApplied = theConstants.isFilterApplied
+      $scope.orderBy = theConstants.orderByPredicateThenSubTotal
+      $scope.orderByTwoCols = theConstants.orderByTwoCols
       $scope.isSubTotalRow = theConstants.isSubTotalRow
       $scope.showBlacklist = function() {
         var modalInstance = $uibModal.open({

@@ -4,8 +4,18 @@ define(['pageComponents'], function (module) {
     templateUrl: 'js/components/userRollupErrors/user-rollup-errors.html',
     controller: ['$scope', function ($scope) {
       var ctrl = this
-      $scope.isRollupError = function () {
+      $scope.isClosed = false
+      this.$onChanges = function (disregardChanges) {
+        $scope.isClosed = false
+      }
+      $scope.closedHandler = function () {
+        $scope.isClosed = true
+      }
+      $scope.isDisplayed = function () {
         if (typeof ctrl.isAllSuccess === 'undefined') {
+          return false
+        }
+        if ($scope.isClosed) {
           return false
         }
         return !ctrl.isAllSuccess
@@ -21,8 +31,8 @@ define(['pageComponents'], function (module) {
       }
     }],
     bindings: {
-      isAllSuccess: '=', // boolean
-      errors: '=' // string[]
+      isAllSuccess: '<', // boolean
+      errors: '<' // string[]
     }
   })
 })

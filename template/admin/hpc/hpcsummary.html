@@ -1,9 +1,9 @@
-<div class="container-fluid">
-  <h3 class="text-center">HPC USAGE</h3>
-  <p ng-show="error" class="alert alert-danger">{{ error }}</p>
-  <user-rollup-errors is-all-success="userRollupErrorData.isAllSuccess" errors="userRollupErrorData.errors"></user-rollup-errors>
-  <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
-  <div>
+<div class="container-fluid box">
+  <div class="box-header">
+    <h3 class="text-center">HPC USAGE</h3>
+    <p ng-show="error" class="alert alert-danger">{{ error }}</p>
+    <user-rollup-errors is-all-success="userRollupErrorData.isAllSuccess" errors="userRollupErrorData.errors"></user-rollup-errors>
+    <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
     <form>
       <div class="row">
         <div class="col-md-12">
@@ -50,119 +50,111 @@
         </div>
       </div>
     </form>
-    <div class="row">
-      <div class="col-xs-12">
-        <table ng-show="detailLevel === 'detailed'" ersa-table="hpc-summary.detailed">
-          <thead>
-            <tr>
-              <th>Organisation </th>
-              <th>School</th>
-              <th>User ID</th>
-              <th>User Name</th>
-              <th>Email</th>
-              <th>Queue</th>
-              <th>Job Count</th>
-              <th>Core Hours</th>
-              <th>Fee</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr ng-repeat="sum in jobCounts | orderBy: ['biller','managerunit','owner']">
-              <td blank-safe="sum.biller"></td>
-              <td blank-safe="sum.managerunit"></td>
-              <td>{{ ::sum.owner }}</td>
-              <td blank-safe="sum.manager"></td>
-              <td blank-safe="sum.manageremail"></td>
-              <td>{{ ::sum.queue }}</td>
-              <td>{{ ::sum.job_count }}</td>
-              <td>{{ ::formatNumber(sum.hours) }}</td>
-              <td>${{ ::formatNumber(sum.cost) }}</td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr ng-show="jobCounts.length">
-              <td><strong>Grand Total</strong></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td><strong>{{ grandTotal.job_count }}</strong></td>
-              <td><strong>{{ formatNumber(grandTotal.hours) }}</strong></td>
-              <td><strong>${{ formatNumber(grandTotal.cost) }}</strong></td>
-            </tr>
-          </tfoot>
-        </table>
-
-        <table ng-show="detailLevel === 'rollup'" ersa-table="hpc-summary.user-rollup">
-          <thead>
-            <tr>
-              <th>Organisation </th>
-              <th>School</th>
-              <th>User ID</th>
-              <th>User Name</th>
-              <th>Email</th>
-              <th>Job Count</th>
-              <th>Core Hours</th>
-              <th>Fee</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr ng-repeat="sum in userRollup | orderBy: ['biller','managerunit','owner']">
-              <td blank-safe="sum.biller"></td>
-              <td blank-safe="sum.managerunit"></td>
-              <td>{{ ::sum.owner }}</td>
-              <td blank-safe="sum.manager"></td>
-              <td blank-safe="sum.manageremail"></td>
-              <td>{{ ::sum.job_count }}</td>
-              <td>{{ ::formatNumber(sum.hours) }}</td>
-              <td>${{ ::formatNumber(sum.cost) }}</td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr ng-show="jobCounts.length">
-              <td><strong>Grand Total</strong></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td><strong>{{ grandTotal.job_count }}</strong></td>
-              <td><strong>{{ formatNumber(grandTotal.hours) }}</strong></td>
-              <td><strong>${{ formatNumber(grandTotal.cost) }}</strong></td>
-            </tr>
-          </tfoot>
-        </table>
-
-        <table ng-show="detailLevel === 'simple'" ersa-table="hpc-summary.simple">
-          <thead>
-            <tr>
-              <th>Organisation</th>
-              <th>School</th>
-              <th>Job Count</th>
-              <th>Core Hours</th>
-              <th>Fee</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr ng-repeat="sum in subTotals | orderBy: ['billing',orderBySubTotalLast,'organisation','job_count']" ng-class="{'subtotal-row': isSubTotalRow(sum)}">
-              <td blank-safe="sum.billing"></td>
-              <td blank-safe="sum.organisation"></td>
-              <td>{{ ::sum.job_count }}</td>
-              <td>{{ ::formatNumber(sum.hours) }}</td>
-              <td>${{ ::formatNumber(sum.cost) }}</td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr ng-show="jobCounts.length">
-              <td><strong>Grand Total</strong></td>
-              <td></td>
-              <td><strong>{{ grandTotal.job_count }}</strong></td>
-              <td><strong>{{ formatNumber(grandTotal.hours) }}</strong></td>
-              <td><strong>${{ formatNumber(grandTotal.cost) }}</strong></td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-    </div>
   </div>
+  <table ng-show="detailLevel === 'detailed'" class="flexy-table box-content"
+    st-table="displayedJobCountsRows" st-safe-src="jobCounts" ersa-table="hpc-summary.detailed">
+    <thead>
+      <tr ersa-table-add-filters>
+        <th cell-ratio="16" ersa-table-sort="orderByNCols(['biller','managerunit','owner'])" st-sort-default="true">Organisation</th>
+        <th cell-ratio="14" ersa-table-sort="managerunit">School</th>
+        <th cell-ratio="14" ersa-table-sort="owner">User ID</th>
+        <th cell-ratio="14" ersa-table-sort="manager">User Name</th>
+        <th cell-ratio="14" ersa-table-sort="manageremail">Email</th>
+        <th cell-ratio="7" ersa-table-sort="queue">Queue</th>
+        <th cell-ratio="7" ersa-table-sort="job_count" ersa-table-no-filter>Job Count</th>
+        <th cell-ratio="7" ersa-table-sort="hours" ersa-table-no-filter>Core Hours</th>
+        <th cell-ratio="7" ersa-table-sort="cost" ersa-table-no-filter>Fee</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="sum in displayedJobCountsRows" class="animated fadeIn">
+        <td cell-ratio="16" blank-safe="sum.biller"></td>
+        <td cell-ratio="14" blank-safe="sum.managerunit"></td>
+        <td cell-ratio="14">{{ ::sum.owner }}</td>
+        <td cell-ratio="14" blank-safe="sum.manager"></td>
+        <td cell-ratio="14" blank-safe="sum.manageremail"></td>
+        <td cell-ratio="7">{{ ::sum.queue }}</td>
+        <td cell-ratio="7">{{ ::sum.job_count }}</td>
+        <td cell-ratio="7">{{ ::formatNumber(sum.hours) }}</td>
+        <td cell-ratio="7">${{ ::formatNumber(sum.cost) }}</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr ng-show="jobCounts.length" ng-class="{'total-not-relevant': isFilterApplied(displayedJobCountsRows, jobCounts)}">
+        <td cell-ratio="79"><strong>Grand Total</strong></td>
+        <td ng-repeat="i in [1,2,3,4,5]" class="filler-cell"></td>
+        <td cell-ratio="7"><strong>{{ grandTotal.job_count }}</strong></td>
+        <td cell-ratio="7"><strong>{{ formatNumber(grandTotal.hours) }}</strong></td>
+        <td cell-ratio="7"><strong>${{ formatNumber(grandTotal.cost) }}</strong></td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <table ng-show="detailLevel === 'rollup'" class="flexy-table box-content"
+    st-table="displayedRollupRows" st-safe-src="userRollup" ersa-table="hpc-summary.user-rollup">
+    <thead>
+      <tr ersa-table-add-filters>
+        <th cell-ratio="16" ersa-table-sort="orderByNCols(['biller','managerunit','owner'])" st-sort-default="true">Organisation</th>
+        <th cell-ratio="14" ersa-table-sort="managerunit">School</th>
+        <th cell-ratio="14" ersa-table-sort="owner">User ID</th>
+        <th cell-ratio="14" ersa-table-sort="manager">User Name</th>
+        <th cell-ratio="15" ersa-table-sort="manageremail">Email</th>
+        <th cell-ratio="9" ersa-table-sort="job_count" ersa-table-no-filter>Job Count</th>
+        <th cell-ratio="9" ersa-table-sort="hours" ersa-table-no-filter>Core Hours</th>
+        <th cell-ratio="9" ersa-table-sort="cost" ersa-table-no-filter>Fee</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="sum in displayedRollupRows" class="animated fadeIn">
+        <td cell-ratio="16" blank-safe="sum.biller"></td>
+        <td cell-ratio="14" blank-safe="sum.managerunit"></td>
+        <td cell-ratio="14">{{ ::sum.owner }}</td>
+        <td cell-ratio="14" blank-safe="sum.manager"></td>
+        <td cell-ratio="15" blank-safe="sum.manageremail"></td>
+        <td cell-ratio="9">{{ ::sum.job_count }}</td>
+        <td cell-ratio="9">{{ ::formatNumber(sum.hours) }}</td>
+        <td cell-ratio="9">${{ ::formatNumber(sum.cost) }}</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr ng-show="jobCounts.length" ng-class="{'total-not-relevant': isFilterApplied(displayedRollupRows, userRollup)}">
+        <td cell-ratio="73"><strong>Grand Total</strong></td>
+        <td ng-repeat="i in [1,2,3,4]" class="filler-cell"></td>
+        <td cell-ratio="9"><strong>{{ grandTotal.job_count }}</strong></td>
+        <td cell-ratio="9"><strong>{{ formatNumber(grandTotal.hours) }}</strong></td>
+        <td cell-ratio="9"><strong>${{ formatNumber(grandTotal.cost) }}</strong></td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <table ng-show="detailLevel === 'simple'" class="flexy-table box-content"
+    st-table="displayedSimpleRows" st-safe-src="subTotals" ersa-table="hpc-summary.simple">
+    <thead>
+      <tr ersa-table-add-filters>
+        <th cell-ratio="35" ersa-table-sort="orderBy('billing')" st-sort-default="true">Organisation</th>
+        <th cell-ratio="35" ersa-table-sort="organisation">School</th>
+        <th cell-ratio="10" ersa-table-sort="job_count" ersa-table-no-filter>Job Count</th>
+        <th cell-ratio="10" ersa-table-sort="hours" ersa-table-no-filter>Core Hours</th>
+        <th cell-ratio="10" ersa-table-sort="cost" ersa-table-no-filter>Fee</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="sum in displayedSimpleRows" ng-class="{'subtotal-row': isSubTotalRow(sum)}" class="animated fadeIn">
+        <td cell-ratio="35" blank-safe="sum.billing"></td>
+        <td cell-ratio="35" blank-safe="sum.organisation"></td>
+        <td cell-ratio="10">{{ ::sum.job_count }}</td>
+        <td cell-ratio="10">{{ ::formatNumber(sum.hours) }}</td>
+        <td cell-ratio="10">${{ ::formatNumber(sum.cost) }}</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr ng-show="jobCounts.length" ng-class="{'total-not-relevant': isFilterApplied(displayedSimpleRows, subTotals)}">
+        <td cell-ratio="70"><strong>Grand Total</strong></td>
+        <td class="filler-cell"></td>
+        <td cell-ratio="10"><strong>{{ grandTotal.job_count }}</strong></td>
+        <td cell-ratio="10"><strong>{{ formatNumber(grandTotal.hours) }}</strong></td>
+        <td cell-ratio="10"><strong>${{ formatNumber(grandTotal.cost) }}</strong></td>
+      </tr>
+    </tfoot>
+  </table>
 </div>

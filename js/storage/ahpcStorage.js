@@ -57,6 +57,9 @@ define(
       $scope.datepickerOptions = {minMode: 'month'}
       $scope.orderBySubTotalLast = theConstants.orderBySubTotalLast
       $scope.isSubTotalRow = theConstants.isSubTotalRow
+      $scope.isFilterApplied = theConstants.isFilterApplied
+      $scope.orderByNCols = theConstants.orderByNCols
+      $scope.orderBy = theConstants.orderByPredicateThenSubTotal
 
       $scope.load = function () {
         clear();

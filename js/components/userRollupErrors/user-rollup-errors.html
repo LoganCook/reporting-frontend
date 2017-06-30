@@ -1,5 +1,14 @@
-<div ng-show="isRollupError()" class="alert alert-danger">
+<style type="text/css">
+  pre.errors-list {
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+</style>
+<div ng-show="isDisplayed()" class="alert alert-danger">
+  <button type="button" class="close" aria-label="Close" ng-click="closedHandler()"><span aria-hidden="true">&times;</span></button>
   Data problems: encountered <strong>{{ rollupErrorsCount() }}</strong> errors while performing rollup. Data with errors
   have been skipped therefore this report is <strong>NOT ACCURATE</strong>!
-  <pre><span ng-repeat="curr in rollupErrors()">{{curr}}<br /></span></pre>
+  <pre class="errors-list">
+    <span ng-repeat="curr in rollupErrors()">{{curr}}<br /></span>
+  </pre>
 </div>

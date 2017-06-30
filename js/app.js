@@ -1,9 +1,9 @@
 define(
-  ["client", "datePickers", "ersaTable", "blankSafe", "userRollupErrors"],
+  ["client", "datePickers", "ersaTable", "ersaTableSort", "ersaTableAddFilters", "blankSafe", "userRollupErrors"],
   function (clientConstructor) {
 
   var app = angular.module("reportingApp", ["ngSanitize", "ui.router", "ui.bootstrap", "ngResource",
-    "angularSpinner", "pageComponents", "ngTableToCsv"]);
+    "angularSpinner", "pageComponents", "ngTableToCsv", "smart-table"]);
   app.factory("reporting", ["$timeout", "queryResource", clientConstructor]);
   app
     // .config(['$resourceProvider', function ($resourceProvider) {
@@ -211,6 +211,38 @@ define(
       }
       return 0
     }
+    function orderByPredicateThenSubTotal (predicate) {
+      return function (value) {
+        var subtotalFieldName = 'organisation'
+        var result = value[predicate]
+        var subtotalFieldValue = value[subtotalFieldName]
+        if (subtotalFieldValue === subTotal) {
+          return result + '~'
+        }
+        return result + subtotalFieldValue
+      }
+    }
+    function orderByTwoCols (col1, col2) {
+      return orderByNCols([col1, col2])
+    }
+    function orderByNCols (colNameArray) {
+      return function (value) {
+        var orderValue = ''
+        for (var i = 0; i < colNameArray.length; i++) {
+          var fieldName = colNameArray[i]
+          var fieldValue = value[fieldName]
+          if (typeof fieldValue === 'undefined') {
+            orderValue += '~'
+            continue
+          }
+          orderValue += fieldValue
+        }
+        return orderValue
+      }
+    }
+    function isFilterApplied (displayed, raw) {
+      return displayed && raw && displayed.length !== raw.length
+    }
     return {
       grandTotal: 'Grand Total',
       subTotal: subTotal,
@@ -218,11 +250,24 @@ define(
       isSubTotalRow: function(entry) {
         return entry.organisation && entry.organisation === subTotal
       },
-      orderBySubTotalLast: orderBySubTotalLast
+      orderBySubTotalLast: orderBySubTotalLast,
+      orderByPredicateThenSubTotal: orderByPredicateThenSubTotal,
+      orderByTwoCols: orderByTwoCols,
+      isFilterApplied: isFilterApplied,
+      orderByNCols: orderByNCols
     }
   }
 
   app.constant('theConstants', buildTheConstants())
+
+  app.directive('cellRatio', function () {
+    return {
+      link: function (scope, element, attr) {
+        var ratio = +(attr.cellRatio)
+        element.css('width', ratio + '%')
+      }
+    }
+  })
 
   return app;
 });

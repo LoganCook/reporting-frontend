@@ -1,15 +1,15 @@
-
+@media screen and (min-width: 961px) and (min-height: 800px) {
+  html, body {
+    height: 100%;
+    margin: 0
+  }
+}
 
 html {
   font-family: sans-serif;
   -webkit-text-size-adjust: 100%;
   font-size: 100%;
 }
-
-
-/**
-   * Remove default margin.
-   */
 
 body {
     font-family: "Open Sans", sans-serif;
@@ -558,4 +558,147 @@ table.table-striped tr:nth-child(odd) {
 .btn-primary.active.ersa-theme, .btn-primary:active.ersa-theme, .open>.dropdown-toggle.btn-primary.ersa-theme {
   background-color: #f48d06;
   border-color: #d17905;
+}
+
+.st-sort-ascent:before {
+  content: '\25B2';
+}
+
+.st-sort-descent:before {
+  content: '\25BC';
+}
+
+.total-not-relevant {
+  color: grey;
+}
+
+tr.total-not-relevant td:first-child ::after {
+  content: ' (total is for all rows, not just filtered)'
+}
+
+.box-ancestor {
+  height: 100%;
+}
+
+.box {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+}
+
+.box .box-header {
+  flex: 0 1 auto;
+}
+
+.box .box-content {
+  flex: 1 1 auto;
+}
+
+table.flexy-table.content {
+  margin-bottom: 1em;
+}
+
+table.flexy-table {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow-y: auto;
+}
+
+table.flexy-table * {
+  box-sizing: inherit;
+  -moz-box-sizing: inherit;
+}
+
+table.flexy-table thead {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+table.flexy-table tbody {
+  overflow-y: auto;
+  display: inline-block;
+}
+
+table.flexy-table thead > tr, table.flexy-table tbody > tr, table.flexy-table tfoot > tr {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+table.flexy-table thead, table.flexy-table tfoot {
+  flex-shrink: 0;
+}
+
+table.flexy-table thead tr, table.flexy-table tfoot tr {
+  padding-right: 1em;
+}
+
+table.flexy-table thead tr, table.table-striped.flexy-table thead tr:nth-child(odd) {
+  background: #f58432;
+}
+
+table.flexy-table th, table.flexy-table tbody td, table.flexy-table tfoot td {
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+}
+
+table.flexy-table tfoot {
+  display: inline-block;
+}
+
+table.flexy-table tfoot td {
+  width: 100%;
+  display: inline-block;
+}
+table.flexy-table tfoot td.filler-cell {
+  width: 0%;
+  padding: 0;
+}
+
+table.flexy-table thead tr:nth-child(2) th {
+  padding: 4px;
+  margin-top: -2px;
+  border-top: 0;
+}
+
+table.flexy-table thead tr:nth-child(2) th:last-child {
+  margin-right: -1em;
+}
+
+table.flexy-table thead tr:nth-child(2) th:last-child label {
+  flex-shrink: 0;
+  margin-right: 1em;
+}
+
+table.flexy-table thead tr:nth-child(2) th:last-child {
+  flex-grow: 1;
+  display: flex;
+  align-items: baseline;
+}
+
+table.flexy-table caption {
+  display: flex;
+  flex-direction: row-reverse;
+  flex-shrink: 0;
+}
+
+.ng-scope .container-fluid {
+  /* Need to get a full width container but stop horizontal scrolling. This works, might not be the best solution though */
+  margin-right: 0;
+  margin-left: 0;
+}
+
+.fullscreen-table {
+  position: absolute;
+  z-index: 9999;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: white;
 }

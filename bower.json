@@ -27,7 +27,8 @@
     "moment": "~2.10.6",
     "numeral": "~1.5.3",
     "angular-spinner": "~0.8.1",
-    "ng-table-to-csv": "^0.3.3"
+    "ng-table-to-csv": "^0.3.3",
+    "angular-smart-table": "^2.1.8"
   },
   "devDependencies": {
     "angular-mocks": "~1.5"
