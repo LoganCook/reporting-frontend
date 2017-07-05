@@ -1,4 +1,4 @@
-define(['app', '../util', 'services/contract'], function (app, util, contract) {
+define(['app', '../util', 'services/contract', 'properties'], function (app, util, contract, props) {
   'use strict';
 
   /**
@@ -69,7 +69,15 @@ define(['app', '../util', 'services/contract'], function (app, util, contract) {
           end: endTs
         };
         nq.query(args, function (data) {
-          summaries[searchHash] = data;
+          var fileSystemName = getNameOf(fileSystemId);
+          if (fileSystemName in props && 'blacklist' in props[fileSystemName]) {
+            function removeThese(item) {
+              return props[fileSystemName]['blacklist'].indexOf(item['owner']) === -1;
+            }
+            summaries[searchHash] = data.filter(removeThese);
+          } else {
+            summaries[searchHash] = data;
+          }
           deferred.resolve(summaries[searchHash]);
         }, function (rsp) {
           console.log(rsp);
@@ -79,7 +87,7 @@ define(['app', '../util', 'services/contract'], function (app, util, contract) {
       return deferred.promise;
     }
 
-    // get id of a filesystem
+    // get id of a filesystem by searching name
     function getIdOf(name) {
       // use computing power instead of memory
       var id = null;
@@ -90,6 +98,20 @@ define(['app', '../util', 'services/contract'], function (app, util, contract) {
         }
       }
       return id;
+    }
+
+    // get name of a filesystem by searching id
+    // only return the last part if it is a full path
+    // otherwise, whole name
+    function getNameOf(id) {
+      for (var i = 0; i < fCount; i++ ) {
+        if (filesystems[i]['id'] === id) {
+          const name = filesystems[i]['name'].split('/');
+          const namePartCount = name.length;
+          return name[namePartCount - 1];
+        }
+      }
+      return null;
     }
 
     function computeBlocks(gbUsed) {

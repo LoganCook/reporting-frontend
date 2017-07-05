@@ -26,3 +26,7 @@ tar -czvf reporting-frontend-deployment.tar.gz favicon.ico img index.html templa
 After copy the package file to a new production location, say *testdir* of a web server html directory, run:
 
 `tar -xzf reporting-frontend-deployment.tar.gz -C testdir`
+
+## Note
+HPC Home storage has a blacklist which has user names in it. So edit it in [js/properties.js](js/properties.js)
+with real user names to be excluded.
