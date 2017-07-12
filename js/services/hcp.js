@@ -20,8 +20,7 @@ define(
     // implement local version of data entries
     usageService.processEntry = function(entry, accounts) {
       entry['filesystem'] = entry[filesystemFieldName]
-      entry['raw'] = entry['raw_bytes']
-      entry['usage'] = util.toGB(entry['raw'])
+      entry['usage'] = util.toGB(entry['ingested_bytes']);
       entry['blocks'] = Math.ceil(entry['usage'] / usageService.BlockSize)
       entry['cost'] = BlockPrice * entry['blocks']
       angular.extend(entry, accounts[entry['filesystem']])
