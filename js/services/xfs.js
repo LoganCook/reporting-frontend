@@ -22,6 +22,18 @@ define(['app', '../util', 'services/contract', 'properties'], function (app, uti
       'cost': 0
     };
 
+    /**
+     * Crete a callback function for Array.filter to blacklist items
+     *
+     * @param {string} fileSystemName
+     * @returns function
+     */
+    function createBlacklistFilterCallback(fileSystemName) {
+      return function removeThese(item) {
+        return props[fileSystemName]['blacklist'].indexOf(item['owner']) === -1;
+      };
+    }
+
     var nq = queryResource.build(BASE_URL);
     var filesystems = {}, fCount = 0;
     // both summaries and totals has searchHash as the first key
@@ -71,9 +83,7 @@ define(['app', '../util', 'services/contract', 'properties'], function (app, uti
         nq.query(args, function (data) {
           var fileSystemName = getNameOf(fileSystemId);
           if (fileSystemName in props && 'blacklist' in props[fileSystemName]) {
-            function removeThese(item) {
-              return props[fileSystemName]['blacklist'].indexOf(item['owner']) === -1;
-            }
+            var removeThese = createBlacklistFilterCallback(fileSystemName);
             summaries[searchHash] = data.filter(removeThese);
           } else {
             summaries[searchHash] = data;
@@ -106,8 +116,8 @@ define(['app', '../util', 'services/contract', 'properties'], function (app, uti
     function getNameOf(id) {
       for (var i = 0; i < fCount; i++ ) {
         if (filesystems[i]['id'] === id) {
-          const name = filesystems[i]['name'].split('/');
-          const namePartCount = name.length;
+          var name = filesystems[i]['name'].split('/');
+          var namePartCount = name.length;
           return name[namePartCount - 1];
         }
       }
