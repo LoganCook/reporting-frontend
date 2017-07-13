@@ -10,7 +10,7 @@
  1. npm i # will install all dependencies
  1. npm run dev # starts the dev server
 
-# Prepare a deployment package to a clean machine
+# Prepare a deployment package to a clean machine on dev branch
 
 On a machine with `npm` installed, run these commands to create a tar ball:
 
@@ -30,3 +30,4 @@ After copy the package file to a new production location, say *testdir* of a web
 ## Note
 HPC Home storage has a blacklist which has user names in it. So edit it in [js/properties.js](js/properties.js)
 with real user names to be excluded.
+
