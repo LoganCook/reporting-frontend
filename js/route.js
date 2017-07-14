@@ -3,30 +3,32 @@ define(["menu-data"], function (menuAllData) {
     $urlRouterProvider.otherwise("/");
 
     function resolveOrgs($q, org, AuthService, spinner) {
-      spinner.start()
-      var deferred = $q.defer()
-      var finishedSuccess = function() {
-        spinner.stop()
-        deferred.resolve()
+      spinner.start();
+      var deferred = $q.defer();
+      function finishedSuccess() {
+        spinner.stop();
+        deferred.resolve();
       }
-      var finishedFailure = function(reason) {
-        spinner.stop()
+      function finishedFailure(reason) {
+        spinner.stop();
         var message = 'Failed to load organisation data, cannot continue without it. '
-          + 'You can try to reload the page but if it fails again, the problem is with the other server.'
+          + 'You can try to reload the page but if it fails again, the problem is with the other server.';
         deferred.reject({
           msgForUi: message,
           reason: reason
-        })
+        });
       }
-      var isLoadAllOrgsAndAccounts = AuthService.isAdmin()
+      var isLoadAllOrgsAndAccounts = AuthService.isAdmin();
       if (isLoadAllOrgsAndAccounts) {
-        org.getOrganisations(isLoadAllOrgsAndAccounts).then(finishedSuccess, finishedFailure)
-        return deferred.promise
+        org.getOrganisations(isLoadAllOrgsAndAccounts).then(finishedSuccess, finishedFailure);
+        return deferred.promise;
       }
       org.getOrganisations(isLoadAllOrgsAndAccounts).then(function () {
-        org.getUsersOf(org.getOrganisationId(AuthService.getUserOrgName())).then(finishedSuccess, finishedFailure)
-      })
-      return deferred.promise
+        org.getUsersOf(org.getOrganisationId(AuthService.getUserOrgName())).then(finishedSuccess, finishedFailure);
+      }, function() {
+        spinner.stop();
+      });
+      return deferred.promise;
     }
 
     $stateProvider.state("home", {
