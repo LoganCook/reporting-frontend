@@ -61,7 +61,14 @@ define({
                     "nfs-test",
                     "test-data-intranet",
                     "unisa",
-                    "vmware-swing-lun"
+                    "vmware-swing-lun",
+                    "/export/compellent/ersa-owncloud-home",
+                    "/export/compellent/tangooptshared",
+                    "/export/compellent/ersa-mytardis",
+                    "/export/compellent/ersa-uofa-ag-plantdb-ftp-2017",
+                    "/mnt/sacgf-replay",
+                    "/export/compellent/hpctest2",
+                    "/export/compellent/ersa-uosa-ccb-molpath-7"
     ],
 
     "hcp.namespace.whitelist": [
