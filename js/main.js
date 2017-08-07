@@ -31,7 +31,7 @@ require(["debug-settings"], function (d) {
 
 require(["app", "services/auth", "services/org", "menu",
     //"identity/crm",
-    "hpc/hpc", "hpc/hpcsummary",
+    "hpc/hpc", "hpc/slurm", "hpc/hpcsummary",
     "storage/hcp", "storage/hnas/fileSystem", "storage/hnas/virtualVolume", "storage/xfs",
     //"storage/fs", "storage/hcp", "storage/hnas", "storage/hnas/fileSystem",  "storage/hnas/virtualVolume", "storage/xfs",
     "storage/hpcStorage", "storage/ahpcStorage",

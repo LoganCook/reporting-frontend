@@ -3,6 +3,7 @@ define({
   "ersa": {
     "HPC": {
       "HPC": ["/hpc/hpc", "HPC"],
+      "Tango": ["/admin/hpc/slurm", "Slurm"],
       "Summary": ["/admin/hpc/hpcsummary", "HPCSummary"],
     },
     "Storage": {
@@ -30,7 +31,7 @@ define({
     }
   },
   "portal": {
-    "Reports": {  // menus not states
+    "Reports": { // menus not states
       "COMPUTING": ["sub1", ["/hpc/hpcsummary", "HPC"],
         ["/cloud/novasummary", "NECTAR"],
       ],
