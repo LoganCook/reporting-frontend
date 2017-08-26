@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,600,600i,700,700i|Raleway:400,400i,600,600i" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="./node_modules/animate.css/animate.min.css">
+  <link rel="stylesheet" href="./lib/dcjs/dc.css">
   <link rel="stylesheet" href="css/style-new.css">
   <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
@@ -60,6 +61,7 @@
   <div ui-view id="main-view" class="box-ancestor"></div>
   <!-- angular-spinner element: use service spinner.start|stop to control for showing|hiding -->
   <span us-spinner spinner-key="main-spinner"></span>
+  <!-- TODO#56 remove angular from here and move all other scripts to main.js, using shims if needed -->
   <script src="lib/angular/angular.min.js"></script>
   <script src="lib/angular-resource/angular-resource.min.js"></script>
   <script src="lib/angular-bootstrap/ui-bootstrap.min.js"></script>

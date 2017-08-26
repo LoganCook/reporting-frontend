@@ -7,7 +7,12 @@ require.config({
     "mathjs": '../lib/mathjs/dist/math.min',
     "moment": '../lib/moment/min/moment.min',
     "numeral": '../lib/numeral/min/numeral.min',
+    'angular': '../lib/angular/angular.min', // defined here again (already in index.html) for angularDc's require
     'qs': '../node_modules/qs/dist/qs',
+    'd3': '../lib/d3/d3.min',
+    'crossfilter2': '../lib/crossfilter2/crossfilter.min',
+    'dc': '../lib/dcjs/dc.min',
+    'angularDc': '../lib/angular-dc/dist/angular-dc', // TODO#56 set back to .min script
     'pageComponents': 'components/pageComponents',
     'datePickers': 'components/datePickers/date-pickers',
     'datePickerUib': 'components/datePickerUib/date-picker-uib',
@@ -15,9 +20,22 @@ require.config({
     'ersaTableSort': 'directives/ersaTableSort/ersa-table-sort',
     'ersaTableAddFilters': 'directives/ersaTableAddFilters/ersa-table-add-filters',
     'blankSafe': 'directives/blankSafe/blank-safe',
-    'userRollupErrors': 'components/userRollupErrors/user-rollup-errors'
+    'userRollupErrors': 'components/userRollupErrors/user-rollup-errors',
+    'ersaLineBarChart': 'components/ersaLineBarChart/ersa-line-bar-chart'
   },
-  baseUrl: 'js'
+  baseUrl: 'js',
+  // angular does not support AMD out of the box, put it in a shim
+  shim: {
+    'angular': {
+      exports: 'angular'
+    },
+    'crossfilter2': {
+      exports: 'crossfilter'
+    }
+  },
+  map: {
+    'crossfilter': 'crossfilter2'
+  }
 });
 
 //TODO: May have seperated dev and production main.js files or gulp it?

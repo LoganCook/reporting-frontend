@@ -52,6 +52,10 @@ define(["menu-data"], function (menuAllData) {
         }
         $scope.allDetails = JSON.stringify(errorDetails)
       }
+    }).state('issue-56', { // TODO#56 remove this state
+      url: '/issue-56',
+      templateUrl: 'template/issue-56.html', // TODO#56 delete the referenced template file
+      resolve: {}
     })
 
     var menuData = {};
