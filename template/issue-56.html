@@ -1,2 +1,16 @@
-<h1>hi</h1>
-<ersa-line-bar-chart></ersa-line-bar-chart>
+<div class="container">
+  <h1 class="text-center">Demo for issue 56 - chart widgets</h1>
+  <h2>Chart 1: bar+line chart</h2>
+  <ersa-line-bar-chart
+    elbc-data="records"
+    elbc-width="780"
+    elbc-height="480"
+    elbc-bar-y-axis-label="'Cost ($)'"
+    elbc-bar-field-name="'cost'"
+    elbc-bar-colour="'#f5842f'"
+    elbc-line-y-axis-label="'Job count'"
+    elbc-line-field-name="'job_count'"
+    elbc-line-colour="'#d01c66'"
+    elbc-is-elastic-y="true"
+    />
+</div>

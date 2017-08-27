@@ -1,16 +1,30 @@
-<div dc-chart="compositeChart"
-  dc-name="'theChart'"
-  dc-width="780"
-  dc-height="480"
-  dc-x="d3.scale.ordinal()"
-  dc-x-units="dc.units.ordinal"
-  dc-brush-on="false"
-  dc-dimension="monthDimension"
-  dc-group="monthDimension.group()"
-  dc-render-horizontal-grid-lines="true"
-  dc-share-title="false"
-  dc-y-axis-label="'TODO'"
-  dc-right-y-axis-label="'TODO'"
-  dc-legend="legend"
-  class="dc-chart">
+<div>
+  <div dc-chart="compositeChart"
+    dc-name="'theChart'"
+    dc-width="$ctrl.elbcWidth"
+    dc-height="$ctrl.elbcHeight"
+    dc-x="d3.scale.ordinal()"
+    dc-x-units="dc.units.ordinal"
+    dc-brush-on="false"
+    dc-dimension="monthDimension"
+    dc-group="monthDimension.group()"
+    dc-render-horizontal-grid-lines="true"
+    dc-share-title="false"
+    dc-y-axis-label="$ctrl.elbcBarYAxisLabel"
+    dc-right-y-axis-label="$ctrl.elbcLineYAxisLabel"
+    dc-legend="legend"
+    class="dc-chart">
+  </div>
+  <div dc-chart="selectMenu"
+    dc-name="'theFilter'"
+    dc-dimension="schoolDimension"
+    dc-group="schoolDimension.group()"
+    dc-multiple="true"
+    dc-number-visible="10"
+    dc-controls-use-visibility="true"
+    dc-prompt-text="'All schools'">
+  </div>
+  <dc-select
+    dc-dimension="schoolDimension"
+    all-label="'All schools'" />
 </div>

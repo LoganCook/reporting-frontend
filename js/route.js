@@ -55,6 +55,96 @@ define(["menu-data"], function (menuAllData) {
     }).state('issue-56', { // TODO#56 remove this state
       url: '/issue-56',
       templateUrl: 'template/issue-56.html', // TODO#56 delete the referenced template file
+      controller: function ($scope) {
+        $scope.records = [
+          {
+            organisation: 'school 1',
+            job_count: 50,
+            cost: 840.6652083333332,
+            month: 3
+          }, {
+            organisation: 'school 2',
+            job_count: 259,
+            cost: 5523.270791666667,
+            month: 3
+          }, {
+            organisation: 'school 3',
+            job_count: 7,
+            cost: 53.43212499999999,
+            month: 3
+          }, {
+            organisation: 'school 4',
+            job_count: 1,
+            cost: 0.004416666666666666,
+            month: 3
+          }, {
+            organisation: 'school 1',
+            job_count: 13,
+            cost: 22.516416666666668,
+            month: 4
+          }, {
+            organisation: 'school 2',
+            job_count: 3,
+            cost: 11.192499999999999,
+            month: 4
+          }, {
+            organisation: 'school 3',
+            job_count: 149,
+            cost: 1141.309,
+            month: 4
+          }, {
+            organisation: 'school 1',
+            job_count: 3710,
+            cost: 2653.7895833333337,
+            month: 5
+          }, {
+            organisation: 'school 2',
+            job_count: 303,
+            cost: 874.6545416666668,
+            month: 5
+          }, {
+            organisation: 'school 1',
+            job_count: 3,
+            cost: 61.35575,
+            month: 6
+          }, {
+            organisation: 'school 3',
+            job_count: 258,
+            cost: 8706.824333333334,
+            month: 6
+          }, {
+            organisation: 'school 4',
+            job_count: 144,
+            cost: 0.08325,
+            month: 6
+          }, {
+            organisation: 'school 1',
+            job_count: 144,
+            cost: 96.08866666666665,
+            month: 7
+          }, {
+            organisation: 'school 2',
+            job_count: 7,
+            cost: 155.16479166666667,
+            month: 7
+          }, {
+            organisation: 'school 3',
+            job_count: 76,
+            cost: 557.5580416666667,
+            month: 7
+          }, {
+            organisation: 'school 1',
+            job_count: 59,
+            cost: 404.1209583333333,
+            month: 8
+          }, {
+            organisation: 'school 3',
+            job_count: 189,
+            cost: 146.69391666666664,
+            month: 8
+          }
+        ]
+      },
       resolve: {}
     })
 

@@ -24,9 +24,8 @@ require.config({
     'ersaLineBarChart': 'components/ersaLineBarChart/ersa-line-bar-chart'
   },
   baseUrl: 'js',
-  // angular does not support AMD out of the box, put it in a shim
   shim: {
-    'angular': {
+    'angular': { // angular does not support AMD out of the box, put it in a shim
       exports: 'angular'
     },
     'crossfilter2': {
