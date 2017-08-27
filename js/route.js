@@ -144,6 +144,10 @@ define(["menu-data"], function (menuAllData) {
             month: 8
           }
         ]
+        $scope.stacks = [ // TODO#56 add more fields to test data and graph them here
+          { fieldName: 'cost', label: 'FIXME cost' },
+          { fieldName: 'job_count', label: 'FIXME job count' }
+        ]
       },
       resolve: {}
     })

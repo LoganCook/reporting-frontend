@@ -21,7 +21,8 @@ require.config({
     'ersaTableAddFilters': 'directives/ersaTableAddFilters/ersa-table-add-filters',
     'blankSafe': 'directives/blankSafe/blank-safe',
     'userRollupErrors': 'components/userRollupErrors/user-rollup-errors',
-    'ersaLineBarChart': 'components/ersaLineBarChart/ersa-line-bar-chart'
+    'ersaLineBarChart': 'components/ersaLineBarChart/ersa-line-bar-chart',
+    'ersaStackedAreaChart': 'components/ersaStackedAreaChart/ersa-stacked-area-chart'
   },
   baseUrl: 'js',
   shim: {

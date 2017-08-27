@@ -1,0 +1,31 @@
+<div>
+  <div dc-chart="lineChart"
+    dc-name="'theChart'"
+    dc-width="$ctrl.esacWidth"
+    dc-height="$ctrl.esacHeight"
+    dc-x="d3.scale.ordinal()"
+    dc-x-units="dc.units.ordinal"
+    dc-brush-on="false"
+    dc-y-axis-label="$ctrl.esacYAxisLabel"
+    dc-y-axis-padding="'10%'"
+    dc-render-area="true"
+    dc-render-data-points="true"
+    dc-dimension="monthDimension"
+    dc-group="monthDimension.group()"
+    dc-render-horizontal-grid-lines="true"
+    dc-legend="legend"
+    class="dc-chart">
+  </div>
+  <div dc-chart="selectMenu"
+    dc-name="'theFilter'"
+    dc-dimension="schoolDimension"
+    dc-group="schoolDimension.group()"
+    dc-multiple="true"
+    dc-number-visible="10"
+    dc-controls-use-visibility="true"
+    dc-prompt-text="'All schools'">
+  </div>
+  <dc-select
+    dc-dimension="schoolDimension"
+    all-label="'All schools'" />
+</div>
