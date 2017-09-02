@@ -14,18 +14,20 @@
     dc-group="monthDimension.group()"
     dc-render-horizontal-grid-lines="true"
     dc-legend="legend"
+    dc-post-setup-chart="stackedAreaChartPostSetup"
     class="dc-chart">
   </div>
   <div dc-chart="selectMenu"
     dc-name="'theFilter'"
-    dc-dimension="schoolDimension"
-    dc-group="schoolDimension.group()"
+    dc-dimension="filterDimension"
+    dc-group="filterDimension.group()"
     dc-multiple="true"
     dc-number-visible="10"
     dc-controls-use-visibility="true"
-    dc-prompt-text="'All schools'">
+    dc-post-setup-chart="filterChartPostSetup"
+    dc-prompt-text="allFilterLabel">
   </div>
   <dc-select
-    dc-dimension="schoolDimension"
-    all-label="'All schools'" />
+    dc-dimension="filterDimension"
+    all-label="{{allFilterLabel}}" />
 </div>

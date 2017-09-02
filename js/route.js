@@ -56,97 +56,169 @@ define(["menu-data"], function (menuAllData) {
       url: '/issue-56',
       templateUrl: 'template/issue-56.html', // TODO#56 delete the referenced template file
       controller: function ($scope) {
-        $scope.records = [
+        $scope.allSchoolsRecords = [
           {
-            organisation: 'school 1',
+            organisation: 'School One',
             job_count: 50,
             cost: 840.6652083333332,
             month: 3
           }, {
-            organisation: 'school 2',
+            organisation: 'School Two',
             job_count: 259,
             cost: 5523.270791666667,
             month: 3
           }, {
-            organisation: 'school 3',
+            organisation: 'School Three',
             job_count: 7,
             cost: 53.43212499999999,
             month: 3
           }, {
-            organisation: 'school 4',
+            organisation: 'School Four',
             job_count: 1,
-            cost: 0.004416666666666666,
+            cost: 66,
             month: 3
           }, {
-            organisation: 'school 1',
+            organisation: 'School One',
             job_count: 13,
             cost: 22.516416666666668,
             month: 4
           }, {
-            organisation: 'school 2',
+            organisation: 'School Two',
             job_count: 3,
             cost: 11.192499999999999,
             month: 4
           }, {
-            organisation: 'school 3',
+            organisation: 'School Three',
             job_count: 149,
             cost: 1141.309,
             month: 4
           }, {
-            organisation: 'school 1',
+            organisation: 'School One',
             job_count: 3710,
             cost: 2653.7895833333337,
             month: 5
           }, {
-            organisation: 'school 2',
+            organisation: 'School Two',
             job_count: 303,
             cost: 874.6545416666668,
             month: 5
           }, {
-            organisation: 'school 1',
+            organisation: 'School One',
             job_count: 3,
             cost: 61.35575,
             month: 6
           }, {
-            organisation: 'school 3',
+            organisation: 'School Three',
             job_count: 258,
             cost: 8706.824333333334,
             month: 6
           }, {
-            organisation: 'school 4',
+            organisation: 'School Four',
             job_count: 144,
-            cost: 0.08325,
+            cost: 83,
             month: 6
           }, {
-            organisation: 'school 1',
+            organisation: 'School One',
             job_count: 144,
             cost: 96.08866666666665,
             month: 7
           }, {
-            organisation: 'school 2',
+            organisation: 'School Two',
             job_count: 7,
             cost: 155.16479166666667,
             month: 7
           }, {
-            organisation: 'school 3',
+            organisation: 'School Three',
             job_count: 76,
             cost: 557.5580416666667,
             month: 7
           }, {
-            organisation: 'school 1',
+            organisation: 'School One',
             job_count: 59,
             cost: 404.1209583333333,
             month: 8
           }, {
-            organisation: 'school 3',
+            organisation: 'School Three',
             job_count: 189,
             cost: 146.69391666666664,
             month: 8
           }
         ]
-        $scope.stacks = [ // TODO#56 add more fields to test data and graph them here
-          { fieldName: 'cost', label: 'FIXME cost' },
-          { fieldName: 'job_count', label: 'FIXME job count' }
+        $scope.allServicesRecords = [
+          {
+            service: 'HPC',
+            cost: 840.6652083333332,
+            month: 3
+          }, {
+            service: 'NECTAR',
+            cost: 5523.270791666667,
+            month: 3
+          }, {
+            service: 'National Storage',
+            cost: 53.43212499999999,
+            month: 3
+          }, {
+            service: 'HPC',
+            cost: 22.516416666666668,
+            month: 4
+          }, {
+            service: 'NECTAR',
+            cost: 11.192499999999999,
+            month: 4
+          }, {
+            service: 'National Storage',
+            cost: 1141.309,
+            month: 4
+          }, {
+            service: 'HPC',
+            cost: 2653.7895833333337,
+            month: 5
+          }, {
+            service: 'NECTAR',
+            cost: 874.6545416666668,
+            month: 5
+          }, {
+            service: 'National Storage',
+            cost: 88,
+            month: 5
+          }, {
+            service: 'HPC',
+            job_count: 3,
+            cost: 61.35575,
+            month: 6
+          }, {
+            service: 'NECTAR',
+            cost: 400,
+            month: 6
+          }, {
+            service: 'National Storage',
+            cost: 8706.824333333334,
+            month: 6
+          }, {
+            service: 'HPC',
+            cost: 96.08866666666665,
+            month: 7
+          }, {
+            service: 'NECTAR',
+            cost: 155.16479166666667,
+            month: 7
+          }, {
+            service: 'National Storage',
+            cost: 557.5580416666667,
+            month: 7
+          }, {
+            service: 'HPC',
+            cost: 404.1209583333333,
+            month: 8
+          }, {
+            service: 'NECTAR',
+            cost: 180,
+            month: 8
+          }, {
+            service: 'National Storage',
+            cost: 146.69391666666664,
+            month: 8
+          }
         ]
       },
       resolve: {}

@@ -15,6 +15,7 @@ define(['pageComponents', 'dc'], function (module, dc) {
       elbcLineColour: '=', // string - can be name or hex
       elbcWidth: '=', // number - pixels of width
       elbcHeight: '=', // number - pixels of height
+      elbcAllFilterLabel: '=', // string - label for 'All' in filter
       // optional
       elbcIsElasticY: '=' // boolean - default true
     }
@@ -22,27 +23,20 @@ define(['pageComponents', 'dc'], function (module, dc) {
 
   function controller ($scope) {
     var records = $scope.$ctrl.elbcData
+    $scope.allFilterLabel = $scope.$ctrl.elbcAllFilterLabel
     var ndx = crossfilter(records)
     $scope.monthDimension = ndx.dimension(function (d) {
       return d.month
     })
-    $scope.schoolDimension = ndx.dimension(function (d) {
+    $scope.filterDimension = ndx.dimension(function (d) {
       return d.organisation
     })
-    $scope.$watch('theFilter', function (newValue, oldValue) {
-      if (!newValue) { // TODO#56 might need a more robust way to determine when to stop redrawing
-        return
-      }
-      var theFilter = newValue
+    $scope.filterChartPostSetup = function (theFilter, _) {
       var filterContainer = angular.element(theFilter.anchor())
       var selectElement = filterContainer.children('select')
       selectElement.addClass('form-control')
-    })
-    $scope.$watch('theChart', function (newValue, oldValue) {
-      if (!newValue) { // TODO#56 might need a more robust way to determine when to stop redrawing
-        return
-      }
-      var theChart = newValue
+    }
+    $scope.lineBarChartPostSetup = function (theChart, _) {
       theChart.compose([
         barChart(theChart, $scope.monthDimension, $scope.$ctrl.elbcBarFieldName, $scope.$ctrl.elbcBarColour, $scope.$ctrl.elbcBarYAxisLabel),
         lineChart(theChart, $scope.monthDimension, $scope.$ctrl.elbcLineFieldName, $scope.$ctrl.elbcLineColour, $scope.$ctrl.elbcLineYAxisLabel)
@@ -59,14 +53,14 @@ define(['pageComponents', 'dc'], function (module, dc) {
         isElasticY = false
       }
       theChart.elasticY(isElasticY)
-      theChart.svg() // TODO#56 get title showing
-        .append('text')
-        .attr('text-anchor', 'middle')
-        .attr('x', theChart.width() / 2)
-        .attr('y', 22)
-        .text('TODO title') // TODO#56 add title param
-      theChart.render()
-    })
+      // theChart.svg() // TODO#56 get title showing
+      //   .append('text')
+      //   .attr('text-anchor', 'middle')
+      //   .attr('x', theChart.width() / 2)
+      //   .attr('y', 22)
+      //   .text('TODO title') // TODO#56 add title param
+      // theChart.render()
+    }
     $scope.legend = dc.legend().x(70).y(10).itemHeight(13).gap(5)
   }
 
@@ -74,6 +68,7 @@ define(['pageComponents', 'dc'], function (module, dc) {
     var group = dimension.group().reduceSum(function (d) {
       return d[groupField]
     })
+    var dotRadius = 5
     var result = dc.lineChart(parentChart)
       .yAxisLabel('', 20)
       .yAxisPadding('10%')
@@ -85,6 +80,12 @@ define(['pageComponents', 'dc'], function (module, dc) {
       .title(function (d) {
         return months[d.key] + '=' + d.value
       })
+      .renderDataPoints({
+        fillOpacity: 0.8,
+        strokeOpacity: 0.8,
+        radius: dotRadius
+      })
+      .dotRadius(dotRadius * 1.4)
     return result
   }
   function barChart (parentChart, dimension, groupField, colour, groupName) {
