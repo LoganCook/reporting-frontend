@@ -1,28 +1,29 @@
+<style>
+  .chart-block div {
+    margin-top: 4em;
+  }
+</style>
 <div class="container">
   <h1 class="text-center">Demo for issue 56 - chart widgets</h1>
   <ersa-line-bar-chart
-    elbc-data="allSchoolsRecords"
+    elbc-data="allServicesRecords"
     elbc-width="780"
     elbc-height="480"
-    elbc-bar-y-axis-label="'Cost ($)'"
+    elbc-bar-y-axis-label="'Sum of total hourly cost ($)'"
     elbc-bar-field-name="'cost'"
     elbc-bar-colour="'#f5842f'"
-    elbc-line-y-axis-label="'Job count'"
-    elbc-line-field-name="'job_count'"
+    elbc-line-y-axis-label="'Count of user name'"
+    elbc-line-field-name="'userCount'"
     elbc-line-colour="'#d01c66'"
-    elbc-all-filter-label="'All schools'"
-    elbc-title="'Chart 1: bar+line chart'"
-    elbc-is-elastic-y="true"></ersa-line-bar-chart>
-  <ersa-stacked-area-chart
-    esac-data="allSchoolsRecords"
-    esac-width="780"
-    esac-height="480"
-    esac-y-axis-label="'Cost ($)'"
-    esac-filter-field="'organisation'"
-    esac-value-field="'cost'"
-    esac-all-filter-label="'All schools'"
-    esac-title="'Chart 2: stacked area chart - school breakdown'"
-    esac-is-elastic-y="true"></ersa-stacked-area-chart>
+    elbc-title="'Chart 1: bar+line chart - all service cost in bars with combo line of users'"
+    elbc-left-y-axis-tick-function="thousandTickFn"
+    elbc-all-filter1-label="'All services'"
+    elbc-filter1-field-name="'service'"
+    elbc-all-filter2-label="'All schools'"
+    elbc-filter2-field-name="'organisation'"
+    elbc-is-elastic-y="true"
+    class="chart-block"></ersa-line-bar-chart>
+  <p>This chart shows two filters. You can filter be either and/or both and they combine as you expect.</p>
   <ersa-stacked-area-chart
     esac-data="allServicesRecords"
     esac-width="780"
@@ -31,6 +32,45 @@
     esac-filter-field="'service'"
     esac-value-field="'cost'"
     esac-all-filter-label="'All services'"
-    esac-title="'Chart 3: stacked area chart - all services'"
-    esac-is-elastic-y="true"></ersa-stacked-area-chart>
+    esac-title="'Chart 2: stacked area chart - all services based on spend'"
+    esac-is-elastic-y="true"
+    class="chart-block"></ersa-stacked-area-chart>
+  <p>This chart shows the stacked area with a filter on the service type</p>
+  <ersa-line-bar-chart
+    elbc-data="storageUsage"
+    elbc-width="780"
+    elbc-height="480"
+    elbc-bar-y-axis-label="'Sum of total allocation (GB)'"
+    elbc-bar-field-name="'allocated'"
+    elbc-bar-colour="'#f5842f'"
+    elbc-line-y-axis-label="'Sum of total usage (GB)'"
+    elbc-line-field-name="'used'"
+    elbc-line-colour="'#d01c66'"
+    elbc-title="'Chart 3: bar+line - allocated vs used storage'"
+    elbc-left-y-axis-tick-function="thousandTickFn"
+    elbc-all-filter1-label="'All services'"
+    elbc-filter1-field-name="'service'"
+    elbc-all-filter2-label="'All schools'"
+    elbc-filter2-field-name="'organisation'"
+    elbc-is-elastic-y="true"
+    class="chart-block"></ersa-line-bar-chart>
+  <p>This is another example of a line+bar with the double filter but for storage rather than cost.
+    Just ignore the fact that the usage goes above the allocation sometimes, that's just my crappy generated data.
+  </p>
+  <ersa-stacked-area-chart
+    esac-data="allSchoolsRecords"
+    esac-width="780"
+    esac-height="480"
+    esac-y-axis-label="'Cost ($)'"
+    esac-filter-field="'organisation'"
+    esac-value-field="'cost'"
+    esac-all-filter-label="'All schools'"
+    esac-title="'Chart 4: stacked area chart - all services for top 5 schools'"
+    esac-is-elastic-y="true"
+    class="chart-block"></ersa-stacked-area-chart>
+  <p>This chart shows the stacked area with a filter on the school. It's basically the same technology as Chart 2.</p>
 </div>
+<!--
+  TODO#56
+  - apply top(5) to all services stacked area
+-->

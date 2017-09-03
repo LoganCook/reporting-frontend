@@ -17,14 +17,25 @@
     dc-post-setup-chart="lineBarChartPostSetup"
     class="ersa-chart">
   </div>
-  <div dc-chart="selectMenu"
+  <div ng-if="filter1Field"
+    dc-chart="selectMenu"
     dc-name="'theFilter'"
-    dc-dimension="filterDimension"
-    dc-group="filterDimension.group()"
+    dc-dimension="filter1Dimension"
+    dc-group="filter1Dimension.group()"
     dc-multiple="true"
     dc-number-visible="10"
     dc-controls-use-visibility="true"
-    dc-prompt-text="allFilterLabel"
+    dc-prompt-text="allFilter1Label"
+    class="ersa-chart-filter">
+  </div>
+  <div ng-if="filter2Field"
+    dc-chart="selectMenu"
+    dc-dimension="filter2Dimension"
+    dc-group="filter2Dimension.group()"
+    dc-multiple="true"
+    dc-number-visible="10"
+    dc-controls-use-visibility="true"
+    dc-prompt-text="allFilter2Label"
     class="ersa-chart-filter">
   </div>
 </div>

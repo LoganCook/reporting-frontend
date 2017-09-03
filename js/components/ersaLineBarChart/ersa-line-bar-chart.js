@@ -15,24 +15,39 @@ define(['pageComponents', 'dc'], function (module, dc) {
       elbcLineColour: '=', // string - can be name or hex
       elbcWidth: '=', // number - pixels of width
       elbcHeight: '=', // number - pixels of height
-      elbcAllFilterLabel: '=', // string - label for 'All' in filter
       // optional
+      elbcAllFilter1Label: '=', // string - label for 'All' in filter 1
+      elbcAllFilter2Label: '=', // string - label for 'All' in filter 2
+      elbcFilter1FieldName: '=', // string - field name to use in filter 1
+      elbcFilter2FieldName: '=', // string - field name to use in filter 2
       elbcIsElasticY: '=', // boolean - default true
+      elbcLeftYAxisTickFunction: '=', // fn(v) => string - tick function to apply
+      elbcRightYAxisTickFunction: '=', // fn(v) => string - tick function to apply
       elbcTitle: '=' // string - title for the chart
     }
   })
 
   function controller ($scope) {
     var records = $scope.$ctrl.elbcData
-    $scope.allFilterLabel = $scope.$ctrl.elbcAllFilterLabel
+    $scope.allFilter1Label = $scope.$ctrl.elbcAllFilter1Label
+    $scope.filter1Field = $scope.$ctrl.elbcFilter1FieldName
+    $scope.allFilter2Label = $scope.$ctrl.elbcAllFilter2Label
+    $scope.filter2Field = $scope.$ctrl.elbcFilter2FieldName
     $scope.chartTitle = $scope.$ctrl.elbcTitle
     var ndx = crossfilter(records)
     $scope.monthDimension = ndx.dimension(function (d) {
       return d.month
     })
-    $scope.filterDimension = ndx.dimension(function (d) {
-      return d.organisation
-    })
+    if ($scope.filter1Field) {
+      $scope.filter1Dimension = ndx.dimension(function (d) {
+        return d[$scope.filter1Field]
+      })
+    }
+    if ($scope.filter2Field) {
+      $scope.filter2Dimension = ndx.dimension(function (d) {
+        return d[$scope.filter2Field]
+      })
+    }
     $scope.lineBarChartPostSetup = function (theChart, _) {
       theChart.compose([
         barChart(theChart, $scope.monthDimension, $scope.$ctrl.elbcBarFieldName, $scope.$ctrl.elbcBarColour, $scope.$ctrl.elbcBarYAxisLabel),
@@ -43,8 +58,12 @@ define(['pageComponents', 'dc'], function (module, dc) {
       theChart.xAxis().tickFormat(function (v) {
         return months[v]
       })
-      theChart.yAxis().tickFormat(function (v) { return (v / 1000) + 'k' })
-      theChart.rightYAxis().tickFormat(function (v) { return (v / 1000) + 'k' })
+      if ($scope.$ctrl.elbcLeftYAxisTickFunction) {
+        theChart.yAxis().tickFormat($scope.$ctrl.elbcLeftYAxisTickFunction)
+      }
+      if ($scope.$ctrl.elbcRightYAxisTickFunction) {
+        theChart.rightYAxis().tickFormat($scope.$ctrl.elbcRightYAxisTickFunction)
+      }
       var isElasticY = true
       if ($scope.$ctrl.elbcIsElasticY === false) {
         isElasticY = false
