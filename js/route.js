@@ -75,7 +75,7 @@ define(["menu-data"], function (menuAllData) {
           }, {
             organisation: 'School Four',
             job_count: 1,
-            cost: 66,
+            cost: 660,
             month: 3
           }, {
             organisation: 'School One',
@@ -115,7 +115,7 @@ define(["menu-data"], function (menuAllData) {
           }, {
             organisation: 'School Four',
             job_count: 144,
-            cost: 83,
+            cost: 230,
             month: 6
           }, {
             organisation: 'School One',
@@ -142,6 +142,11 @@ define(["menu-data"], function (menuAllData) {
             job_count: 189,
             cost: 146.69391666666664,
             month: 8
+          }, {
+            organisation: 'School Four',
+            job_count: 189,
+            cost: 1468,
+            month: 8
           }
         ]
         $scope.allServicesRecords = [
@@ -155,7 +160,7 @@ define(["menu-data"], function (menuAllData) {
             month: 3
           }, {
             service: 'National Storage',
-            cost: 53.43212499999999,
+            cost: 530.43212499999999,
             month: 3
           }, {
             service: 'HPC',
@@ -179,7 +184,7 @@ define(["menu-data"], function (menuAllData) {
             month: 5
           }, {
             service: 'National Storage',
-            cost: 88,
+            cost: 8800,
             month: 5
           }, {
             service: 'HPC',
@@ -217,7 +222,7 @@ define(["menu-data"], function (menuAllData) {
           }, {
             service: 'National Storage',
             cost: 146.69391666666664,
-            month: 8
+            month: 666
           }
         ]
       },

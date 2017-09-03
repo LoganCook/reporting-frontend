@@ -14,7 +14,8 @@ define(['pageComponents', 'dc'], function (module, dc) {
       esacHeight: '=', // number - pixels of height
       esacAllFilterLabel: '=', // string - label for 'All' in filter
       // optional
-      esacIsElasticY: '=' // boolean - default true
+      esacIsElasticY: '=', // boolean - default true
+      esacTitle: '=' // string - title for the chart
     }
   })
 
@@ -23,6 +24,7 @@ define(['pageComponents', 'dc'], function (module, dc) {
     var filterField = $scope.$ctrl.esacFilterField
     var valueField = $scope.$ctrl.esacValueField
     $scope.allFilterLabel = $scope.$ctrl.esacAllFilterLabel
+    $scope.chartTitle = $scope.$ctrl.esacTitle
     var uniqueFilterValues = records.reduce(function (prev, curr) {
       if (prev.indexOf(curr[filterField]) >= 0) {
         return prev
@@ -37,11 +39,6 @@ define(['pageComponents', 'dc'], function (module, dc) {
     $scope.filterDimension = ndx.dimension(function (d) {
       return d[filterField]
     })
-    $scope.filterChartPostSetup = function (theFilter, _) {
-      var filterContainer = angular.element(theFilter.anchor())
-      var selectElement = filterContainer.children('select')
-      selectElement.addClass('form-control')
-    }
     $scope.stackedAreaChartPostSetup = function (theChart, _) {
       theChart.xAxis().tickFormat(function (v) {
         return months[v]
@@ -53,12 +50,14 @@ define(['pageComponents', 'dc'], function (module, dc) {
           if (v[filterField] !== curr) {
             return p
           }
-          return p + v[valueField]
+          var value = v[valueField] || 0
+          return p + value
         }, function (p, v) {
           if (v[filterField] !== curr) {
             return p
           }
-          return p - v[valueField]
+          var value = v[valueField] || 0
+          return p - value
         }, function () { return 0 })
         if (isFirst) {
           isFirst = false
@@ -82,13 +81,6 @@ define(['pageComponents', 'dc'], function (module, dc) {
       theChart.title(function (d) {
         return months[d.key] + '=' + d.value // TODO#56 get tooltips showing for any filter value (currently obscured)
       })
-      // theChart.svg() // TODO#56 get title showing
-      //   .append('text')
-      //   .attr('text-anchor', 'middle')
-      //   .attr('x', theChart.width() / 2)
-      //   .attr('y', 22)
-      //   .text('TODO title') // TODO#56 add title param
-      // theChart.render()
     }
     $scope.legend = dc.legend().x(70).y(10).itemHeight(13).gap(5)
   }

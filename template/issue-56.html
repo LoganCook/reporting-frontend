@@ -1,6 +1,5 @@
 <div class="container">
   <h1 class="text-center">Demo for issue 56 - chart widgets</h1>
-  <h2>Chart 1: bar+line chart</h2>
   <ersa-line-bar-chart
     elbc-data="allSchoolsRecords"
     elbc-width="780"
@@ -12,8 +11,8 @@
     elbc-line-field-name="'job_count'"
     elbc-line-colour="'#d01c66'"
     elbc-all-filter-label="'All schools'"
+    elbc-title="'Chart 1: bar+line chart'"
     elbc-is-elastic-y="true"></ersa-line-bar-chart>
-  <h2>Chart 2: stacked area chart - school breakdown</h2>
   <ersa-stacked-area-chart
     esac-data="allSchoolsRecords"
     esac-width="780"
@@ -22,8 +21,8 @@
     esac-filter-field="'organisation'"
     esac-value-field="'cost'"
     esac-all-filter-label="'All schools'"
+    esac-title="'Chart 2: stacked area chart - school breakdown'"
     esac-is-elastic-y="true"></ersa-stacked-area-chart>
-  <h2>Chart 3: stacked area chart - all services</h2>
   <ersa-stacked-area-chart
     esac-data="allServicesRecords"
     esac-width="780"
@@ -32,5 +31,6 @@
     esac-filter-field="'service'"
     esac-value-field="'cost'"
     esac-all-filter-label="'All services'"
+    esac-title="'Chart 3: stacked area chart - all services'"
     esac-is-elastic-y="true"></ersa-stacked-area-chart>
 </div>

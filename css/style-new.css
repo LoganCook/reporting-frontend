@@ -702,3 +702,18 @@ table.flexy-table caption {
   bottom: 0;
   background-color: white;
 }
+
+.ersa-chart.dc-chart, .ersa-chart-filter.dc-chart {
+  float: none;
+  vertical-align: middle;
+  display: inline-block;
+}
+
+.ersa-chart-filter select {
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.chart-title {
+  font-size: 30px;
+}

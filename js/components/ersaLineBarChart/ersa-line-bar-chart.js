@@ -17,13 +17,15 @@ define(['pageComponents', 'dc'], function (module, dc) {
       elbcHeight: '=', // number - pixels of height
       elbcAllFilterLabel: '=', // string - label for 'All' in filter
       // optional
-      elbcIsElasticY: '=' // boolean - default true
+      elbcIsElasticY: '=', // boolean - default true
+      elbcTitle: '=' // string - title for the chart
     }
   })
 
   function controller ($scope) {
     var records = $scope.$ctrl.elbcData
     $scope.allFilterLabel = $scope.$ctrl.elbcAllFilterLabel
+    $scope.chartTitle = $scope.$ctrl.elbcTitle
     var ndx = crossfilter(records)
     $scope.monthDimension = ndx.dimension(function (d) {
       return d.month
@@ -31,11 +33,6 @@ define(['pageComponents', 'dc'], function (module, dc) {
     $scope.filterDimension = ndx.dimension(function (d) {
       return d.organisation
     })
-    $scope.filterChartPostSetup = function (theFilter, _) {
-      var filterContainer = angular.element(theFilter.anchor())
-      var selectElement = filterContainer.children('select')
-      selectElement.addClass('form-control')
-    }
     $scope.lineBarChartPostSetup = function (theChart, _) {
       theChart.compose([
         barChart(theChart, $scope.monthDimension, $scope.$ctrl.elbcBarFieldName, $scope.$ctrl.elbcBarColour, $scope.$ctrl.elbcBarYAxisLabel),
@@ -53,20 +50,13 @@ define(['pageComponents', 'dc'], function (module, dc) {
         isElasticY = false
       }
       theChart.elasticY(isElasticY)
-      // theChart.svg() // TODO#56 get title showing
-      //   .append('text')
-      //   .attr('text-anchor', 'middle')
-      //   .attr('x', theChart.width() / 2)
-      //   .attr('y', 22)
-      //   .text('TODO title') // TODO#56 add title param
-      // theChart.render()
     }
     $scope.legend = dc.legend().x(70).y(10).itemHeight(13).gap(5)
   }
 
   function lineChart (parentChart, dimension, groupField, colour, groupName) {
     var group = dimension.group().reduceSum(function (d) {
-      return d[groupField]
+      return d[groupField] || 0
     })
     var dotRadius = 5
     var result = dc.lineChart(parentChart)
@@ -90,7 +80,7 @@ define(['pageComponents', 'dc'], function (module, dc) {
   }
   function barChart (parentChart, dimension, groupField, colour, groupName) {
     var group = dimension.group().reduceSum(function (d) {
-      return d[groupField]
+      return d[groupField] || 0
     })
     var result = dc.barChart(parentChart)
       .yAxisLabel('', 20)

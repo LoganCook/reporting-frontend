@@ -1,4 +1,5 @@
 <div>
+  <div class="chart-title" ng-if="chartTitle">{{chartTitle}}</div>
   <div dc-chart="lineChart"
     dc-name="'theChart'"
     dc-width="$ctrl.esacWidth"
@@ -15,7 +16,7 @@
     dc-render-horizontal-grid-lines="true"
     dc-legend="legend"
     dc-post-setup-chart="stackedAreaChartPostSetup"
-    class="dc-chart">
+    class="ersa-chart">
   </div>
   <div dc-chart="selectMenu"
     dc-name="'theFilter'"
@@ -24,10 +25,7 @@
     dc-multiple="true"
     dc-number-visible="10"
     dc-controls-use-visibility="true"
-    dc-post-setup-chart="filterChartPostSetup"
-    dc-prompt-text="allFilterLabel">
+    dc-prompt-text="allFilterLabel"
+    class="ersa-chart-filter">
   </div>
-  <dc-select
-    dc-dimension="filterDimension"
-    all-label="{{allFilterLabel}}" />
 </div>
