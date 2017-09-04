@@ -57,6 +57,7 @@ define(["menu-data"], function (menuAllData) {
       templateUrl: 'template/issue-56.html', // TODO#56 delete the referenced template file
       controller: function ($scope) {
         $scope.thousandTickFn = function (v) { return (v / 1000) + 'k' }
+        $scope.terrabyteTickFn = function (v) { return (v / 1000) }
         $scope.allSchoolsRecords = [
           {
             organisation: 'School One',
