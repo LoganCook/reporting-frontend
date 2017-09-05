@@ -1,16 +1,14 @@
 <div>
   <div class="chart-title" ng-if="chartTitle">{{chartTitle}}</div>
-  <div dc-chart="lineChart"
+  <div dc-chart="barChart"
     dc-name="'theChart'"
-    dc-width="$ctrl.esacWidth"
-    dc-height="$ctrl.esacHeight"
+    dc-width="$ctrl.esbcWidth"
+    dc-height="$ctrl.esbcHeight"
     dc-x="d3.scale.ordinal()"
     dc-x-units="dc.units.ordinal"
     dc-brush-on="false"
-    dc-y-axis-label="$ctrl.esacYAxisLabel"
+    dc-y-axis-label="$ctrl.esbcYAxisLabel"
     dc-y-axis-padding="'10%'"
-    dc-render-area="true"
-    dc-render-data-points="true"
     dc-dimension="monthDimension"
     dc-group="monthDimension.group()"
     dc-render-horizontal-grid-lines="true"
@@ -26,6 +24,7 @@
     dc-number-visible="10"
     dc-controls-use-visibility="true"
     dc-prompt-text="allFilterLabel"
+    dc-title="filterTitleFn"
     class="ersa-chart-filter">
   </div>
 </div>

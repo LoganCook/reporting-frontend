@@ -1,6 +1,6 @@
 define(
   ["client", "datePickers", "ersaTable", "ersaTableSort", "ersaTableAddFilters", "blankSafe",
-    "d3", "crossfilter2", "dc", "angularDc", "userRollupErrors", "ersaLineBarChart", "ersaStackedAreaChart"],
+    "d3", "crossfilter2", "dc", "angularDc", "userRollupErrors", "ersaLineBarChart", "ersaStackedBarChart"],
   function (clientConstructor) {
 
   var app = angular.module("reportingApp", ["ngSanitize", "ui.router", "ui.bootstrap", "ngResource",

@@ -23,19 +23,18 @@
     elbc-filter2-field-name="'organisation'"
     elbc-is-elastic-y="true"
     class="chart-block"></ersa-line-bar-chart>
-  <p>This chart shows two filters. You can filter be either and/or both and they combine as you expect.</p>
-  <ersa-stacked-area-chart
-    esac-data="allServicesRecords"
-    esac-width="780"
-    esac-height="480"
-    esac-y-axis-label="'Cost ($)'"
-    esac-filter-field="'service'"
-    esac-value-field="'cost'"
-    esac-all-filter-label="'All services'"
-    esac-title="'Chart 2: stacked area chart - all services based on spend'"
-    esac-is-elastic-y="true"
-    class="chart-block"></ersa-stacked-area-chart>
-  <p>This chart shows the stacked area with a filter on the service type</p>
+  <ersa-stacked-bar-chart
+    esbc-data="allServicesRecords"
+    esbc-width="780"
+    esbc-height="480"
+    esbc-y-axis-label="'Cost ($)'"
+    esbc-filter-field="'service'"
+    esbc-value-field="'cost'"
+    esbc-all-filter-label="'All services'"
+    esbc-title="'Chart 2: stacked bar chart - all services based on spend'"
+    esbc-is-elastic-y="true"
+    class="chart-block"></ersa-stacked-bar-chart>
+  <p>This chart shows the stacked bar with a filter on the service type</p>
   <ersa-line-bar-chart
     elbc-data="storageUsage"
     elbc-width="780"
@@ -58,18 +57,18 @@
   <p>This is another example of a line+bar with the double filter but for storage rather than cost.
     Just ignore the fact that the usage goes above the allocation sometimes, that's just my crappy generated data.
   </p>
-  <ersa-stacked-area-chart
-    esac-data="allSchoolsRecords"
-    esac-width="780"
-    esac-height="480"
-    esac-y-axis-label="'Cost ($)'"
-    esac-filter-field="'organisation'"
-    esac-value-field="'cost'"
-    esac-all-filter-label="'All schools'"
-    esac-title="'Chart 4: stacked area chart - all services for top 5 schools'"
-    esac-is-elastic-y="true"
-    class="chart-block"></ersa-stacked-area-chart>
-  <p>This chart shows the stacked area with a filter on the school. It's basically the same technology as Chart 2.</p>
+  <ersa-stacked-bar-chart
+    esbc-data="allServicesRecords"
+    esbc-width="780"
+    esbc-height="480"
+    esbc-y-axis-label="'Cost ($)'"
+    esbc-filter-field="'organisation'"
+    esbc-value-field="'cost'"
+    esbc-all-filter-label="'All schools'"
+    esbc-title="'Chart 4: stacked bar chart - all services for top 5 schools'"
+    esbc-is-elastic-y="true"
+    class="chart-block"></ersa-stacked-bar-chart>
+  <p>This chart shows the stacked bar with a filter on the school. It's basically the same technology as Chart 2.</p>
 </div>
 <!--
   TODO#56

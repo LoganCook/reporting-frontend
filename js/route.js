@@ -58,193 +58,6 @@ define(["menu-data"], function (menuAllData) {
       controller: function ($scope) {
         $scope.thousandTickFn = function (v) { return (v / 1000) + 'k' }
         $scope.terrabyteTickFn = function (v) { return (v / 1000) }
-        $scope.allSchoolsRecords = [
-          {
-            organisation: 'School One',
-            job_count: 50,
-            cost: 840.6652083333332,
-            month: 3
-          }, {
-            organisation: 'School Two',
-            job_count: 259,
-            cost: 5523.270791666667,
-            month: 3
-          }, {
-            organisation: 'School Three',
-            job_count: 7,
-            cost: 53.43212499999999,
-            month: 3
-          }, {
-            organisation: 'School Four',
-            job_count: 1,
-            cost: 660,
-            month: 3
-          }, {
-            organisation: 'School One',
-            job_count: 13,
-            cost: 22.516416666666668,
-            month: 4
-          }, {
-            organisation: 'School Two',
-            job_count: 3,
-            cost: 11.192499999999999,
-            month: 4
-          }, {
-            organisation: 'School Three',
-            job_count: 149,
-            cost: 1141.309,
-            month: 4
-          }, {
-            organisation: 'School One',
-            job_count: 3710,
-            cost: 2653.7895833333337,
-            month: 5
-          }, {
-            organisation: 'School Two',
-            job_count: 303,
-            cost: 874.6545416666668,
-            month: 5
-          }, {
-            organisation: 'School One',
-            job_count: 3,
-            cost: 61.35575,
-            month: 6
-          }, {
-            organisation: 'School Three',
-            job_count: 258,
-            cost: 8706.824333333334,
-            month: 6
-          }, {
-            organisation: 'School Four',
-            job_count: 144,
-            cost: 230,
-            month: 6
-          }, {
-            organisation: 'School One',
-            job_count: 144,
-            cost: 96.08866666666665,
-            month: 7
-          }, {
-            organisation: 'School Two',
-            job_count: 7,
-            cost: 155.16479166666667,
-            month: 7
-          }, {
-            organisation: 'School Three',
-            job_count: 76,
-            cost: 557.5580416666667,
-            month: 7
-          }, {
-            organisation: 'School One',
-            job_count: 59,
-            cost: 404.1209583333333,
-            month: 8
-          }, {
-            organisation: 'School Three',
-            job_count: 189,
-            cost: 146.69391666666664,
-            month: 8
-          }, {
-            organisation: 'School Four',
-            job_count: 189,
-            cost: 1468,
-            month: 8
-          }
-        ]
-        $scope.offallServicesRecords = [
-          {
-            service: 'HPC',
-            cost: 840.6652083333332,
-            userCount: 33,
-            month: 3
-          }, {
-            service: 'NECTAR',
-            cost: 5523.270791666667,
-            userCount: 13,
-            month: 3
-          }, {
-            service: 'National Storage',
-            cost: 530.43212499999999,
-            userCount: 22,
-            month: 3
-          }, {
-            service: 'HPC',
-            cost: 22.516416666666668,
-            userCount: 38,
-            month: 4
-          }, {
-            service: 'NECTAR',
-            cost: 11.192499999999999,
-            userCount: 23,
-            month: 4
-          }, {
-            service: 'National Storage',
-            cost: 1141.309,
-            userCount: 31,
-            month: 4
-          }, {
-            service: 'HPC',
-            cost: 2653.7895833333337,
-            userCount: 50,
-            month: 5
-          }, {
-            service: 'NECTAR',
-            cost: 874.6545416666668,
-            userCount: 28,
-            month: 5
-          }, {
-            service: 'National Storage',
-            cost: 8800,
-            userCount: 33,
-            month: 5
-          }, {
-            service: 'HPC',
-            job_count: 3,
-            cost: 61.35575,
-            userCount: 33,
-            month: 6
-          }, {
-            service: 'NECTAR',
-            cost: 400,
-            userCount: 66,
-            month: 6
-          }, {
-            service: 'National Storage',
-            cost: 8706.824333333334,
-            userCount: 58,
-            month: 6
-          }, {
-            service: 'HPC',
-            cost: 96.08866666666665,
-            userCount: 88,
-            month: 7
-          }, {
-            service: 'NECTAR',
-            cost: 155.16479166666667,
-            userCount: 44,
-            month: 7
-          }, {
-            service: 'National Storage',
-            cost: 557.5580416666667,
-            userCount: 80,
-            month: 7
-          }, {
-            service: 'HPC',
-            cost: 404.1209583333333,
-            userCount: 101,
-            month: 8
-          }, {
-            service: 'NECTAR',
-            cost: 180,
-            userCount: 32,
-            month: 8
-          }, {
-            service: 'National Storage',
-            cost: 146.69391666666664,
-            userCount: 39,
-            month: 8
-          }
-        ]
         $scope.allServicesRecords = [
           {
             'service': 'HPC',
@@ -1005,6 +818,13 @@ define(["menu-data"], function (menuAllData) {
             'organisation': 'School B'
           }
         ]
+        // $scope.allServicesRecords.push({
+        //   'service': 'New service',
+        //   'cost': Math.random() * 1000,
+        //   'userCount': Math.random() * 10,
+        //   'organisation': 'School C',
+        //   'month': 3
+        // })
       },
       resolve: {}
     })

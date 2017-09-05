@@ -22,7 +22,7 @@ require.config({
     'blankSafe': 'directives/blankSafe/blank-safe',
     'userRollupErrors': 'components/userRollupErrors/user-rollup-errors',
     'ersaLineBarChart': 'components/ersaLineBarChart/ersa-line-bar-chart',
-    'ersaStackedAreaChart': 'components/ersaStackedAreaChart/ersa-stacked-area-chart'
+    'ersaStackedBarChart': 'components/ersaStackedBarChart/ersa-stacked-bar-chart'
   },
   baseUrl: 'js',
   shim: {

@@ -1,30 +1,30 @@
 define(['pageComponents', 'dc'], function (module, dc) {
   'use strict'
   var months = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-  module.component('ersaStackedAreaChart', {
-    templateUrl: 'js/components/ersaStackedAreaChart/ersa-stacked-area-chart.html',
+  module.component('ersaStackedBarChart', {
+    templateUrl: 'js/components/ersaStackedBarChart/ersa-stacked-bar-chart.html',
     controller: ['$scope', controller],
     bindings: {
       // mandatory
-      esacData: '=', // [{}]
-      esacYAxisLabel: '=', // string - label for Y axis
-      esacFilterField: '=', // string - name of field to filter on
-      esacValueField: '=', // string - name of field with value
-      esacWidth: '=', // number - pixels of width
-      esacHeight: '=', // number - pixels of height
-      esacAllFilterLabel: '=', // string - label for 'All' in filter
+      esbcData: '=', // [{}]
+      esbcYAxisLabel: '=', // string - label for Y axis
+      esbcFilterField: '=', // string - name of field to filter on
+      esbcValueField: '=', // string - name of field with value
+      esbcWidth: '=', // number - pixels of width
+      esbcHeight: '=', // number - pixels of height
+      esbcAllFilterLabel: '=', // string - label for 'All' in filter
       // optional
-      esacIsElasticY: '=', // boolean - default true
-      esacTitle: '=' // string - title for the chart
+      esbcIsElasticY: '=', // boolean - default true
+      esbcTitle: '=' // string - title for the chart
     }
   })
 
   function controller ($scope) {
-    var records = $scope.$ctrl.esacData
-    var filterField = $scope.$ctrl.esacFilterField
-    var valueField = $scope.$ctrl.esacValueField
-    $scope.allFilterLabel = $scope.$ctrl.esacAllFilterLabel
-    $scope.chartTitle = $scope.$ctrl.esacTitle
+    var records = $scope.$ctrl.esbcData
+    var filterField = $scope.$ctrl.esbcFilterField
+    var valueField = $scope.$ctrl.esbcValueField
+    $scope.allFilterLabel = $scope.$ctrl.esbcAllFilterLabel
+    $scope.chartTitle = $scope.$ctrl.esbcTitle
     var uniqueFilterValues = records.reduce(function (prev, curr) {
       if (prev.indexOf(curr[filterField]) >= 0) {
         return prev
@@ -39,6 +39,9 @@ define(['pageComponents', 'dc'], function (module, dc) {
     $scope.filterDimension = ndx.dimension(function (d) {
       return d[filterField]
     })
+    $scope.filterTitleFn = function (d) {
+      return d.key
+    }
     $scope.stackedAreaChartPostSetup = function (theChart, _) {
       theChart.xAxis().tickFormat(function (v) {
         return months[v]
@@ -68,15 +71,9 @@ define(['pageComponents', 'dc'], function (module, dc) {
       })
       theChart.yAxis().tickFormat(function (v) { return (v / 1000) + 'k' })
       var isElasticY = true
-      if ($scope.$ctrl.esacIsElasticY === false) {
+      if ($scope.$ctrl.esbcIsElasticY === false) {
         isElasticY = false
       }
-      var dotRadius = 5
-      theChart.renderDataPoints({
-        fillOpacity: 0.8,
-        strokeOpacity: 0.8,
-        radius: dotRadius
-      }).dotRadius(dotRadius * 1.4)
       theChart.elasticY(isElasticY)
       theChart.title(function (d) {
         return months[d.key] + '=' + d.value // TODO#56 get tooltips showing for any filter value (currently obscured)
