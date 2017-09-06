@@ -14,6 +14,7 @@ define(['pageComponents', 'dc'], function (module, dc) {
       esbcHeight: '=', // number - pixels of height
       esbcAllFilterLabel: '=', // string - label for 'All' in filter
       // optional
+      esbcTopN: '=', // number - restrict to top N if supplied
       esbcIsElasticY: '=', // boolean - default true
       esbcTitle: '=' // string - title for the chart
     }
@@ -33,12 +34,25 @@ define(['pageComponents', 'dc'], function (module, dc) {
       return prev
     }, [])
     var ndx = crossfilter(records)
+    var n = parseInt($scope.$ctrl.esbcTopN)
     $scope.monthDimension = ndx.dimension(function (d) {
       return d.month
     })
     $scope.filterDimension = ndx.dimension(function (d) {
       return d[filterField]
     })
+    if (Number.isSafeInteger(n) && n >= 0) {
+      var topNFilterValues = getTopNFilterValues(ndx, n, $scope.filterDimension, valueField)
+      var isTopFilter = function (v) {
+        return topNFilterValues.indexOf(v) !== -1
+      }
+      var a = ndx.dimension(function (d) {
+        return d[filterField]
+      })
+      a.filter(isTopFilter)
+      uniqueFilterValues = topNFilterValues
+    }
+    $scope.filterGroup = $scope.filterDimension.group()
     $scope.filterTitleFn = function (d) {
       return d.key
     }
@@ -82,3 +96,16 @@ define(['pageComponents', 'dc'], function (module, dc) {
     $scope.legend = dc.legend().x(70).y(10).itemHeight(13).gap(5)
   }
 })
+
+function getTopNFilterValues (ndx, n, filterDimension, valueField) {
+  var values = filterDimension
+    .group()
+    .reduceSum(function (d) {
+      return d[valueField]
+    })
+    .top(n)
+  return values.reduce(function (prev, curr) {
+    prev.push(curr.key)
+    return prev
+  }, [])
+}
