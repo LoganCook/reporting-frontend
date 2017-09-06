@@ -20,6 +20,10 @@ require.config({
     "moment": '../lib/moment/min/moment.min',
     "numeral": '../lib/numeral/min/numeral.min',
     'qs': '../node_modules/qs/dist/qs',
+    'd3': '../lib/d3/d3.min',
+    'crossfilter2': '../lib/crossfilter2/crossfilter.min',
+    'dc': '../lib/dcjs/dc.min',
+    'angularDc': '../lib/angular-dc/dist/angular-dc.min',
     'angular': '../lib/angular/angular.min',
     'spin': '../lib/spin.js/spin.min',
     'pageComponents': '../js/components/pageComponents',
@@ -29,10 +33,17 @@ require.config({
     'ersaTableSort': '../js/directives/ersaTableSort/ersa-table-sort',
     'ersaTableAddFilters': '../js/directives/ersaTableAddFilters/ersa-table-add-filters',
     'blankSafe': '../js/directives/blankSafe/blank-safe',
-    'userRollupErrors': '../js/components/userRollupErrors/user-rollup-errors'
+    'userRollupErrors': '../js/components/userRollupErrors/user-rollup-errors',
+    'ersaLineBarChart': '../js/components/ersaLineBarChart/ersa-line-bar-chart',
+    'ersaStackedBarChart': '../js/components/ersaStackedBarChart/ersa-stacked-bar-chart'
   },
   shim: {
-    "angular": { exports: "angular" },
+    'angular': { // angular does not support AMD out of the box, put it in a shim
+      exports: 'angular'
+    },
+    'crossfilter2': {
+      exports: 'crossfilter'
+    }
   },
 
   // dynamically load all test files
