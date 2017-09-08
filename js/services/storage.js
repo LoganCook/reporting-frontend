@@ -14,7 +14,6 @@ define(['app', 'properties', 'services/rds'], function (app, props) {
    */
   function Storage (endpoint, filesystemFieldName, queryResource, AuthService, org, RDService) {
     /**
-     * @type {number} BlockPrice
      * @type {number} BlockSize
      */
     this.BlockSize = 250;
@@ -25,7 +24,7 @@ define(['app', 'properties', 'services/rds'], function (app, props) {
     this.processEntry = function() { throw "Not implemented."; };
     this.getUsages = function() { throw "Not implemented."; };
     this.getTotals = function() { throw "Not implemented."; };
-    // getGrandTotals only availabel to admin
+    // getGrandTotals only available to admin
     this.getGrandTotals = function() { throw "Not implemented."; };
 
     // for xfs, eRSA accounts are returned with usage data
@@ -50,12 +49,12 @@ define(['app', 'properties', 'services/rds'], function (app, props) {
 
     // link usage to users
     // saveTo is totals[searchHash]
-    this.linkUsages = function(usageSource, accounts) {
+    this.linkUsages = function(usageSource, allocations) {
       var tmpTotals = {}, extendedUsage = angular.copy(usageSource);
       tmpTotals['Grand'] = angular.copy(USAGE_DEFAULT);
 
       for (var i = 0; i < usageSource.length; i++) {
-        this.processEntry(extendedUsage[i], accounts);
+        this.processEntry(extendedUsage[i], allocations);
         this.subtotal(extendedUsage[i], tmpTotals);
       }
       var grandTotals = tmpTotals['Grand'];
@@ -96,7 +95,7 @@ define(['app', 'properties', 'services/rds'], function (app, props) {
      * @property {string} billing   User's billing organisation
      * @property {number} organisation   User's most detailed organisation
      * @property {number} blocks  Usage devided by BlockSize.
-     * @property {number} cost    BlockPrice * BlockSize
+     * @property {number} cost    BlockSize * UnitPrice from Order
      * @param {entry} Entry
      */
     this.subtotal = function(entry, saveTo) {

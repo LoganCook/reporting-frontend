@@ -2,7 +2,7 @@ define(['app', '../util', 'services/contract', 'properties'], function (app, uti
   'use strict';
 
   /**
-   * All xfs.filesystem related data services.
+   * All xfs.filesystem related data services. Currently only used by hpc home storage
    */
   app.factory('XFSService', function (queryResource, $http, $q, org, AuthService) {
     var contractService = contract($http, $q, org, 'ersaaccount', 'managerusername', AuthService);
@@ -12,8 +12,11 @@ define(['app', '../util', 'services/contract', 'properties'], function (app, uti
      * @type {number} BlockPrice
      * @type {number} BlockSize
      */
-    var BlockPrice = 5,
-      BlockSize = 250;
+    // FIXME: There is no hpc home storage contracts but surrogate contracts eRSAAccount
+    // FIXME: this is a singleton service, all the states
+    // are shared by every controllers use this service
+    var BlockSize = 250, BlockPrice = 5000, // make BlockPrice significant as it should not be used.
+      useContractPrice = false;  // unitPrice DOES NOT come from contracts
 
     // default values of a usage object
     var USAGE_DEFAULT = {
@@ -65,6 +68,7 @@ define(['app', '../util', 'services/contract', 'properties'], function (app, uti
 
     // get a summary of a filesystem between startTs and endTs
     function summary(fileSystemId, startTs, endTs) {
+      console.warn("Attention: useContractPrice = ", useContractPrice);
       var deferred = $q.defer(),
         searchHash = hashSearch(fileSystemId, startTs, endTs);
       if (!angular.isString(fileSystemId)) {
@@ -133,12 +137,11 @@ define(['app', '../util', 'services/contract', 'properties'], function (app, uti
     }
 
     // convert KiB into GiB
-    function processEntry(entry, accounts) {
+    function processEntry(entry) {
       entry['raw'] = entry['usage'] * 1024;
       entry['usage'] = util.toGB(entry['raw']);
       entry['blocks'] = computeBlocks(entry['usage']);
-      entry['cost'] = BlockPrice * entry['blocks'];
-      angular.extend(entry, accounts[entry['owner']]);
+      entry['cost'] = entry['blocks'] * entry['unitPrice'];
     }
 
     /**
@@ -177,14 +180,21 @@ define(['app', '../util', 'services/contract', 'properties'], function (app, uti
 
     // link usage to users
     // saveTo is totals[searchHash]
-    function processUsages(usageSource, accounts, searchHash) {
+    function processUsages(usageSource, contracts, searchHash) {
       var tmpTotals = {};
       tmpTotals['Grand'] = angular.copy(USAGE_DEFAULT);
       // totals at different levels: organisation (billing) and school (organisation)
       summaries[searchHash] = angular.copy(usageSource);
 
       for (var i = 0; i < summaries[searchHash].length; i++) {
-        processEntry(summaries[searchHash][i], accounts);
+        // NOTE: this is special treat to hpc home storage price
+        if (summaries[searchHash][i]['owner'] in contracts) {
+          angular.extend(summaries[searchHash][i], contracts[summaries[searchHash][i]['owner']]);
+        }
+        if (!useContractPrice) {
+          summaries[searchHash][i]['unitPrice'] = BlockPrice;
+        }
+        processEntry(summaries[searchHash][i]);
         subtotal(summaries[searchHash][i], tmpTotals);
       }
       grandTotals[searchHash] = tmpTotals['Grand'];
@@ -194,6 +204,11 @@ define(['app', '../util', 'services/contract', 'properties'], function (app, uti
     }
 
     return {
+      loadPrice: function loadPrice(price) {
+        // This is a special fix for HPC home storage by loading price from options
+        // See comment at the top of the file
+        BlockPrice = price;
+      },
       getIdOf: getIdOf,
       list: list,
       query: function query(fileSystemId, startTs, endTs) {

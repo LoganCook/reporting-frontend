@@ -20,5 +20,8 @@ define({
   },
   hpc: {
     IncompleteMonth: 'The cost of current month is not accurate.'
+  },
+  "hpchome": {
+    "price": 5
   }
 });

@@ -3,7 +3,14 @@ define(["app", '../options', "lodash", "mathjs", "../util", 'services/xfs'], fun
     function ($rootScope, $scope, $timeout, $filter, reporting, org, spinner, XFSService, AuthService) {
       'use strict';
 
-      var FILESYTEM_NAME = 'hpchome';
+      var FILESYTEM_NAME = 'hpchome', defaultPrice = 0;
+      // FIXME: this is a temporary fix because there is no contract of HPC HOME STORAGE
+      if (FILESYTEM_NAME in options && 'price' in options[FILESYTEM_NAME]) {
+        defaultPrice = options[FILESYTEM_NAME]['price'];
+      } else {
+        throw ("HPC home storage price is not set in options.");
+      }
+      XFSService.loadPrice(defaultPrice);
 
       /**
        * Whenever user click 'Update' button, this is called
@@ -59,7 +66,7 @@ define(["app", '../options', "lodash", "mathjs", "../util", 'services/xfs'], fun
       };
       $scope.datepickerOptions = {minMode: 'month'}
 
-      // Request XFS data with qeury string.
+      // Request XFS data with query string.
       $scope.load = function () {
         clear();
 

@@ -6,7 +6,9 @@ define(['app', '../util', 'services/contract', 'options' ,'../cloud/services'], 
    */
   app.factory('NectarService', function (queryResource, $q, AuthService, org, $http, flavor) {
     var contractService = contract($http, $q, org, 'nectar', 'OpenstackID');
-    var PRICE = 5;
+    // unitPrice comes from contract, some instances do not have contract with eRSA,
+    // so set default price to stop calculator blowing itself up
+    var PRICE = 0;
     if ('nova' in options && 'price' in options['nova']) {
       PRICE = options['nova']['price'];
     }
@@ -57,12 +59,18 @@ define(['app', '../util', 'services/contract', 'options' ,'../cloud/services'], 
     // link usage to users
     // saveTo is totals[searchHash]
     // common + local argument
-   function linkUsages(usageSource, accounts, flavorMap) {
+   function linkUsages(usageSource, contracts, flavorMap) {
       var tmpTotals = {}, extendedUsage = angular.copy(usageSource);
       tmpTotals['Grand'] = angular.copy(USAGE_DEFAULT);
 
       for (var i = 0; i < usageSource.length; i++) {
-        processEntry(extendedUsage[i], accounts, flavorMap);
+        if (extendedUsage[i]['tenant'] in contracts) {
+          angular.extend(extendedUsage[i], contracts[extendedUsage[i]['tenant']]);
+        } else {
+          // set default price to stop calculator blowing itself up
+          extendedUsage[i]['unitPrice'] = PRICE;
+        }
+        processEntry(extendedUsage[i], flavorMap);
         subtotal(extendedUsage[i], tmpTotals);
       }
       var grandTotal = tmpTotals['Grand'];
@@ -107,7 +115,7 @@ define(['app', '../util', 'services/contract', 'options' ,'../cloud/services'], 
       // "@odata.etag": "W/\"3233960\""
     // },
 
-    function processEntry(entry, accounts, flavorMap) {
+    function processEntry(entry, flavorMap) {
       delete entry['az'];
       if (entry['flavor'] in flavorMap) {
         entry['core'] = parseInt(flavorMap[entry['flavor']]['vcpus']);
@@ -116,8 +124,7 @@ define(['app', '../util', 'services/contract', 'options' ,'../cloud/services'], 
         entry['core'] = 0;
         entry['flavorName'] = 'Unknown';
       }
-      entry['cost'] = PRICE * entry['core'];
-      angular.extend(entry, accounts[entry['tenant']]);
+      entry['cost'] = entry['core'] * entry['unitPrice'];
       // temporary mapping to avoid change templates
       if ('biller' in entry) {
         entry['billing'] = entry['biller'];

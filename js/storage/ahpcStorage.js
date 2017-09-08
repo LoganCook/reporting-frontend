@@ -1,12 +1,19 @@
 define(
-  ["app", "lodash", "mathjs", "../util", "services/xfs"],
-  function (app, _, math, util) {
+  ["app", "lodash", "mathjs", "../util", "options", "services/xfs"],
+  function (app, _, math, util, options) {
 
-  app.controller("AHPCStorageController", 
+  app.controller("AHPCStorageController",
     ["$rootScope", "$scope", "$timeout", "$filter", "reporting", "org", "spinner", "XFSService", "theConstants", "AuthService",
     function ($rootScope, $scope, $timeout, $filter, reporting, org, spinner, XFSService, theConstants) {
       'use strict';
-      var FILESYTEM_NAME = 'hpchome';
+      var FILESYTEM_NAME = 'hpchome', defaultPrice = 0;
+      // FIXME: this is a temporary fix because there is no contract of HPC HOME STORAGE
+      if (FILESYTEM_NAME in options && 'price' in options[FILESYTEM_NAME]) {
+        defaultPrice = options[FILESYTEM_NAME]['price'];
+      } else {
+        throw ("HPC home storage price is not set in options.");
+      }
+      XFSService.loadPrice(defaultPrice);
 
       function clear() {
         $scope.output.summed = [];
@@ -91,8 +98,8 @@ define(
       };
 
       /**
-       * When user click a close alert button on the page, this fucnction will be called
-       * to remove warnning message.
+       * When user click a close alert button on the page, this function will be called
+       * to remove warning message.
        *
        * @export
        */

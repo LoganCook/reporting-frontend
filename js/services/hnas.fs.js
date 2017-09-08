@@ -5,7 +5,7 @@ define(['app', '../util', 'services/storage'], function (app, util) {
    * All hnas filesytem usage related data services?
    */
   app.factory('HNASFSService', function (Storage, $q) {
-    var filesystemFieldName = 'filesystem'
+    var filesystemFieldName = 'filesystem';
     // should come from options.
     var BlockPrice = 5;
 
@@ -21,8 +21,12 @@ define(['app', '../util', 'services/storage'], function (app, util) {
       delete entry['live_usage'];
       entry['usage'] = entry['raw'] / 1000;  // MB to GB
       entry['blocks'] = Math.ceil(entry['usage'] / usageService.BlockSize);
-      entry['cost'] = BlockPrice * entry['blocks'];
       angular.extend(entry, allocations[entry[filesystemFieldName]]); // hnas.fs has no owner at all
+      if ('unitPrice' in entry && entry['unitPrice']) {
+        entry['cost'] = entry['blocks'] * entry['unitPrice'];
+      } else {
+        entry['cost'] = entry['blocks'] * BlockPrice;
+      }
     };
 
     // get a summary of a filesystem between startTs and endTs from endpoint

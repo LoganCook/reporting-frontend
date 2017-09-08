@@ -5,8 +5,8 @@ define(['app', '../util', 'services/storage'], function (app, util) {
    * All xfs.usage related data services?
    */
   app.factory('XFSUsageService', function (Storage, $q) {
-    var filesystemFieldName = 'filesystem'
-    // should come from options.
+    var filesystemFieldName = 'filesystem';
+    // Price should come from contract, JIC
     var BlockPrice = 5;
 
     // both summaries and totals has searchHash as the first key
@@ -16,12 +16,16 @@ define(['app', '../util', 'services/storage'], function (app, util) {
     var usageService = new Storage(sessionStorage['xfs'], filesystemFieldName);
 
     // implement local version of data entries
-    usageService.processEntry = function(entry, accounts) {
+    usageService.processEntry = function(entry, allocations) {
+      angular.extend(entry, allocations[entry[filesystemFieldName]]);
       entry['raw'] = entry['usage'] * 1024;
       entry['usage'] = util.toGB(entry['raw']);
       entry['blocks'] = Math.ceil(entry['usage'] / usageService.BlockSize);
-      entry['cost'] = BlockPrice * entry['blocks'];
-      angular.extend(entry, accounts[entry[filesystemFieldName]]);
+      if ('unitPrice' in entry && entry['unitPrice']) {
+        entry['cost'] = entry['blocks'] * entry['unitPrice'];
+      } else {
+        entry['cost'] = entry['blocks'] * BlockPrice;
+      }
     };
 
     // get a summary of a filesystem between startTs and endTs from endpoint
@@ -45,7 +49,7 @@ define(['app', '../util', 'services/storage'], function (app, util) {
         } else {
           usageService.prepareData(summary(startTs, endTs), isDisableBlacklist).then(function(result) {
             angular.forEach(result['summaries'], function(value, key) {
-              value.source = 'XFS'
+              value.source = 'XFS';
             })
             summaries[searchHash] = result['summaries'];
             totals[searchHash] = result['totals'];
