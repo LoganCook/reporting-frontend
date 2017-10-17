@@ -5,7 +5,7 @@ define(['app', '../util', 'services/contract', '../options', 'lodash', './slurm-
    * All High performance computing (HPC) - Slurm related data services.
    */
   app.factory('SlurmService', function (queryResource, $q, $http, org, AuthService) {
-    var contractService = contract($http, $q, org, 'ersaaccount', 'managerusername', AuthService);
+    var contractService = contract($http, $q, org, 'tangocompute', 'managerusername', AuthService);
     var BASE_URL = sessionStorage['slurm'];
     var nq = queryResource.build(BASE_URL);
     var USAGE_DEFAULT = {

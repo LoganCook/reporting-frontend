@@ -13,7 +13,7 @@ define(
       $scope.viewDetails = false
       $scope.datepickerOptions = {minMode: 'month'};
       $scope.rangeStart = new Date();
-      $scope.rangeEnd = new Date();
+      $scope.rangeEnd = new Date(2017, 7, 31);
       $scope.rangeEndOpen = false;
       $scope.openRangeEnd = function () {
         $scope.rangeEndOpen = true;

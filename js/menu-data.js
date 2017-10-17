@@ -1,4 +1,7 @@
 // FIXME: can this to include admined parameter for setting up route states?
+// FIXME: this file contains menu items for MenuController called in index.html and
+//        it also contains some (ersa) states for route.js to create routes.
+//        Some states are detached from menu items and defined in hideFor3rdMenu
 define({
   "ersa": {
     "HPC": {
@@ -32,16 +35,22 @@ define({
   },
   "portal": {
     "Reports": { // menus not states
-      "COMPUTING": ["sub1", ["/hpc/hpcsummary", "HPC"],
-        ["/cloud/novasummary", "NECTAR"],
+      "COMPUTING": [
+        "sub1",
+        ["/hpc/slurm", "HPC - Tango"],
+        ["/hpc/hpcsummary", "HPC - Tizard"],
+        ["/cloud/novasummary", "NECTAR"]
       ],
-      "STORAGE": ["sub2", ["/storage/hpcStorage", "HOME ACCOUNT"],
+      "STORAGE": [
+        "sub2",
+        ["/storage/hpcStorage", "HOME ACCOUNT"],
         ["/storage/allocationSummary", "NATIONAL"],
-        ["/storage/allocationANDSReport", "STORED COLLECTIONS"],
-      ],
+        ["/storage/allocationANDSReport", "STORED COLLECTIONS"]
+      ]
     },
     "hideFor3rdMenu": { // this data will be registered in 'state'
-      "SummaHPry": ["/hpc/hpcsummary", "HPCSummary", "tesla gpu gtx mecheng abraham short gtx3 "],
+      "HPC - Tizard": ["/hpc/hpcsummary", "HPCSummary", "tesla gpu gtx mecheng abraham short gtx3 "],
+      "HPC - Tango": ["/hpc/slurm", "Slurm"],
       "HPC Storage": ["/storage/hpcStorage", "HPCStorage"],
       "Allocation Summary": ["/storage/allocationSummary", "AllocationSummary"],
       "Cloud Summary": ["/cloud/novasummary", "Novasummary"],

@@ -30,15 +30,13 @@ require(["debug-settings"], function (d) {
 });
 
 require(["app", "services/auth", "services/org", "menu",
-    //"identity/crm",
+    // Controllers and Component
     "hpc/hpc", "hpc/slurm", "hpc/hpcsummary",
     "storage/hcp", "storage/hnas/fileSystem", "storage/hnas/virtualVolume", "storage/xfs",
-    //"storage/fs", "storage/hcp", "storage/hnas", "storage/hnas/fileSystem",  "storage/hnas/virtualVolume", "storage/xfs",
     "storage/hpcStorage", "storage/ahpcStorage",
     "storage/allocationSummary", "storage/aallocationSummary",
     "storage/allocationANDSReport", "storage/aallocationRDSReport",
-    "cloud/keystone", "cloud/nova.component", "cloud/novasummary",
-    //"cloud/keystone", "cloud/nova", "cloud/cinder","cloud/swift",
+    "cloud/keystone", "cloud/nova.component", "cloud/novasummary"
   ],
   function (app) {
     app.config(function (AuthServiceProvider) {
