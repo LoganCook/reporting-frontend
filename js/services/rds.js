@@ -1,6 +1,9 @@
   define(['app', 'util'], function (app, util) {
     'use strict';
 
+    // Conversion factor of annual price in GB to 250 GB/Block/month
+    var CONVERTFACTOR = 0.048; // 12/250
+
     function tempMap(data) {
       // Hope this is a tempory solution
       data.forEach(function(entry) {
@@ -29,8 +32,8 @@
         throw new Error("Wrong configuration: bman is not defined in sessionStorage.");
       }
       var requestUri = sessionStorage['bman'],
-        rdsUri = requestUri + '/api/rds/',
-        rdsBackupUri = requestUri + '/api/rdsbackup/',
+        rdsUri = requestUri + '/api/v2/contract/attachedstorage/',
+        rdsBackupUri = requestUri + '/api/v2/contract/attachedbackupstorage/',
         rdsReportUri = requestUri + '/api/rdsreport/',
         rdses = null,
         reportMeta = null,
@@ -40,52 +43,55 @@
       function doGetAll() {
         if (getAllPromise) {
           // ensures when multiple calls are triggered at once that they all wait for one HTTP call to resolve
-          return getAllPromise
+          return getAllPromise;
         }
-        var deferred = $q.defer()
+        var deferred = $q.defer();
         if (rdses) {
-          deferred.resolve(rdses)
+          deferred.resolve(rdses);
         } else {
           $http.get(rdsUri).then(function (response) {
             $http.get(rdsBackupUri).then(function(rdsBackUpResponse) {
-              var combined = response.data.concat(rdsBackUpResponse.data)
+              var combined = response.data.concat(rdsBackUpResponse.data);
               tempMap(combined)
-              rdses = util.keyArray(combined, 'FileSystemName')
+              rdses = util.keyArray(combined, 'FileSystemName');
+              util.convertContractPrice(rdses, CONVERTFACTOR);
               deferred.resolve(rdses)
             }, function(reason) {
-              var message = 'Failed during call to RDS backup URL'
-              console.error(message)
-              deferred.reject(message)
+              var message = 'Failed during call to attached backup storage URL';
+              console.error(message);
+              deferred.reject(message);
             })
           }, function(reason) {
-            var message = 'Failed during call to RDS primary URL'
-            console.error(message)
-            deferred.reject(message)
+            var message = 'Failed during call to attached storage URL';
+            console.error(message);
+            deferred.reject(message);
           })
         }
-        getAllPromise = deferred.promise
-        return getAllPromise
+        getAllPromise = deferred.promise;
+        return getAllPromise;
       }
 
       function doGetServiceOf(orgId) {
         if (getServiceOfPromise) {
           // ensures when multiple calls are triggered at once that they all wait for one HTTP call to resolve
-          return getServiceOfPromise
+          return getServiceOfPromise;
         }
         var deferred = $q.defer();
-        org.getServiceOf(orgId, 'rds').then(function(rdsData) {
-          org.getServiceOf(orgId, 'rdsbackup').then(function(rdsBackupdata) {
+        org.getServiceOf(orgId, 'attachedstorage').then(function(rdsData) {
+          org.getServiceOf(orgId, 'attachedbackupstorage').then(function(rdsBackupdata) {
             var combined = rdsData.concat(rdsBackupdata);
             tempMap(combined);
-            deferred.resolve(util.keyArray(combined, 'FileSystemName'));
+            combined = util.keyArray(combined, 'FileSystemName');
+            util.convertContractPrice(combined, CONVERTFACTOR);
+            deferred.resolve(combined);
           }, function(reason) {
-            deferred.reject(reason)
+            deferred.reject(reason);
           });
         }, function(reason) {
-          deferred.reject(reason)
-        })
-        getServiceOfPromise = deferred.promise
-        return getServiceOfPromise
+          deferred.reject(reason);
+        });
+        getServiceOfPromise = deferred.promise;
+        return getServiceOfPromise;
       }
 
       return {
@@ -115,9 +121,9 @@
         getServiceOf: function (orgId) {
           var deferred = $q.defer();
           doGetServiceOf(orgId).then(function (response) {
-            deferred.resolve(response)
+            deferred.resolve(response);
           }, function(reason) {
-            deferred.reject(reason)
+            deferred.reject(reason);
           });
           return deferred.promise;
         },

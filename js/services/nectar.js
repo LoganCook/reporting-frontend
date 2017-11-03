@@ -1,3 +1,5 @@
+var MONTHSAYEAR = 12;
+
 define(['app', '../util', 'services/contract', 'options' ,'../cloud/services'], function (app, util, contract, options) {
   'use strict';
 
@@ -5,7 +7,7 @@ define(['app', '../util', 'services/contract', 'options' ,'../cloud/services'], 
    * All nectar usage related data services
    */
   app.factory('NectarService', function (queryResource, $q, AuthService, org, $http, flavor) {
-    var contractService = contract($http, $q, org, 'nectar', 'OpenstackID');
+    var contractService = contract($http, $q, org, 'nectarcloudvm', 'OpenstackProjectID');
     // unitPrice comes from contract, some instances do not have contract with eRSA,
     // so set default price to stop calculator blowing itself up
     var PRICE = 0;
@@ -37,6 +39,7 @@ define(['app', '../util', 'services/contract', 'options' ,'../cloud/services'], 
     // common
     function processUsages(usages) {
       return getContracts().then(function (contracts) {
+        util.convertContractPrice(contracts, MONTHSAYEAR);
         return flavors.then(function (flavorMap) {
           return linkUsages(usages, contracts, flavorMap);
         });

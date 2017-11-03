@@ -13,17 +13,11 @@
       var orgUri = requestUri + '/api/Organisation/?method=get_tops';
       var orgServiceUri = requestUri + '/api/organisation/#id/get_service/?name=#serviceName';
       var orgFORUri = requestUri + '/api/organisation/#id/get_for/?product=#productName';
-      var rdsUri = requestUri + '/api/RDS/';
-      var roleUri = requestUri + '/api/Role/'; // TODO: to be retired
+      var rdsUri = requestUri + '/api/v2/contract/attachedstorage/';
       var organisations = {}, // pk -> name
         organisationByNames = {}, // name -> pk
         users = {},
         mergedUsers = {},
-        rdses = [],
-        roleDict = {},
-        roles = [],
-        rolesOf = {},  // to replace roles which does not well target different logged in users, security concern
-        mergedRoles = {},
         services = {},
         anzsrcFORs = {};
 
@@ -138,15 +132,6 @@
         return deferred.promise;
       }
 
-      // TODO: to be retired
-      function getMergedRoles() {
-        for (var orgId in rolesOf) {
-          rolesOf[orgId].forEach(function (role) {
-            angular.extend(mergedRoles, role);
-          });
-        }
-      }
-
       return {
         getOrganisations: function (loadUsers) {
           var deferred = $q.defer();
@@ -210,69 +195,11 @@
           deferred.resolve(organisations);
           return deferred.promise;
         },
-        getRDS: function () {
-          // TODO: is it still in use?
-          var deferred = $q.defer();
-          if (rdses.length) {
-            deferred.resolve(rdses);
-          } else {
-            $http.get(rdsUri).then(function (response) {
-              rdses = util.keyArray(response.data, 'filesystem');
-              deferred.resolve(rdses);
-            }, function(reason) {
-              deferred.reject(reason);
-            });
-          }
-          return deferred.promise;
-        },
-        getRoles: function () {
-          var deferred = $q.defer();
-          if (roles.length) {
-            deferred.resolve(roles);
-          } else {
-            $http.get(roleUri).then(function (response) {
-              roles = response.data;
-              deferred.resolve(roles);
-            }, function(reason) {
-              deferred.reject(reason);
-            });
-          }
-          return deferred.promise;
-        },
-        getRole: function (roleId) {
-          var deferred = $q.defer();
-          if (roleId in roleDict) {
-            deferred.resolve(roleDict[roleId]);
-          } else {
-            $http.get(roleUri + roleId + '/').then(function (response) {
-              roleDict[roleId] = response.data;
-              deferred.resolve(roleDict[roleId]);
-            }, function(reason) {
-              deferred.reject(reason);
-            });
-          }
-          return deferred.promise;
-        },
         getServiceOf: function (orgId, name) {
           return _getServiceOf(orgId, name);
         },
         getFORsOf: function (orgId, name) {
           return _getFORsOf(orgId, name);
-        },
-        getRolesOfSync: function (orgName) {
-          var orgId = organisationByNames[orgName];
-          if (orgId in rolesOf) {
-            return rolesOf[orgId];
-          } else {
-            throw new Error("You have to modify code to ensure users are availabe when called.");
-          }
-        },
-        getAllRoles: function () {
-          // return preloaded roles
-          if (Object.keys(mergedRoles).length == 0) {
-            getMergedRoles();
-          }
-          return mergedRoles;
         }
       };
     });

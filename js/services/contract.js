@@ -8,7 +8,7 @@
         throw new Error("Wrong configuration: bman is not defined in sessionStorage.");
       }
       var requestUrl = sessionStorage['bman'],
-        serviceUrl = requestUrl + '/api/' + service + '/',
+        serviceUrl = requestUrl + '/api/v2/contract/' + service + '/',
         contracts = null;
 
       return {

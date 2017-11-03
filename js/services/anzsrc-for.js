@@ -25,9 +25,9 @@
           return deferred.promise;
         },
         getFORsOf: function (orgId) {
-          // rds and rdsbackup are in the same order, so, cheat here: only check rds
-          // TODO: when re-write, do not cheat, chain rds and rdsbackup
-          return org.getFORsOf(orgId, 'rds');
+          // attachedstorage and attachedbackupstorage are in the same order, so, cheat here: only check one
+          // TODO: when re-write, do not cheat, chain rds and rdsbackup (?)
+          return org.getFORsOf(orgId, 'attachedstorage');
         }
       };
     });

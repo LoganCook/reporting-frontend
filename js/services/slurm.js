@@ -1,3 +1,5 @@
+var HOURSAYEAR = 8760;  // 24 * 365
+
 define(['app', '../util', 'services/contract', '../options', 'lodash', './slurm-rollup'], function(app, util, contract, options, _, rollup) {
   'use strict';
 
@@ -70,6 +72,7 @@ define(['app', '../util', 'services/contract', '../options', 'lodash', './slurm-
           summary(startTs, endTs).then(function(result) {
             totals[searchHash] = {Grand: angular.copy(USAGE_DEFAULT)};
             contractService.getContracts().then(function(contracts) {
+              util.convertContractPrice(contracts, HOURSAYEAR);
               result.forEach(function(entry) {
                 var username = entry['owner'];
                 if (username in contracts) {

@@ -1,6 +1,6 @@
 define(['util2', 'util'], function (util, utilOld) {
   describe('Utility date functions', function () {
-    it('shoud throw error if non Date object is given', function () {
+    it('should throw error if non Date object is given', function () {
       expect(function () {
         util.dateToTimestamp('string');
       }).toThrow();
@@ -122,6 +122,41 @@ define(['util2', 'util'], function (util, utilOld) {
       x = utilOld.spliceOne(source, 'k1', 10);
       expect(x).toEqual(null);
       expect(source.length).toEqual(l - 1);
+    });
+  });
+
+  describe('Function convertContractPrice', function() {
+    it('should change price to what we want', function() {
+      var itemCount = 3, originalPrice = 1000, denominator = 12, contracts = {}, i;
+      var convertedPrice = originalPrice / denominator;
+      for (i = 0; i < itemCount; i++) {
+        contracts["id" + i] = {
+          "name": "item" + i,
+          "unitPrice": originalPrice
+        };
+      }
+      utilOld.convertContractPrice(contracts, denominator);
+      expect(Object.keys(contracts).length).toEqual(itemCount);
+      for (i = 0; i < itemCount; i++) {
+        expect(contracts["id" + i]["unitPrice"]).toEqual(convertedPrice);
+      }
+    });
+
+    it('should throw error when there is no denominator', function() {
+      expect(function () {
+        utilOld.convertContractPrice({});
+      }).toThrowError(Error, 'Missing denominator');
+    });
+
+    it('should throw error when there is no unitPrice in a contract', function() {
+      var badContact = {
+        someId: {
+          name: "bad"
+        }
+      };
+      expect(function () {
+        utilOld.convertContractPrice(badContact, 1);
+      }).toThrow();
     });
   });
 });

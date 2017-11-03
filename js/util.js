@@ -62,6 +62,7 @@ define(["filesize", "mathjs", "moment", "numeral", "lodash"], function (filesize
 
       return result;
     },
+
     multiKeyArray: function (records, key1, key2) {
       var result = {};
 
@@ -303,5 +304,23 @@ define(["filesize", "mathjs", "moment", "numeral", "lodash"], function (filesize
       throw new Error("Unable to copy obj! Its type isn't supported.");
     },
 
+    /**
+     * Convert contract price by a denominator to a price can be used for a service:
+     * either hourly or monthly depends on service
+     *
+     * @param {objcet} contracts keyed objects in which each should have UnitPrice element
+     * @param {number} denominator a year in hours or months
+     */
+    convertContractPrice: function(contracts, denominator) {
+      if (typeof denominator === "undefined")
+        throw new Error("Missing denominator");
+
+      Object.keys(contracts).forEach(function(id) {
+        if ('unitPrice' in contracts[id])
+          contracts[id]['unitPrice'] /=  denominator;
+        else
+          throw new Error("unitPrice was not found in contract: " + JSON.stringify(contracts[id]));
+      });
+    }
   };
 });
