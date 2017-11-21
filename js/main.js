@@ -36,7 +36,7 @@ require(["app", "services/auth", "services/org", "menu",
     "storage/hpcStorage", "storage/ahpcStorage",
     "storage/allocationSummary", "storage/aallocationSummary",
     "storage/allocationANDSReport", "storage/aallocationRDSReport",
-    "cloud/keystone", "cloud/nova.component", "cloud/novasummary"
+    "cloud/keystone", "cloud/nova.component", "cloud/novasummary", "cloud/tangosummary"
   ],
   function (app) {
     app.config(function (AuthServiceProvider) {

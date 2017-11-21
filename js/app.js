@@ -198,7 +198,7 @@ define(
   }]);
 
   function buildTheConstants() {
-    var subTotal = 'Grand'
+    var subTotal = 'Grand';
     /**
      * A comparator for ensuring that the sub-total row comes last.
      * @param {{organisation: string}} v1 - first object
@@ -206,49 +206,50 @@ define(
      * @return {int} sort order the ensures sub-total row comes last but is indifferent to everything else
      */
     function orderBySubTotalLast(v1, v2) {
-      if (v1.organisation === subTotal) {
-        return 1
+      if (v1.organisation === subTotal) { // organisation should be managerunit
+        return 1;
       }
-      return 0
+      return 0;
     }
     function orderByPredicateThenSubTotal (predicate) {
       return function (value) {
-        var subtotalFieldName = 'organisation'
-        var result = value[predicate]
-        var subtotalFieldValue = value[subtotalFieldName]
+        var subtotalFieldName = 'organisation';  // organisation should be managerunit
+        var result = value[predicate];
+        var subtotalFieldValue = value[subtotalFieldName];
         if (subtotalFieldValue === subTotal) {
-          return result + '~'
+          return result + '~';
         }
-        return result + subtotalFieldValue
+        return result + subtotalFieldValue;
       }
     }
     function orderByTwoCols (col1, col2) {
-      return orderByNCols([col1, col2])
+      return orderByNCols([col1, col2]);
     }
     function orderByNCols (colNameArray) {
       return function (value) {
-        var orderValue = ''
+        var orderValue = '';
         for (var i = 0; i < colNameArray.length; i++) {
-          var fieldName = colNameArray[i]
-          var fieldValue = value[fieldName]
+          var fieldName = colNameArray[i];
+          var fieldValue = value[fieldName];
           if (typeof fieldValue === 'undefined') {
-            orderValue += '~'
-            continue
+            orderValue += '~';
+            continue;
           }
-          orderValue += fieldValue
+          orderValue += fieldValue;
         }
-        return orderValue
+        return orderValue;
       }
     }
     function isFilterApplied (displayed, raw) {
-      return displayed && raw && displayed.length !== raw.length
+      return displayed && raw && displayed.length !== raw.length;
     }
     return {
       grandTotal: 'Grand Total',
       subTotal: subTotal,
       blankValue: '_blank_value_',
       isSubTotalRow: function(entry) {
-        return entry.organisation && entry.organisation === subTotal
+        // This is hard coded old field: new one should be managerunit
+        return entry.organisation && entry.organisation === subTotal;
       },
       orderBySubTotalLast: orderBySubTotalLast,
       orderByPredicateThenSubTotal: orderByPredicateThenSubTotal,
@@ -258,16 +259,16 @@ define(
     }
   }
 
-  app.constant('theConstants', buildTheConstants())
+  app.constant('theConstants', buildTheConstants());
 
   app.directive('cellRatio', function () {
     return {
       link: function (scope, element, attr) {
-        var ratio = +(attr.cellRatio)
-        element.css('width', ratio + '%')
+        var ratio = +(attr.cellRatio);
+        element.css('width', ratio + '%');
       }
-    }
-  })
+    };
+  });
 
   return app;
 });

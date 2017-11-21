@@ -26,7 +26,8 @@ define({
     "Cloud": {
       "Identity (Keystone)": ["/cloud/keystone", "Keystone"],
       "Virtual Machines (Nova)": ["/nova"],
-      "Cloud Summary": ["/admin/cloud/novasummary", "Novasummary"],
+      "Nectar Summary": ["/admin/cloud/novasummary", "Novasummary"],
+      "Tango Summary": ["/admin/cloud/tangosummary", "TangoCloudsummary"],
     },
     "hideFor3rdMenu": {
       "FileSystem": ["/storage/hnas/fileSystem", "FileSystem"],
@@ -34,12 +35,13 @@ define({
     }
   },
   "portal": {
-    "Reports": { // menus not states
+    "Reports": { // menus not states, first element is the uri of a state
       "COMPUTING": [
         "sub1",
         ["/hpc/slurm", "HPC - Tango"],
         ["/hpc/hpcsummary", "HPC - Tizard"],
-        ["/cloud/novasummary", "NECTAR"]
+        ["/cloud/novasummary", "Cloud - NECTAR"],
+        ["/cloud/tangosummary", "Cloud - Tango"]
       ],
       "STORAGE": [
         "sub2",
@@ -48,12 +50,15 @@ define({
         ["/storage/allocationANDSReport", "STORED COLLECTIONS"]
       ]
     },
-    "hideFor3rdMenu": { // this data will be registered in 'state'
+    // this data will be registered as states, keys are not used, just used as a reminder for coder
+    // the first element has to match to the first element of a menu item
+    "hideFor3rdMenu": {
       "HPC - Tizard": ["/hpc/hpcsummary", "HPCSummary", "tesla gpu gtx mecheng abraham short gtx3 "],
       "HPC - Tango": ["/hpc/slurm", "Slurm"],
       "HPC Storage": ["/storage/hpcStorage", "HPCStorage"],
       "Allocation Summary": ["/storage/allocationSummary", "AllocationSummary"],
-      "Cloud Summary": ["/cloud/novasummary", "Novasummary"],
+      "Nectar Summary": ["/cloud/novasummary", "Novasummary"],
+      "Tango Cloud Summary": ["/cloud/tangosummary", "TangoCloudsummary"],
       "ANDS Report": ["/storage/allocationANDSReport", "AllocationANDSReport"],
     }
   }

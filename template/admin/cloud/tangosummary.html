@@ -1,0 +1,107 @@
+<div class="container-fluid box">
+    <div class="box-header">
+        <h3 class="text-center">TANGO CLOUD USAGE</h3>
+        <form>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-4">
+                        <p>Organisation</p>
+                        <div class="form-group">
+                            <select name="domainSelect" id="domainSelect" ng-change="selectDomain()" ng-model="selectedDomain" class="form-control" disabled="disabled">
+                                <option value="0">All</option>
+                                <option ng-repeat="domain in domains" value="{{domain}}">{{domain}}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <p>Select Usage Month</p>
+                        <p class="input-group">
+                            <input type="text" class="form-control" uib-datepicker-popup="MMM/yyyy" ng-model="rangeEnd" is-open="rangeEndOpen"
+                                datepicker-options="datepickerOptions" ng-required="true" onkeydown="return false"/>
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default btn-search" ng-click="openRangeEnd()"><i class="glyphicon glyphicon-calendar"></i></button>
+                            </span>
+                        </p>
+                    </div>
+
+                    <div class="col-md-4">
+                        <p>&nbsp;</p>
+                        <div class="btn-group btn-group-justified" role="group">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-default btn-search" ng-click="load()">View Usage</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row top-margin">
+                <div class="col-xs-12">
+                    <div class="form-group text-center">
+                        <label class="checkbox-inline">
+                            <input type="checkbox" ng-model="viewDetails">View User Detail
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <table ng-show="viewDetails" class="flexy-table box-content"
+        st-table="displayedUsagesRows" st-safe-src="usages" ersa-table="nova-summary.detailed">
+        <thead>
+            <tr ersa-table-add-filters>
+                <th cell-ratio="13" ersa-table-sort="orderBy('biller')" st-sort-default="true">managerunit</th>
+                <th cell-ratio="13" ersa-table-sort="managerunit">School</th>
+                <th cell-ratio="13" ersa-table-sort="tenant">Project</th>
+                <th cell-ratio="13" ersa-table-sort="manager">User Name</th>
+                <th cell-ratio="14" ersa-table-sort="manageremail">Email</th>
+                <th cell-ratio="13" ersa-table-sort="server">Server Name</th>
+                <th cell-ratio="7" ersa-table-sort="span" ersa-table-no-filter class="text-right">Span (hours)</th>
+                <th cell-ratio="7" ersa-table-sort="cost" ersa-table-no-filter class="text-right">Fee</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="instance in displayedUsagesRows" class="animated fadeIn">
+                <td cell-ratio="13" blank-safe="instance.biller"></td>
+                <td cell-ratio="13" blank-safe="instance.managerunit"></td>
+                <td cell-ratio="13">{{ ::instance.name }}</td>
+                <td cell-ratio="13" blank-safe="instance.manager"></td>
+                <td cell-ratio="14" blank-safe="instance.manageremail"></td>
+                <td cell-ratio="13">{{ ::instance.server }}</td>
+                <td cell-ratio="7" class="text-right"> {{ ::instance.span }}</td>
+                <td cell-ratio="7" class="text-right"> ${{ ::instance.cost }}</td>
+            </tr>
+            <tr ng-show="usages.length > 0 && displayedUsagesRows.length === 0">
+                <td>No rows match the filter</td>
+            </tr>
+        </tbody>
+    </table>
+    <table ng-hide="viewDetails" class="flexy-table box-content"
+        st-table="displayedSimpleRows" st-safe-src="subTotals" ersa-table="nova-summary.simple">
+        <thead>
+            <tr ersa-table-add-filters>
+                <th cell-ratio="40" ersa-table-sort="orderBy('billing')" st-sort-default="true">Organisation</th>
+                <th cell-ratio="40" ersa-table-sort="organisation">School</th>
+                <th cell-ratio="10" ersa-table-sort="cost" ersa-table-no-filter class="text-right">Cores Used</th>
+                <th cell-ratio="10" ersa-table-sort="cost" ersa-table-no-filter class="text-right">Fee</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="instance in displayedSimpleRows" ng-class="{'subtotal-row': isSubTotalRow(instance)}" class="animated fadeIn">
+                <td cell-ratio="40" blank-safe="instance.billing"></td>
+                <td cell-ratio="40" blank-safe="instance.organisation"></td>
+                <td cell-ratio="10" class="text-right"> {{ ::instance.core }}</td>
+                <td cell-ratio="10" class="text-right"> ${{ ::instance.cost }}</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr ng-show="subTotals.length" class="animated fadeIn" ng-class="{'total-not-relevant': isFilterApplied(displayedSimpleRows, subTotals)}">
+                <td cell-ratio="80"><strong>Grand Total</strong></td>
+                <td class="filler-cell"></td>
+                <td cell-ratio="10" class="text-right"><strong>{{ grandTotal.core }}</strong></td>
+                <td cell-ratio="10" class="text-right"><strong>${{ grandTotal.cost }}</strong></td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
