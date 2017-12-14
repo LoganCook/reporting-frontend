@@ -65,7 +65,6 @@ define({
                     "/export/compellent/ersa-owncloud-home",
                     "/export/compellent/tangooptshared",
                     "/export/compellent/ersa-mytardis",
-                    "/export/compellent/ersa-uofa-ag-plantdb-ftp-2017",
                     "/mnt/sacgf-replay",
                     "/export/compellent/hpctest2",
                     "/export/compellent/ersa-uosa-ccb-molpath-7"
