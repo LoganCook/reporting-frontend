@@ -316,11 +316,31 @@ define(["filesize", "mathjs", "moment", "numeral", "lodash"], function (filesize
         throw new Error("Missing denominator");
 
       Object.keys(contracts).forEach(function(id) {
-        if ('unitPrice' in contracts[id])
-          contracts[id]['unitPrice'] /=  denominator;
+        if ('unitPrice' in contracts[id]) {
+          if (!('priceConverted' in contracts[id])) {
+            // just convert once
+            contracts[id]['priceConverted'] = true;
+            contracts[id]['unitPrice'] /=  denominator;
+          }
+        }
         else
           throw new Error("unitPrice was not found in contract: " + JSON.stringify(contracts[id]));
       });
+    },
+
+
+    /**
+     * Create a dictionary with fields from a given list with values of zero
+     *
+     * @param {Array} fields a list of string will be used as keys in the new default object
+     * @return Object
+     */
+    createDefaults: function(fields) {
+      var defaults = {};
+      for (var i = 0; i < fields.length; i++) {
+        defaults[fields[i]] = 0;
+      }
+      return defaults;
     }
   };
 });

@@ -142,6 +142,24 @@ define(['util2', 'util'], function (util, utilOld) {
       }
     });
 
+    it('should only convert price once', function() {
+      var itemCount = 3, originalPrice = 1000, denominator = 12, contracts = {}, i;
+      var convertedPrice = originalPrice / denominator;
+      for (i = 0; i < itemCount; i++) {
+        contracts["id" + i] = {
+          "name": "item" + i,
+          "unitPrice": originalPrice
+        };
+      }
+      utilOld.convertContractPrice(contracts, denominator);
+      utilOld.convertContractPrice(contracts, denominator);
+      utilOld.convertContractPrice(contracts, denominator);
+      expect(Object.keys(contracts).length).toEqual(itemCount);
+      for (i = 0; i < itemCount; i++) {
+        expect(contracts["id" + i]["unitPrice"]).toEqual(convertedPrice);
+      }
+    });
+
     it('should throw error when there is no denominator', function() {
       expect(function () {
         utilOld.convertContractPrice({});
@@ -157,6 +175,23 @@ define(['util2', 'util'], function (util, utilOld) {
       expect(function () {
         utilOld.convertContractPrice(badContact, 1);
       }).toThrow();
+    });
+  });
+
+  describe('Function createDefaults', function() {
+    it('should have all values is zero', function() {
+      var fieldCount = Math.ceil(Math.random() * 10), i, fields = [];
+      for (i = 1; i <= fieldCount; i++) {
+        fields.push('field' + i);
+      }
+
+      var defaults = utilOld.createDefaults(fields);
+      expect(Object.keys(defaults).length).toEqual(fieldCount);
+      var total = 0;
+      for (i = 1; i <= fieldCount; i++) {
+        total += defaults['field' + i];
+      }
+      expect(total).toEqual(0);
     });
   });
 });
