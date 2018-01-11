@@ -55,11 +55,10 @@ define(["filesize", "mathjs", "moment", "numeral", "lodash"], function (filesize
 
     keyArray: function (records, key) {
       var result = {};
-
       _.forEach(records, function (record) {
-        result[record[key ? key : "id"]] = record;
+        var keyValue = record[key ? key : "id"];
+        if (keyValue && typeof keyValue != 'undefined') result[keyValue] = record;
       });
-
       return result;
     },
 

@@ -4,10 +4,11 @@ define(['app', '../util', 'services/contract', 'options'], function (app, util, 
   'use strict';
 
   /**
-   * All nectar usage related data services
+   * All Tango Cloud usage related data services
    */
   app.factory('TangoCloudService', function (queryResource, $q, AuthService, org, $http) {
     var contractService = contract($http, $q, org, 'tangocloudvm', 'OpenstackProjectID');
+    var nq = queryResource.build(sessionStorage['vms']);
 
     var USAGE_DEFAULT = { core : 0, cost : 0};
 
@@ -15,12 +16,16 @@ define(['app', '../util', 'services/contract', 'options'], function (app, util, 
     // summaries: usage data with extended user information
     var summaries = {}, totals = {}, grandTotals = {};
 
-    // get nectar usage between startTs and endTs from local host
+    // get Tango Cloud usage between startTs and endTs
     // return a promise
-    // local version
     function summary(startTs, endTs) {
-      var summaryUrl = 'usage/tango_cloud/TangoCloudUsage_'  + startTs + '_' + endTs + '.json';
-      return queryResource.build(summaryUrl).query({}).$promise;
+      var args = {
+        object: 'instance',
+        start: startTs,
+        end: endTs
+      };
+
+      return nq.query(args).$promise;
     }
 
     // common
@@ -36,7 +41,7 @@ define(['app', '../util', 'services/contract', 'options'], function (app, util, 
         util.convertContractPrice(contracts, MONTHSAYEAR);
         return linkUsages(usages, contracts);
       }, function(reason) {
-        console.log("Failed to get Nectar usage data. Details: " +  reason);
+        console.log("Failed to get Tango Cloud usage data. Details: " +  reason);
       });
     };
 
@@ -59,8 +64,8 @@ define(['app', '../util', 'services/contract', 'options'], function (app, util, 
       tmpTotals['Grand'] = angular.copy(USAGE_DEFAULT);
 
       for (var i = 0; i < usageSource.length; i++) {
-        if (extendedUsage[i]['server_id'] in contracts) {
-          angular.extend(extendedUsage[i], contracts[extendedUsage[i]['server_id']]);
+        if (extendedUsage[i]['id'] in contracts) {
+          angular.extend(extendedUsage[i], contracts[extendedUsage[i]['id']]);
         } else {
           // set default price to stop calculator blowing itself up
           extendedUsage[i]['unitPrice'] = -1;
@@ -78,13 +83,17 @@ define(['app', '../util', 'services/contract', 'options'], function (app, util, 
         };
     };
 
-    // implement local version of data entries
     // {
-    //   "span": "32",
-    //   "server_id": "vm-2141",
-    //   "core": "16",
-    //   "server": "some.server.ersa.edu.au"
-    // },
+    //   "id": "vm-2141",
+    //   "server": "some.server.ersa.edu.au",
+    //   "core": 16,
+    //   "ram": 32,
+    //   "storage": 34.000
+    //   "os": "ubuntu",
+    //   "businessUnit": "UofA",
+    //   "span": 32,
+    //   "month": "15000123"
+    // }
 
     // New contract/accounts data to be merged with usage data above
     // {
@@ -104,7 +113,8 @@ define(['app', '../util', 'services/contract', 'options'], function (app, util, 
     // },
 
     function processEntry(entry) {
-      // span is not used
+      // entry is for monthly only
+      // span is not used, its unit is hour
       entry['cost'] = entry['core'] * entry['unitPrice'];
       if ('managerunit' in entry) {
         entry['organisation'] = entry['managerunit'];

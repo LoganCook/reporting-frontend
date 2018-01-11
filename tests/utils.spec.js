@@ -16,9 +16,12 @@ define(['util2', 'util'], function (util, utilOld) {
       expect(end - start).toEqual(86399);
     });
 
-    it('witinCurrentMonth should distinguish ', function() {
-      expect(util.withinCurrentMonth(new Date())).toBe(true);
-      expect(util.withinCurrentMonth(new Date(2016, 0, 1))).toBe(false);
+    it('withinCurrentMonth should distinguish ', function() {
+      var current = new Date();
+      expect(util.withinCurrentMonth(current)).toBe(true);
+      var differentMonth = current.getMonth() + 1;
+      differentMonth = differentMonth == 12 ? 0 : differentMonth;
+      expect(util.withinCurrentMonth(new Date(2016, differentMonth, 1))).toBe(false);
     });
   });
 
@@ -192,6 +195,49 @@ define(['util2', 'util'], function (util, utilOld) {
         total += defaults['field' + i];
       }
       expect(total).toEqual(0);
+    });
+  });
+
+  describe('Function keyArray', function() {
+    const arraySize = 10, keyCount = 4;
+
+    function getRandomInt(max) {
+      return Math.floor(Math.random() * max);
+    }
+
+    function dummyObject(size, keyToRandomise) {
+      var dummy = {};
+      for (var i = 0; i < size; i++) {
+        dummy['key' + i] = 'value' + i;
+      }
+      dummy[keyToRandomise] = 'value' + getRandomInt(1000);
+      return dummy;
+    }
+
+    function constructArray() {
+      var i, orginalArray = [];
+      for (i = 0; i < arraySize; i++) {
+        orginalArray.push(dummyObject(keyCount, keyInInterested));
+      }
+      return orginalArray;
+    }
+
+    var keyInInterested = 'key' + getRandomInt(keyCount);
+
+    it('should convert an array of dict to a dict with value of specified key as key', function() {
+      var newObject = utilOld.keyArray(constructArray(), keyInInterested);
+      expect(Object.keys(newObject).length).toBeLessThanOrEqual(arraySize);
+    });
+
+    it('should not convert object if value of key is undefined', function() {
+      var orginalArray = constructArray();
+      delete orginalArray[getRandomInt(arraySize)][keyInInterested];
+
+      var newObject = utilOld.keyArray(orginalArray, keyInInterested);
+      expect(Object.keys(newObject).length).toBeLessThan(arraySize);
+      Object.keys(newObject).forEach(function(key) {
+        expect(typeof key != 'undefined').toBe(true);
+      });
     });
   });
 });
