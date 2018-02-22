@@ -116,6 +116,26 @@ define(["filesize", "mathjs", "moment", "numeral", "lodash"], function (filesize
       return new Date((new Date(theDay.getFullYear(), theDay.getMonth() + 1, 1)) - 1);
     },
 
+    getSearchDateFilter: function (scope) {
+      if (scope.rangeStart > scope.rangeEnd) {
+        scope.alerts.push({
+          type: 'danger',
+          msg: "Date options is invalid!"
+        });
+        return '';
+      }
+
+      var rangeStartEpoch = this.dayStart(scope.rangeStart);
+      var rangeEndEpoch = this.dayEnd(scope.rangeEnd);
+      var filter = {
+        filter: [
+          "end.ge." + rangeStartEpoch,
+          "end.lt." + rangeEndEpoch
+        ]
+      };
+      return filter;
+    },
+
     /**
      * Convert a nested object into an array for display.
      * This is for totals which has billing as key on one level, Organisation as key on next level

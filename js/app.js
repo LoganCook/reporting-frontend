@@ -75,40 +75,11 @@ define(
           $scope.buttonClassName = $attrs.buttonClass;
         }
 
-
-        /**
-         * start Util fuctions
-         */
-        var getSearchDateFilter = function (scope) {
-
-          if (scope.rangeStart > scope.rangeEnd) {
-            scope.alerts.push({
-              type: 'danger',
-              msg: "Date options is invalid!"
-            });
-            return '';
-          }
-
-          var rangeStartEpoch = util.dayStart(scope.rangeStart);
-          var rangeEndEpoch = util.dayEnd(scope.rangeEnd);
-          var filter = {
-            filter: [
-              "end.ge." + rangeStartEpoch,
-              "end.lt." + rangeEndEpoch
-            ]
-          };
-          return filter;
-        };
-
-        /**
-         * end Util fuctions
-         */
-
         /**
          * Wrapping functions
          */
         $scope._load = function () {
-          var rangeEpochFilter = getSearchDateFilter($scope);
+          var rangeEpochFilter = util.getSearchDateFilter($scope);
           if (rangeEpochFilter == '') {
             return;
           }
