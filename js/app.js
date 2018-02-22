@@ -1,6 +1,6 @@
 define(
-  ["client", "datePickers", "ersaTable", "ersaTableSort", "ersaTableAddFilters", "blankSafe", "userRollupErrors"],
-  function (clientConstructor) {
+  ["client", "util", "datePickers", "ersaTable", "ersaTableSort", "ersaTableAddFilters", "blankSafe", "userRollupErrors"],
+  function (clientConstructor, util) {
 
   var app = angular.module("reportingApp", ["ngSanitize", "ui.router", "ui.bootstrap", "ngResource",
     "angularSpinner", "pageComponents", "ngTableToCsv", "smart-table"]);
@@ -89,8 +89,8 @@ define(
             return '';
           }
 
-          var rangeStartEpoch = dayStart(scope.rangeStart);
-          var rangeEndEpoch = dayEnd(scope.rangeEnd);
+          var rangeStartEpoch = util.dayStart(scope.rangeStart);
+          var rangeEndEpoch = util.dayEnd(scope.rangeEnd);
           var filter = {
             filter: [
               "end.ge." + rangeStartEpoch,
@@ -98,29 +98,6 @@ define(
             ]
           };
           return filter;
-        };
-
-        // FIXME: are there any differences between dayStart and dayEnd here and those in util.js?
-        var dayStart = function (ts) {
-          var modified = new Date(ts);
-
-          modified.setHours(0);
-          modified.setMinutes(0);
-          modified.setSeconds(0);
-          modified.setMilliseconds(0);
-
-          return Math.round(modified.getTime() / 1000);
-        };
-
-        var dayEnd = function (ts) {
-          var modified = new Date(ts);
-
-          modified.setHours(23);
-          modified.setMinutes(59);
-          modified.setSeconds(59);
-          modified.setMilliseconds(999);
-
-          return Math.round(modified.getTime() / 1000);
         };
 
         /**
