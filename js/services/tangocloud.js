@@ -91,8 +91,7 @@ define(['app', '../util', 'services/contract', 'options'], function (app, util, 
     //   "storage": 34.000
     //   "os": "ubuntu",
     //   "businessUnit": "UofA",
-    //   "span": 32,
-    //   "month": "15000123"
+    //   "span": 32
     // }
 
     // New contract/accounts data to be merged with usage data above
@@ -115,7 +114,8 @@ define(['app', '../util', 'services/contract', 'options'], function (app, util, 
     function processEntry(entry) {
       // entry is for monthly only
       // span is not used, its unit is hour
-      entry['cost'] = entry['core'] * entry['unitPrice'];
+      // TODO: use three prices of component for total VM cost
+      entry['cost'] = entry['core'] * entry['unitPrice'] + entry['ram'] * entry['unitPrice'] + entry['storage'] * entry['unitPrice'];
       if ('managerunit' in entry) {
         entry['organisation'] = entry['managerunit'];
       }
