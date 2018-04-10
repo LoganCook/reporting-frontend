@@ -7,7 +7,7 @@ define(['app', '../util', 'services/contract', 'options'], function (app, util, 
    * All Tango Cloud usage related data services
    */
   app.factory('TangoCloudService', function (queryResource, $q, AuthService, org, $http, compositions, pricelist) {
-    var composedProducts = false, prices = {} ;
+    var composedProducts = [], prices = {} ;
     compositions.getCompositions("tangocloudvm").then(function(data) {
       console.log(data);
       if (angular.isArray(data) && data.length > 0) { composedProducts = data; }
@@ -15,7 +15,6 @@ define(['app', '../util', 'services/contract', 'options'], function (app, util, 
     }).then(function(data) {
       data.forEach(element => {
         pricelist(element).then(function (data) {
-          console.log(element, ": ", data);
           prices[element] = util.keyArray(data, '_pricelevelid_value');
           console.log(prices[element]);
         });
@@ -86,7 +85,11 @@ define(['app', '../util', 'services/contract', 'options'], function (app, util, 
           // set default price to stop calculator blowing itself up
           extendedUsage[i]['unitPrice'] = -1;
         }
-        processEntry(extendedUsage[i]);
+        if (composedProducts.length > 0) {
+          processComposedEntry(extendedUsage[i], prices);
+        } else {
+          processEntry(extendedUsage[i]);
+        }
         subtotal(extendedUsage[i], tmpTotals);
       }
       var grandTotal = tmpTotals['Grand'];
@@ -120,18 +123,49 @@ define(['app', '../util', 'services/contract', 'options'], function (app, util, 
       // "managerid": "e5df8269-xxxx-e611-80e8-c4346bc4beac",
       // "allocated": 4,
       // "name": "CM2 Cloud Services",
+      // "os": "Ubuntu Linux (64-bit)"
       // "salesorderid": "364cfb44-xxxx-e611-80e7-70106fa39b51",
       // "unitPrice": 0,
       // "allocated@OData.Community.Display.V1.FormattedValue": "4",
       // "salesorderdetail2_x002e_transactioncurrencyid": "744fd97c-18fb-e511-80d8-c4346bc5b718",
+      // "pricelevelID": "0c407dd9-1b59-e611-80e2-c4346bc58784"
       // "@odata.etag": "W/\"3233960\""
     // },
-
     function processEntry(entry) {
       // entry is for monthly only
       // span is not used, its unit is hour
+      entry['cost'] = entry['core'] * entry['unitPrice'];
+      if ('managerunit' in entry) {
+        entry['organisation'] = entry['managerunit'];
+      }
+    };
+
+    function processComposedEntry(entry) {
+      // entry is for monthly only
+      // span is not used, its unit is hour
       // TODO: use three prices of component for total VM cost
-      entry['cost'] = entry['core'] * entry['unitPrice'] + entry['ram'] * entry['unitPrice'] + entry['storage'] * entry['unitPrice'];
+      entry['cost'] = 0;
+      if ('pricelevelID' in entry) {
+        try {
+          entry['cost'] = entry['core'] * prices['vmcpu'][entry['pricelevelID']]['amount'];
+        } catch (error) {
+          console.error("Calculating disk cost error: ", error.message);
+        }
+
+        try {
+          var diskUsage = entry['os'].indexOf('Windows') > -1 ? entry['storage']  - 60 : entry['storage']  - 40;
+          entry['cost'] += diskUsage * prices['vmdisk'][entry['pricelevelID']]['amount'];
+        } catch (error) {
+          console.error("Calculating disk cost error: ", error.message);
+        }
+
+        try {
+          entry['cost'] += entry['ram'] * prices['vmmemory'][entry['pricelevelID']]['amount'];
+        } catch (error) {
+          console.error("Calculating memory cost error: ", error.message);
+        }
+      }
+
       if ('managerunit' in entry) {
         entry['organisation'] = entry['managerunit'];
       }
