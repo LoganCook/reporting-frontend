@@ -29,7 +29,7 @@ require(["debug-settings"], function (d) {
   console.log("Cannot load settings, skip set up debug session.[" + JSON.stringify(err) + "]");
 });
 
-require(["app", "services/auth", "services/org", "menu", "services/product-compositions",
+require(["app", "services/auth", "services/org", "menu", "services/product-compositions", "services/pricelist",
     // Controllers and Component
     "hpc/hpc", "hpc/slurm", "hpc/hpcsummary",
     "storage/hcp", "storage/hnas/fileSystem", "storage/hnas/virtualVolume", "storage/xfs",

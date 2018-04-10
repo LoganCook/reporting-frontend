@@ -6,9 +6,18 @@ define(['app', '../util', 'services/contract', 'options'], function (app, util, 
   /**
    * All Tango Cloud usage related data services
    */
-  app.factory('TangoCloudService', function (queryResource, $q, AuthService, org, $http, compositions) {
+  app.factory('TangoCloudService', function (queryResource, $q, AuthService, org, $http, compositions, pricelist) {
     compositions.getCompositions("tangocloudvm").then(function(data) {
       console.log(data);
+      return data;
+    }).then(function(data) {
+      data.forEach(element => {
+        pricelist(element).then(function (data) {
+          console.log(element, ": ", data);
+          var indexed = util.keyArray(data, '_pricelevelid_value');
+          console.log(indexed);
+        });
+      });
     });
 
 
