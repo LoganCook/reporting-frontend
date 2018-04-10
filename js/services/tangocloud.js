@@ -7,7 +7,7 @@ define(['app', '../util', 'services/contract', 'options'], function (app, util, 
    * All Tango Cloud usage related data services
    */
   app.factory('TangoCloudService', function (queryResource, $q, AuthService, org, $http, compositions) {
-    compositions().then(function(data) {
+    compositions.getCompositions("tangocloudvm").then(function(data) {
       console.log(data);
     });
 
