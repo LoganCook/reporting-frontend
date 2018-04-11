@@ -66,8 +66,7 @@ define({
                     "/export/compellent/tangooptshared",
                     "/export/compellent/ersa-mytardis",
                     "/mnt/sacgf-replay",
-                    "/export/compellent/hpctest2",
-                    "/export/compellent/ersa-uosa-ccb-molpath-7"
+                    "/export/compellent/hpctest2"
     ],
 
     "hcp.namespace.whitelist": [
