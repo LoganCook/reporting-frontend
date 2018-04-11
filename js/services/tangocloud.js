@@ -1,26 +1,24 @@
 var MONTHSAYEAR = 12;
 
-define(['app', '../util', 'services/contract', 'options'], function (app, util, contract, options) {
+define(['app', '../util', 'services/contract'], function (app, util, contract) {
   'use strict';
 
   /**
    * All Tango Cloud usage related data services
    */
   app.factory('TangoCloudService', function (queryResource, $q, AuthService, org, $http, compositions, pricelist) {
-    var composedProducts = [], prices = {} ;
-    compositions.getCompositions("tangocloudvm").then(function(data) {
-      console.log(data);
-      if (angular.isArray(data) && data.length > 0) { composedProducts = data; }
-      return data;
-    }).then(function(data) {
-      data.forEach(element => {
-        pricelist(element).then(function (data) {
-          prices[element] = util.keyArray(data, '_pricelevelid_value');
-          console.log(prices[element]);
+    // Check if the product - tangocloudvm is a composed product and if so gets prices
+    var composedProducts = {}, prices = {}, isComposed = false;
+    var composedProducts = compositions('tangocloudvm');
+    if (Object.keys(composedProducts).length > 0) {
+      isComposed = true;
+      Object.keys(composedProducts).forEach(item => {
+        pricelist(composedProducts[item]).then(function (data) {
+          prices[item] = util.keyArray(data, '_pricelevelid_value');
+          console.log(prices[item]);
         });
       });
-    });
-
+    }
 
     var contractService = contract($http, $q, org, 'tangocloudvm', 'OpenstackProjectID');
     var nq = queryResource.build(sessionStorage['vms']);
@@ -85,7 +83,7 @@ define(['app', '../util', 'services/contract', 'options'], function (app, util, 
           // set default price to stop calculator blowing itself up
           extendedUsage[i]['unitPrice'] = -1;
         }
-        if (composedProducts.length > 0) {
+        if (isComposed) {
           processComposedEntry(extendedUsage[i], prices);
         } else {
           processEntry(extendedUsage[i]);
@@ -143,27 +141,18 @@ define(['app', '../util', 'services/contract', 'options'], function (app, util, 
     function processComposedEntry(entry) {
       // entry is for monthly only
       // span is not used, its unit is hour
-      // TODO: use three prices of component for total VM cost
+      // storage calculation depends on type of os
       entry['cost'] = 0;
+      entry['disk'] = entry['os'].indexOf('Windows') > -1 ? entry['storage']  - 60 : entry['storage']  - 40;
+      if (entry['disk'] < 0) entry['disk'] = entry['storage'];
       if ('pricelevelID' in entry) {
-        try {
-          entry['cost'] = entry['core'] * prices['vmcpu'][entry['pricelevelID']]['amount'];
-        } catch (error) {
-          console.error("Calculating disk cost error: ", error.message);
-        }
-
-        try {
-          var diskUsage = entry['os'].indexOf('Windows') > -1 ? entry['storage']  - 60 : entry['storage']  - 40;
-          entry['cost'] += diskUsage * prices['vmdisk'][entry['pricelevelID']]['amount'];
-        } catch (error) {
-          console.error("Calculating disk cost error: ", error.message);
-        }
-
-        try {
-          entry['cost'] += entry['ram'] * prices['vmmemory'][entry['pricelevelID']]['amount'];
-        } catch (error) {
-          console.error("Calculating memory cost error: ", error.message);
-        }
+        Object.keys(prices).forEach(element => {
+          try {
+            entry['cost'] += entry[element] * prices[element][entry['pricelevelID']]['amount'];
+          } catch (error) {
+            console.error("Calculating ", element, " cost error: ", error.message);
+          }
+        });
       }
 
       if ('managerunit' in entry) {

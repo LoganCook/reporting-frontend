@@ -58,6 +58,9 @@
                 <th cell-ratio="14" ersa-table-sort="manageremail">Email</th>
                 <th cell-ratio="13" ersa-table-sort="server">Server Name</th>
                 <th cell-ratio="7" ersa-table-sort="span" ersa-table-no-filter class="text-right">Span (hours)</th>
+                <th cell-ratio="7" ersa-table-sort="core" ersa-table-no-filter class="text-right">CPU Core</th>
+                <th cell-ratio="7" ersa-table-sort="ram" ersa-table-no-filter class="text-right">Memory (GB)</th>
+                <th cell-ratio="7" ersa-table-sort="storage" ersa-table-no-filter class="text-right">Storage (GB)</th>
                 <th cell-ratio="7" ersa-table-sort="cost" ersa-table-no-filter class="text-right">Fee</th>
             </tr>
         </thead>
@@ -70,7 +73,10 @@
                 <td cell-ratio="14" blank-safe="instance.manageremail"></td>
                 <td cell-ratio="13">{{ ::instance.server }}</td>
                 <td cell-ratio="7" class="text-right"> {{ ::instance.span }}</td>
-                <td cell-ratio="7" class="text-right"> ${{ ::instance.cost }}</td>
+                <td cell-ratio="7" class="text-right"> {{ ::instance.core }}</td>
+                <td cell-ratio="7" class="text-right"> {{ ::instance.ram }}</td>
+                <td cell-ratio="7" class="text-right"> {{ ::instance.storage }} {{ ::instance.disk }}</td>
+                <td cell-ratio="7" class="text-right"> ${{ ::instance.cost | number:2 }}</td>
             </tr>
             <tr ng-show="usages.length > 0 && displayedUsagesRows.length === 0">
                 <td>No rows match the filter</td>
@@ -92,7 +98,7 @@
                 <td cell-ratio="40" blank-safe="instance.billing"></td>
                 <td cell-ratio="40" blank-safe="instance.organisation"></td>
                 <td cell-ratio="10" class="text-right"> {{ ::instance.core }}</td>
-                <td cell-ratio="10" class="text-right"> ${{ ::instance.cost }}</td>
+                <td cell-ratio="10" class="text-right"> ${{ ::instance.cost | number:2 }}</td>
             </tr>
         </tbody>
         <tfoot>
@@ -100,7 +106,7 @@
                 <td cell-ratio="80"><strong>Grand Total</strong></td>
                 <td class="filler-cell"></td>
                 <td cell-ratio="10" class="text-right"><strong>{{ grandTotal.core }}</strong></td>
-                <td cell-ratio="10" class="text-right"><strong>${{ grandTotal.cost }}</strong></td>
+                <td cell-ratio="10" class="text-right"><strong>${{ grandTotal.cost | number:2 }}</strong></td>
             </tr>
         </tfoot>
     </table>

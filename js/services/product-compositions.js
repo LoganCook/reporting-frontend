@@ -1,39 +1,23 @@
-  define(['app'], function (app) {
+  define(['app', 'options'], function (app, options) {
     'use strict';
 
-    // Cacheable product composition: always short names, see bman.dynamicsp.view for details
-    app.factory('compositions', function (queryResource, $q) {
-      var compositions = {};
+    /* in option, there is an optional key: product-composition
+    "product-composition": {
+      "tangocloudvm": {
+        "core": "vmcpu",
+        "ram": "vmmemory",
+        "disk-usage": "vmdisk"
+      }
+    */
+    app.factory('compositions', function () {
+      var compositions = 'product-composition' in options ? options['product-composition'] : {};
 
-      function load() {
-        const uri = sessionStorage['bman'] + '/api';
-        var deferred = $q.defer();
-        if (Object.keys(compositions).length > 0) {
-            deferred.resolve(compositions);
+      return function getCompositions(shortName)
+      {
+        if (shortName in compositions) {
+          return compositions[shortName];
         } else {
-          var nq = queryResource.build(uri);
-          // this is an ugly fix to keep the end tailing slash
-          nq.getNoHeader({object: 'composed_products/'}, function(data) {
-            compositions = data;
-            deferred.resolve(compositions);
-          }, function(rsp) {
-              alert("Data could not be retrieved. Please try it later.");
-              console.log(rsp);
-              deferred.reject({});
-          });
-        }
-        return deferred.promise;
-      };
-
-      return {
-        getCompositions: function(shortName) {
-          return load().then(function (data) {
-            if (shortName in data) {
-              return data[shortName];
-            } else {
-              return [];
-            }
-          });
+          return {};
         }
       };
     });

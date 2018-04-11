@@ -23,5 +23,12 @@ define({
   },
   "hpchome": {
     "price": 5
+  },
+  "product-composition": {
+    "tangocloudvm": {
+      "core": "vmcpu",
+      "ram": "vmmemory",
+      "storage": "vmdisk"
+    }
   }
 });
