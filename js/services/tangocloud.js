@@ -23,7 +23,7 @@ define(['app', '../util', 'services/contract'], function (app, util, contract) {
     var contractService = contract($http, $q, org, 'tangocloudvm', 'OpenstackProjectID');
     var nq = queryResource.build(sessionStorage['vms']);
 
-    var USAGE_DEFAULT = { core : 0, cost : 0};
+    var USAGE_DEFAULT = { core : 0, cost : 0, count: 0 };
 
     // both summaries and totals has searchHash as the first key
     // summaries: usage data with extended user information
@@ -108,7 +108,8 @@ define(['app', '../util', 'services/contract'], function (app, util, contract) {
     //   "storage": 34.000
     //   "os": "ubuntu",
     //   "businessUnit": "UofA",
-    //   "span": 32
+    //   "span": 32,
+    //   "uptimePercent": 99.99999
     // }
 
     // New contract/accounts data to be merged with usage data above
@@ -143,8 +144,6 @@ define(['app', '../util', 'services/contract'], function (app, util, contract) {
       // span is not used, its unit is hour
       // storage calculation depends on type of os
       entry['cost'] = 0;
-      entry['disk'] = entry['os'].indexOf('Windows') > -1 ? entry['storage']  - 60 : entry['storage']  - 40;
-      if (entry['disk'] < 0) entry['disk'] = entry['storage'];
       if ('pricelevelID' in entry) {
         Object.keys(prices).forEach(element => {
           try {
@@ -171,12 +170,15 @@ define(['app', '../util', 'services/contract'], function (app, util, contract) {
       if (!(level2 in saveTo[level1])) {
         saveTo[level1][level2] = angular.copy(USAGE_DEFAULT);
       }
+      saveTo['Grand']['count'] += 1;
       saveTo['Grand']['core'] += entry['core'];
       saveTo['Grand']['cost'] += entry['cost'];
 
+      saveTo[level1][level2]['count'] += 1;
       saveTo[level1][level2]['core'] += entry['core'];
       saveTo[level1][level2]['cost'] += entry['cost'];
 
+      saveTo[level1]['Grand']['count'] += 1;
       saveTo[level1]['Grand']['core'] += entry['core'];
       saveTo[level1]['Grand']['cost'] += entry['cost'];
     };
