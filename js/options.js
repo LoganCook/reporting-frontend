@@ -26,8 +26,8 @@ define({
   },
   "product-composition": {
     "tangocloudvm": {
-      "core": "vmcpu",
-      "ram": "vmmemory"
+      "core": "tangovmcpunotforsale",
+      "ram": "tangovmmemorynotforsale"
     }
   }
 });
