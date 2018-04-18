@@ -19,7 +19,12 @@ define({
     'flinders.edu.au': 'Flinders University'
   },
   hpc: {
-    IncompleteMonth: 'The cost of current month is not accurate.'
+    IncompleteMonth: 'The cost of current month is not accurate.',
+  },
+  slurm: {
+    partitions: {
+      exclude: ['ccb']
+    }
   },
   "hpchome": {
     "price": 5

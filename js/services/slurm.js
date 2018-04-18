@@ -21,6 +21,12 @@ define(['app', '../util', 'services/contract', '../options', 'lodash', './slurm-
     var summaries = {}, totals = {}, grandTotal = {};
     var userRollupCache = {}, userRollupErrorCache = {};
 
+    // Prepare an array of queues will be excluded from calculation
+    var queueExcluded = [];
+    if ('slurm' in options && 'partitions' in options['slurm'] && 'exclude' in options['slurm']['partitions']) {
+      queueExcluded = options['slurm']['partitions']['exclude'];
+    }
+
     // get a summary of HPC jobs between startTs and endTs grouped by owner and queue
     // return a promise
     function summary(startTs, endTs) {
@@ -76,11 +82,13 @@ define(['app', '../util', 'services/contract', '../options', 'lodash', './slurm-
               result.forEach(function(entry) {
                 var username = entry['owner'];
                 if (username in contracts) {
-                  const accountInfoForUser = contracts[username];
-                  angular.extend(entry, accountInfoForUser);
                   entry['hours'] = entry['cpu_seconds'] / 3600;
-                  entry['cost'] = entry['hours'] * entry['unitPrice'];
-                  subtotal(entry, totals[searchHash]);
+                  // if entry is not in excluding queues, include it in linking and calculation:
+                  if (queueExcluded.indexOf(entry['partition']) == -1 ) {
+                    angular.extend(entry, contracts[username]);
+                    entry['cost'] = entry['hours'] * entry['unitPrice'];
+                    subtotal(entry, totals[searchHash]);
+                  }
                 }
               });
               summaries[searchHash] = result;
