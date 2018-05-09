@@ -9,16 +9,6 @@ define(['app', '../util', 'services/contract'], function (app, util, contract) {
   app.factory('TangoCloudService', function (queryResource, $q, AuthService, org, $http, compositions, pricelist) {
     // Check if the product - tangocloudvm is a composed product and if so gets prices
     var composedProducts = {}, prices = {}, isComposed = false;
-    var composedProducts = compositions('tangocloudvm');
-    if (Object.keys(composedProducts).length > 0) {
-      isComposed = true;
-      Object.keys(composedProducts).forEach(item => {
-        pricelist(composedProducts[item]).then(function (data) {
-          prices[item] = util.keyArray(data, '_pricelevelid_value');
-          console.log(prices[item]);
-        });
-      });
-    }
 
     var contractService = contract($http, $q, org, 'tangocloudvm', 'OpenstackProjectID');
     var nq = queryResource.build(sessionStorage['vms']);
@@ -37,6 +27,37 @@ define(['app', '../util', 'services/contract'], function (app, util, contract) {
         start: startTs,
         end: endTs
       };
+      // composed product could have effective date
+      composedProducts = compositions('tangocloudvm');
+      if (Object.keys(composedProducts).length > 0) {
+        if ('start-date' in composedProducts && composedProducts['start-date'] > startTs && composedProducts['start-date'] < endTs) {
+          throw new Error("Start of price effective time range is in the middle billing start date: " +
+                          String(composedProducts['start-date']) + " vs " + String(startTs) + " - " + String(endTs));
+        }
+        if ('end-date' in composedProducts && composedProducts['end-date'] > startTs && composedProducts['end-date'] < endTs) {
+        // if there is no start-date but end-date, it will throw error, someone has configured wrongly
+          throw new Error("Billing period is not fully covered by price effective time range: " +
+                          String(startTs) + " " + String(endTs) +
+                          " vs " + String(composedProducts['start-date']) + " " + String(composedProducts['end-date']));
+        }
+        // Check if it is in the price effective range
+        if (('end-date' in composedProducts && startTs >= composedProducts['start-date'] && endTs <= composedProducts['end-date']) ||
+            (!('end-date' in composedProducts) && startTs >= composedProducts['start-date'])) {
+          isComposed = true;
+          Object.keys(composedProducts).forEach(item => {
+            if (!item.endsWith('-date')) {
+              pricelist(composedProducts[item]).then(function (data) {
+                prices[item] = util.keyArray(data, '_pricelevelid_value');
+                console.log(prices[item]);
+              });
+            }
+          });
+        } else {
+          isComposed = false;
+        }
+      } else {
+        isComposed = false;
+      }
 
       return nq.query(args).$promise;
     }

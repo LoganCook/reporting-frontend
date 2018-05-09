@@ -26,6 +26,7 @@ define({
   },
   "product-composition": {
     "tangocloudvm": {
+      "start-date": 1522503000,
       "core": "tangovmcpunotforsale",
       "ram": "tangovmmemorynotforsale"
     }

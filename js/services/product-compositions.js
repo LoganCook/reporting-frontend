@@ -6,9 +6,16 @@
       "tangocloudvm": {
         "core": "vmcpu",
         "ram": "vmmemory",
-        "disk-usage": "vmdisk"
+        "disk-usage": "vmdisk",
+        "start-date": 14100000,
+        "end-date": 150000
       }
     */
+   // If price of a composed product changes in the whole period of
+   // reporting-frontend serves, set start-date and optionl end-date,
+   // we can have on - off effective price time range but not
+   // multiple non-continue ranges: either one start-date or one 
+   // start-date and one end-date or nothing
     app.factory('compositions', function () {
       var compositions = 'product-composition' in options ? options['product-composition'] : {};
 
