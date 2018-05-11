@@ -52,7 +52,10 @@ define(["menu-data"], function (menuAllData) {
         }
         $scope.allDetails = JSON.stringify(errorDetails)
       }
-    })
+    }).state("calculator", {
+      url: "/calculator",
+      templateUrl: "template/calculator.html"
+    });
 
     var menuData = {};
     // angular.config only inject providers, so we have to get the instance ourselves
