@@ -1,0 +1,553 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Cost Calculator</title>
+
+    <link href="/fonts/fontello/css/fontello.css" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,600,600i,700,700i|Raleway:400,400i,600,600i" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="/css/calculator/main.css" />
+
+    <style type="text/css">
+      .cost {
+        cursor: text;
+      }
+
+      #quote_total {
+        background-color: #333333;
+        color: #ffffff;
+      }
+
+      .remove:hover {
+        color: #be1428;
+        cursor: pointer;
+      }
+
+      select {
+        padding-top: 17px !important;
+      }
+
+      #quote_table {
+        table-layout: fixed;
+      }
+
+      #quote_table th:nth-child(1) {
+        width: 20ch;
+      }
+
+      #quote_table th:nth-child(3) {
+        width: 128px;
+      }
+
+      #quote_table th:nth-child(3), #quote_table td:nth-child(3) {
+        text-align: right;
+      }
+
+      #quote_table th:nth-child(4) {
+        width: 74px;
+      }
+
+      .tabs-panel.is-active {
+        background-color: #fefbf7;
+      }
+
+      .calculate {
+        margin-right: 4ch;
+      }
+
+      .form-control-label {
+        width: 100%;
+        display: table-cell;
+      }
+
+      .detail {
+        margin-right: 2ch;
+        min-width: 14ch;
+        display: inline-block;
+      }
+
+    </style>
+
+    <script type="text/javascript">
+      'use strict';
+
+      // Unit prices for all services.
+      var unit_prices = {
+        "cpu": 20.00,
+        "ram": 5.00,
+        "storage": 0.02 // Testing value, not real.
+      }
+
+      // Hardware limits for all services.
+      var limits = {
+        "Linux": {
+          "cpu": {
+            "min": 1,
+            "max": 22
+          },
+          "ram": {
+            "min": 2,
+            "max": 128
+          },
+          "disk": {
+            "min": 40,
+            "max": 500
+          }
+        },
+        "Windows": {
+          "cpu": {
+            "min": 1,
+            "max": 22
+          },
+          "ram": {
+            "min": 4,
+            "max": 128
+          },
+          "disk": {
+            "min": 60,
+            "max": 500
+          }
+        },
+        "storage": {
+          "storage_size": {
+            "min": 250,     // Testing value, not real.
+            "max": 100000   // Testing value, not real.
+          }
+        }
+      }
+
+      // Input form titles
+      var titles = {
+        "cpu": "CPUs",
+        "ram": "RAM (GB)",
+        "disk": "Disk (GB)",
+        "storage_size": "Size (GB)"
+      }
+
+      // Current services to customise and calculate.
+      var vm_config = {
+        "os": "OS",
+        "cpu": -1,
+        "ram": -1,
+        "disk": -1,
+        "cost": -1
+      }
+      var storage_config = {
+        "storage_size": -1,
+        "storage_backup": false,
+        "cost": -1
+      }
+
+      // List of all services added to the quote.
+      var quotes = [];
+
+      // Style.
+      var ERROR_COLOR = '#be1428';
+
+      function load() {
+        calculate('storage');
+        calculate('vm');
+        reset('storage');
+        reset('vm');
+      }
+
+      function calculate(service) {
+        if (service === 'vm') {
+          os_parse();
+          vm_config['cost'] = (vm_config['cpu'] * unit_prices['cpu'] + vm_config['ram'] * unit_prices['ram']).toFixed(2);
+          document.getElementById("vm_cost").value = vm_config['cost'];
+        } else if (service === 'storage') {
+          hardware_parse('storage_size', 'storage');
+          storage_config['cost'] = (storage_config['storage_size'] * 0.02).toFixed(2);
+          document.getElementById("storage_cost").value = storage_config['cost'];
+
+        }
+      }
+
+      /**
+       * Helper function to parse the OS of a VM.
+       */
+      function os_parse() {
+        var select_input = document.getElementById('os');
+        var prev_vm_config = Object.assign({}, vm_config);
+        vm_config['os'] = select_input.options[select_input.selectedIndex].value;
+
+        // Reset to default for the specific OS when changing between them.
+        if (prev_vm_config['os'] != vm_config['os']) {
+          reset_os(vm_config['os']);
+        }
+
+        // Different OSs have different hardware constraints.
+        hardware_notify('cpu', 'vm');
+        hardware_notify('ram', 'vm');
+        hardware_notify('disk', 'vm');
+        hardware_parse('cpu', 'vm');
+        hardware_parse('ram', 'vm');
+        hardware_parse('disk', 'vm');
+
+        if (prev_vm_config['os'] == 'Linux' && vm_config['os'] == 'Windows') {
+          set_title('ram', titles['ram'] + " - Windows min of " + limits['Windows']['ram']['min'], ERROR_COLOR);
+          set_title('disk', titles['disk'] + " - Windows min of " + limits['Windows']['disk']['min'], ERROR_COLOR);
+        } else if (prev_vm_config['os'] == 'Windows' && vm_config['os'] == 'Linux') {
+          set_title('ram', titles['ram'] + " - Linux min of " + limits['Linux']['ram']['min'], ERROR_COLOR);
+          set_title('disk', titles['disk'] + " - Linux min of " + limits['Linux']['disk']['min'], ERROR_COLOR);
+        }
+      }
+
+      /**
+       * Get the min and max for a certain hardware.
+       */
+      function get_hardware_limits(hardware, service) {
+        var min = -1;
+        var max = -1;
+        if (service === 'vm') {
+          min = limits[vm_config['os']][hardware]['min'];
+          max = limits[vm_config['os']][hardware]['max'];
+        } else if (service === 'storage') {
+          min = limits['storage'][hardware]['min'];
+          max = limits['storage'][hardware]['max'];
+        }
+        return {
+          'min': min,
+          'max': max
+        }
+      }
+
+      /**
+       * Make sure hardware is within limits.
+       */
+      function hardware_parse(input_id, service) {
+        var input = document.getElementById(input_id);
+
+        // Get and set min and max for a service.
+        var hardware_limits = get_hardware_limits(input_id, service);
+        input.min = hardware_limits.min;
+        input.max = hardware_limits.max;
+
+        // Check and parse amount within limits.
+        var amount = parseInt(input.value);
+        if (isNaN(amount)) {
+          amount = hardware_limits.min;
+        }
+        amount = Math.max(hardware_limits.min, amount);
+        amount = Math.min(hardware_limits.max, amount);
+
+        // Save amount.
+        input.value = amount;
+        if (service === 'vm') {
+          vm_config[input_id] = amount;
+        } else if (service === 'storage') {
+          storage_config[input_id] = amount;
+        }
+
+        // Notify when user finished with this field.
+        hardware_notify(input_id, service);
+      }
+
+      /**
+       * Visually show if hardware is out of range.
+       */
+      function hardware_notify(input_id, service) {
+        var input = document.getElementById(input_id);
+        var error_list = document.getElementById('error_list');
+        var color = "";
+        var title = titles[input_id];
+        var error = false;
+        var error_message = "";
+        var hardware_limits = get_hardware_limits(input_id, service);
+
+        // Check if there is anything to cause an error.
+        if (input.value < hardware_limits.min) {
+          error = true;
+          error_message = "min of " + hardware_limits.min;
+        } else if (input.value > hardware_limits.max) {
+          error = true;
+          error_message = "max of " + hardware_limits.max;
+        } else if (parseInt(Number(input.value)) != input.value) {
+          error = true;
+          error_message = "integers only"
+        }
+
+        // Display any error.
+        if (error) {
+          title = title + " - " + error_message;
+          color = ERROR_COLOR;
+        } else {
+          color = 'inherit';
+        }
+        input.parentNode.parentNode.parentNode.children[1].children[0].innerHTML = title;
+        input.parentNode.parentNode.parentNode.children[1].children[0].style.color = color;
+        input.style.color = color;
+      }
+
+      function add_quote(service) {
+        calculate(service);
+        var quote_total = document.getElementById("quote_total");
+        var quote = document.createElement("tr");
+        if (service === 'vm') {
+          quote.innerHTML = '<td>Virtual Machine</td>'
+                          + '<td>'
+                          + '<span class="detail">OS: ' + vm_config['os'] + '; </span>'
+                          + '<span class="detail">CPU(s): ' + vm_config['cpu'] + '; </span>'
+                          + '<span class="detail">RAM: ' + vm_config['ram'] + 'GB; </span>'
+                          + '<span class="detail">Disk: ' + vm_config['disk'] + 'GB</span>'
+                          + '</td>'
+                          + '<td>' + vm_config['cost'] + '</td>'
+                          + '<td><span class="icon-minus-circled remove" onclick="remove_quote(event)" /></td>';
+          quotes.push({"vm": Object.assign({}, vm_config)});
+        } else if (service === 'storage') {
+          quote.innerHTML = '<td>Storage</td>'
+                          + '<td>'
+                          + '<span class="detail">Size: ' + storage_config['storage_size'] + 'GB; </span>'
+                          + '<span class="detail">Backup: ' + storage_config['storage_backup'] + '; </span>'
+                          + '</td>'
+                          + '<td>' + storage_config['cost'] + '</td>'
+                          + '<td><span class="icon-minus-circled remove" onclick="remove_quote(event)" /></td>';
+          quotes.push({"storage": Object.assign({}, storage_config)});
+        }
+
+        quote_total.parentNode.insertBefore(quote, quote_total);
+        calculate_quote();
+      }
+
+      function remove_quote(event) {
+        var target = event.target || event.srcElement;
+        var quote_table = document.getElementById("quote_table");
+
+        // Find index that matches up with list of total cost.
+        var index = -1;
+        for (var i = 0; i < quote_table.children[1].childElementCount; i++) {
+          if (quote_table.children[1].children[i] == target.parentNode.parentNode) {
+            index = i;
+            break;
+          }
+        }
+
+        // Remove and recalculate.
+        quotes.splice(index, 1);
+        quote_table.children[1].removeChild(target.parentNode.parentNode);
+        calculate_quote();
+      }
+
+      function calculate_quote() {
+        var quote_total = document.getElementById("quote_total");
+        var cost_total = 0.00;
+        var cpu_total = 0;
+        var ram_total = 0;
+        var disk_total = 0;
+        for (var i = 0; i < quotes.length; i++) {
+          if (quotes[i].hasOwnProperty('vm')) {
+            cost_total += parseFloat(quotes[i]['vm']['cost']);
+            cpu_total += parseInt(quotes[i]['vm']['cpu']);
+            ram_total += parseInt(quotes[i]['vm']['ram']);
+            disk_total += parseInt(quotes[i]['vm']['disk']);
+          } else if (quotes[i].hasOwnProperty('storage')) {
+            cost_total += parseFloat(quotes[i]['storage']['cost']);
+          }
+        }
+        quote_total.children[2].innerHTML = cost_total.toFixed(2);
+      }
+
+      /**
+       * Reset the form for a service.
+       */
+      function reset(service) {
+        // TODO: warn disable
+        if (service === 'vm') {
+          document.getElementById('os').value = 'Linux';
+          reset_os('Linux');
+        } else if (service === 'storage') {
+          document.getElementById('storage_size').value = limits['storage']['storage_size']['min'];
+        }
+        calculate(service);
+      }
+
+      /**
+       * Helper function to reset hardware components of a VM.
+       */
+      function reset_os(os) {
+        document.getElementById('cpu').value = limits[os]['cpu']['min'];
+        document.getElementById('ram').value = limits[os]['ram']['min'];
+        document.getElementById('disk').value = limits[os]['disk']['min'];
+      }
+
+      /**
+       * Change the input title (e.g. for showing errors).
+       */
+      function set_title(id, string, color) {
+        var input = document.getElementById(id);
+        input.parentNode.parentNode.parentNode.children[1].children[0].innerHTML = string;
+        input.parentNode.parentNode.parentNode.children[1].children[0].style.color = color;
+      }
+
+      /**
+       * Get the title of an input field.
+       */
+      function get_title_string(id) {
+        var input = document.getElementById(id);
+        return input.parentNode.parentNode.parentNode.children[1].children[0].innerHTML;
+      }
+
+      /**
+       * Testing: create a CSV file representing the quote for download.
+       */
+      function export_csv() {
+        var csv = "data:text/csv;charset=utf-8,"
+                + "Service,Details,Cost($)\r\n";
+        for (var i = 0; i < quotes.length; i++) {
+          if (quotes[i].hasOwnProperty('vm')) {
+            csv += 'Virtual Machine,'
+                +  quotes[i]['os'];
+          } else if (quotes[i].hasOwnProperty('storage')) {
+            csv += 'Storage';
+          }
+          csv += "\r\n";
+        }
+
+        // Trigger download.
+        var download = document.createElement("a");
+        download.setAttribute("href", encodeURI(csv));
+        download.setAttribute("download", "eRSA Quote.csv");
+        document.body.appendChild(download);
+        download.click();
+        document.body.removeChild(download);
+      }
+    </script>
+  </head>
+  <body onload="load()">
+    <article itemscope itemtype="http://schema.org/Article">
+      <section class="content-block content-block-text">
+        <div class="row column">
+          <h2>Cost Calculator</h2>
+          <p>All quotes generated below are estimates of what university members monthly charges would be:</p>
+
+          <ul class="tabs" data-tabs id="example-tabs">
+            <li class="tabs-title is-active"><a href="#tpanel1" aria-selected="true">Virtual Machine</a></li>
+            <!-- <li class="tabs-title"><a href="#tpanel2">Storage</a></li> -->
+          </ul>
+          <div class="tabs-content" data-tabs-content="example-tabs">
+            <div class="tabs-panel is-active" id="tpanel1">
+              <div class="ninja-form row column">
+
+                <!-- VM calculator -->
+                <div class="row">
+                  <div class="tiny-12 large-3 columns">
+                    <select data-label="OS" name="os" id="os" onchange="os_parse()">
+                      <option value="Linux">Linux</option>
+                      <option value="Windows">Windows</option>
+                    </select>
+                  </div>
+                  <div class="tiny-12 large-3 columns">
+                    <input type="number" name="cpu" id="cpu" value="1" data-label="CPUs" onchange="hardware_parse('cpu', 'vm')" min="1" max="22" oninput="hardware_notify('cpu', 'vm')">
+                  </div>
+                  <div class="tiny-12 large-3 columns">
+                    <input type="number" value="2" data-label="RAM (GB)" name="ram" id="ram" onchange="hardware_parse('ram', 'vm')" min="2" max="128" oninput="hardware_notify('ram', 'vm')">
+                  </div>
+                  <div class="tiny-12 large-3 columns">
+                    <input type="number" value="40" data-label="Disk (GB)" name="disk" id="disk" onchange="hardware_parse('disk', 'vm')" min="40" max="500" oninput="hardware_notify('disk', 'vm')">
+                  </div>
+                </div>
+
+                <!-- Calculate VM price -->
+                <div class="row">
+                  <div class="tiny-12 large-4 columns calculate">
+                    <div class="input-group">
+                      <div class="input-group-button">
+                        <input type="button" class="button tiny" value="Calculate" name="calculate" onclick="calculate('vm')" >
+                      </div>
+                      <span class="input-group-label">$</span>
+                      <input class="input-group-field cost" type="text" id="vm_cost" value="0.00" readonly="readonly">
+                    </div>
+                  </div>
+                  <div class="tiny-12 large-4 columns">
+                    <input type="button" class="button secondary tiny calculate" value="Add to Quote" name="quote" onclick="add_quote('vm')" >
+                    <input type="button" class="button secondary hollow tiny" value="Reset to Default" name="quote" onclick="reset('vm')" >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tabs-panel" id="tpanel2">
+              <div class="ninja-form row column">
+
+                <!-- Storage calculator -->
+                <div class="row">
+                  <div class="tiny-12 large-3 columns">
+                    <input type="number" value="250" data-label="Size (GB)" name="storage_size" id="storage_size" onchange="hardware_parse('storage_size', 'storage')" min="250" max="10000" oninput="hardware_notify('storage_size', 'storage')">
+                  </div>
+                  <div class="tiny-12 large-3 columns">
+                    <input id="storage_backup" class="checkbox input-adjacent" type="checkbox">
+                    <label for="storage_backup"><span class="color-dark">Backup</span></label>
+                  </div>
+                </div>
+
+                <!-- Calculate storage price -->
+                <div class="row">
+                  <div class="tiny-12 large-4 columns calculate">
+                    <div class="input-group">
+                      <div class="input-group-button">
+                        <input type="button" class="button tiny" value="Calculate" name="calculate" onclick="calculate('storage')" >
+                      </div>
+                      <span class="input-group-label">$</span>
+                      <input class="input-group-field cost" type="text" id="storage_cost" value="0.00" readonly="readonly">
+                    </div>
+                  </div>
+                  <div class="tiny-12 large-4 columns">
+                    <input type="button" class="button secondary tiny calculate" value="Add to Quote" name="quote" onclick="add_quote('storage')" >
+                    <input type="button" class="button secondary hollow tiny" value="Reset to Default" name="quote" onclick="reset('storage')" >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Quote table -->
+      <section class="content-block content-block-text">
+        <div class="row column">
+          <h3>Quote</h3>
+          <table class="stack" id="quote_table">
+            <thead>
+              <tr>
+                <th>Service</th>
+                <th>Details</th>
+                <th>Cost ($)</th>
+                <th><span class="icon-minus-circled remove" style="visibility: hidden" /></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr id="quote_total">
+                <td></td>
+                <td>Monthly Total</td>
+                <td>0.00</td>
+                <td></td>
+              </tr>
+            </tbody>
+            <tfoot>
+            </tfoot>
+          </table>
+          <!-- <input type="button" class="button secondary tiny" value="Export" name="export" onclick="export_csv()" > -->
+        </div>
+      </section>
+    </article>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="/js/calculator/vendor.bundle.js"></script>
+    <script src="/js/calculator/app.bundle.js"></script>
+
+    <script type="text/javascript">
+      /* Simple browser detection for IE - Avoid using if possible */
+      var msie = parseInt((/msie (\d+)/.exec(navigator.userAgent.toLowerCase()) || [])[1]);
+      if (isNaN(msie)) {
+        msie = parseInt((/trident\/.*; rv:(\d+)/.exec(navigator.userAgent.toLowerCase()) || [])[1]);
+      }
+      if(msie) {
+        $('body').addClass('IE IE'+msie);
+      }
+    </script>
+  </body>
+</html>
