@@ -53,7 +53,6 @@ define(["menu-data"], function (menuAllData) {
         $scope.allDetails = JSON.stringify(errorDetails)
       }
     }).state("calculator", {
-      url: "/calculator",
       templateUrl: "template/calculator.html"
     });
 
