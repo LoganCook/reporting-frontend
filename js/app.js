@@ -150,7 +150,7 @@ define(
     return {
       build: function (url) {
         //
-        // By default, only suppport object query
+        // By default, only support object query
         // pattern = pattern ? pattern : '/:object/:id/:method';
         //return $resource(url + '/:object', {count:3},
         return $resource(url + '/:object/:id/:method', {}, {

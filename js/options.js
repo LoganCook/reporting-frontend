@@ -28,5 +28,12 @@ define({
   },
   "hpchome": {
     "price": 5
+  },
+  "product-composition": {
+    "tangocloudvm": {
+      "start-date": 1522503000,
+      "core": "tangovmcpunotforsale",
+      "ram": "tangovmmemorynotforsale"
+    }
   }
 });

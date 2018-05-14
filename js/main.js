@@ -29,7 +29,7 @@ require(["debug-settings"], function (d) {
   console.log("Cannot load settings, skip set up debug session.[" + JSON.stringify(err) + "]");
 });
 
-require(["app", "services/auth", "services/org", "menu",
+require(["app", "services/auth", "services/org", "menu", "services/product-compositions", "services/pricelist",
     // Controllers and Component
     "hpc/hpc", "hpc/slurm", "hpc/hpcsummary",
     "storage/hcp", "storage/hnas/fileSystem", "storage/hnas/virtualVolume", "storage/xfs",
@@ -44,14 +44,14 @@ require(["app", "services/auth", "services/org", "menu",
     });
     app.run(['$rootScope', '$state', function($rootScope, $state) {
       $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error) {
-        var errorStateName = 'errorreport'
-        event.preventDefault()
-        $state.get('errorreport').runtimeErrorDetails = error
-        $state.go(errorStateName)
+        var errorStateName = 'errorreport';
+        event.preventDefault();
+        $state.get('errorreport').runtimeErrorDetails = error;
+        $state.go(errorStateName);
       })
     }])
     require(["route"], function (route) {
-      app.config(["$stateProvider", "$urlRouterProvider", "AuthServiceProvider", route])
+      app.config(["$stateProvider", "$urlRouterProvider", "AuthServiceProvider", route]);
       angular.bootstrap(document, ["reportingApp"]);
     });
   }
