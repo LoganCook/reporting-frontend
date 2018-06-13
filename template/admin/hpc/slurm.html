@@ -74,7 +74,7 @@
         <td cell-ratio="14" blank-safe="sum.manageremail"></td>
         <td cell-ratio="7">{{ ::sum.partition }}</td>
         <td cell-ratio="7">{{ ::formatNumber(sum.hours) }}</td>
-        <td cell-ratio="7">${{ ::formatNumber(sum.cost) }}</td>
+        <td cell-ratio="7">${{ sum.cost | number : 2}}</td>
       </tr>
     </tbody>
     <tfoot>
@@ -82,7 +82,7 @@
         <td cell-ratio="79.5"><strong>Grand Total</strong></td>
         <td ng-repeat="i in [1,2,3,4,5]" class="filler-cell"></td>
         <td cell-ratio="7"><strong>{{ formatNumber(grandTotal.hours) }}</strong></td>
-        <td cell-ratio="7"><strong>${{ formatNumber(grandTotal.cost) }}</strong></td>
+        <td cell-ratio="7"><strong>${{ grandTotal.cost | number : 2 }}</strong></td>
       </tr>
     </tfoot>
   </table>
@@ -108,7 +108,7 @@
         <td cell-ratio="14" blank-safe="sum.manager"></td>
         <td cell-ratio="15" blank-safe="sum.manageremail"></td>
         <td cell-ratio="9">{{ ::formatNumber(sum.hours) }}</td>
-        <td cell-ratio="9">${{ ::formatNumber(sum.cost) }}</td>
+        <td cell-ratio="9">${{ sum.cost | number : 2 }}</td>
       </tr>
     </tbody>
     <tfoot>
@@ -116,7 +116,7 @@
         <td cell-ratio="73.5"><strong>Grand Total</strong></td>
         <td ng-repeat="i in [1,2,3,4]" class="filler-cell"></td>
         <td cell-ratio="9"><strong>{{ formatNumber(grandTotal.hours) }}</strong></td>
-        <td cell-ratio="9"><strong>${{ formatNumber(grandTotal.cost) }}</strong></td>
+        <td cell-ratio="9"><strong>${{ grandTotal.cost | number : 2 }}</strong></td>
       </tr>
     </tfoot>
   </table>
@@ -136,7 +136,7 @@
         <td cell-ratio="35" blank-safe="sum.billing"></td>
         <td cell-ratio="35" blank-safe="sum.organisation"></td>
         <td cell-ratio="10">{{ ::formatNumber(sum.hours) }}</td>
-        <td cell-ratio="10">${{ ::formatNumber(sum.cost) }}</td>
+        <td cell-ratio="10">${{ sum.cost | number : 2 }}</td>
       </tr>
     </tbody>
     <tfoot>
@@ -144,7 +144,7 @@
         <td cell-ratio="70.5"><strong>Grand Total</strong></td>
          <td class="filler-cell"></td>
         <td cell-ratio="10.3"><strong>{{ formatNumber(grandTotal.hours) }}</strong></td>
-        <td cell-ratio="10"><strong>${{ formatNumber(grandTotal.cost) }}</strong></td>
+        <td cell-ratio="10"><strong>${{ grandTotal.cost  | number : 2 }}</strong></td>
       </tr>
     </tfoot>
   </table>

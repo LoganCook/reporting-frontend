@@ -58,7 +58,7 @@
               <td>{{ ::sum.manageremail }}</td>
               <td>{{ ::sum.partition }}</td>
               <td class="text-right">{{ ::formatNumber(sum.hours) }}</td>
-              <td class="text-right">${{ ::formatNumber(sum.cost) }}</td>
+              <td class="text-right">${{ sum.cost  | number : 2 }}</td>
             </tr>
           </tbody>
         </table>
@@ -74,14 +74,14 @@
             <tr ng-repeat="sum in subTotals | orderBy: 'organisation'">
               <td blank-safe="sum.organisation"></td>
               <td class="text-right">{{ ::formatNumber(sum.hours) }}</td>
-              <td class="text-right">${{ ::formatNumber(sum.cost) }}</td>
+              <td class="text-right">${{ sum.cost  | number : 2 }}</td>
             </tr>
           </tbody>
           <tfoot>
             <tr ng-show="subTotals.length">
               <td><strong>Grand Total</strong></td>
               <td class="text-right"><strong>{{ formatNumber(grandTotal.hours) }}</strong></td>
-              <td class="text-right"><strong>${{ formatNumber(grandTotal.cost) }}</strong></td>
+              <td class="text-right"><strong>${{ grandTotal.cost  | number : 2 }}</strong></td>
             </tr>
           </tfoot>
         </table>
