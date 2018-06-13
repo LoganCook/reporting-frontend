@@ -10,7 +10,7 @@ define(
       }
       $scope.values = _.values;
       $scope.formatNumber = utilOld.formatNumber;
-      $scope.viewDetails = false
+      $scope.viewDetails = false;
       $scope.datepickerOptions = {minMode: 'month'};
       $scope.rangeStart = new Date();
       $scope.rangeEnd = new Date();
@@ -19,9 +19,9 @@ define(
         $scope.rangeEndOpen = true;
       };
       $scope.isSubTotalRow = theConstants.isSubTotalRow;
-      $scope.isFilterApplied = theConstants.isFilterApplied
-      $scope.orderByNCols = theConstants.orderByNCols
-      $scope.orderBy = theConstants.orderByPredicateThenSubTotal
+      $scope.isFilterApplied = theConstants.isFilterApplied;
+      $scope.orderByNCols = theConstants.orderByNCols;
+      $scope.orderBy = theConstants.orderByPredicateThenSubTotal;
 
       $scope.load = function () {
         $scope.alerts = [];
@@ -38,7 +38,7 @@ define(
         SlurmService.query(startTs, endTs).then(function() {
           $scope.jobCounts = SlurmService.getJobCounts(startTs, endTs, orgName);
           $scope.userRollup = SlurmService.getUserRollup(startTs, endTs);
-          $scope.userRollupErrorData = SlurmService.getUserRollupErrorData(startTs, endTs)
+          $scope.userRollupErrorData = SlurmService.getUserRollupErrorData(startTs, endTs);
           if (orgName) {
             var subTotals = angular.copy(SlurmService.getSubTotals(startTs, endTs, orgName));
             $scope.grandTotal = utilOld.spliceOne(subTotals, 'organisation', 'Grand');

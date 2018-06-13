@@ -1,6 +1,6 @@
 var HOURSAYEAR = 8760;  // 24 * 365
 
-define(['app', '../util', 'services/contract', '../options', 'lodash', './slurm-rollup'], function(app, util, contract, options, _, rollup) {
+define(['app', '../util', 'services/contract', '../options', 'lodash', './slurm-rollup', 'services/fee-overrider'], function(app, util, contract, options, _, rollup, overrider) {
   'use strict';
 
   /**
@@ -20,6 +20,7 @@ define(['app', '../util', 'services/contract', '../options', 'lodash', './slurm-
     // summaries, totals and userRollupCache have searchHash as the first key
     var summaries = {}, totals = {}, grandTotal = {};
     var userRollupCache = {}, userRollupErrorCache = {};
+
 
     // Prepare an array of queues will be excluded from calculation
     var queueExcluded = [];
@@ -78,6 +79,7 @@ define(['app', '../util', 'services/contract', '../options', 'lodash', './slurm-
           summary(startTs, endTs).then(function(result) {
             totals[searchHash] = {Grand: angular.copy(USAGE_DEFAULT)};
             contractService.getContracts().then(function(contracts) {
+              var feeOverrider = overrider.getOverrides('slurm', startTs, endTs);
               util.convertContractPrice(contracts, HOURSAYEAR);
               result.forEach(function(entry) {
                 var username = entry['owner'];
@@ -86,7 +88,12 @@ define(['app', '../util', 'services/contract', '../options', 'lodash', './slurm-
                   // if entry is not in excluding queues, include it in linking and calculation:
                   if (queueExcluded.indexOf(entry['partition']) == -1 ) {
                     angular.extend(entry, contracts[username]);
-                    entry['cost'] = entry['hours'] * entry['unitPrice'];
+                    if (feeOverrider && username in feeOverrider) {
+                      console.warn("slurm: fee has been overriden for", username, "as", feeOverrider[username], "between", startTs, endTs);
+                      entry['cost'] = feeOverrider[username];
+                    } else {
+                      entry['cost'] = entry['hours'] * entry['unitPrice'];
+                    }
                     subtotal(entry, totals[searchHash]);
                   }
                 }
@@ -98,12 +105,12 @@ define(['app', '../util', 'services/contract', '../options', 'lodash', './slurm-
 
               if (AuthService.isAdmin()) {
                 try {
-                  var rollupResponse = rollup.createUserRollup(summaries[searchHash])
+                  var rollupResponse = rollup.createUserRollup(summaries[searchHash]);
                   userRollupErrorCache[searchHash] = {
                     isAllSuccess: rollupResponse.isAllSuccess,
                     errors: rollupResponse.errors
-                  }
-                  userRollupCache[searchHash] = rollupResponse.rollupResult
+                  };
+                  userRollupCache[searchHash] = rollupResponse.rollupResult;
                 } catch (e) {
                   console.error(e);
                   deferred.reject(false);
@@ -148,7 +155,7 @@ define(['app', '../util', 'services/contract', '../options', 'lodash', './slurm-
         return util.getCached(userRollupCache, [startTs, endTs]);
       },
       getUserRollupErrorData: function (startTs, endTs) {
-        return util.getCached(userRollupErrorCache, [startTs, endTs])
+        return util.getCached(userRollupErrorCache, [startTs, endTs]);
       }
     };
   });

@@ -48,8 +48,8 @@ require(["app", "services/auth", "services/org", "menu", "services/product-compo
         event.preventDefault();
         $state.get('errorreport').runtimeErrorDetails = error;
         $state.go(errorStateName);
-      })
-    }])
+      });
+    }]);
     require(["route"], function (route) {
       app.config(["$stateProvider", "$urlRouterProvider", "AuthServiceProvider", route]);
       angular.bootstrap(document, ["reportingApp"]);

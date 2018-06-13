@@ -1,0 +1,18 @@
+// group by service, then month, last, identifier of the service and value
+// The actual file name should be fee-overridings.js
+define({
+  "slurm": {
+    "201802": {
+      "user": 5
+    },
+    "201803": {
+      "user2": 5
+    },
+    "201804": {
+      "user2": 5
+    },
+    "201805": {
+      "user": 4985
+    }
+  }
+});
