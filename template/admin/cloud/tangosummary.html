@@ -51,32 +51,32 @@
         st-table="displayedUsagesRows" st-safe-src="usages" ersa-table="nova-summary.detailed">
         <thead>
             <tr ersa-table-add-filters>
-                <th cell-ratio="13" ersa-table-sort="orderBy('biller')" st-sort-default="true">managerunit</th>
-                <th cell-ratio="13" ersa-table-sort="managerunit">School</th>
+                <th cell-ratio="13" ersa-table-sort="orderBy('account')" st-sort-default="true">Organisation</th>
+                <th cell-ratio="13" ersa-table-sort="unit">School</th>
                 <th cell-ratio="13" ersa-table-sort="tenant">Project</th>
-                <th cell-ratio="13" ersa-table-sort="manager">User Name</th>
-                <th cell-ratio="14" ersa-table-sort="manageremail">Email</th>
+                <th cell-ratio="13" ersa-table-sort="managerName">User Name</th>
+                <th cell-ratio="14" ersa-table-sort="managerEmail">Email</th>
                 <th cell-ratio="13" ersa-table-sort="server">Server Name</th>
-                <th cell-ratio="7" ersa-table-sort="span" ersa-table-no-filter class="text-right">Uptime (%)</th>
+                <th cell-ratio="7" ersa-table-sort="avg_uptime" ersa-table-no-filter class="text-right">Uptime (%)</th>
                 <th cell-ratio="7" ersa-table-sort="core" ersa-table-no-filter class="text-right">CPU(s)</th>
                 <th cell-ratio="7" ersa-table-sort="ram" ersa-table-no-filter class="text-right">Memory (GB)</th>
-                <th cell-ratio="7" ersa-table-sort="storage" ersa-table-no-filter class="text-right">Used Storage (GB)</th>
-                <th cell-ratio="7" ersa-table-sort="cost" ersa-table-no-filter class="text-right">Fee</th>
+                <th cell-ratio="7" ersa-table-sort="avg_storage" ersa-table-no-filter class="text-right">Used Storage (GB)</th>
+                <th cell-ratio="7" ersa-table-sort="total_fee" ersa-table-no-filter class="text-right">Fee</th>
             </tr>
         </thead>
         <tbody>
             <tr ng-repeat="instance in displayedUsagesRows" class="animated fadeIn">
-                <td cell-ratio="13" blank-safe="instance.biller"></td>
-                <td cell-ratio="13" blank-safe="instance.managerunit"></td>
+                <td cell-ratio="13" blank-safe="instance.account"></td>
+                <td cell-ratio="13" blank-safe="instance.unit"></td>
                 <td cell-ratio="13">{{ ::instance.name }}</td>
-                <td cell-ratio="13" blank-safe="instance.manager"></td>
-                <td cell-ratio="14" blank-safe="instance.manageremail"></td>
+                <td cell-ratio="13" blank-safe="instance.managerName"></td>
+                <td cell-ratio="14" blank-safe="instance.managerEmail"></td>
                 <td cell-ratio="13">{{ ::instance.server }}</td>
-                <td cell-ratio="7" class="text-right">{{ ::instance.uptimePercent | number:2 }}</td>
+                <td cell-ratio="7" class="text-right">{{ ::instance.avg_uptime | number:2 }}</td>
                 <td cell-ratio="7" class="text-right">{{ ::instance.core }}</td>
                 <td cell-ratio="7" class="text-right">{{ ::instance.ram }}</td>
-                <td cell-ratio="7" class="text-right">{{ ::instance.storage | number:2 }}</td>
-                <td cell-ratio="7" class="text-right">${{ ::instance.cost | number:2 }}</td>
+                <td cell-ratio="7" class="text-right">{{ ::instance.avg_storage | number:2 }}</td>
+                <td cell-ratio="7" class="text-right">${{ ::instance.total_fee | number:2 }}</td>
             </tr>
             <tr ng-show="usages.length > 0 && displayedUsagesRows.length === 0">
                 <td>No rows match the filter</td>

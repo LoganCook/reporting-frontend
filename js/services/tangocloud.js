@@ -3,6 +3,10 @@ var MONTHSAYEAR = 12;
 define(['app', '../util', 'services/contract'], function (app, util, contract) {
   'use strict';
 
+  // Need to separate admin and other because they get data from different urls:
+  // admin/vms/instance?start=&end=
+  // manager/vms/instance?start=&end=email=
+  // vms/instance?start=&end=email=
   /**
    * All Tango Cloud usage related data services
    */
@@ -22,44 +26,52 @@ define(['app', '../util', 'services/contract'], function (app, util, contract) {
     // get Tango Cloud usage between startTs and endTs
     // return a promise
     function summary(startTs, endTs) {
+      var nq_new = queryResource.build(sessionStorage['record']);
       var args = {
-        object: 'instance',
+        object: 'vms/instance',
         start: startTs,
         end: endTs
       };
-      // composed product could have effective date
-      composedProducts = compositions('tangocloudvm');
-      if (Object.keys(composedProducts).length > 0) {
-        if ('start-date' in composedProducts && composedProducts['start-date'] > startTs && composedProducts['start-date'] < endTs) {
-          throw new Error("Start of price effective time range is in the middle billing start date: " +
-                          String(composedProducts['start-date']) + " vs " + String(startTs) + " - " + String(endTs));
-        }
-        if ('end-date' in composedProducts && composedProducts['end-date'] > startTs && composedProducts['end-date'] < endTs) {
-        // if there is no start-date but end-date, it will throw error, someone has configured wrongly
-          throw new Error("Billing period is not fully covered by price effective time range: " +
-                          String(startTs) + " " + String(endTs) +
-                          " vs " + String(composedProducts['start-date']) + " " + String(composedProducts['end-date']));
-        }
-        // Check if it is in the price effective range
-        if (('end-date' in composedProducts && startTs >= composedProducts['start-date'] && endTs <= composedProducts['end-date']) ||
-            (!('end-date' in composedProducts) && startTs >= composedProducts['start-date'])) {
-          isComposed = true;
-          Object.keys(composedProducts).forEach(item => {
-            if (!item.endsWith('-date')) {
-              pricelist(composedProducts[item]).then(function (data) {
-                prices[item] = util.keyArray(data, '_pricelevelid_value');
-                console.log(prices[item]);
-              });
-            }
-          });
-        } else {
-          isComposed = false;
-        }
+      if (AuthService.isAdmin()) {
+        // admin/vms/instance?start=&end=
+        args['object'] = 'admin/vms/instance';
       } else {
-        isComposed = false;
+        args['email'] = AuthService.getUserEmail();
       }
+      return nq_new.queryNoHeader(args).$promise;
+      // // composed product could have effective date
+      // composedProducts = compositions('tangocloudvm');
+      // if (Object.keys(composedProducts).length > 0) {
+      //   if ('start-date' in composedProducts && composedProducts['start-date'] > startTs && composedProducts['start-date'] < endTs) {
+      //     throw new Error("Start of price effective time range is in the middle billing start date: " +
+      //                     String(composedProducts['start-date']) + " vs " + String(startTs) + " - " + String(endTs));
+      //   }
+      //   if ('end-date' in composedProducts && composedProducts['end-date'] > startTs && composedProducts['end-date'] < endTs) {
+      //   // if there is no start-date but end-date, it will throw error, someone has configured wrongly
+      //     throw new Error("Billing period is not fully covered by price effective time range: " +
+      //                     String(startTs) + " " + String(endTs) +
+      //                     " vs " + String(composedProducts['start-date']) + " " + String(composedProducts['end-date']));
+      //   }
+      //   // Check if it is in the price effective range
+      //   if (('end-date' in composedProducts && startTs >= composedProducts['start-date'] && endTs <= composedProducts['end-date']) ||
+      //       (!('end-date' in composedProducts) && startTs >= composedProducts['start-date'])) {
+      //     isComposed = true;
+      //     Object.keys(composedProducts).forEach(item => {
+      //       if (!item.endsWith('-date')) {
+      //         pricelist(composedProducts[item]).then(function (data) {
+      //           prices[item] = util.keyArray(data, '_pricelevelid_value');
+      //           console.log(prices[item]);
+      //         });
+      //       }
+      //     });
+      //   } else {
+      //     isComposed = false;
+      //   }
+      // } else {
+      //   isComposed = false;
+      // }
 
-      return nq.query(args).$promise;
+      // return nq.query(args).$promise;
     }
 
     // common
@@ -79,12 +91,22 @@ define(['app', '../util', 'services/contract'], function (app, util, contract) {
       });
     };
 
+  // Need to separate admin and other because they get data from different urls:
+  // admin/vms/instance?start=&end=
+  // manager/vms/instance?start=&end=email=
+  // vms/instance?start=&end=email=
     // common
     function getContracts() {
       var promise;
       if (AuthService.isAdmin()) {
+        // admin/vms/instance?start=&end=
         promise = contractService.getAll();
       } else {
+        var email = AuthService.getUserEmail();
+        // Manager at different levels.
+        // manager/vms/instance?start=&end=email=
+        // vms/instance?start=&end=email=
+
         promise = contractService.getServiceOf(org.getOrganisationId(AuthService.getUserOrgName()));
       }
       return promise;
@@ -182,8 +204,8 @@ define(['app', '../util', 'services/contract'], function (app, util, contract) {
 
     // local
     function subtotal(entry, saveTo) {
-      var level1 = 'biller' in entry ? entry['biller'] : '?',
-        level2 = 'managerunit' in entry ? entry['managerunit'] : '?';
+      var level1 = 'account' in entry ? entry['account'] : '?',
+        level2 = 'unit' in entry ? entry['unit'] : '?';
       if (!(level1 in saveTo)) {
         saveTo[level1] = {};
         saveTo[level1]['Grand'] = angular.copy(USAGE_DEFAULT);
@@ -193,15 +215,15 @@ define(['app', '../util', 'services/contract'], function (app, util, contract) {
       }
       saveTo['Grand']['count'] += 1;
       saveTo['Grand']['core'] += entry['core'];
-      saveTo['Grand']['cost'] += entry['cost'];
+      saveTo['Grand']['cost'] += entry['total_fee'];
 
       saveTo[level1][level2]['count'] += 1;
       saveTo[level1][level2]['core'] += entry['core'];
-      saveTo[level1][level2]['cost'] += entry['cost'];
+      saveTo[level1][level2]['cost'] += entry['total_fee'];
 
       saveTo[level1]['Grand']['count'] += 1;
       saveTo[level1]['Grand']['core'] += entry['core'];
-      saveTo[level1]['Grand']['cost'] += entry['cost'];
+      saveTo[level1]['Grand']['cost'] += entry['total_fee'];
     };
 
     return {
@@ -229,7 +251,7 @@ define(['app', '../util', 'services/contract'], function (app, util, contract) {
         if (orgName) {
           var result = [];
           for (var i = 0; i < tmpSummaries.length; i++) {
-            if (tmpSummaries[i]['biller'] == orgName) {
+            if (tmpSummaries[i]['account'] == orgName) {
               result.push(tmpSummaries[i]);
             }
           }

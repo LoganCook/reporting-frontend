@@ -45,6 +45,9 @@ define(['app', 'options'], function (app, options) {
       $get: function () {
         return {
           isAdmin: isAdmin,
+          getUserEmail: function getUserEmail() {
+            return user;
+          },
           getUserDomain: function () {
             return domain + '.edu.au';
           },
