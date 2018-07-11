@@ -72,11 +72,11 @@
                 <td cell-ratio="13" blank-safe="instance.managerName"></td>
                 <td cell-ratio="14" blank-safe="instance.managerEmail"></td>
                 <td cell-ratio="13">{{ ::instance.server }}</td>
-                <td cell-ratio="7" class="text-right">{{ ::instance.avg_uptime | number:2 }}</td>
+                <td cell-ratio="7" class="text-right">{{ ::instance.avgUptime | number:2 }}</td>
                 <td cell-ratio="7" class="text-right">{{ ::instance.core }}</td>
                 <td cell-ratio="7" class="text-right">{{ ::instance.ram }}</td>
-                <td cell-ratio="7" class="text-right">{{ ::instance.avg_storage | number:2 }}</td>
-                <td cell-ratio="7" class="text-right">${{ ::instance.total_fee | number:2 }}</td>
+                <td cell-ratio="7" class="text-right">{{ ::instance.avgStorage | number:2 }}</td>
+                <td cell-ratio="7" class="text-right">${{ ::instance.totalFee | number:2 }}</td>
             </tr>
             <tr ng-show="usages.length > 0 && displayedUsagesRows.length === 0">
                 <td>No rows match the filter</td>

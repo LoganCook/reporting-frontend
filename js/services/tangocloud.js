@@ -28,16 +28,11 @@ define(['app', '../util', 'services/contract'], function (app, util, contract) {
     function summary(startTs, endTs) {
       var nq_new = queryResource.build(sessionStorage['record']);
       var args = {
-        object: 'vms/instance',
+        object: '/usage/tangocloudvm/',
+        email: AuthService.getUserEmail(),
         start: startTs,
         end: endTs
       };
-      if (AuthService.isAdmin()) {
-        // admin/vms/instance?start=&end=
-        args['object'] = 'admin/vms/instance';
-      } else {
-        args['email'] = AuthService.getUserEmail();
-      }
       return nq_new.queryNoHeader(args).$promise;
       // // composed product could have effective date
       // composedProducts = compositions('tangocloudvm');
@@ -215,15 +210,15 @@ define(['app', '../util', 'services/contract'], function (app, util, contract) {
       }
       saveTo['Grand']['count'] += 1;
       saveTo['Grand']['core'] += entry['core'];
-      saveTo['Grand']['cost'] += entry['total_fee'];
+      saveTo['Grand']['cost'] += entry['totalFee'];
 
       saveTo[level1][level2]['count'] += 1;
       saveTo[level1][level2]['core'] += entry['core'];
-      saveTo[level1][level2]['cost'] += entry['total_fee'];
+      saveTo[level1][level2]['cost'] += entry['totalFee'];
 
       saveTo[level1]['Grand']['count'] += 1;
       saveTo[level1]['Grand']['core'] += entry['core'];
-      saveTo[level1]['Grand']['cost'] += entry['total_fee'];
+      saveTo[level1]['Grand']['cost'] += entry['totalFee'];
     };
 
     return {
