@@ -118,13 +118,13 @@ define(["filesize", "mathjs", "moment", "numeral", "lodash"], function (filesize
 
     /**
      * Convert a nested object into an array for display.
-     * This is for totals which has billing as key on one level, Organisation as key on next level
+     * This is for totals which has account as key on one level, unit as key on next level
      *
      * @param {Object} nestedObj
      * @return Array
      */
     rearrange: function rearrange(nestedObj) {
-      return this.deflate(nestedObj, 'billing', 'organisation');
+      return this.deflate(nestedObj, 'account', 'unit');
     },
 
     /**

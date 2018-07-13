@@ -36,7 +36,7 @@ define(
         var endTs = utilOld.dayEnd($scope.rangeEnd);
         spinner.start();
         SlurmService.query(startTs, endTs).then(function() {
-          $scope.jobCounts = SlurmService.getJobCounts(startTs, endTs, orgName);
+          $scope.jobCounts = SlurmService.getUsages(startTs, endTs, orgName);
           $scope.userRollup = SlurmService.getUserRollup(startTs, endTs);
           $scope.userRollupErrorData = SlurmService.getUserRollupErrorData(startTs, endTs);
           if (orgName) {

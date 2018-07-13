@@ -1,4 +1,4 @@
-define(['app', '../util', 'services/usage-record'], function (app, util, Usage) {
+define(['app', 'services/usage-record'], function (app, Usage) {
   'use strict';
 
   /**

@@ -1,11 +1,11 @@
 define(['../util'], function (util) {
   'use strict';
 
-  /*
-  * factory function for creating an instance to query, search usage data from a record source
-  */
   function Usages($q, queryResource, userEmail, source, statisticsFields) {
-    // @param {[]} statisticsFields - A list of fields will be added up for statistics purpose
+    /** 
+     * factory function for creating an instance to query, search usage data from a record source
+     *  @param {[]} statisticsFields - A list of fields will be added up for statistics purpose
+     */
 
     // both summaries and totals has searchHash as the first key
     // summaries: usage data with extended user information

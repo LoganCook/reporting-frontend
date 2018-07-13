@@ -87,16 +87,16 @@
         st-table="displayedSimpleRows" st-safe-src="subTotals" ersa-table="nova-summary.simple">
         <thead>
             <tr ersa-table-add-filters>
-                <th cell-ratio="40" ersa-table-sort="orderBy('billing')" st-sort-default="true">Organisation</th>
-                <th cell-ratio="40" ersa-table-sort="organisation">School</th>
-                <th cell-ratio="10" ersa-table-sort="cost" ersa-table-no-filter class="text-right">Server(s)</th>
+                <th cell-ratio="40" ersa-table-sort="orderBy('account')" st-sort-default="true">Organisation</th>
+                <th cell-ratio="40" ersa-table-sort="unit">School</th>
+                <th cell-ratio="10" ersa-table-sort="count" ersa-table-no-filter class="text-right">Server(s)</th>
                 <th cell-ratio="10" ersa-table-sort="cost" ersa-table-no-filter class="text-right">Fee</th>
             </tr>
         </thead>
         <tbody>
             <tr ng-repeat="instance in displayedSimpleRows" ng-class="{'subtotal-row': isSubTotalRow(instance)}" class="animated fadeIn">
-                <td cell-ratio="40" blank-safe="instance.billing"></td>
-                <td cell-ratio="40" blank-safe="instance.organisation"></td>
+                <td cell-ratio="40" blank-safe="instance.account"></td>
+                <td cell-ratio="40" blank-safe="instance.unit"></td>
                 <td cell-ratio="10" class="text-right">{{ ::instance.count }}</td>
                 <td cell-ratio="10" class="text-right"> ${{ ::instance.cost | number:2 }}</td>
             </tr>
