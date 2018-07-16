@@ -81,7 +81,7 @@
       <tr ng-show="jobCounts.length" ng-class="{'total-not-relevant': isFilterApplied(displayedJobCountsRows, jobCounts)}">
         <td cell-ratio="79.5"><strong>Grand Total</strong></td>
         <td ng-repeat="i in [1,2,3,4,5]" class="filler-cell"></td>
-        <td cell-ratio="7"><strong>{{ formatNumber(grandTotal.hours) }}</strong></td>
+        <td cell-ratio="7"><strong>{{ formatNumber(grandTotal.totalCPUHours) }}</strong></td>
         <td cell-ratio="7"><strong>${{ grandTotal.cost | number : 2 }}</strong></td>
       </tr>
     </tfoot>
@@ -115,7 +115,7 @@
       <tr ng-show="jobCounts.length" ng-class="{'total-not-relevant': isFilterApplied(displayedRollupRows, userRollup)}">
         <td cell-ratio="73.5"><strong>Grand Total</strong></td>
         <td ng-repeat="i in [1,2,3,4]" class="filler-cell"></td>
-        <td cell-ratio="9"><strong>{{ formatNumber(grandTotal.hours) }}</strong></td>
+        <td cell-ratio="9"><strong>{{ formatNumber(grandTotal.totalCPUHours) }}</strong></td>
         <td cell-ratio="9"><strong>${{ grandTotal.cost | number : 2 }}</strong></td>
       </tr>
     </tfoot>
@@ -143,7 +143,7 @@
       <tr ng-show="jobCounts.length" ng-class="{'total-not-relevant': isFilterApplied(displayedSimpleRows, subTotals)}">
         <td cell-ratio="70.5"><strong>Grand Total</strong></td>
          <td class="filler-cell"></td>
-        <td cell-ratio="10.3"><strong>{{ formatNumber(grandTotal.hours) }}</strong></td>
+        <td cell-ratio="10.3"><strong>{{ formatNumber(grandTotal.totalCPUHours) }}</strong></td>
         <td cell-ratio="10"><strong>${{ grandTotal.cost  | number : 2 }}</strong></td>
       </tr>
     </tfoot>
