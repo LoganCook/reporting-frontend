@@ -49,11 +49,6 @@
                                 <label class="btn btn-primary ersa-theme" ng-model="detailLevel" uib-btn-radio="'detailed'">Detailed</label>
                             </div>
                         </span>
-                        <label class="checkbox-inline">
-                            <input type="checkbox" ng-model="isDisableBlacklist" ng-change="disableBlacklistChangeHandler()"> Disable Blacklist
-                        </label>
-                        <a class="checkbox-inline not-actually-checkbox" ng-click="showBlacklist()">View "Filesystem" Blacklist</a>
-                        <a class="checkbox-inline not-actually-checkbox" ng-click="showWhitelist()">View "HCP Namespace" Whitelist</a>
                     </div>
                 </div>
             </div>
@@ -63,39 +58,39 @@
         st-table="displayedUsagesRows" st-safe-src="usages" ersa-table="national-storage.detailed">
         <thead>
             <tr ersa-table-add-filters>
-                <th cell-ratio="7" ersa-table-sort="source">Source</th>
-                <th cell-ratio="7" ersa-table-sort="orderID">Allocation Name</th>
-                <th cell-ratio="10" ersa-table-sort="orderByTwoCols('billing','orderID')" st-sort-default="true">Organisation</th>
-                <th cell-ratio="10" ersa-table-sort="managerunit">School</th>
-                <th cell-ratio="10" ersa-table-sort="manager">User Name</th>
-                <th cell-ratio="15" ersa-table-sort="manageremail">Email</th>
-                <th cell-ratio="15" ersa-table-sort="filesystem">File System</th>
+                <th cell-ratio="7" ersa-table-sort="type">Source</th>
+                <th cell-ratio="7" ersa-table-sort="orderline_id">Allocation Name</th>
+                <th cell-ratio="10" ersa-table-sort="orderByTwoCols('account','orderline_id')" st-sort-default="true">Organisation</th>
+                <th cell-ratio="10" ersa-table-sort="unit">School</th>
+                <th cell-ratio="10" ersa-table-sort="managerName">User Name</th>
+                <th cell-ratio="15" ersa-table-sort="managerEmail">Email</th>
+                <th cell-ratio="15" ersa-table-sort="identifier">File System</th>
                 <th cell-ratio="8" ersa-table-sort="approved_size" ersa-table-no-filter class="text-right">GB Allocated</th>
-                <th cell-ratio="8" ersa-table-sort="usage" ersa-table-no-filter class="text-right">GB Used</th>
+                <th cell-ratio="8" ersa-table-sort="avgUsage" ersa-table-no-filter class="text-right">GB Used</th>
                 <th cell-ratio="5" ersa-table-sort="blocks" ersa-table-no-filter class="text-right">Usage / 250GB</th>
-                <th cell-ratio="5" ersa-table-sort="cost" ersa-table-no-filter class="text-right">Fee</th>
+                <th cell-ratio="5" ersa-table-sort="totalFee" ersa-table-no-filter class="text-right">Fee</th>
             </tr>
         </thead>
         <tbody>
             <tr ng-repeat="usage in displayedUsagesRows" class="animated fadeIn">
-                <td cell-ratio="7">{{::usage.source}}</td>
-                <td cell-ratio="7" blank-safe="usage.orderID"></td>
-                <td cell-ratio="10" blank-safe="usage.billing"></td>
-                <td cell-ratio="10" blank-safe="usage.managerunit"></td>
-                <td cell-ratio="10" blank-safe="usage.manager"></td>
-                <td cell-ratio="15" blank-safe="usage.manageremail"></td>
-                <td cell-ratio="15">{{ ::usage.filesystem }}</td>
+                <td cell-ratio="7">{{::usage.type}}</td>
+                <td cell-ratio="7">To be replaced by order_id {{ ::usage.orderline_id }}</td>
+                <td cell-ratio="10" blank-safe="usage.account"></td>
+                <td cell-ratio="10" blank-safe="usage.unit"></td>
+                <td cell-ratio="10" blank-safe="usage.managerName"></td>
+                <td cell-ratio="15" blank-safe="usage.managerEmail"></td>
+                <td cell-ratio="15">{{ ::usage.identifier }}</td>
                 <td cell-ratio="8" class="text-right">{{ ::usage.approved_size | number }}</td>
-                <td cell-ratio="8" class="text-right"> {{ ::usage.usage | number }}</td>
+                <td cell-ratio="8" class="text-right"> {{ ::usage.avgUsage | number }}</td>
                 <td cell-ratio="5" class="text-right"> {{ ::usage.blocks }}</td>
-                <td cell-ratio="5" class="text-right">${{ ::formatNumber(usage.cost) }}</td>
+                <td cell-ratio="5" class="text-right">${{ ::formatNumber(usage.totalFee) }}</td>
             </tr>
         </tbody>
         <tfoot>
             <tr ng-show="usages.length" ng-class="{'total-not-relevant': isFilterApplied(displayedUsagesRows, usages)}">
                 <td cell-ratio="82"><strong>Grand Total</strong></td>
                 <td ng-repeat="i in [1,2,3,4,5,6,7]" class="filler-cell"></td>
-                <td cell-ratio="8" class="text-right"><strong>{{ total.usage | number }}</strong></td>
+                <td cell-ratio="8" class="text-right"><strong>{{ total.avgUsage | number }}</strong></td>
                 <td cell-ratio="5" class="text-right"><strong>{{ total.blocks }}</strong></td>
                 <td cell-ratio="5" class="text-right"><strong>${{ formatNumber(total.cost) }}</strong></td>
             </tr>
@@ -106,37 +101,37 @@
         st-table="displayedRollupRows" st-safe-src="rollup" ersa-table="national-storage.rollup">
         <thead>
             <tr ersa-table-add-filters>
-                <th cell-ratio="7" ersa-table-sort="orderID">Allocation Name</th>
-                <th cell-ratio="13" ersa-table-sort="orderByTwoCols('billing','orderID')" st-sort-default="true">Organisation</th>
-                <th cell-ratio="14" ersa-table-sort="managerunit">School</th>
-                <th cell-ratio="10" ersa-table-sort="manager">User Name</th>
-                <th cell-ratio="15" ersa-table-sort="manageremail">Email</th>
-                <th cell-ratio="15" ersa-table-sort="filesystem">File System</th>
+                <th cell-ratio="7" ersa-table-sort="orderline_id">Allocation Name</th>
+                <th cell-ratio="13" ersa-table-sort="orderByTwoCols('account','orderline_id')" st-sort-default="true">Organisation</th>
+                <th cell-ratio="14" ersa-table-sort="unit">School</th>
+                <th cell-ratio="10" ersa-table-sort="managerName">User Name</th>
+                <th cell-ratio="15" ersa-table-sort="managerEmail">Email</th>
+                <th cell-ratio="15" ersa-table-sort="identifier">File System</th>
                 <th cell-ratio="8" ersa-table-sort="approved_size" ersa-table-no-filter class="text-right">GB Allocated</th>
                 <th cell-ratio="8" ersa-table-sort="usage" ersa-table-no-filter class="text-right">GB Used</th>
                 <th cell-ratio="5" ersa-table-sort="blocks" ersa-table-no-filter class="text-right">Usage / 250GB</th>
-                <th cell-ratio="5" ersa-table-sort="cost" ersa-table-no-filter class="text-right">Fee</th>
+                <th cell-ratio="5" ersa-table-sort="totalFee" ersa-table-no-filter class="text-right">Fee</th>
             </tr>
         </thead>
         <tbody>
             <tr ng-repeat="usage in displayedRollupRows" class="animated fadeIn">
-                <td cell-ratio="7" blank-safe="usage.orderID"></td>
-                <td cell-ratio="13" blank-safe="usage.billing"></td>
-                <td cell-ratio="14" blank-safe="usage.managerunit"></td>
-                <td cell-ratio="10" blank-safe="usage.full_name"></td>
-                <td cell-ratio="15" blank-safe="usage.manageremail"></td>
-                <td cell-ratio="15">{{ ::usage.filesystem }}</td>
+                <td cell-ratio="7">To be replaced by order_id {{ ::usage.orderline_id }}</td>
+                <td cell-ratio="13" blank-safe="usage.account"></td>
+                <td cell-ratio="14" blank-safe="usage.unit"></td>
+                <td cell-ratio="10" blank-safe="usage.managerName"></td>
+                <td cell-ratio="15" blank-safe="usage.managerEmail"></td>
+                <td cell-ratio="15">{{ ::usage.identifier }}</td>
                 <td cell-ratio="8" class="text-right">{{ ::usage.approved_size | number }}</td>
-                <td cell-ratio="8" class="text-right"> {{ ::usage.usage | number }}</td>
+                <td cell-ratio="8" class="text-right"> {{ ::usage.avgUsage | number }}</td>
                 <td cell-ratio="5" class="text-right"> {{ ::usage.blocks }}</td>
-                <td cell-ratio="5" class="text-right">${{ ::formatNumber(usage.cost) }}</td>
+                <td cell-ratio="5" class="text-right">${{ ::formatNumber(usage.totalFee) }}</td>
             </tr>
         </tbody>
         <tfoot>
             <tr ng-show="usages.length" ng-class="{'total-not-relevant': isFilterApplied(displayedRollupRows, rollup)}">
                 <td cell-ratio="82"><strong>Grand Total</strong></td>
                 <td ng-repeat="i in [1,2,3,4,5,6]" class="filler-cell"></td>
-                <td cell-ratio="8" class="text-right"><strong>{{ total.usage | number }}</strong></td>
+                <td cell-ratio="8" class="text-right"><strong>{{ total.avgUsage | number }}</strong></td>
                 <td cell-ratio="5" class="text-right"><strong>{{ total.blocks }}</strong></td>
                 <td cell-ratio="5" class="text-right"><strong>${{ formatNumber(total.cost) }}</strong></td>
             </tr>
@@ -147,68 +142,30 @@
         st-table="displayedSimpleRows" st-safe-src="subTotals" ersa-table="national-storage.simple">
         <thead>
             <tr ersa-table-add-filters>
-                <th cell-ratio="35" ersa-table-sort="orderBy('billing')" st-sort-default="true">Organisation</th>
-                <th cell-ratio="35" ersa-table-sort="organisation">School</th>
+                <th cell-ratio="35" ersa-table-sort="orderBy('account')" st-sort-default="true">Organisation</th>
+                <th cell-ratio="35" ersa-table-sort="unit">School</th>
                 <th cell-ratio="10" ersa-table-sort="usage" ersa-table-no-filter class="text-right">GB Used</th>
                 <th cell-ratio="10" ersa-table-sort="blocks" ersa-table-no-filter class="text-right">Usage / 250GB</th>
-                <th cell-ratio="10" ersa-table-sort="cost" ersa-table-no-filter class="text-right">Fee</th>
+                <th cell-ratio="10" ersa-table-sort="totalFee" ersa-table-no-filter class="text-right">Fee</th>
             </tr>
         </thead>
         <tbody>
             <tr ng-repeat="usage in displayedSimpleRows" ng-class="{'subtotal-row': isSubTotalRow(usage)}" class="animated fadeIn">
-                <td cell-ratio="35" blank-safe="usage.billing"></td>
-                <td cell-ratio="35" blank-safe="usage.organisation"></td>
-                <td cell-ratio="10" class="text-right"> {{ ::usage.usage | number }}</td>
+                <td cell-ratio="35" blank-safe="usage.account"></td>
+                <td cell-ratio="35" blank-safe="usage.unit"></td>
+                <td cell-ratio="10" class="text-right"> {{ ::usage.avgUsage | number }}</td>
                 <td cell-ratio="10" class="text-right"> {{ ::usage.blocks }}</td>
-                <td cell-ratio="10" class="text-right">${{ ::formatNumber(usage.cost) }}</td>
+                <td cell-ratio="10" class="text-right">${{ ::formatNumber(usage.totalFee) }}</td>
             </tr>
         </tbody>
         <tfoot>
             <tr ng-show="usages.length" class="animated fadeIn" ng-class="{'total-not-relevant': isFilterApplied(displayedSimpleRows, subTotals)}">
                 <td cell-ratio="70"><strong>Grand Total</strong></td>
                 <td class="filler-cell"></td>
-                <td cell-ratio="10" class="text-right"><strong>{{ total.usage | number }}</strong></td>
+                <td cell-ratio="10" class="text-right"><strong>{{ total.avgUsage | number }}</strong></td>
                 <td cell-ratio="10" class="text-right"><strong>{{ total.blocks }}</strong></td>
                 <td cell-ratio="10" class="text-right"><strong>${{ formatNumber(total.cost) }}</strong></td>
             </tr>
         </tfoot>
     </table>
 </div>
-
-<script type="text/ng-template" id="blacklistModal.html">
-    <div class="modal-header">
-        <h3 class="modal-title" id="modal-title">Blacklisted 'filesystem' values</h3>
-    </div>
-    <div class="modal-body" id="modal-body" >
-        <p>Entries listed here are removed from all calculations and the view. You can include them again by checking
-            the 'disable blacklist' checkbox.</p>
-        <p>You need a programmer to edit the list for you. It's also important to note that blacklisting also affects
-            the institutional(non-admin) version of this page so be careful.</p>
-        <ul class="blacklist-list">
-            <li ng-repeat="item in items">{{::item}}</li>
-        </ul>
-        <p>Total: {{::items.length}} entries</p>
-    </div>
-    <div class="modal-footer">
-        <button ng-click="$close()">Close</button>
-    </div>
-</script>
-
-<script type="text/ng-template" id="whitelistModal.html">
-    <div class="modal-header">
-        <h3 class="modal-title" id="modal-title">Whitelisted 'HCP Namespace' values</h3>
-    </div>
-    <div class="modal-body" id="modal-body" >
-        <p>Entries listed here are the <b>only</b> HCP Namespaces included for all calculations and the view. The whitelist cannot be disabled,
-            it's permanently enabled.</p>
-        <p>You need a programmer to edit the list for you. It's also important to note that whitelisting also affects
-            the institutional(non-admin) version of this page so be careful.</p>
-        <ul class="blacklist-list">
-            <li ng-repeat="item in items">{{::item}}</li>
-        </ul>
-        <p>Total: {{::items.length}} entries</p>
-    </div>
-    <div class="modal-footer">
-        <button ng-click="$close()">Close</button>
-    </div>
-</script>
