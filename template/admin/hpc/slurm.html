@@ -55,12 +55,12 @@
     st-table="displayedJobCountsRows" st-safe-src="jobCounts" ersa-table="hpc-summary.detailed">
     <thead>
       <tr ersa-table-add-filters>
-        <th cell-ratio="16" ersa-table-sort="orderByNCols(['account','unit','identifier'])" st-sort-default="true">Organisation</th>
+        <th cell-ratio="16" ersa-table-sort="orderByNCols(['account','unit','user'])" st-sort-default="true">Organisation</th>
         <th cell-ratio="14" ersa-table-sort="unit">School</th>
-        <th cell-ratio="14" ersa-table-sort="identifier">User ID</th>
+        <th cell-ratio="14" ersa-table-sort="user">User ID</th>
         <th cell-ratio="14" ersa-table-sort="manager">User Name</th>
         <th cell-ratio="14" ersa-table-sort="manageremail">Email</th>
-        <th cell-ratio="7" ersa-table-sort="queue">Queue</th>
+        <th cell-ratio="7" ersa-table-sort="partition">Queue</th>
         <th cell-ratio="7" ersa-table-sort="hours" ersa-table-no-filter>Core Hours</th>
         <th cell-ratio="7" ersa-table-sort="cost" ersa-table-no-filter>Fee</th>
       </tr>
@@ -69,7 +69,7 @@
       <tr ng-repeat="sum in displayedJobCountsRows" class="animated fadeIn">
         <td cell-ratio="16" blank-safe="sum.account"></td>
         <td cell-ratio="14" blank-safe="sum.unit"></td>
-        <td cell-ratio="14">{{ ::sum.identifier }}</td>
+        <td cell-ratio="14">{{ ::sum.user }}</td>
         <td cell-ratio="14" blank-safe="sum.managerName"></td>
         <td cell-ratio="14" blank-safe="sum.managerEmail"></td>
         <td cell-ratio="7">{{ ::sum.partition }}</td>
@@ -91,9 +91,9 @@
     st-table="displayedRollupRows" st-safe-src="userRollup" ersa-table="hpc-summary.user-rollup">
     <thead>
       <tr ersa-table-add-filters>
-        <th cell-ratio="16" ersa-table-sort="orderByNCols(['account','unit','identifier'])" st-sort-default="true">Organisation</th>
+        <th cell-ratio="16" ersa-table-sort="orderByNCols(['account','unit','user'])" st-sort-default="true">Organisation</th>
         <th cell-ratio="14" ersa-table-sort="unit">School</th>
-        <th cell-ratio="14" ersa-table-sort="identifier">User ID</th>
+        <th cell-ratio="14" ersa-table-sort="user">User ID</th>
         <th cell-ratio="14" ersa-table-sort="manager">User Name</th>
         <th cell-ratio="15" ersa-table-sort="manageremail">Email</th>
         <th cell-ratio="9" ersa-table-sort="hours" ersa-table-no-filter>Core Hours</th>
@@ -104,7 +104,7 @@
       <tr ng-repeat="sum in displayedRollupRows" class="animated fadeIn">
         <td cell-ratio="16" blank-safe="sum.account"></td>
         <td cell-ratio="14" blank-safe="sum.unit"></td>
-        <td cell-ratio="14">{{ ::sum.identifier }}</td>
+        <td cell-ratio="14">{{ ::sum.user }}</td>
         <td cell-ratio="14" blank-safe="sum.managerName"></td>
         <td cell-ratio="15" blank-safe="sum.managerEmail"></td>
         <td cell-ratio="9">{{ ::formatNumber(sum.totalCPUHours) }}</td>

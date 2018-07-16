@@ -131,7 +131,7 @@ define(['../util'], function (util) {
       },
       getGrandTotal: function getTotal(startTs, endTs) {
         // only for admin view
-        return grandTotals[util.hashSearch([startTs, endTs])];
+        return util.getCached(grandTotals, [startTs, endTs]);
       }
     };
   }

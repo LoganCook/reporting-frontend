@@ -4,16 +4,19 @@ define(['./rollerUpperer'], function(rollerUpperer) {
   var SlurmRollerUpper = rollerUpperer
     .builder()
     .fieldsToSum([
-      'cost',
-      'cpu_seconds',
-      'hours',
-      'job_count'
+      'totalFee',
+      'totalCPUHours',
+      'totalCount'
     ])
     .fieldsToIgnore([
+      'orderline_id',
+      'price',
+      'name',
+      'identifier',
       'partition'
     ])
     .joinFields([
-      'owner'
+      'user'
     ])
     .build();
 
