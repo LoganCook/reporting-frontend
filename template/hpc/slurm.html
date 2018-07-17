@@ -51,14 +51,14 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="sum in jobCounts | orderBy: ['managerunit', 'owner']">
-              <td blank-safe="sum.managerunit"></td>
-              <td>{{ ::sum.owner }}</td>
-              <td>{{ ::sum.manager }}</td>
-              <td>{{ ::sum.manageremail }}</td>
+            <tr ng-repeat="sum in jobCounts | orderBy: ['unit', 'user']">
+              <td blank-safe="sum.unit"></td>
+              <td>{{ ::sum.user }}</td>
+              <td>{{ ::sum.managerName }}</td>
+              <td>{{ ::sum.managerEmail }}</td>
               <td>{{ ::sum.partition }}</td>
-              <td class="text-right">{{ ::formatNumber(sum.hours) }}</td>
-              <td class="text-right">${{ sum.cost  | number : 2 }}</td>
+              <td class="text-right">{{ ::formatNumber(sum.totalCPUHours) }}</td>
+              <td class="text-right">${{ sum.totalFee  | number : 2 }}</td>
             </tr>
           </tbody>
         </table>
@@ -71,16 +71,16 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="sum in subTotals | orderBy: 'organisation'">
-              <td blank-safe="sum.organisation"></td>
-              <td class="text-right">{{ ::formatNumber(sum.hours) }}</td>
+            <tr ng-repeat="sum in subTotals | orderBy: 'unit'">
+              <td blank-safe="sum.unit"></td>
+              <td class="text-right">{{ ::formatNumber(sum.totalCPUHours) }}</td>
               <td class="text-right">${{ sum.cost  | number : 2 }}</td>
             </tr>
           </tbody>
           <tfoot>
             <tr ng-show="subTotals.length">
               <td><strong>Grand Total</strong></td>
-              <td class="text-right"><strong>{{ formatNumber(grandTotal.hours) }}</strong></td>
+              <td class="text-right"><strong>{{ formatNumber(grandTotal.totalCPUHours) }}</strong></td>
               <td class="text-right"><strong>${{ grandTotal.cost  | number : 2 }}</strong></td>
             </tr>
           </tfoot>

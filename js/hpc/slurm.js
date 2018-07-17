@@ -38,13 +38,13 @@ define(
         spinner.start();
         SlurmService.query(startTs, endTs).then(function() {
           $scope.jobCounts = SlurmService.getUsages(startTs, endTs, orgName);
-          $scope.userRollup = SlurmService.getUserRollup(startTs, endTs);
-          $scope.userRollupErrorData = SlurmService.getUserRollupErrorData(startTs, endTs);
           if (orgName) {
             var subTotals = angular.copy(SlurmService.getSubTotals(startTs, endTs, orgName));
-            $scope.grandTotal = utilOld.spliceOne(subTotals, 'organisation', 'Grand');
+            $scope.grandTotal = utilOld.spliceOne(subTotals, 'unit', 'Grand');
             $scope.subTotals = subTotals;
           } else {
+            $scope.userRollup = SlurmService.getUserRollup(startTs, endTs);
+            $scope.userRollupErrorData = SlurmService.getUserRollupErrorData(startTs, endTs);
             $scope.subTotals = SlurmService.getSubTotals(startTs, endTs);
             $scope.grandTotal = SlurmService.getGrandTotal(startTs, endTs);
           }
