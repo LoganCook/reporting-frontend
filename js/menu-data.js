@@ -20,7 +20,7 @@ define({
       //"HNAS/FileSystem": ["/storage/hnas/fileSystem", "FileSystem"],
       //"HNAS/VirtualVolume": ["/storage/hnas/virtualVolume", "VirtualVolume"],
       "HCP": ["/storage/hcp", "HCP"],
-      "National": ["/admin/storage/allocationSummary", "AAllocationSummary"],
+      "National": ["/admin/storage/allocationSummary", "AllocationSummary"],
       "RDS Report": ["/admin/storage/allocationRDSReport", "AAllocationRDSReport"],
     },
     "Cloud": {
@@ -56,7 +56,7 @@ define({
       "HPC - Tizard": ["/hpc/hpcsummary", "HPCSummary", "tesla gpu gtx mecheng abraham short gtx3 "],
       "HPC - Tango": ["/hpc/slurm", "Slurm"],
       "HPC Storage": ["/storage/hpcStorage", "HPCStorage"],
-      "Allocation Summary": ["/storage/allocationSummary", "AAllocationSummary"],
+      "Allocation Summary": ["/storage/allocationSummary", "AllocationSummary"],
       "Nectar Summary": ["/cloud/novasummary", "Novasummary"],
       "Tango Cloud Summary": ["/cloud/tangosummary", "TangoCloudsummary"],
       "ANDS Report": ["/storage/allocationANDSReport", "AllocationANDSReport"],

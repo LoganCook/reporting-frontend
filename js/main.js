@@ -34,7 +34,7 @@ require(["app", "services/auth", "services/org", "menu", "services/product-compo
     "hpc/hpc", "hpc/slurm", "hpc/hpcsummary",
     "storage/hcp", "storage/hnas/fileSystem", "storage/hnas/virtualVolume", "storage/xfs",
     "storage/hpcStorage", "storage/ahpcStorage",
-    "storage/allocationSummary", "storage/aallocationSummary",
+    "storage/allocationSummary",
     "storage/allocationANDSReport", "storage/aallocationRDSReport",
     "cloud/keystone", "cloud/nova.component", "cloud/novasummary", "cloud/tangosummary"
   ],
