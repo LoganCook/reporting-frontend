@@ -247,8 +247,11 @@ define(
       grandTotal: 'Grand Total',
       subTotal: subTotal,
       blankValue: '_blank_value_',
-      isSubTotalRow: function(entry) {
-        // This is hard coded old field: new one should be managerunit
+      isSubTotalRow: function(entry, indicatorField) {
+        if (indicatorField) {
+          return entry[indicatorField] && entry[indicatorField] === subTotal;
+        }
+        // This is hard coded using old field organisation as the default
         return entry.organisation && entry.organisation === subTotal;
       },
       orderBySubTotalLast: orderBySubTotalLast,

@@ -23,6 +23,7 @@ define(["app", "../util", "services/storage.v2"], function (app, util) {
       $scope.orderBy = theConstants.orderByPredicateThenSubTotal;
       $scope.orderByTwoCols = theConstants.orderByTwoCols;
       $scope.isSubTotalRow = theConstants.isSubTotalRow;
+      $scope.subTotalRowIndicator = 'unit';
 
       $scope.load = function () {
         spinner.start();
@@ -31,10 +32,7 @@ define(["app", "../util", "services/storage.v2"], function (app, util) {
         $scope.rangeEnd = util.lastDayOfYearAndMonth($scope.rangeEnd);
 
         var startTs = util.dayStart($scope.rangeStart), endTs = util.dayEnd($scope.rangeEnd);
-        var orgName;
-        if (!(AuthService.isAdmin())) {
-          orgName = AuthService.getUserOrgName();
-        }
+        var orgName = AuthService.isAdmin() ? null : AuthService.getUserOrgName();
         $scope.usages = [];
         $scope.subTotals = [];
         $scope.rollup = [];

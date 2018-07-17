@@ -90,9 +90,9 @@
             <tr ng-show="usages.length" ng-class="{'total-not-relevant': isFilterApplied(displayedUsagesRows, usages)}">
                 <td cell-ratio="82"><strong>Grand Total</strong></td>
                 <td ng-repeat="i in [1,2,3,4,5,6,7]" class="filler-cell"></td>
-                <td cell-ratio="8" class="text-right"><strong>{{ total.avgUsage | number }}</strong></td>
-                <td cell-ratio="5" class="text-right"><strong>{{ total.blocks }}</strong></td>
-                <td cell-ratio="5" class="text-right"><strong>${{ formatNumber(total.cost) }}</strong></td>
+                <td cell-ratio="8" class="text-right"><strong>{{ grandTotal.avgUsage | number }}</strong></td>
+                <td cell-ratio="5" class="text-right"><strong>{{ grandTotal.blocks }}</strong></td>
+                <td cell-ratio="5" class="text-right"><strong>${{ formatNumber(grandTotal.cost) }}</strong></td>
             </tr>
         </tfoot>
     </table>
@@ -131,9 +131,9 @@
             <tr ng-show="usages.length" ng-class="{'total-not-relevant': isFilterApplied(displayedRollupRows, rollup)}">
                 <td cell-ratio="82"><strong>Grand Total</strong></td>
                 <td ng-repeat="i in [1,2,3,4,5,6]" class="filler-cell"></td>
-                <td cell-ratio="8" class="text-right"><strong>{{ total.avgUsage | number }}</strong></td>
-                <td cell-ratio="5" class="text-right"><strong>{{ total.blocks }}</strong></td>
-                <td cell-ratio="5" class="text-right"><strong>${{ formatNumber(total.cost) }}</strong></td>
+                <td cell-ratio="8" class="text-right"><strong>{{ grandTotal.avgUsage | number }}</strong></td>
+                <td cell-ratio="5" class="text-right"><strong>{{ grandTotal.blocks }}</strong></td>
+                <td cell-ratio="5" class="text-right"><strong>${{ formatNumber(grandTotal.cost) }}</strong></td>
             </tr>
         </tfoot>
     </table>
@@ -150,7 +150,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="usage in displayedSimpleRows" ng-class="{'subtotal-row': isSubTotalRow(usage)}" class="animated fadeIn">
+            <tr ng-repeat="usage in displayedSimpleRows" ng-class="{'subtotal-row': isSubTotalRow(usage, subTotalRowIndicator)}" class="animated fadeIn">
                 <td cell-ratio="35" blank-safe="usage.account"></td>
                 <td cell-ratio="35" blank-safe="usage.unit"></td>
                 <td cell-ratio="10" class="text-right"> {{ ::usage.avgUsage | number }}</td>
@@ -162,9 +162,9 @@
             <tr ng-show="usages.length" class="animated fadeIn" ng-class="{'total-not-relevant': isFilterApplied(displayedSimpleRows, subTotals)}">
                 <td cell-ratio="70"><strong>Grand Total</strong></td>
                 <td class="filler-cell"></td>
-                <td cell-ratio="10" class="text-right"><strong>{{ total.avgUsage | number }}</strong></td>
-                <td cell-ratio="10" class="text-right"><strong>{{ total.blocks }}</strong></td>
-                <td cell-ratio="10" class="text-right"><strong>${{ formatNumber(total.cost) }}</strong></td>
+                <td cell-ratio="10" class="text-right"><strong>{{ grandTotal.avgUsage | number }}</strong></td>
+                <td cell-ratio="10" class="text-right"><strong>{{ grandTotal.blocks }}</strong></td>
+                <td cell-ratio="10" class="text-right"><strong>${{ formatNumber(grandTotal.cost) }}</strong></td>
             </tr>
         </tfoot>
     </table>

@@ -19,6 +19,7 @@ define(
         $scope.rangeEndOpen = true;
       };
       $scope.isSubTotalRow = theConstants.isSubTotalRow;
+      $scope.subTotalRowIndicator = 'unit';
       $scope.isFilterApplied = theConstants.isFilterApplied;
       $scope.orderByNCols = theConstants.orderByNCols;
       $scope.orderBy = theConstants.orderByPredicateThenSubTotal;

@@ -94,7 +94,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="instance in displayedSimpleRows" ng-class="{'subtotal-row': isSubTotalRow(instance)}" class="animated fadeIn">
+            <tr ng-repeat="instance in displayedSimpleRows" ng-class="{'subtotal-row': isSubTotalRow(instance, subTotalRowIndicator)}" class="animated fadeIn">
                 <td cell-ratio="40" blank-safe="instance.account"></td>
                 <td cell-ratio="40" blank-safe="instance.unit"></td>
                 <td cell-ratio="10" class="text-right">{{ ::instance.count }}</td>

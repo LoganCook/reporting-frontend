@@ -132,7 +132,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="sum in displayedSimpleRows" ng-class="{'subtotal-row': isSubTotalRow(sum)}" class="animated fadeIn">
+      <tr ng-repeat="sum in displayedSimpleRows" ng-class="{'subtotal-row': isSubTotalRow(sum, subTotalRowIndicator)}" class="animated fadeIn">
         <td cell-ratio="35" blank-safe="sum.account"></td>
         <td cell-ratio="35" blank-safe="sum.unit"></td>
         <td cell-ratio="10">{{ ::formatNumber(sum.totalCPUHours) }}</td>

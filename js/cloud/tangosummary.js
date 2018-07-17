@@ -21,8 +21,9 @@ define(
       $scope.selectedDomain = '0';
       $scope.instancesState = [];
       $scope.serverChecked = false;
-      $scope.datepickerOptions = {minMode: 'month'}
-      $scope.isSubTotalRow = theConstants.isSubTotalRow
+      $scope.datepickerOptions = {minMode: 'month'};
+      $scope.isSubTotalRow = theConstants.isSubTotalRow;
+      $scope.subTotalRowIndicator = 'unit';
 
       /**
        * summary variables
@@ -43,8 +44,8 @@ define(
         $scope.rangeEndOpen = true;
       };
 
-      $scope.orderBy = theConstants.orderByPredicateThenSubTotal
-      $scope.isFilterApplied = theConstants.isFilterApplied
+      $scope.orderBy = theConstants.orderByPredicateThenSubTotal;
+      $scope.isFilterApplied = theConstants.isFilterApplied;
       /**
        * retrieve data with query string.
        */
