@@ -74,7 +74,7 @@
         <tbody>
             <tr ng-repeat="usage in displayedUsagesRows" class="animated fadeIn">
                 <td cell-ratio="7">{{::usage.type}}</td>
-                <td cell-ratio="7">To be replaced by order_id {{ ::usage.orderline_id }}</td>
+                <td cell-ratio="7" class="text-warning">To be replaced by order_id {{ ::usage.orderline_id }}</td>
                 <td cell-ratio="10" blank-safe="usage.account"></td>
                 <td cell-ratio="10" blank-safe="usage.unit"></td>
                 <td cell-ratio="10" blank-safe="usage.managerName"></td>
@@ -115,7 +115,7 @@
         </thead>
         <tbody>
             <tr ng-repeat="usage in displayedRollupRows" class="animated fadeIn">
-                <td cell-ratio="7">To be replaced by order_id {{ ::usage.orderline_id }}</td>
+                <td cell-ratio="7" class="text-warning">To be replaced by order_id {{ ::usage.orderline_id }}</td>
                 <td cell-ratio="13" blank-safe="usage.account"></td>
                 <td cell-ratio="14" blank-safe="usage.unit"></td>
                 <td cell-ratio="10" blank-safe="usage.managerName"></td>
