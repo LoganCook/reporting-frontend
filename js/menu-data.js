@@ -56,7 +56,7 @@ define({
       "HPC - Tizard": ["/hpc/hpcsummary", "HPCSummary", "tesla gpu gtx mecheng abraham short gtx3 "],
       "HPC - Tango": ["/hpc/slurm", "Slurm"],
       "HPC Storage": ["/storage/hpcStorage", "HPCStorage"],
-      "Allocation Summary": ["/storage/allocationSummary", "AllocationSummary"],
+      "Allocation Summary": ["/storage/allocationSummary", "AAllocationSummary"],
       "Nectar Summary": ["/cloud/novasummary", "Novasummary"],
       "Tango Cloud Summary": ["/cloud/tangosummary", "TangoCloudsummary"],
       "ANDS Report": ["/storage/allocationANDSReport", "AllocationANDSReport"],

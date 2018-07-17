@@ -54,15 +54,15 @@
                     </thead>
                     <tbody>
                         <tr ng-repeat="usage in usages | orderBy: 'orderID'">
-                            <td>{{ usage.orderID }}</td>
-                            <td blank-safe="usage.organisation"></td>
+                            <td class="text-warning">To be replaced by order_id {{ ::usage.orderline_id }}</td>
+                            <td blank-safe="usage.unit"></td>
                             <td>{{ ::usage.manager }}</td>
                             <td>{{ ::usage.manageremail }}</td>
-                            <td>{{ ::usage.FileSystemName }} ({{ usage.source }})</td>
+                            <td>{{ ::usage.identifier }} ({{ usage.type }})</td>
                             <td class="text-right">{{ ::usage.approved_size | number }}</td>
-                            <td class="text-right"> {{ ::usage.usage | number }}</td>
+                            <td class="text-right"> {{ ::usage.avgUsage | number }}</td>
                             <td class="text-right"> {{ ::usage.blocks }}</td>
-                            <td class="text-right">${{ ::formatNumber(usage.cost) }}</td>
+                            <td class="text-right">${{ ::formatNumber(usage.totalFee) }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -76,9 +76,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="usage in subTotals | orderBy: 'organisation'">
-                            <td blank-safe="usage.organisation"></td>
-                            <td class="text-right"> {{ ::usage.usage | number }}</td>
+                        <tr ng-repeat="usage in subTotals | orderBy: 'unit'">
+                            <td blank-safe="usage.unit"></td>
+                            <td class="text-right"> {{ ::usage.avgUsage | number }}</td>
                             <td class="text-right"> {{ ::usage.blocks }}</td>
                             <td class="text-right">${{ ::formatNumber(usage.cost) }}</td>
                         </tr>
@@ -86,9 +86,9 @@
                     <tfoot>
                         <tr ng-show="subTotals.length">
                             <td><strong>Grand Total</strong></td>
-                            <td class="text-right"><strong>{{ total.usage | number }}</strong></td>
-                            <td class="text-right"><strong>{{ total.blocks }}</strong></td>
-                            <td class="text-right"><strong>${{ formatNumber(total.cost) }}</strong></td>
+                            <td class="text-right"><strong>{{ grandTotal.avgUsage | number }}</strong></td>
+                            <td class="text-right"><strong>{{ grandTotal.blocks }}</strong></td>
+                            <td class="text-right"><strong>${{ formatNumber(grandTotal.cost) }}</strong></td>
                         </tr>
                     </tfoot>
                 </table>

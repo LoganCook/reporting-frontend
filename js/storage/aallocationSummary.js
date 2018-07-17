@@ -44,13 +44,13 @@ define(["app", "../util", "services/storage.v2"], function (app, util) {
 
         StorageService.query(startTs, endTs).then(function() {
           $scope.usages = StorageService.getUsages(startTs, endTs, orgName);
-          $scope.rollup = StorageService.getUserRollup(startTs, endTs);
-          $scope.rollupErrors = StorageService.getUserRollupErrorData(startTs, endTs);
           if (orgName) {
             var subTotals = angular.copy(StorageService.getSubTotals(startTs, endTs, orgName));
-            $scope.grandTotal = util.spliceOne(subTotals, 'organisation', 'Grand');
+            $scope.grandTotal = util.spliceOne(subTotals, 'unit', 'Grand');
             $scope.subTotals = subTotals;
           } else {
+            $scope.rollup = StorageService.getUserRollup(startTs, endTs);
+            $scope.rollupErrors = StorageService.getUserRollupErrorData(startTs, endTs);
             $scope.subTotals = StorageService.getSubTotals(startTs, endTs);
             $scope.grandTotal = StorageService.getGrandTotal(startTs, endTs);
           }
