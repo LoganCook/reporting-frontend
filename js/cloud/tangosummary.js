@@ -1,14 +1,11 @@
 define(
-  ['app', 'options', '../util2', '../util', './services', '../crm', './account', '../services/tangocloud'],
-  function (app, options, util, oldUtil) {
+  ['app', '../util2', '../util', '../services/tangocloud'],
+  function (app, util, oldUtil) {
   'use strict';
 
   app.controller("TangoCloudsummaryController",
-    ["$rootScope", "$scope", "reporting", "org", "queryResource", "$q", "crm", "account", "spinner",
-      "TangoCloudService", "AuthService", "theConstants",
-    function ($rootScope, $scope, reporting, org, queryResource, $q, crm, account, spinner,
-      TangoCloudService, AuthService, theConstants) {
-
+    ["$scope", "spinner", "TangoCloudService", "AuthService", "theConstants", 
+     function ($scope, spinner, TangoCloudService, AuthService, theConstants) {
       var orgName;
       if (!(AuthService.isAdmin())) {
         orgName = AuthService.getUserOrgName();
@@ -60,21 +57,21 @@ define(
         $scope.serverChecked = false;
         $scope.instancesState = [];
 
-        spinner.start()
+        spinner.start();
         TangoCloudService.query(startTs, endTs).then(function () {
           console.log("Query of Tango Cloud is done");
           $scope.usages = TangoCloudService.getUsages(startTs, endTs, orgName);
           if (orgName) {
             var subTotals = angular.copy(TangoCloudService.getSubTotals(startTs, endTs, orgName));
-            $scope.grandTotal = oldUtil.spliceOne(subTotals, 'organisation', 'Grand');
+            $scope.grandTotal = oldUtil.spliceOne(subTotals, 'unit', 'Grand');
             $scope.subTotals = subTotals;
           } else {
             $scope.subTotals = TangoCloudService.getSubTotals(startTs, endTs);
             $scope.grandTotal = TangoCloudService.getGrandTotal(startTs, endTs);
           }
-          spinner.stop()
+          spinner.stop();
         }, function(reason) {
-          spinner.stop()
+          spinner.stop();
           console.error("Failed request, ", reason);
         });
       };

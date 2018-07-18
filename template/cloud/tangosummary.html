@@ -58,10 +58,10 @@
                             <td>{{ ::instance.managerName }}</td>
                             <td blank-safe="instance.managerEmail"></td>
                             <td>{{ ::instance.server }}</td>
-                            <td class="text-right"> {{ ::instance.avg_uptime | number:2 }}</td>
+                            <td class="text-right"> {{ ::instance.avgUptime | number:2 }}</td>
                             <td class="text-right"> {{ ::instance.core }}</td>
                             <td class="text-right"> {{ ::instance.ram }}</td>
-                            <td class="text-right"> ${{ ::instance.total_fee }}</td>
+                            <td class="text-right"> ${{ ::instance.totalFee | number:2 }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -74,17 +74,17 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="instance in subTotals | orderBy: 'organisation'">
-                            <td>{{ ::instance.organisation }}</td>
+                        <tr ng-repeat="instance in subTotals | orderBy: 'unit'">
+                            <td>{{ ::instance.unit }}</td>
                             <td class="text-right"> {{ ::instance.count }}</td>
-                            <td class="text-right"> ${{ ::instance.cost }}</td>
+                            <td class="text-right"> ${{ ::instance.cost | number:2 }}</td>
                         </tr>
                     </tbody>
                     <tfoot>
                         <tr ng-show="subTotals.length">
                             <td><strong>Grand Total</strong></td>
                             <td class="text-right"><strong>{{ grandTotal.count }}</strong></td>
-                            <td class="text-right"><strong>${{ grandTotal.cost }}</strong></td>
+                            <td class="text-right"><strong>${{ grandTotal.cost | number:2 }}</strong></td>
                         </tr>
                     </tfoot>
                 </table>
