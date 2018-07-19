@@ -1,0 +1,41 @@
+<div>
+  <div class="chart-title" ng-if="chartTitle">{{chartTitle}}</div>
+  <div dc-chart="compositeChart"
+    dc-name="'theChart'"
+    dc-width="$ctrl.elbcWidth"
+    dc-height="$ctrl.elbcHeight"
+    dc-x="d3.scale.ordinal()"
+    dc-x-units="dc.units.ordinal"
+    dc-brush-on="false"
+    dc-dimension="monthDimension"
+    dc-group="monthDimension.group()"
+    dc-render-horizontal-grid-lines="true"
+    dc-share-title="false"
+    dc-y-axis-label="$ctrl.elbcBarYAxisLabel"
+    dc-right-y-axis-label="$ctrl.elbcLineYAxisLabel"
+    dc-legend="legend"
+    dc-post-setup-chart="lineBarChartPostSetup"
+    class="ersa-chart">
+  </div>
+  <div ng-if="filter1Field"
+    dc-chart="selectMenu"
+    dc-name="'theFilter'"
+    dc-dimension="filter1Dimension"
+    dc-group="filter1Dimension.group()"
+    dc-multiple="true"
+    dc-number-visible="10"
+    dc-controls-use-visibility="true"
+    dc-prompt-text="allFilter1Label"
+    class="ersa-chart-filter">
+  </div>
+  <div ng-if="filter2Field"
+    dc-chart="selectMenu"
+    dc-dimension="filter2Dimension"
+    dc-group="filter2Dimension.group()"
+    dc-multiple="true"
+    dc-number-visible="10"
+    dc-controls-use-visibility="true"
+    dc-prompt-text="allFilter2Label"
+    class="ersa-chart-filter">
+  </div>
+</div>
