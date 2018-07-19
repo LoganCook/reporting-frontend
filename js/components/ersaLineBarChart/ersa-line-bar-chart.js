@@ -1,4 +1,4 @@
-define(['pageComponents', 'dc'], function (module, dc) {
+define(['pageComponents', 'dc', 'crossfilter2'], function (module, dc, crossfilter) {
   'use strict'
   var months = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
   module.component('ersaLineBarChart', {
