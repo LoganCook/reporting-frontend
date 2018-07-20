@@ -54,6 +54,17 @@ define(["menu-data"], function (menuAllData) {
       }
     }).state("calculator", {
       templateUrl: "template/calculator.html"
+    }).state("summary", {
+      url: "/summary",
+      templateUrl: "template/chart-demo.html",
+      controller: function($scope) {
+        $scope.thousandTickFn = function (v) { return (v / 1000) + 'k' };
+        $scope.terrabyteTickFn = function (v) { return (v / 1000) };
+        var url = sessionStorage['record'] + '/fee/summary/?start=1514727000&end=1517405399'
+        fetch(url).then(function(response) {
+          $scope.allServicesRecords = response.json();
+        });
+      }
     });
 
     var menuData = {};

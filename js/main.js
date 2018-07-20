@@ -7,7 +7,7 @@ require.config({
     "mathjs": '../lib/mathjs/dist/math.min',
     "moment": '../lib/moment/min/moment.min',
     "numeral": '../lib/numeral/min/numeral.min',
-    // 'angular': '../lib/angular/angular.min', // defined here again (already in index.html) for angularDc's require
+    'angular': '../lib/angular/angular.min', // defined here again (already in index.html) for angularDc's require
     'd3': '../lib/d3/d3.min',
     'crossfilter2': '../lib/crossfilter2/crossfilter.min',
     'dc': '../lib/dcjs/dc.min',
