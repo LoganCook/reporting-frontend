@@ -11,31 +11,38 @@ require.config({
     'd3': '../lib/d3/d3.min',
     'crossfilter2': '../lib/crossfilter2/crossfilter.min',
     'dc': '../lib/dcjs/dc.min',
-    'angularDc': '../lib/angular-dc/dist/angular-dc.min',
+    // 'angularDc': '../lib/angular-dc/dist/angular-dc.min',
     'qs': '../node_modules/qs/dist/qs',
     'pageComponents': 'components/pageComponents',
     'datePickers': 'components/datePickers/date-pickers',
     'datePickerUib': 'components/datePickerUib/date-picker-uib',
+    'ersaBarChart': 'components/barChart/bar-chart',
     'ersaTable': 'directives/ersaTable/ersa-table',
     'ersaTableSort': 'directives/ersaTableSort/ersa-table-sort',
     'ersaTableAddFilters': 'directives/ersaTableAddFilters/ersa-table-add-filters',
     'blankSafe': 'directives/blankSafe/blank-safe',
-    'userRollupErrors': 'components/userRollupErrors/user-rollup-errors',
-    'ersaLineBarChart': 'components/ersaLineBarChart/ersa-line-bar-chart',
-    'ersaStackedBarChart': 'components/ersaStackedBarChart/ersa-stacked-bar-chart'
+    'userRollupErrors': 'components/userRollupErrors/user-rollup-errors'
+    // 'userRollupErrors': 'components/userRollupErrors/user-rollup-errors',
+    // 'ersaLineBarChart': 'components/ersaLineBarChart/ersa-line-bar-chart',
+    // 'ersaStackedBarChart': 'components/ersaStackedBarChart/ersa-stacked-bar-chart'
   },
   baseUrl: 'js',
   shim: {
-      'angular': { // angular does not support AMD out of the box, put it in a shim
-        exports: 'angular'
-      },
-      'crossfilter2': {
-        exports: 'crossfilter'
-      }
-    },
-  map: {
-    'crossfilter': 'crossfilter2'
-  }
+    'angular': { // angular does not support AMD out of the box, put it in a shim
+      exports: 'angular'
+    }
+  },
+// shim: {
+  //     'angular': { // angular does not support AMD out of the box, put it in a shim
+  //       exports: 'angular'
+  //     },
+  //     'crossfilter2': {
+  //       exports: 'crossfilter'
+  //     }
+  //   },
+  // map: {
+  //   'crossfilter': 'crossfilter2'
+  // }
 });
 
 //TODO: May have seperated dev and production main.js files or gulp it?

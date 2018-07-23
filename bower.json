@@ -29,7 +29,7 @@
     "angular-spinner": "~0.8.1",
     "ng-table-to-csv": "^0.3.3",
     "angular-smart-table": "^2.1.8",
-    "angular-dc": "tomsaleeba/angular-dc#6ce872a91a029bdc8a3e9fdd1a436b3fa7d7d1dd"
+    "dcjs": ""
   },
   "devDependencies": {
     "angular-mocks": "~1.5"

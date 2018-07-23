@@ -1,10 +1,9 @@
 define(
-  ["client", "datePickers", "ersaTable", "ersaTableSort", "ersaTableAddFilters", "blankSafe", "userRollupErrors",
-   "d3", "crossfilter2", "dc", "angularDc", "ersaLineBarChart", "ersaStackedBarChart"],
+  ["client", "datePickers", "ersaTable", "ersaTableSort", "ersaTableAddFilters", "blankSafe", "userRollupErrors", "ersaBarChart"],
   function (clientConstructor) {
 
   var app = angular.module("reportingApp", ["ngSanitize", "ui.router", "ui.bootstrap", "ngResource",
-    "angularSpinner", "pageComponents", "ngTableToCsv", "smart-table", "angularDc"]);
+    "angularSpinner", "pageComponents", "ngTableToCsv", "smart-table"]);
   app.factory("reporting", ["$timeout", "queryResource", clientConstructor]);
   app
     // .config(['$resourceProvider', function ($resourceProvider) {
