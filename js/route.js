@@ -60,11 +60,15 @@ define(["menu-data"], function (menuAllData) {
       controller: function($scope, chartData) {
         $scope.thousandTickFn = function (v) { return (v / 1000) + 'k' };
         $scope.terrabyteTickFn = function (v) { return (v / 1000) };
+        chartData.forEach(function(d) {
+          d['month'] = new Date(d.start * 1000).getMonth() + 1;
+        });
+        console.log(chartData);
         $scope.allServicesRecords = chartData;
       },
       resolve: {
         chartData: function () {
-          var url = sessionStorage['record'] + '/fee/summary/?start=1514727000&end=1517405399';
+          var url = sessionStorage['record'] + '/fee/summary/?start=1451568600&end=1530368999';
           return fetch(url).then(function(response) {
             return response.json();
           });
