@@ -6,7 +6,7 @@ define(['pageComponents', 'dc', 'crossfilter2'], function (module, dc, crossfilt
     controller: ['$scope', controller],
     bindings: {
       // mandatory
-      esbcData: '=', // [{}]
+      esbcData: '<', // [{}]
       esbcYAxisLabel: '=', // string - label for Y axis
       esbcFilterField: '=', // string - name of field to filter on
       esbcValueField: '=', // string - name of field with value
@@ -18,10 +18,17 @@ define(['pageComponents', 'dc', 'crossfilter2'], function (module, dc, crossfilt
       esbcIsElasticY: '=', // boolean - default true
       esbcTitle: '=' // string - title for the chart
     }
-  })
-
+  });
   function controller ($scope) {
-    var records = $scope.$ctrl.esbcData
+    $scope.$ctrl.esbcData.then(function(data) {
+      console.log(data);
+      $scope.$ctrl.esbcData = data;
+      controller2($scope);
+    });
+  }
+
+  function controller2 ($scope) {
+    var records = $scope.$ctrl.esbcData;
     var filterField = $scope.$ctrl.esbcFilterField
     var valueField = $scope.$ctrl.esbcValueField
     $scope.allFilterLabel = $scope.$ctrl.esbcAllFilterLabel
@@ -95,8 +102,9 @@ define(['pageComponents', 'dc', 'crossfilter2'], function (module, dc, crossfilt
     }
     $scope.legend = dc.legend().x(70).y(10).itemHeight(13).gap(5)
   }
-})
+});
 
+// private function
 function getTopNFilterValues (ndx, n, filterDimension, valueField) {
   var values = filterDimension
     .group()

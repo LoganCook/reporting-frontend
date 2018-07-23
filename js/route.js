@@ -1,4 +1,9 @@
 define(["menu-data"], function (menuAllData) {
+  function getData(url) {
+    return fetch(url).then(response =>
+      response.json());
+  };
+
   return function ($stateProvider, $urlRouterProvider, AuthServiceProvider) {
     $urlRouterProvider.otherwise("/");
 
@@ -60,8 +65,13 @@ define(["menu-data"], function (menuAllData) {
       controller: function($scope) {
         $scope.thousandTickFn = function (v) { return (v / 1000) + 'k' };
         $scope.terrabyteTickFn = function (v) { return (v / 1000) };
-        var url = sessionStorage['record'] + '/fee/summary/?start=1514727000&end=1517405399'
+        var url = sessionStorage['record'] + '/fee/summary/?start=1514727000&end=1517405399';
+        // getData(url).then(data => {
+        //   console.log(data);
+        //   $scope.allServicesRecords = data;
+        // });
         fetch(url).then(function(response) {
+          console.log('to resolve');
           $scope.allServicesRecords = response.json();
         });
       }

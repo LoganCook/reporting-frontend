@@ -6,7 +6,7 @@ define(['pageComponents', 'dc', 'crossfilter2'], function (module, dc, crossfilt
     controller: ['$scope', controller],
     bindings: {
       // mandatory
-      elbcData: '=', // [{}]
+      elbcData: '<', // [{}]
       elbcBarYAxisLabel: '=', // string
       elbcBarFieldName: '=', // string
       elbcBarColour: '=', // string - can be name or hex
@@ -28,6 +28,14 @@ define(['pageComponents', 'dc', 'crossfilter2'], function (module, dc, crossfilt
   })
 
   function controller ($scope) {
+    $scope.$ctrl.elbcData.then(function(data) {
+      console.log(data);
+      $scope.$ctrl.elbcData = data;
+      controller2($scope);
+    });
+  }
+
+  function controller2 ($scope) {
     var records = $scope.$ctrl.elbcData
     $scope.allFilter1Label = $scope.$ctrl.elbcAllFilter1Label
     $scope.filter1Field = $scope.$ctrl.elbcFilter1FieldName
