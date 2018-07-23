@@ -36,7 +36,7 @@ define(['pageComponents', 'dc', 'crossfilter2'], function (module, dc, crossfilt
     $scope.chartTitle = $scope.$ctrl.elbcTitle
     var ndx = crossfilter(records)
     $scope.monthDimension = ndx.dimension(function (d) {
-      return d.month
+      return new Date(d.start).getMonth() + 1;
     })
     if ($scope.filter1Field) {
       $scope.filter1Dimension = ndx.dimension(function (d) {
