@@ -1,9 +1,4 @@
 define(["menu-data"], function (menuAllData) {
-  function getData(url) {
-    return fetch(url).then(response =>
-      response.json());
-  };
-
   return function ($stateProvider, $urlRouterProvider, AuthServiceProvider) {
     $urlRouterProvider.otherwise("/");
 
@@ -62,18 +57,18 @@ define(["menu-data"], function (menuAllData) {
     }).state("summary", {
       url: "/summary",
       templateUrl: "template/chart-demo.html",
-      controller: function($scope) {
+      controller: function($scope, chartData) {
         $scope.thousandTickFn = function (v) { return (v / 1000) + 'k' };
         $scope.terrabyteTickFn = function (v) { return (v / 1000) };
-        var url = sessionStorage['record'] + '/fee/summary/?start=1514727000&end=1517405399';
-        // getData(url).then(data => {
-        //   console.log(data);
-        //   $scope.allServicesRecords = data;
-        // });
-        fetch(url).then(function(response) {
-          console.log('to resolve');
-          $scope.allServicesRecords = response.json();
-        });
+        $scope.allServicesRecords = chartData;
+      },
+      resolve: {
+        chartData: function () {
+          var url = sessionStorage['record'] + '/fee/summary/?start=1514727000&end=1517405399';
+          return fetch(url).then(function(response) {
+            return response.json();
+          });
+        }
       }
     });
 

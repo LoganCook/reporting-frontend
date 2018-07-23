@@ -20,14 +20,6 @@ define(['pageComponents', 'dc', 'crossfilter2'], function (module, dc, crossfilt
     }
   });
   function controller ($scope) {
-    $scope.$ctrl.esbcData.then(function(data) {
-      console.log(data);
-      $scope.$ctrl.esbcData = data;
-      controller2($scope);
-    });
-  }
-
-  function controller2 ($scope) {
     var records = $scope.$ctrl.esbcData;
     var filterField = $scope.$ctrl.esbcFilterField
     var valueField = $scope.$ctrl.esbcValueField
