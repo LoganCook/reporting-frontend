@@ -7,10 +7,10 @@ require.config({
     "mathjs": '../lib/mathjs/dist/math.min',
     "moment": '../lib/moment/min/moment.min',
     "numeral": '../lib/numeral/min/numeral.min',
-    'angular': '../lib/angular/angular.min', // defined here again (already in index.html) for angularDc's require
-    'd3': '../lib/d3/d3.min',
-    'crossfilter2': '../lib/crossfilter2/crossfilter.min',
-    'dc': '../lib/dcjs/dc.min',
+    // 'angular': '../lib/angular/angular.min', // defined here again (already in index.html) for angularDc's require
+    // 'd3': '../lib/d3/d3.min',
+    // 'crossfilter2': '../lib/crossfilter2/crossfilter.min',
+    // 'dc': '../lib/dcjs/dc.min',
     // 'angularDc': '../lib/angular-dc/dist/angular-dc.min',
     'qs': '../node_modules/qs/dist/qs',
     'pageComponents': 'components/pageComponents',
@@ -26,12 +26,12 @@ require.config({
     // 'ersaLineBarChart': 'components/ersaLineBarChart/ersa-line-bar-chart',
     // 'ersaStackedBarChart': 'components/ersaStackedBarChart/ersa-stacked-bar-chart'
   },
-  baseUrl: 'js',
-  shim: {
-    'angular': { // angular does not support AMD out of the box, put it in a shim
-      exports: 'angular'
-    }
-  },
+  baseUrl: 'js' //,
+  // shim: {
+  //   'angular': { // angular does not support AMD out of the box, put it in a shim
+  //     exports: 'angular'
+  //   }
+  // },
 // shim: {
   //     'angular': { // angular does not support AMD out of the box, put it in a shim
   //       exports: 'angular'
