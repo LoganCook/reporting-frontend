@@ -77,7 +77,7 @@ define(['pageComponents'], function (module) {
           .group(accountFeeGroupSum, products[0], sel_stack(products[0]));
         for(var i = 1; i<products.length; ++i)
           chart.stack(accountFeeGroupSum, products[i], sel_stack(products[i]));
-        // chart.render();
+        chart.render();
         chart.on("renderlet", function (chart) {
           // rotate x-axis labels
           chart.selectAll('g.x text')
@@ -89,7 +89,7 @@ define(['pageComponents'], function (module) {
         .group(accountDimension.group())
         .numberVisible(10)
         .controlsUseVisibility(true);
-        dc.renderAll();
+        filterSelect.render();
       });
     },
     bindings: {
