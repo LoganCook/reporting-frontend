@@ -35,7 +35,10 @@ define(['pageComponents'], function (module) {
       var url = sessionStorage['record'] + '/fee/summary/?start=1451568600&end=1530368999';
       d3.json(url).then(function (fee) {
         var ndx = crossfilter(fee),
-          accountDimension = ndx.dimension(function (d) {
+        productDimension = ndx.dimension(function (d) {
+          return d.product;
+        }),
+        accountDimension = ndx.dimension(function (d) {
             return d.account;
           }),
           accountFeeGroup = accountDimension.group().reduceSum(function (d) {
@@ -85,8 +88,8 @@ define(['pageComponents'], function (module) {
         });
 
         var filterSelect = dc.selectMenu(anchorElement.select('.ersa-chart-filter'));
-        filterSelect.dimension(accountDimension)
-        .group(accountDimension.group())
+        filterSelect.dimension(productDimension)
+        .group(productDimension.group())
         .numberVisible(10)
         .controlsUseVisibility(true);
         filterSelect.render();
