@@ -67,7 +67,7 @@ define(['pageComponents'], function (module) {
 
         chart.width(1024)
           .height(480)
-          .x(d3.scaleOrdinal().domain(xTicks))
+          .x(d3.scaleBand().domain(xTicks))
           .xUnits(dc.units.ordinal)
           .elasticX(true)
           .brushOn(false)
@@ -78,16 +78,11 @@ define(['pageComponents'], function (module) {
         for(var i = 1; i<products.length; ++i)
           chart.stack(accountFeeGroupSum, products[i], sel_stack(products[i]));
         // chart.render();
-        /* For compatibility with d3v4+, dc.js d3.0 ordinal bar/line/bubble charts need d3.scaleBand() for the x scale,
-           instead of d3.scaleOrdinal(). Replacing .x() with a d3.scaleBand with the same domain - make the same change
-           in your code to avoid this warning! dc.js:969:16 chart.renderlet has been deprecated.  Please use chart.on("renderlet.<renderletKey>", renderletFunction)
-         */
-        chart.renderlet(function (chart) {
+        chart.on("renderlet", function (chart) {
           // rotate x-axis labels
           chart.selectAll('g.x text')
             .attr('transform', 'translate(-10,-100) rotate(-90)');
         });
-
 
         var filterSelect = dc.selectMenu(anchorElement.select('.ersa-chart-filter'));
         filterSelect.dimension(accountDimension)
