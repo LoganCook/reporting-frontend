@@ -1,4 +1,3 @@
-var ngxexposed; //FIXME: remove when done
 define(['pageComponents'], function (module) {
   'use strict';
 
@@ -35,8 +34,9 @@ define(['pageComponents'], function (module) {
         };
       }
 
+      // is there a way to convert current $element to d3 selector? then we don't need id
       var anchorElement = d3.select("#" + $element.attr('id'));
-      var chart = dc.barChart(anchorElement);
+      var chart = dc.barChart(anchorElement.select('.ersa-chart'));
 
       var url = sessionStorage['record'] + '/fee/summary/?start=1451568600&end=1530368999';
       d3.json(url).then(function (fee) {
@@ -63,19 +63,8 @@ define(['pageComponents'], function (module) {
         } else {
           dimensionGroup = dataDimension.group().reduceSum(function(d) {return d['totalAmount']});
         }
-        // var accountFeeGroupSum = accountDimension.group().reduce(function (p, v) {
-        //   p[v['product']] = (p[v['product']] || 0) + v['totalAmount'];
-        //   return p;
-        // }, function (p, v) {
-        //   p[v['product']] = (p[v['product']] || 0) - v['totalAmount'];
-        //   return p;
-        // }, function () {
-        //   return {};
-        // });
 
         var xTicks = getNames(dataDimension);
-
-        ngxexposed = ndx; //FIXME: remove when done
 
         chart.width(mainChartWidth)
           .height(mainChartHeight)
@@ -86,12 +75,12 @@ define(['pageComponents'], function (module) {
           .yAxisLabel("Fee")
           .elasticY(true)
           .xAxisLabel("Account")
-          .dimension(dataDimension)
-          .legend(dc.legend().x(70).y(10).itemHeight(13).gap(5));
+          .dimension(dataDimension);
         if (ctrl.ersaChartGroupKey) {
           let groups = unique(fee, ctrl.ersaChartGroupKey);
-          console.log(groups);
-          chart.group(dimensionGroup, groups[0], sel_stack(groups[0]));
+          chart.legend(dc.legend().x(70).y(10).itemHeight(13).gap(5))
+            .group(dimensionGroup, groups[0], sel_stack(groups[0]));
+
           for(let i = 1; i<groups.length; ++i) {
             chart.stack(dimensionGroup, groups[i], sel_stack(groups[i]));
           }
