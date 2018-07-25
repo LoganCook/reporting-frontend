@@ -20,10 +20,14 @@ define(['pageComponents'], function (module) {
   }
 
   module.component('ersaBarChart', {
+    // bar chart for displaying fees
     templateUrl: 'js/components/barChart/bar-chart.html',
     controller: function ChartController($scope, $element, $attrs) {
       let ctrl = this;
       let mainChartWidth = ctrl.ersaChartWidth || 780, mainChartHeight = ctrl.ersaChartHeight || 480;
+      if (angular.isUndefined(ctrl.ersaChartDimensionKey)) {
+        throw new Error('Missing ersa-chart-dimension-key');
+      }
 
       function sel_stack(valueKey) {
         return function (d) {
@@ -37,38 +41,41 @@ define(['pageComponents'], function (module) {
       var url = sessionStorage['record'] + '/fee/summary/?start=1451568600&end=1530368999';
       d3.json(url).then(function (fee) {
         var ndx = crossfilter(fee),
-        productDimension = ndx.dimension(function (d) {
-          return d.product;
-        }),
-        accountDimension = ndx.dimension(function (d) {
-            return d.account;
+          productDimension = ndx.dimension(function (d) {
+            return d.product;
           }),
-          accountFeeGroup = accountDimension.group().reduceSum(function (d) {
-            return d.totalAmount;
-          }),
-          unitDimension = ndx.dimension(function (d) {
-            return d.unit;
-          }),
-          unitFeeGroup = unitDimension.group().reduceSum(function (d) {
-            return d.totalAmount;
+          dataDimension = ndx.dimension(function (d) {
+              return d[ctrl.ersaChartDimensionKey];
           });
 
-        var accountFeeGroupSum = accountDimension.group().reduce(function (p, v) {
-          p[v['product']] = (p[v['product']] || 0) + v['totalAmount'];
-          return p;
-        }, function (p, v) {
-          p[v['product']] = (p[v['product']] || 0) - v['totalAmount'];
-          return p;
-        }, function () {
-          return {};
-        });
+        let dimensionGroup;
+        if (ctrl.ersaChartGroupKey) {
+          // this is a stacked bar chart
+          dimensionGroup = dataDimension.group().reduce(function (p, v) {
+            p[v[ctrl.ersaChartGroupKey]] = (p[v[ctrl.ersaChartGroupKey]] || 0) + v['totalAmount'];
+            return p;
+          }, function (p, v) {
+            p[v[ctrl.ersaChartGroupKey]] = (p[v[ctrl.ersaChartGroupKey]] || 0) - v['totalAmount'];
+            return p;
+          }, function () {
+            return {};
+          });
+        } else {
+          dimensionGroup = dataDimension.group().reduceSum(function(d) {return d['totalAmount']});
+        }
+        // var accountFeeGroupSum = accountDimension.group().reduce(function (p, v) {
+        //   p[v['product']] = (p[v['product']] || 0) + v['totalAmount'];
+        //   return p;
+        // }, function (p, v) {
+        //   p[v['product']] = (p[v['product']] || 0) - v['totalAmount'];
+        //   return p;
+        // }, function () {
+        //   return {};
+        // });
 
-        var xTicks = getNames(accountDimension);
+        var xTicks = getNames(dataDimension);
 
         ngxexposed = ndx; //FIXME: remove when done
-
-        var products = unique(fee, 'product');
-        console.log(products);
 
         chart.width(mainChartWidth)
           .height(mainChartHeight)
@@ -79,11 +86,24 @@ define(['pageComponents'], function (module) {
           .yAxisLabel("Fee")
           .elasticY(true)
           .xAxisLabel("Account")
-          .dimension(accountDimension)
-          .group(accountFeeGroupSum, products[0], sel_stack(products[0]))
+          .dimension(dataDimension)
           .legend(dc.legend().x(70).y(10).itemHeight(13).gap(5));
-        for(var i = 1; i<products.length; ++i)
-          chart.stack(accountFeeGroupSum, products[i], sel_stack(products[i]));
+        if (ctrl.ersaChartGroupKey) {
+          let groups = unique(fee, ctrl.ersaChartGroupKey);
+          console.log(groups);
+          chart.group(dimensionGroup, groups[0], sel_stack(groups[0]));
+          for(let i = 1; i<groups.length; ++i) {
+            chart.stack(dimensionGroup, groups[i], sel_stack(groups[i]));
+          }
+          let filterSelect = dc.selectMenu(anchorElement.select('.ersa-chart-filter'));
+          filterSelect.dimension(productDimension)
+            .group(productDimension.group())
+            .numberVisible(10)
+            .controlsUseVisibility(true);
+          filterSelect.render();
+        } else {
+          chart.group(dimensionGroup);
+        }
         chart.render();
         chart.on("renderlet", function (chart) {
           // rotate x-axis labels
@@ -91,18 +111,14 @@ define(['pageComponents'], function (module) {
             .attr('transform', 'translate(-10,-100) rotate(-90)');
         });
 
-        var filterSelect = dc.selectMenu(anchorElement.select('.ersa-chart-filter'));
-        filterSelect.dimension(productDimension)
-        .group(productDimension.group())
-        .numberVisible(10)
-        .controlsUseVisibility(true);
-        filterSelect.render();
       });
     },
     bindings: {
       ersaChartTitle: '@',
       ersaChartHeight: '<',
-      ersaChartWidth: '<'
+      ersaChartWidth: '<',
+      ersaChartDimensionKey: '@',
+      ersaChartGroupKey: '@'
     }
   });
 });

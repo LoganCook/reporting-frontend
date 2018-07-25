@@ -5,8 +5,15 @@
 </style>
 
 <div class="container">
-  <ersa-bar-chart chart-title="demo is here to shown" id="chart1">
-  </ersa-bar-chart>
+  <ersa-bar-chart id="chart1"
+    ersa-chart-title="demo is here to shown"
+    ersa-chart-height="500"
+    ersa-chart-dimension-key="account"
+    ersa-chart-group-key="product"></ersa-bar-chart>
+  <ersa-bar-chart id="chart2"
+    ersa-chart-title="bar chart"
+    ersa-chart-height="500"
+    ersa-chart-dimension-key="account"></ersa-bar-chart>
   <h1 class="text-center">Demo for issue 56 - chart widgets</h1>
   <ersa-line-bar-chart
     elbc-data="allServicesRecords"
