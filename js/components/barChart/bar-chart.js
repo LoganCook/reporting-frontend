@@ -80,7 +80,8 @@ define(['pageComponents'], function (module) {
           .elasticY(true)
           .xAxisLabel("Account")
           .dimension(accountDimension)
-          .group(accountFeeGroupSum, products[0], sel_stack(products[0]));
+          .group(accountFeeGroupSum, products[0], sel_stack(products[0]))
+          .legend(dc.legend().x(70).y(10).itemHeight(13).gap(5));
         for(var i = 1; i<products.length; ++i)
           chart.stack(accountFeeGroupSum, products[i], sel_stack(products[i]));
         chart.render();
