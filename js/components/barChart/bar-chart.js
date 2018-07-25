@@ -22,6 +22,8 @@ define(['pageComponents'], function (module) {
   module.component('ersaBarChart', {
     templateUrl: 'js/components/barChart/bar-chart.html',
     controller: function ChartController($scope, $element, $attrs) {
+      let ctrl = this;
+      let mainChartWidth = ctrl.ersaChartWidth || 780, mainChartHeight = ctrl.ersaChartHeight || 480;
 
       function sel_stack(valueKey) {
         return function (d) {
@@ -68,13 +70,14 @@ define(['pageComponents'], function (module) {
         var products = unique(fee, 'product');
         console.log(products);
 
-        chart.width(1024)
-          .height(480)
+        chart.width(mainChartWidth)
+          .height(mainChartHeight)
           .x(d3.scaleBand().domain(xTicks))
           .xUnits(dc.units.ordinal)
           .elasticX(true)
           .brushOn(false)
           .yAxisLabel("Fee")
+          .elasticY(true)
           .xAxisLabel("Account")
           .dimension(accountDimension)
           .group(accountFeeGroupSum, products[0], sel_stack(products[0]));
@@ -96,7 +99,9 @@ define(['pageComponents'], function (module) {
       });
     },
     bindings: {
-      chartTitle: '@'
+      ersaChartTitle: '@',
+      ersaChartHeight: '<',
+      ersaChartWidth: '<'
     }
   });
 });
