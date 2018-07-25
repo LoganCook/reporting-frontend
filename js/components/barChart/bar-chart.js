@@ -29,8 +29,9 @@ define(['pageComponents'], function (module) {
         };
       }
 
-      var elementId = $element.attr('id');
-      var chart = dc.barChart("#" + elementId);
+      var anchorElement = d3.select("#" + $element.attr('id'));
+      var chart = dc.barChart(anchorElement);
+
       var url = sessionStorage['record'] + '/fee/summary/?start=1451568600&end=1530368999';
       d3.json(url).then(function (fee) {
         var ndx = crossfilter(fee),
@@ -76,12 +77,24 @@ define(['pageComponents'], function (module) {
           .group(accountFeeGroupSum, products[0], sel_stack(products[0]));
         for(var i = 1; i<products.length; ++i)
           chart.stack(accountFeeGroupSum, products[i], sel_stack(products[i]));
-        chart.render();
+        // chart.render();
+        /* For compatibility with d3v4+, dc.js d3.0 ordinal bar/line/bubble charts need d3.scaleBand() for the x scale,
+           instead of d3.scaleOrdinal(). Replacing .x() with a d3.scaleBand with the same domain - make the same change
+           in your code to avoid this warning! dc.js:969:16 chart.renderlet has been deprecated.  Please use chart.on("renderlet.<renderletKey>", renderletFunction)
+         */
         chart.renderlet(function (chart) {
           // rotate x-axis labels
           chart.selectAll('g.x text')
             .attr('transform', 'translate(-10,-100) rotate(-90)');
         });
+
+
+        var filterSelect = dc.selectMenu(anchorElement.select('.ersa-chart-filter'));
+        filterSelect.dimension(accountDimension)
+        .group(accountDimension.group())
+        .numberVisible(10)
+        .controlsUseVisibility(true);
+        dc.renderAll();
       });
     },
     bindings: {
