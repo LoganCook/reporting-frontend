@@ -63,7 +63,7 @@ define(["menu-data"], function (menuAllData) {
         chartData.forEach(function(d) {
           d['month'] = new Date(d.start * 1000).getMonth() + 1;
         });
-        console.log(chartData);
+        // console.log(chartData);
         $scope.allServicesRecords = chartData;
       },
       resolve: {

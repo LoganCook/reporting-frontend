@@ -1,3 +1,4 @@
+/*global d3:true dc:true crossfilter:true*/
 define(['pageComponents'], function (module) {
   'use strict';
 
@@ -18,6 +19,12 @@ define(['pageComponents'], function (module) {
     return uniques;
   }
 
+  function selectStack(valueKey) {
+    return function (d) {
+      return d.value[valueKey];
+    };
+  }
+
   module.component('ersaBarChart', {
     // bar chart for displaying fees
     templateUrl: 'js/components/barChart/bar-chart.html',
@@ -27,11 +34,10 @@ define(['pageComponents'], function (module) {
       if (angular.isUndefined(ctrl.ersaChartDimensionKey)) {
         throw new Error('Missing ersa-chart-dimension-key');
       }
-
-      function sel_stack(valueKey) {
-        return function (d) {
-          return d.value[valueKey];
-        };
+      const chartXTypes = ['ordinal', 'datetime'];
+      let chartXType = ctrl.ersaChartXType || 'ordinal';  // either datetime or ordinal
+      if (chartXTypes.indexOf(chartXType) == -1) {
+        throw new Error(chartXType + ': not supported x axis type, has to be one of "ordinal", "datetime"');
       }
 
       // is there a way to convert current $element to d3 selector? then we don't need id
@@ -40,15 +46,25 @@ define(['pageComponents'], function (module) {
 
       var url = sessionStorage['record'] + '/fee/summary/?start=1451568600&end=1530368999';
       d3.json(url).then(function (fee) {
-        var ndx = crossfilter(fee),
-          productDimension = ndx.dimension(function (d) {
-            return d.product;
-          }),
+        fee.forEach(function(d) {
+          d['startDate'] = new Date(d['start'] * 1000);
+        });
+        let ndx = crossfilter(fee), dataDimension, dimensionGroup;
+        let productDimension = ndx.dimension(function (d) { return d.product; });
+
+        if (chartXType === 'ordinal') { // ordinal dimension
           dataDimension = ndx.dimension(function (d) {
               return d[ctrl.ersaChartDimensionKey];
           });
+          chart.x(d3.scaleBand().domain(getNames(dataDimension)))
+            .xUnits(dc.units.ordinal)
+            .xAxisLabel(ctrl.ersaChartDimensionKey.charAt(0).toUpperCase() + ctrl.ersaChartDimensionKey.substr(1));
+        } else { // datetime dimension
+          dataDimension = ndx.dimension(function(d) {return d3.timeMonth(d['startDate']);});
+          chart.x(d3.scaleTime())
+            .xUnits(d3.timeMonths).xAxisLabel("Date");
+        }
 
-        let dimensionGroup;
         if (ctrl.ersaChartGroupKey) {
           // this is a stacked bar chart
           dimensionGroup = dataDimension.group().reduce(function (p, v) {
@@ -61,28 +77,23 @@ define(['pageComponents'], function (module) {
             return {};
           });
         } else {
-          dimensionGroup = dataDimension.group().reduceSum(function(d) {return d['totalAmount']});
+          dimensionGroup = dataDimension.group().reduceSum(function(d) {return d['totalAmount'];});
         }
-
-        var xTicks = getNames(dataDimension);
 
         chart.width(mainChartWidth)
           .height(mainChartHeight)
-          .x(d3.scaleBand().domain(xTicks))
-          .xUnits(dc.units.ordinal)
           .elasticX(true)
           .brushOn(false)
           .yAxisLabel("Fee")
           .elasticY(true)
-          .xAxisLabel("Account")
           .dimension(dataDimension);
         if (ctrl.ersaChartGroupKey) {
           let groups = unique(fee, ctrl.ersaChartGroupKey);
           chart.legend(dc.legend().x(70).y(10).itemHeight(13).gap(5))
-            .group(dimensionGroup, groups[0], sel_stack(groups[0]));
+            .group(dimensionGroup, groups[0], selectStack(groups[0]));
 
-          for(let i = 1; i<groups.length; ++i) {
-            chart.stack(dimensionGroup, groups[i], sel_stack(groups[i]));
+          for (let i = 1; i < groups.length; ++i) {
+            chart.stack(dimensionGroup, groups[i], selectStack(groups[i]));
           }
           let filterSelect = dc.selectMenu(anchorElement.select('.ersa-chart-filter'));
           filterSelect.dimension(productDimension)
@@ -94,20 +105,20 @@ define(['pageComponents'], function (module) {
           chart.group(dimensionGroup);
         }
         chart.render();
-        chart.on("renderlet", function (chart) {
+        chart.on("renderlet", function (chartObj) {
           // rotate x-axis labels
-          chart.selectAll('g.x text')
+          chartObj.selectAll('g.x text')
             .attr('transform', 'translate(-10,-100) rotate(-90)');
         });
-
       });
     },
     bindings: {
+      ersaChartDimensionKey: '@',  // required
       ersaChartTitle: '@',
       ersaChartHeight: '<',
       ersaChartWidth: '<',
-      ersaChartDimensionKey: '@',
-      ersaChartGroupKey: '@'
+      ersaChartGroupKey: '@',
+      ersaChartXType: '@'
     }
   });
 });
