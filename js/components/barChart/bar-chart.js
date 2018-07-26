@@ -109,11 +109,13 @@ define(['pageComponents'], function (module) {
         chart.margins().left += 15;
 
         chart.render();
-        chart.on("renderlet", function (chartObj) {
-          // rotate x-axis labels
-          chartObj.selectAll('g.x text')
-            .attr('transform', 'translate(-10,-100) rotate(-90)');
-        });
+        if (chartXType === 'ordinal') {
+          chart.on("renderlet", function (chartObj) {
+            // rotate x-axis labels, this certainly depends font size
+            chartObj.selectAll('g.x text')
+              .attr('transform', 'translate(-15,-150) rotate(-90)');
+          });
+        }
       });
     },
     bindings: {
