@@ -104,6 +104,10 @@ define(['pageComponents'], function (module) {
         } else {
           chart.group(dimensionGroup);
         }
+
+        chart.yAxis().tickFormat(d3.format('.3s'));
+        chart.margins().left += 15;
+
         chart.render();
         chart.on("renderlet", function (chartObj) {
           // rotate x-axis labels
