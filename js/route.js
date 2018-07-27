@@ -56,23 +56,21 @@ define(["menu-data"], function (menuAllData) {
       templateUrl: "template/calculator.html"
     }).state("summary", {
       url: "/summary",
-      templateUrl: "template/chart-demo.html",
-      controller: function($scope, chartData) {
-        $scope.thousandTickFn = function (v) { return (v / 1000) + 'k' };
-        $scope.terrabyteTickFn = function (v) { return (v / 1000) };
-        chartData.forEach(function(d) {
-          d['month'] = new Date(d.start * 1000).getMonth() + 1;
-        });
-        // console.log(chartData);
-        $scope.allServicesRecords = chartData;
-      },
       resolve: {
         chartData: function () {
+          // TODO: make a default time window query: e.g. 2 years from today
           var url = sessionStorage['record'] + '/fee/summary/?start=1451568600&end=1530368999';
           return fetch(url).then(function(response) {
             return response.json();
           });
         }
+      },
+      templateUrl: "template/chart-demo.html",
+      controller: function($scope, chartData) {
+        chartData.forEach(function(d) {
+          d['startDate'] = new Date(d['start'] * 1000);
+        });
+        $scope.chartData = chartData;
       }
     });
 
