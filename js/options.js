@@ -27,7 +27,15 @@ define({
     }
   },
   "hpchome": {
-    "price": 5
+    "comment": "Hpchome has been drafted as a product: HPC home storage,\
+                but frontend does not use it. \
+                And it is absorbed into Slurm (Tango Compute) from \
+                2018 July",
+    "price": 5,
+    "lastReportMonth": {
+      "date": new Date(2018, 5, 30),
+      "message": "From July 2018, HPC home is charged as part of Tango Compute"
+    }
   },
   "product-composition": {
     "tangocloudvm": {

@@ -1,6 +1,7 @@
 var HOURSAYEAR = 8760;  // 24 * 365
 
-define(['app', '../util', 'services/contract', '../options', 'lodash', './slurm-rollup', 'services/fee-overrider'], function(app, util, contract, options, _, rollup, overrider) {
+define(['app', '../util', 'services/contract', '../options', 'lodash', './slurm-rollup', 'services/fee-overrider'],
+       function(app, util, contract, options, _, rollup, overrider) {
   'use strict';
 
   /**
@@ -69,6 +70,16 @@ define(['app', '../util', 'services/contract', '../options', 'lodash', './slurm-
       }
     }
 
+    function addStorageCost(startTs) {
+      // from the date set in options['hpchome']['lastReportMonth']['date'], every slurm user
+      // will be charged extra of options['hpchome']['price'] for hpchome
+      let startDate = new Date(startTs * 1000);
+      if ('lastReportMonth' in options['hpchome'] && startDate > options['hpchome']['lastReportMonth']['date']) {
+        return options['hpchome']['price'];
+      }
+      return 0;
+    }
+
     return {
       query: function (startTs, endTs) {
         var deferred = $q.defer(),
@@ -89,11 +100,13 @@ define(['app', '../util', 'services/contract', '../options', 'lodash', './slurm-
                   if (queueExcluded.indexOf(entry['partition']) == -1 ) {
                     angular.extend(entry, contracts[username]);
                     if (feeOverrider && username in feeOverrider) {
-                      console.warn("slurm: fee has been overriden for", username, "as", feeOverrider[username], "between", startTs, endTs);
+                      console.warn("slurm: fee has been overridden for", username, "as", feeOverrider[username], "between", startTs, endTs);
                       entry['cost'] = feeOverrider[username];
                     } else {
                       entry['cost'] = entry['hours'] * entry['unitPrice'];
                     }
+                    // if there are more than one partitions, a method to avoid duplicates will be needed
+                    entry['cost'] += addStorageCost(startTs);
                     subtotal(entry, totals[searchHash]);
                   }
                 }

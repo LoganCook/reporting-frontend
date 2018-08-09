@@ -59,15 +59,16 @@ define(["app", '../options', "lodash", "mathjs", "../util", 'services/xfs'], fun
       $scope.loggedInAsErsaUser = true;
 
       $scope.rangeStart = new Date();
-      $scope.rangeEnd = new Date();
+      $scope.rangeEnd = options['hpchome']['lastReportMonth']['date'];
       $scope.rangeEndOpen = false;
       $scope.openRangeEnd = function () {
         $scope.rangeEndOpen = true;
       };
-      $scope.datepickerOptions = {minMode: 'month'}
+      $scope.datepickerOptions = {minMode: 'month'};
 
       // Request XFS data with query string.
       $scope.load = function () {
+        if (XFSService.isLastReportMonth($scope.rangeEnd, options['hpchome']['lastReportMonth'])) return;
         clear();
 
         $scope.rangeStart = util.firstDayOfYearAndMonth($scope.rangeEnd);
@@ -92,8 +93,8 @@ define(["app", '../options', "lodash", "mathjs", "../util", 'services/xfs'], fun
               spinner.stop();
             });
         }, function(reason) {
-          console.error("Failed to retrieve XFS data: " + reason)
-          spinner.stop()
+          console.error("Failed to retrieve XFS data: " + reason);
+          spinner.stop();
         });
       };
 

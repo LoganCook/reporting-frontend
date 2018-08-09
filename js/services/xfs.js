@@ -204,6 +204,21 @@ define(['app', '../util', 'services/contract', 'properties'], function (app, uti
     }
 
     return {
+      isLastReportMonth: function (currentDate, lastMonth) {
+      /**
+       * * @description
+       * check if currentDate is beyond the set last report month
+       *
+       * @property {Date} currentDate
+       * @property {Object} lastMonth   object has date and message keys
+       * @returns {boolean} true if currentDate is beyond last report month
+       */
+        if (currentDate > lastMonth['date']) {
+          alert(lastMonth['message']);
+          return true;
+        }
+        return false;
+      },
       loadPrice: function loadPrice(price) {
         // This is a special fix for HPC home storage by loading price from options
         // See comment at the top of the file

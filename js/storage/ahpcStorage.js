@@ -56,19 +56,20 @@ define(
       $scope.loggedInAsErsaUser = true;
 
       $scope.rangeStart = new Date();
-      $scope.rangeEnd = new Date();
+      $scope.rangeEnd = options['hpchome']['lastReportMonth']['date'];
       $scope.rangeEndOpen = false;
       $scope.openRangeEnd = function () {
         $scope.rangeEndOpen = true;
       };
-      $scope.datepickerOptions = {minMode: 'month'}
-      $scope.orderBySubTotalLast = theConstants.orderBySubTotalLast
-      $scope.isSubTotalRow = theConstants.isSubTotalRow
-      $scope.isFilterApplied = theConstants.isFilterApplied
-      $scope.orderByNCols = theConstants.orderByNCols
-      $scope.orderBy = theConstants.orderByPredicateThenSubTotal
+      $scope.datepickerOptions = {minMode: 'month'};
+      $scope.orderBySubTotalLast = theConstants.orderBySubTotalLast;
+      $scope.isSubTotalRow = theConstants.isSubTotalRow;
+      $scope.isFilterApplied = theConstants.isFilterApplied;
+      $scope.orderByNCols = theConstants.orderByNCols;
+      $scope.orderBy = theConstants.orderByPredicateThenSubTotal;
 
       $scope.load = function () {
+        if (XFSService.isLastReportMonth($scope.rangeEnd, options['hpchome']['lastReportMonth'])) return;
         clear();
 
         $scope.rangeStart = util.firstDayOfYearAndMonth($scope.rangeEnd);
@@ -88,12 +89,12 @@ define(
               $scope.total = XFSService.getGrandTotals(filesysteId, startTs, endTs);
               spinner.stop();
             }, function(reason) {
-              alert('Failed to retrieve XFS data: ' + reason)
-              spinner.stop()
-            })
+              alert('Failed to retrieve XFS data: ' + reason);
+              spinner.stop();
+            });
         }, function(reason) {
-          alert('Failed to retrieve XFS data: ' + reason)
-          spinner.stop()
+          alert('Failed to retrieve XFS data: ' + reason);
+          spinner.stop();
         });
       };
 
