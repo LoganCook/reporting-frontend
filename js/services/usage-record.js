@@ -2,7 +2,7 @@ define(['../util'], function (util) {
   'use strict';
 
   function Usages($q, queryResource, userEmail, source, statisticsFields) {
-    /** 
+    /**
      * factory function for creating an instance to query, search usage data from a record source
      *  @param {[]} statisticsFields - A list of fields will be added up for statistics purpose
      */
@@ -20,7 +20,8 @@ define(['../util'], function (util) {
     function summary(startTs, endTs) {
       var nq = queryResource.build(sessionStorage['record']);
       var args = {
-        object: '/usage/' + source + '/',
+        object: 'usage',
+        id: source + '/',
         email: userEmail,
         start: startTs,
         end: endTs
