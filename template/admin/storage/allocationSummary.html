@@ -59,8 +59,8 @@
         <thead>
             <tr ersa-table-add-filters>
                 <th cell-ratio="7" ersa-table-sort="type">Source</th>
-                <th cell-ratio="7" ersa-table-sort="orderline_id">Allocation Name</th>
-                <th cell-ratio="10" ersa-table-sort="orderByTwoCols('account','orderline_id')" st-sort-default="true">Organisation</th>
+                <th cell-ratio="7" ersa-table-sort="no">Allocation Name</th>
+                <th cell-ratio="10" ersa-table-sort="orderByTwoCols('account','no')" st-sort-default="true">Organisation</th>
                 <th cell-ratio="10" ersa-table-sort="unit">School</th>
                 <th cell-ratio="10" ersa-table-sort="managerName">User Name</th>
                 <th cell-ratio="15" ersa-table-sort="managerEmail">Email</th>
@@ -74,7 +74,7 @@
         <tbody>
             <tr ng-repeat="usage in displayedUsagesRows" class="animated fadeIn">
                 <td cell-ratio="7">{{::usage.type}}</td>
-                <td cell-ratio="7" class="text-warning">To be replaced by order_id {{ ::usage.orderline_id }}</td>
+                <td cell-ratio="7">{{ ::usage.no }}</td>
                 <td cell-ratio="10" blank-safe="usage.account"></td>
                 <td cell-ratio="10" blank-safe="usage.unit"></td>
                 <td cell-ratio="10" blank-safe="usage.managerName"></td>
@@ -101,8 +101,8 @@
         st-table="displayedRollupRows" st-safe-src="rollup" ersa-table="national-storage.rollup">
         <thead>
             <tr ersa-table-add-filters>
-                <th cell-ratio="7" ersa-table-sort="orderline_id">Allocation Name</th>
-                <th cell-ratio="13" ersa-table-sort="orderByTwoCols('account','orderline_id')" st-sort-default="true">Organisation</th>
+                <th cell-ratio="7" ersa-table-sort="no">Allocation Name</th>
+                <th cell-ratio="13" ersa-table-sort="orderByTwoCols('account','no')" st-sort-default="true">Organisation</th>
                 <th cell-ratio="14" ersa-table-sort="unit">School</th>
                 <th cell-ratio="10" ersa-table-sort="managerName">User Name</th>
                 <th cell-ratio="15" ersa-table-sort="managerEmail">Email</th>
@@ -115,7 +115,7 @@
         </thead>
         <tbody>
             <tr ng-repeat="usage in displayedRollupRows" class="animated fadeIn">
-                <td cell-ratio="7" class="text-warning">To be replaced by order_id {{ ::usage.orderline_id }}</td>
+                <td cell-ratio="7">{{ ::usage.no }}</td>
                 <td cell-ratio="13" blank-safe="usage.account"></td>
                 <td cell-ratio="14" blank-safe="usage.unit"></td>
                 <td cell-ratio="10" blank-safe="usage.managerName"></td>
