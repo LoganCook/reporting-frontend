@@ -1,6 +1,6 @@
 define(
-  ["client", "datePickers", "ersaTable", "ersaTableSort", "ersaTableAddFilters", "blankSafe", "userRollupErrors"],
-  function (clientConstructor) {
+  ["client", "util", "datePickers", "ersaTable", "ersaTableSort", "ersaTableAddFilters", "blankSafe", "userRollupErrors"],
+  function (clientConstructor, util) {
 
   var app = angular.module("reportingApp", ["ngSanitize", "ui.router", "ui.bootstrap", "ngResource",
     "angularSpinner", "pageComponents", "ngTableToCsv", "smart-table"]);
@@ -75,63 +75,11 @@ define(
           $scope.buttonClassName = $attrs.buttonClass;
         }
 
-
-        /**
-         * start Util fuctions
-         */
-        var getSearchDateFilter = function (scope) {
-
-          if (scope.rangeStart > scope.rangeEnd) {
-            scope.alerts.push({
-              type: 'danger',
-              msg: "Date options is invalid!"
-            });
-            return '';
-          }
-
-          var rangeStartEpoch = dayStart(scope.rangeStart);
-          var rangeEndEpoch = dayEnd(scope.rangeEnd);
-          var filter = {
-            filter: [
-              "end.ge." + rangeStartEpoch,
-              "end.lt." + rangeEndEpoch
-            ]
-          };
-          return filter;
-        };
-
-        // FIXME: are there any differences between dayStart and dayEnd here and those in util.js?
-        var dayStart = function (ts) {
-          var modified = new Date(ts);
-
-          modified.setHours(0);
-          modified.setMinutes(0);
-          modified.setSeconds(0);
-          modified.setMilliseconds(0);
-
-          return Math.round(modified.getTime() / 1000);
-        };
-
-        var dayEnd = function (ts) {
-          var modified = new Date(ts);
-
-          modified.setHours(23);
-          modified.setMinutes(59);
-          modified.setSeconds(59);
-          modified.setMilliseconds(999);
-
-          return Math.round(modified.getTime() / 1000);
-        };
-
-        /**
-         * end Util fuctions
-         */
-
         /**
          * Wrapping functions
          */
         $scope._load = function () {
-          var rangeEpochFilter = getSearchDateFilter($scope);
+          var rangeEpochFilter = util.getSearchDateFilter($scope);
           if (rangeEpochFilter == '') {
             return;
           }
