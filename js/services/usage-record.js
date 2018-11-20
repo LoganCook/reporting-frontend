@@ -10,7 +10,7 @@ define(['../util'], function (util) {
     // both summaries and totals has searchHash as the first key
     // summaries: usage data with extended user information
     var summaries = {}, totals = {}, grandTotals = {};
-    var SUMMATION_DEFAULT = { cost : 0, count: 0 };
+    var SUMMATION_DEFAULT = { cost : 0, count: 0, blocks: 0 };
     statisticsFields.forEach(element => {
       SUMMATION_DEFAULT[element] = 0;
     });
@@ -26,7 +26,8 @@ define(['../util'], function (util) {
         start: startTs,
         end: endTs
       };
-      return nq.queryNoHeader(args).$promise;
+      // return nq.queryNoHeader(args).$promise;
+      return nq.query(args).$promise;
     }
 
     // {
@@ -79,6 +80,11 @@ define(['../util'], function (util) {
       saveTo[level1]['Grand']['count'] += 1;
       saveTo['Grand']['count'] += 1;
 
+      // blocks: used for storage allocation only
+      saveTo[level1][level2]['blocks'] += 1;
+      saveTo[level1]['Grand']['blocks'] += 1;
+      saveTo['Grand']['blocks'] += 1;
+
       add(entry, saveTo[level1][level2]);
       add(entry, saveTo[level1]['Grand']);
       add(entry, saveTo['Grand']);
@@ -128,9 +134,16 @@ define(['../util'], function (util) {
         }
       },
       getSubTotals: function getSubTotals(startTs, endTs, orgName) {
+        console.log("subtotals", totals);
         return util.rearrange(util.getCached(totals, [startTs, endTs], orgName));
       },
       getGrandTotal: function getTotal(startTs, endTs) {
+        var result = util.getCached(grandTotals, [startTs, endTs]);
+
+        console.log("getting grand total", startTs, endTs, result);
+
+
+
         // only for admin view
         return util.getCached(grandTotals, [startTs, endTs]);
       }

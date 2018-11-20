@@ -47,6 +47,7 @@ define(
             $scope.userRollupErrorData = SlurmService.getUserRollupErrorData(startTs, endTs);
             $scope.subTotals = SlurmService.getSubTotals(startTs, endTs);
             $scope.grandTotal = SlurmService.getGrandTotal(startTs, endTs);
+            console.log($scope.jobCounts);
           }
           spinner.stop();
         }, function (reason) {

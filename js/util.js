@@ -39,6 +39,10 @@ define(["filesize", "mathjs", "moment", "numeral", "lodash"], function (filesize
       return numeral(i).format("0,0");
     },
 
+    formatNumberCeil: function (i) {
+      return this.formatNumber(Math.ceil(i));
+    },
+
     formatDuration: function (t, unit) {
       return moment.duration(t, unit).humanize();
     },

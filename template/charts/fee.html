@@ -1,0 +1,39 @@
+<style>
+  .chart-block div {
+    margin-top: 4em;
+  }
+</style>
+
+<div class="container">
+  <p>These are the graphs for users to look at...</p>
+
+  Time filter:
+  <select ng-model="time" ng-change="changeTime()">
+    <option value="all-time">All time</option>
+    <option value="last-month">Last month</option>
+    <option value="last-6-months">Last 6 months</option>
+    <option value="2018">2018</option>
+    <option value="2017">2017</option>
+    <option value="2016">2016</option>
+  </select>
+  <ersa-bar-chart
+    id="chart4"
+    ersa-chart-data="chartData"
+    ersa-chart-title="Account Cumulative Spend"
+    ersa-chart-unit="Institution"
+    ersa-chart-height="500"
+    ersa-chart-dimension-key="unit"
+    ersa-chart-group-key="product"
+  >
+  </ersa-bar-chart>
+  <ersa-bar-chart
+    id="chart3"
+    ersa-chart-data="chartData"
+    ersa-chart-title="All Accounts Monthly Spend"
+    ersa-chart-height="500",
+    ersa-chart-x-type="datetime",
+    ersa-chart-dimension-key="account"
+    ersa-chart-group-key="product"
+  >
+  </ersa-bar-chart>
+</div>

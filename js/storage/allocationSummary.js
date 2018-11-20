@@ -5,6 +5,7 @@ define(["app", "../util", "services/storage.v2"], function (app, util) {
       $scope.formatSize = util.formatSize;
       $scope.formatTimestamp = util.formatTimeSecStamp;
       $scope.formatNumber = util.formatNumber;
+      $scope.formatNumberCeil = util.formatNumberCeil;
       $scope.formatDuration = util.formatDuration;
 
       $scope.alerts = [];

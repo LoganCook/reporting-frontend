@@ -53,15 +53,15 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="usage in usages | orderBy: 'orderID'">
-                            <td class="text-warning">To be replaced by order_id {{ ::usage.orderline_id }}</td>
+                        <tr ng-repeat="usage in usages | orderBy: 'no'">
+                            <td>{{ ::usage.no }}</td>
                             <td blank-safe="usage.unit"></td>
-                            <td>{{ ::usage.manager }}</td>
-                            <td>{{ ::usage.manageremail }}</td>
+                            <td>{{ ::usage.managerName }}</td>
+                            <td>{{ ::usage.managerEmail }}</td>
                             <td>{{ ::usage.identifier }} ({{ usage.type }})</td>
-                            <td class="text-right">{{ ::usage.approved_size | number }}</td>
+                            <td class="text-right">{{ ::usage.quantity | number }}</td>
                             <td class="text-right"> {{ ::usage.avgUsage | number }}</td>
-                            <td class="text-right"> {{ ::usage.blocks }}</td>
+                            <td class="text-right"> {{ ::formatNumberCeil(usage.blocks) }}</td>
                             <td class="text-right">${{ ::formatNumber(usage.totalFee) }}</td>
                         </tr>
                     </tbody>

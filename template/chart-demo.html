@@ -5,22 +5,106 @@
 </style>
 
 <div class="container">
-  <ersa-bar-chart id="chart1"
+  Time filter:
+  <select ng-model="time" ng-change="changeTime()">
+    <option value="all-time">All time</option>
+    <option value="last-month">Last month</option>
+    <option value="last-6-months">Last 6 months</option>
+    <option value="2018">2018</option>
+    <option value="2017">2017</option>
+    <option value="2016">2016</option>
+  </select>
+
+
+
+<!--   <ersa-bar-chart id="chart1"
     ersa-chart-data="chartData"
-    ersa-chart-title="stacked bar chart"
+    ersa-chart-title="Account Cumulative Spend"
     ersa-chart-height="500"
     ersa-chart-dimension-key="account"
     ersa-chart-group-key="product"></ersa-bar-chart>
-  <ersa-bar-chart id="chart2"
+
+
+  <ersa-bar-chart id="chart4"
     ersa-chart-data="chartData"
-    ersa-chart-title="bar chart"
+    ersa-chart-title="Institution: Account Cumulative Spend"
+    ersa-chart-unit="Institution"
     ersa-chart-height="500"
-    ersa-chart-dimension-key="account"></ersa-bar-chart>
+    ersa-chart-dimension-key="unit"
+    ersa-chart-group-key="product"></ersa-bar-chart>
+
+    <ersa-bar-chart id="chart3"
+        ersa-chart-data="chartData"
+        ersa-chart-title="All Accounts Monthly Spend"
+        ersa-chart-height="500",
+        ersa-chart-x-type="datetime",
+        ersa-chart-dimension-key="account"
+        ersa-chart-group-key="product"></ersa-bar-chart>
+ -->
+
+
+  <ersa-bar-chart id="chart1"
+    ersa-chart-data="chartData"
+    ersa-chart-title="Account Cumulative Spend"
+    ersa-chart-height="500"
+    ersa-chart-dimension-key="account"
+    ersa-chart-group-key="product"></ersa-bar-chart>
   <ersa-bar-chart id="chart3"
     ersa-chart-data="chartData"
-    ersa-chart-title="stacked bar chart with datetime axis"
+    ersa-chart-title="All Accounts Monthly Spend"
     ersa-chart-height="500",
     ersa-chart-x-type="datetime",
     ersa-chart-dimension-key="account"
     ersa-chart-group-key="product"></ersa-bar-chart>
-  </div>
+
+
+  <ersa-bar-chart id="chart4"
+    ersa-chart-data="chartData"
+    ersa-chart-title="University of Adelaide: Account Cumulative Spend"
+    ersa-chart-unit="University of Adelaide"
+    ersa-chart-height="500"
+    ersa-chart-dimension-key="unit"
+    ersa-chart-group-key="product"></ersa-bar-chart>
+  <ersa-bar-chart id="chart5"
+    ersa-chart-data="chartData"
+    ersa-chart-title="University of Adelaide: All Accounts Monthly Spend"
+    ersa-chart-unit="University of Adelaide"
+    ersa-chart-height="500",
+    ersa-chart-x-type="datetime",
+    ersa-chart-dimension-key="account"
+    ersa-chart-group-key="product"></ersa-bar-chart>
+
+
+  <ersa-bar-chart id="chart6"
+    ersa-chart-data="chartData"
+    ersa-chart-title="Flinders University: Account Cumulative Spend"
+    ersa-chart-unit="Flinders University"
+    ersa-chart-height="500"
+    ersa-chart-dimension-key="unit"
+    ersa-chart-group-key="product"></ersa-bar-chart>
+  <ersa-bar-chart id="chart7"
+    ersa-chart-data="chartData"
+    ersa-chart-title="Flinders University: All Accounts Monthly Spend"
+    ersa-chart-unit="Flinders University"
+    ersa-chart-height="500",
+    ersa-chart-x-type="datetime",
+    ersa-chart-dimension-key="account"
+    ersa-chart-group-key="product"></ersa-bar-chart>
+
+
+  <ersa-bar-chart id="chart8"
+    ersa-chart-data="chartData"
+    ersa-chart-title="University of South Australia: Account Cumulative Spend"
+    ersa-chart-unit="University of South Australia"
+    ersa-chart-height="500"
+    ersa-chart-dimension-key="unit"
+    ersa-chart-group-key="product"></ersa-bar-chart>
+  <ersa-bar-chart id="chart9"
+    ersa-chart-data="chartData"
+    ersa-chart-title="University of South Australia: All Accounts Monthly Spend"
+    ersa-chart-unit="University of South Australia"
+    ersa-chart-height="500",
+    ersa-chart-x-type="datetime",
+    ersa-chart-dimension-key="account"
+    ersa-chart-group-key="product"></ersa-bar-chart>
+</div>

@@ -40,6 +40,8 @@
                   </li>
                 </ul>
               </li>
+              <li class="menu-item" ng-if="!email.endsWith('@ersa.edu.au')"><a ui-sref="summary" href="#/summary">Graphs</a></li>
+              <li class="menu-item" ng-if="email.endsWith('@ersa.edu.au')"><a ui-sref="ersasummary" href="#/summary">Graphs</a></li>
               <li class="menu-item"><a ui-sref="calculator" href="#/calculator">Calculator</a></li>
               <!-- <li class="menu-item"><a href="#">Help</a></li> -->
               <li class="menu-item"><a href="https://ersa.freshservice.com/support/solutions" target="blank">Support</a></li>

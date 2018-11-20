@@ -4,31 +4,40 @@
 //        Some states are detached from menu items and defined in hideFor3rdMenu
 define({
   "ersa": {
-    "HPC": {
-      "HPC": ["/hpc/hpc", "HPC"],
-      "Tango": ["/admin/hpc/slurm", "Slurm"],
-      "Summary": ["/admin/hpc/hpcsummary", "HPCSummary"],
+    "Tables" : {
+      "HPC": ["/admin/hpc/slurm", "Slurm"],
+      "Storage": ["/admin/storage/allocationSummary", "AllocationSummary"],
+      "TANGO Cloud": ["/admin/cloud/tangosummary", "TangoCloudsummary"]
     },
-    "Storage": {
-      //"Filesystem": ["/storage/fs", "Filesystem"],
-      "XFS": ["/storage/xfs", "XFS"],
-      "Home Account": ["/admin/storage/hpcStorage", "AHPCStorage"],
-      //"HNAS": ["/storage/hnas", "HNAS"],
-      "HNAS": ["sub", ["/storage/hnas/fileSystem", "FileSystem"],
-        ["/storage/hnas/virtualVolume", "VirtualVolume"],
-      ],
-      //"HNAS/FileSystem": ["/storage/hnas/fileSystem", "FileSystem"],
-      //"HNAS/VirtualVolume": ["/storage/hnas/virtualVolume", "VirtualVolume"],
-      "HCP": ["/storage/hcp", "HCP"],
-      "National": ["/admin/storage/allocationSummary", "AllocationSummary"],
-      "RDS Report": ["/admin/storage/allocationRDSReport", "AAllocationRDSReport"],
-    },
-    "Cloud": {
-      "Identity (Keystone)": ["/cloud/keystone", "Keystone"],
-      "Virtual Machines (Nova)": ["/nova"],
-      "Nectar Summary": ["/admin/cloud/novasummary", "Novasummary"],
-      "Tango Summary": ["/admin/cloud/tangosummary", "TangoCloudsummary"],
-    },
+    // "HPC": {
+    //   "HPC": ["/hpc/hpc", "HPC"],
+    //   // "Tango": ["/admin/hpc/slurm", "Slurm"],
+    //   "Summary": ["/admin/hpc/hpcsummary", "HPCSummary"],
+    // },
+    // "Storage": {
+    //   //"Filesystem": ["/storage/fs", "Filesystem"],
+    //   "XFS": ["/storage/xfs", "XFS"],
+    //   "Home Account": ["/admin/storage/hpcStorage", "AHPCStorage"],
+    //   //"HNAS": ["/storage/hnas", "HNAS"],
+    //   "HNAS": ["sub", ["/storage/hnas/fileSystem", "FileSystem"],
+    //     ["/storage/hnas/virtualVolume", "VirtualVolume"],
+    //   ],
+    //   //"HNAS/FileSystem": ["/storage/hnas/fileSystem", "FileSystem"],
+    //   //"HNAS/VirtualVolume": ["/storage/hnas/virtualVolume", "VirtualVolume"],
+    //   "HCP": ["/storage/hcp", "HCP"],
+    //   // "National": ["/admin/storage/allocationSummary", "AllocationSummary"],
+    //   "RDS Report": ["/admin/storage/allocationRDSReport", "AAllocationRDSReport"],
+    // },
+    // "Cloud": {
+    //   "Identity (Keystone)": ["/cloud/keystone", "Keystone"],
+    //   "Virtual Machines (Nova)": ["/nova"],
+    //   "Nectar Summary": ["/admin/cloud/novasummary", "Novasummary"],
+    //   // "Tango Summary": ["/admin/cloud/tangosummary", "TangoCloudsummary"],
+    // },
+    // "Graphs": {
+    //   // "Fee": ["/summary", "ersaBarChart"],
+    //   "Fee": ["/chart-demo", "summary"],
+    // },
     "hideFor3rdMenu": {
       "FileSystem": ["/storage/hnas/fileSystem", "FileSystem"],
       "VirtualVolume": ["/storage/hnas/virtualVolume", "VirtualVolume"],
@@ -48,7 +57,7 @@ define({
         ["/storage/hpcStorage", "HOME ACCOUNT"],
         ["/storage/allocationSummary", "NATIONAL"],
         ["/storage/allocationANDSReport", "STORED COLLECTIONS"]
-      ]
+      ],
     },
     // this data will be registered as states, keys are not used, just used as a reminder for coder
     // the first element has to match to the first element of a menu item

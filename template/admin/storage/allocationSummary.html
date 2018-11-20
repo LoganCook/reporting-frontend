@@ -65,7 +65,7 @@
                 <th cell-ratio="10" ersa-table-sort="managerName">User Name</th>
                 <th cell-ratio="15" ersa-table-sort="managerEmail">Email</th>
                 <th cell-ratio="15" ersa-table-sort="identifier">File System</th>
-                <th cell-ratio="8" ersa-table-sort="approved_size" ersa-table-no-filter class="text-right">GB Allocated</th>
+                <th cell-ratio="8" ersa-table-sort="quantity" ersa-table-no-filter class="text-right">GB Allocated</th>
                 <th cell-ratio="8" ersa-table-sort="avgUsage" ersa-table-no-filter class="text-right">GB Used</th>
                 <th cell-ratio="5" ersa-table-sort="blocks" ersa-table-no-filter class="text-right">Usage / 250GB</th>
                 <th cell-ratio="5" ersa-table-sort="totalFee" ersa-table-no-filter class="text-right">Fee</th>
@@ -80,9 +80,9 @@
                 <td cell-ratio="10" blank-safe="usage.managerName"></td>
                 <td cell-ratio="15" blank-safe="usage.managerEmail"></td>
                 <td cell-ratio="15">{{ ::usage.identifier }}</td>
-                <td cell-ratio="8" class="text-right">{{ ::usage.approved_size | number }}</td>
+                <td cell-ratio="8" class="text-right">{{ ::usage.quantity | number }}</td>
                 <td cell-ratio="8" class="text-right"> {{ ::usage.avgUsage | number }}</td>
-                <td cell-ratio="5" class="text-right"> {{ ::usage.blocks }}</td>
+                <td cell-ratio="5" class="text-right"> {{ ::formatNumberCeil(usage.blocks) }}</td>
                 <td cell-ratio="5" class="text-right">${{ ::formatNumber(usage.totalFee) }}</td>
             </tr>
         </tbody>
@@ -107,8 +107,8 @@
                 <th cell-ratio="10" ersa-table-sort="managerName">User Name</th>
                 <th cell-ratio="15" ersa-table-sort="managerEmail">Email</th>
                 <th cell-ratio="15" ersa-table-sort="identifier">File System</th>
-                <th cell-ratio="8" ersa-table-sort="approved_size" ersa-table-no-filter class="text-right">GB Allocated</th>
-                <th cell-ratio="8" ersa-table-sort="usage" ersa-table-no-filter class="text-right">GB Used</th>
+                <th cell-ratio="8" ersa-table-sort="quantity" ersa-table-no-filter class="text-right">GB Allocated</th>
+                <th cell-ratio="8" ersa-table-sort="avgUsage" ersa-table-no-filter class="text-right">GB Used</th>
                 <th cell-ratio="5" ersa-table-sort="blocks" ersa-table-no-filter class="text-right">Usage / 250GB</th>
                 <th cell-ratio="5" ersa-table-sort="totalFee" ersa-table-no-filter class="text-right">Fee</th>
             </tr>
@@ -121,9 +121,9 @@
                 <td cell-ratio="10" blank-safe="usage.managerName"></td>
                 <td cell-ratio="15" blank-safe="usage.managerEmail"></td>
                 <td cell-ratio="15">{{ ::usage.identifier }}</td>
-                <td cell-ratio="8" class="text-right">{{ ::usage.approved_size | number }}</td>
+                <td cell-ratio="8" class="text-right">{{ ::usage.quantity | number }}</td>
                 <td cell-ratio="8" class="text-right"> {{ ::usage.avgUsage | number }}</td>
-                <td cell-ratio="5" class="text-right"> {{ ::usage.blocks }}</td>
+                <td cell-ratio="5" class="text-right"> {{ ::formatNumberCeil(usage.blocks) }}</td>
                 <td cell-ratio="5" class="text-right">${{ ::formatNumber(usage.totalFee) }}</td>
             </tr>
         </tbody>
@@ -144,9 +144,9 @@
             <tr ersa-table-add-filters>
                 <th cell-ratio="35" ersa-table-sort="orderBy('account')" st-sort-default="true">Organisation</th>
                 <th cell-ratio="35" ersa-table-sort="unit">School</th>
-                <th cell-ratio="10" ersa-table-sort="usage" ersa-table-no-filter class="text-right">GB Used</th>
+                <th cell-ratio="10" ersa-table-sort="avgUsage" ersa-table-no-filter class="text-right">GB Used</th>
                 <th cell-ratio="10" ersa-table-sort="blocks" ersa-table-no-filter class="text-right">Usage / 250GB</th>
-                <th cell-ratio="10" ersa-table-sort="totalFee" ersa-table-no-filter class="text-right">Fee</th>
+                <th cell-ratio="10" ersa-table-sort="cost" ersa-table-no-filter class="text-right">Fee</th>
             </tr>
         </thead>
         <tbody>
@@ -155,7 +155,7 @@
                 <td cell-ratio="35" blank-safe="usage.unit"></td>
                 <td cell-ratio="10" class="text-right"> {{ ::usage.avgUsage | number }}</td>
                 <td cell-ratio="10" class="text-right"> {{ ::usage.blocks }}</td>
-                <td cell-ratio="10" class="text-right">${{ ::formatNumber(usage.totalFee) }}</td>
+                <td cell-ratio="10" class="text-right">${{ formatNumber(usage.cost) }}</td>
             </tr>
         </tbody>
         <tfoot>

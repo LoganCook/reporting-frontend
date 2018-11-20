@@ -717,3 +717,7 @@ table.flexy-table caption {
 .chart-title {
   font-size: 30px;
 }
+
+.beta-warning {
+  background-color: red;
+}

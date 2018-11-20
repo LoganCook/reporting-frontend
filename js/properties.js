@@ -115,5 +115,11 @@ define({
 
     "hpchome" : {
         "blacklist": ["foo", "bar"]
+    },
+
+    "chart": {
+        "blacklist": [
+            "Example"
+        ]
     }
 });
